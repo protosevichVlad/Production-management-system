@@ -1,0 +1,177 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Изменение прибора";
+    int index = 1;
+}
+
+<form method="post" action="">
+    Наименовие: <input type="text" name="Name" required value="@ViewBag.Device.Name" autocomplete="off"><br>
+    Количество на складе: <input type="number" name="Quantity" value="@ViewBag.Device.Quantity" autocomplete="off" required min="0">
+    <input type="number" name="Id" value="@ViewBag.Device.Id" hidden><br>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h3>
+                    Монтаж
+                    <button type="button" onclick="createComponentSelect()" class="btn btn-link">Добавить</button>
+                    <button type="button" onclick="removeComponentSelect()" class="btn btn-link">Удалить последний</button>
+                </h3>
+            </div>
+            <div class="col">
+                <h3>
+                    Конструктив
+                    <button type="button" onclick="createDesignSelect()" class="btn btn-link">Добавить</button>
+                    <button type="button" onclick="removeDesignSelect()" class="btn btn-link">Удалить последний</button>
+                </h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" id="Components">
+                @{index = 1; }
+                @foreach (var comp in ViewBag.Device.DeviceComponentsTemplate)
+                {
+                    <select class="ComponentSelect" id="Component@(index)" name="Component@(index)">
+                        @foreach (var c in ViewBag.Components)
+                        {
+                            @if (c.Id == comp.Component.Id)
+                            {
+                                <option value="@c.Id" selected>@c.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@c.Id">@c.Name</option>
+                            }
+                        }
+                    </select><input class="ComponentInput" id="Component@(index)Input" name="Component@(index)Input" type="number" required value="@comp.Quantity" autocomplete="off" min="0"/>
+                    <br class="ComponentBr">
+                    index++;
+                }
+            </div>
+            <div class="col" id="Designs">
+                @{index = 1; }
+                @foreach (var des in ViewBag.Device.DeviceDesignTemplate)
+                {
+                    <select class="DesignSelect" id="Design@(index)" name="Design@(index)">
+                        @foreach (var d in ViewBag.Designs)
+                        {
+                            @if (des.Design.Id == d.Id)
+                            {
+                                <option value="@d.Id" selected>@d.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@d.Id">@d.Name</option>
+                            }
+                        }
+                    </select><input class="DesignInput" id="Design@(index)Input" name="Design@(index)Input" type="number" required value="@des.Quantity" autocomplete="off" min="0"/>
+                    <br class="DesignBr">
+                    index++;
+                }
+
+            </div>
+        </div>
+    </div>
+    <button type="submit">Изменить</button>
+</form>
+<script type="text/javascript">
+
+    function createComponentSelect() {
+        let component_selects = [...document.getElementsByClassName('ComponentSelect')];
+
+        let newSelect = document.createElement("select");
+        let newInput= document.createElement("input");
+
+        let option = document.createElement("option");
+
+        @foreach (var c in ViewBag.Components)
+        {
+            <text>
+            option = document.createElement("option");
+            option.value = "@c.Id";
+            option.text = "@c.Name";
+            newSelect.appendChild(option);
+            </text>
+        }
+
+        let length = component_selects.length + 1;
+
+        newSelect.classList.add('ComponentSelect');
+        newSelect.id = 'Component' + length;
+        newSelect.name = 'Component' + length;
+        newInput.classList.add('ComponentInput');
+        newInput.id = 'Component' + length + 'Input';
+        newInput.name = 'Component' + length + 'Input';
+        newInput.type = 'number';
+        newInput.required = true;
+        newInput.autocomplete = 'off';
+        newInput.min = 0;
+
+        document.getElementById('Components').insertBefore(newInput, document.getElementById('Component' + length));
+        document.getElementById('Components').insertBefore(newSelect, newInput);
+        newInput.insertAdjacentHTML('afterEnd', '<br class="ComponentBr">')
+    }
+
+    function createDesignSelect() {
+        let design_selects = [...document.getElementsByClassName('DesignSelect')];
+
+        let newSelect = document.createElement("select");
+        let newInput= document.createElement("input");
+
+        let option = document.createElement("option");
+
+        @foreach (var d in ViewBag.Designs)
+        {
+            <text>
+            option = document.createElement("option");
+            option.value = "@d.Id";
+            option.text = "@d.Name";
+            newSelect.appendChild(option);
+            </text>
+        }
+
+        let length = design_selects.length + 1;
+
+        newSelect.classList.add('DesignSelect');
+        newSelect.id = 'Design' + length;
+        newSelect.name = 'Design' + length;
+
+        newInput.classList.add('DesignInput');
+        newInput.id = 'Design' + length + 'Input';
+        newInput.name = 'Design' + length + 'Input';
+        newInput.type = 'number';
+        newInput.required = true;
+        newInput.autocomplete = 'off';
+        newInput.min = 0;
+
+        document.getElementById('Designs').insertBefore(newInput, document.getElementById('Design' + length));
+        document.getElementById('Designs').insertBefore(newSelect, newInput);
+        newInput.insertAdjacentHTML('afterEnd', '<br class="DesignBr">')
+    }
+
+    function removeComponentSelect() {
+        let component_selects = [...document.getElementsByClassName('ComponentSelect')];
+        let component_inputs = [...document.getElementsByClassName('ComponentInput')];
+        let component_br = [...document.getElementsByClassName('ComponentBr')];
+
+        if (component_inputs.length > 0) {
+            component_selects[component_selects.length - 1].remove();
+            component_inputs[component_inputs.length - 1].remove();
+            component_br[component_br.length - 1].remove();
+        }
+    }
+
+    function removeDesignSelect() {
+        let design_selects = [...document.getElementsByClassName('DesignSelect')];
+        let design_inputs = [...document.getElementsByClassName('DesignInput')];
+        let design_br = [...document.getElementsByClassName('DesignBr')];
+
+        if (design_inputs.length > 0) {
+            design_selects[design_selects.length - 1].remove();
+            design_inputs[design_inputs.length - 1].remove();
+            design_br[design_br.length - 1].remove();
+        }
+    }
+
+</script>

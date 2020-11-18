@@ -1,0 +1,14 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Edit component " + ViewBag.Design.Name;
+}
+<form method="post" action="">
+    
+    Type: <input type="text" name="Type" value="@ViewBag.Design.Type"><br>
+    Name: <input type="text" name="Name"  value="@ViewBag.Design.Name"><br>
+    Quantity: <input type="text" name="Quantity" value="@ViewBag.Design.Quantity"><br>
+    <button type="submit">Ok</button>
+</form>
+<button onclick="window.location='/Design/Remove/@ViewBag.Design.Id'">Delete</button>

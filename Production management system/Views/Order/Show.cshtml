@@ -1,0 +1,39 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Задания";
+}
+<a href="/Order/Add">Добавить задачу</a>
+
+<table class="table table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <td><p>#</p></td>
+            <td><p>Device</p></td>
+            <td><p>Дата начала</p></td>
+            <td><p>Дата окончания</p></td>
+            <td><p>Статус</p></td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in ViewBag.Orders)
+        {
+            var nullDate = new DateTime();
+        <tr onclick="window.location='/Order/ShowOrder/@o.Id'" style="cursor: pointer;">
+            <td><p>@o.Id</p></td>
+            <td><p>@o.Device.Name</p></td>
+            <td><p>@o.StartTime</p></td>
+            @if (o.EndTime == nullDate)
+            {
+                <td><p>-</p></td>
+            }
+            else
+            {
+                <td><p>@o.EndTime</p></td>
+            }
+            <td><p>@o.Status</p></td>
+        </tr>
+        }
+    </tbody>
+</table>

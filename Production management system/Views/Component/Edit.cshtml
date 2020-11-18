@@ -1,0 +1,18 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Изменение монтажа " + ViewBag.Component.Name;
+}
+<form method="post" action="">
+
+    Тип: <input type="text" name="Type" value="@ViewBag.Component.Type" required autocomplete="off"><br>
+    Наименование: <input type="text" name="Name" value="@ViewBag.Component.Name"required autocomplete="off"><br>
+    Номинал: <input type="text" name="Nominal" value="@ViewBag.Component.Nominal" autocomplete="off"><br>
+    Корпус: <input type="text" name="Corpus" value="@ViewBag.Component.Corpus" autocomplete="off"><br>
+    Пояснение: <input type="text" name="Explanation" value="@ViewBag.Component.Explanation" autocomplete="off"><br>
+    Производитель: <input type="text" name="Manufacturer" value="@ViewBag.Component.Manufacturer" autocomplete="off"><br>
+    Количество: <input type="text" name="Quantity" value="@ViewBag.Component.Quantity" required autocomplete="off" min="0"><br>
+    <button type="submit">Изменить</button>
+</form>
+<button onclick="window.location='/Component/Remove/@ViewBag.Component.Id'">Удалить</button>
