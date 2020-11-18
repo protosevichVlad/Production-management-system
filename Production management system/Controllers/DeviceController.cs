@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace ProductionManagementSystem.Controllers
             _logger = logger;
         }
 
+        [Authorize(Roles = "admin")]
         public IActionResult Show()
         {
             var db = new ApplicationContext();
@@ -27,6 +29,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult Add()
         {
             var db = new ApplicationContext();
@@ -36,6 +39,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Add(IFormCollection collection)
         {
             var db = new ApplicationContext();
@@ -141,6 +145,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult Edit(int id)
         {
             var db = new ApplicationContext();
@@ -156,6 +161,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Edit(IFormCollection collection)
         {
             var db = new ApplicationContext();
@@ -272,6 +278,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult ShowDevice(int id)
         {
             var db = new ApplicationContext();
@@ -285,6 +292,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult Remove(int id)
         {
             var db = new ApplicationContext();

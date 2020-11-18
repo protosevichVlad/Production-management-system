@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProductionManagementSystem.Controllers
 {
@@ -18,7 +19,9 @@ namespace ProductionManagementSystem.Controllers
         {
             _logger = logger;
         }
+
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult Show(string sortBy, string splitByType)
         {
             var db = new ApplicationContext();
@@ -114,12 +117,14 @@ namespace ProductionManagementSystem.Controllers
             return View();
         }
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult Add()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Add(Component component)
         {
             var db = new ApplicationContext();
@@ -129,6 +134,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult Edit(int id)
         {
             var db = new ApplicationContext();
@@ -137,6 +143,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Edit(Component component)
         {
             var db = new ApplicationContext();
@@ -155,6 +162,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult Remove(int id)
         {
             ApplicationContext db = new ApplicationContext();

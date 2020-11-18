@@ -6,18 +6,23 @@ using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProductionManagementSystem.Controllers
 {
+
     public class OrderController : Controller
     {
+        [Authorize(Roles = "admin")]
         public IActionResult Show()
         {
             var db = new ApplicationContext();
             ViewBag.Orders = db.Orders.Include(o => o.Device);
             return View();
         }
+
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult Add()
         {
             var db = new ApplicationContext();
@@ -26,6 +31,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Add(IFormCollection collection)
         {
             var db = new ApplicationContext();
@@ -43,6 +49,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult ShowOrder(int id)
         {
             var db = new ApplicationContext();
