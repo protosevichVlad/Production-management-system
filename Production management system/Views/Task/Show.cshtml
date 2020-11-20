@@ -1,0 +1,38 @@
+﻿@model IEnumerable<ProductionManagementSystem.Models.Task>
+@{
+    ViewData["Title"] = "Задачи";
+    var nullDate = new DateTime();
+
+}
+<a href="/Task/Add">Добавить задачу</a>
+
+<table class="table table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <td><p>#</p></td>
+            <td><p>Заказчик</p></td>
+            <td><p>Дата начала</p></td>
+            <td><p>Дата окончания</p></td>
+            <td><p>Статус</p></td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in Model)
+        {
+            <tr onclick="window.location='/Task/ShowTask/@t.Id'" style="cursor: pointer;">
+                <td><p>@t.Id</p></td>
+                <td><p>@t.Customer</p></td>
+                <td><p>@t.StartTime</p></td>
+                @if (t.EndTime == nullDate)
+                {
+                    <td><p>-</p></td>
+                }
+                else
+                {
+                    <td><p>@t.EndTime</p></td>
+                }
+                <td><p>@t.Status</p></td>
+            </tr>
+        }
+    </tbody>
+</table>

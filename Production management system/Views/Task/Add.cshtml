@@ -1,0 +1,94 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Добавить задачу";
+}
+
+<form method="post" action="">
+    Заказчик: <input type="text" autocomplete="off" required name="Customer"/>
+    Deadline: <input type="date" name="Deadline" min="@ViewBag.Date" value="@ViewBag.Date">
+    <br>
+    <button onclick="AddDevice()" type="button">Добавить прибор</button>
+    <button onclick="RemoveDevice()" type="button">Удалить прибор</button>
+    <br>
+    <div class="container" id="container">
+        <div class="row">
+            <div class="col">Наименование прибора:</div>
+            <div class="col">Количество:</div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <select class="Select" id="SelectDevice1" name="NameDivice1">
+                    @foreach (var d in ViewBag.Devices)
+                    {
+                        <option value="@d.Id">@d.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col">
+                <input type="number" name="Quantity1" autocomplete="off" min="0"><br>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit">Принять</button>
+</form>
+<script>
+    function AddDevice() {
+        let rows = [...document.getElementsByClassName('row')];
+
+        let newSelect = document.createElement("select");
+        let newInput = document.createElement("input");
+
+        let row = document.createElement("div");
+        let col1 = document.createElement("div");
+        let col2 = document.createElement("div");
+
+        row.classList.add("row");
+        col1.classList.add("col");
+        col2.classList.add("col");
+
+        let option = document.createElement("option");
+
+        @foreach (var d in ViewBag.Devices)
+        {
+            <text>
+            option = document.createElement("option");
+            option.value = "@d.Id";
+            option.text = "@d.Name";
+            newSelect.appendChild(option);
+            </text>
+        }
+
+        let length = rows.length;
+
+        newSelect.classList.add('Select');
+        newSelect.id = 'SelectDevice' + length;
+        newSelect.name = 'NameDivice' + length;
+
+        newInput.classList.add('DesignInput');
+        newInput.name = 'Quantity' + length + 'Input';
+        newInput.type = 'number';
+        newInput.required = true;
+        newInput.autocomplete = 'off';
+        newInput.min = 0;
+
+
+        col1.insertAdjacentElement('afterbegin', newSelect);
+        col2.insertAdjacentElement('afterbegin', newInput);
+
+        row.insertAdjacentElement('afterbegin', col1);
+        row.insertAdjacentElement('beforeend', col2);
+
+        document.getElementById('container').insertAdjacentElement('beforeend', row);
+    }
+
+    function RemoveDevice() {
+        let rows = [...document.getElementsByClassName('row')];
+
+        if (rows.length > 1) {
+            rows[rows.length - 1].remove();
+        }
+    }
+</script>

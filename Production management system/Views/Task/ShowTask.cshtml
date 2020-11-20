@@ -1,0 +1,91 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Задача №" + ViewBag.Task.Id;
+    int index = 0;
+}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h4>Заказчик: @ViewBag.Task.Customer</h4>
+            <h4>Deadline: @ViewBag.Task.Deadline.ToString("dd.MM.yyyy")</h4>
+        </div>
+        <div class="col">
+            <button class="btn btn-link float-right" type="button" onclick="window.print()">Распечатать(Сохранить)</button>
+        </div>
+    </div>
+</div>
+
+@foreach (var Device in ViewBag.Devices)
+{
+    var quantity = ViewBag.QuantytiDevices[index];
+    index++;
+
+    <hr />
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h5>Наименование прибора: @Device.Name</h5>
+                <h5>Количество в задаче: @quantity</h5>
+                <p>Количество на складе: @Device.Quantity</p>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h6>
+                    Монтаж
+                </h6>
+            </div>
+            <div class="col">
+                <h6>
+                    Конструктив
+                </h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" id="Components">
+                <table style="width:100%;">
+                    <tr>
+                        <td>Наименование</td>
+                        <td>В приборе</td>
+                        <td>В задании</td>
+                        <td>На складе</td>
+                    </tr>
+                    @foreach (var comp in Device.DeviceComponentsTemplate)
+                    {
+                        <tr @if (comp.Component.Quantity < comp.Quantity * quantity) { @: class="table-danger"
+                            }>
+                            <td>@comp.Component.Name</td>
+                            <td>@comp.Quantity</td>
+                            <td>@(comp.Quantity * quantity)</td>
+                            <td>@comp.Component.Quantity</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+            <div class="col" id="Designs">
+                <table style="width:100%;">
+                    <tr>
+                        <td>Наименование</td>
+                        <td>В приборе</td>
+                        <td>В задании</td>
+                        <td>На складе</td>
+                    </tr>
+                    @foreach (var des in Device.DeviceDesignTemplate)
+                    {
+                        <tr @if (des.Design.Quantity < des.Quantity * quantity) { @: class="table-danger"
+                            }>
+                            <td>@des.Design.Name</td>
+                            <td>@des.Quantity</td>
+                            <td>@(des.Quantity * quantity)</td>
+                            <td>@des.Design.Quantity</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+}
