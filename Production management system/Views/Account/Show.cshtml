@@ -2,10 +2,10 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    ViewData["Title"] = "Users";
+    ViewData["Title"] = "Пользователи";
 }
 
-<a href="/Device/Add">Добавить прибор</a>
+<a href="/Account/Register">Создать нового пользователя</a>
 <table class="table table-hover">
     <thead class="thead-dark">
         <tr>
@@ -16,13 +16,13 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var d in ViewBag.Users)
+        @foreach (var u in ViewBag.Users)
         {
-        <tr style="cursor: pointer;">
-            <td><p>@d.Id</p></td>
-            <td><p>@d.Login</p></td>
-            <td><p>@d.Password</p></td>
-            <td><p>@d.Role.RusName</p></td>
+        <tr onclick="window.location='/Account/Edit/@u.Id'" style="cursor: pointer;">
+            <td><p>@u.Id</p></td>
+            <td><p>@u.Login</p></td>
+            <td><p>@u.Password</p></td>
+            <td><p>@u.Role.RusName</p></td>
         </tr>
         }
     </tbody>

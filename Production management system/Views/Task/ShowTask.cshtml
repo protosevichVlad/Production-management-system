@@ -51,7 +51,7 @@
                     <tr>
                         <td>Наименование</td>
                         <td>В приборе</td>
-                        <td>В задании</td>
+                        <td>В задаче</td>
                         <td>На складе</td>
                     </tr>
                     @foreach (var comp in Device.DeviceComponentsTemplate)
@@ -71,7 +71,7 @@
                     <tr>
                         <td>Наименование</td>
                         <td>В приборе</td>
-                        <td>В задании</td>
+                        <td>В задаче</td>
                         <td>На складе</td>
                     </tr>
                     @foreach (var des in Device.DeviceDesignTemplate)
@@ -89,3 +89,44 @@
         </div>
     </div>
 }
+<div class="table-responsive-xl">
+    <hr />
+    <h4>Общее количество монтажа:</h4>
+    <table style="width:100%;" class="table-hover">
+        <tr>
+            <td>Наименование</td>
+            <td>В задаче</td>
+            <td>На складе</td>
+        </tr>
+        @foreach (var comp in ViewBag.ComponentTemplate)
+        {
+            <tr style="cursor: pointer" @if (comp.Component.Quantity < comp.Quantity) { @: class="table-danger"
+                } onclick="window.location = '/Component/Adding?taskId=@ViewBag.Task.Id&componentId=@comp.Component.Id'">
+                <td>@comp.Component.Name</td>
+                <td>@comp.Quantity</td>
+                <td>@comp.Component.Quantity</td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div class="table-responsive-xl">
+    <hr />
+    <h4>Общее количество конструктива:</h4>
+    <table style="width:100%;" class="table-hover">
+        <tr>
+            <td>Наименование</td>
+            <td>В задаче</td>
+            <td>На складе</td>
+        </tr>
+        @foreach (var des in ViewBag.DesignTemplate)
+        {
+            <tr style="cursor: pointer" @if (des.Design.Quantity < des.Quantity) { @: class="table-danger"
+                } onclick="window.location = '/Design/Adding?taskId=@ViewBag.Task.Id&designId=@des.Design.Id'">
+                <td>@des.Design.Name</td>
+                <td>@des.Quantity</td>
+                <td>@des.Design.Quantity</td>
+            </tr>
+        }
+    </table>
+</div>

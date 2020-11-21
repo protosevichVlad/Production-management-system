@@ -21,7 +21,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, order_picker")]
         public IActionResult Show(string sortBy, string splitByType)
         {
             var db = new ApplicationContext();
@@ -117,14 +117,14 @@ namespace ProductionManagementSystem.Controllers
             return View();
         }
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, order_picker")]
         public IActionResult Add()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, order_picker")]
         public IActionResult Add(Component component)
         {
             var db = new ApplicationContext();
@@ -134,7 +134,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, order_picker")]
         public IActionResult Edit(int id)
         {
             var db = new ApplicationContext();
@@ -143,7 +143,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, order_picker")]
         public IActionResult Edit(Component component)
         {
             var db = new ApplicationContext();
@@ -162,7 +162,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, order_picker")]
         public IActionResult Remove(int id)
         {
             ApplicationContext db = new ApplicationContext();
@@ -177,6 +177,26 @@ namespace ProductionManagementSystem.Controllers
 
             db.SaveChanges();
             return Redirect("/Component/Show");
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "admin, order_picker")]
+        public IActionResult Adding(int taskId, int componentId, int addedQuntity=0)
+        {
+            var db = new ApplicationContext();
+            if (addedQuntity == 0)
+            {
+                ViewBag.TaskId = taskId;
+                ViewBag.Component = db.Components.Where(c => c.Id == componentId).FirstOrDefault(); ;
+                return View();
+            }
+            else
+            {
+                Component component = db.Components.Where(c => c.Id == componentId).FirstOrDefault();
+                component.Quantity += addedQuntity;
+                db.SaveChanges();
+                return Redirect($"/Task/ShowTask/{taskId}");
+            }
         }
     }
 }

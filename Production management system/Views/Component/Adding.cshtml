@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Изменение монтажа " + ViewBag.Component.Name;
+}
+<p>Тип: @ViewBag.Component.Type</p><br>
+<p>Наименование: @ViewBag.Component.Name</p><br>
+<p>Номинал: @ViewBag.Component.Nominal</p><br>
+<p>Корпус: @ViewBag.Component.Corpus</p><br>
+<p>Пояснение: @ViewBag.Component.Explanation</p><br>
+<p>Производитель: @ViewBag.Component.Manufacturer</p><br>
+<p>Количество: @ViewBag.Component.Quantity</p><br>
+<p>Добавить: <input type="number" min="0" required id="AddedQuantity" autocomplete="off" /></p>
+<button type="button" onclick="send()">Добавить</button>
+<script type="text/javascript">
+    function send() {
+        var input = document.getElementById('AddedQuantity');
+        window.location = '/Component/Adding?taskId=@ViewBag.TaskId&componentId=@ViewBag.Component.Id&addedQuntity=' + input.value
+    }
+</script>
+

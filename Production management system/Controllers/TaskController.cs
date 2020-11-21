@@ -13,7 +13,7 @@ namespace ProductionManagementSystem.Controllers
 
     public class TaskController : Controller
     {
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, order_picker")]
         public IActionResult Show()
         {
             var db = new ApplicationContext();
@@ -68,7 +68,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, order_picker")]
         public IActionResult ShowTask(int id)
         {
             var db = new ApplicationContext();
@@ -97,6 +97,60 @@ namespace ProductionManagementSystem.Controllers
             }
             ViewBag.QuantytiDevices = quantytiDevices;
             ViewBag.Devices = devices;
+
+            List<DeviceComponentsTemplate> components = new List<DeviceComponentsTemplate>();
+            List<int> componentsIds = new List<int>();
+            List<DeviceDesignTemplate> designs = new List<DeviceDesignTemplate>();
+            List<int> designsIds = new List<int>();
+
+            int indexDevice = 0;
+            foreach (Device device in devices)
+            {
+                foreach(DeviceComponentsTemplate componentTemplate in device.DeviceComponentsTemplate)
+                {
+                    if (!componentsIds.Contains(componentTemplate.Component.Id))
+                    {
+                        componentsIds.Add(componentTemplate.Component.Id);
+                        components.Add(new DeviceComponentsTemplate
+                        {
+                            Component = componentTemplate.Component,
+                            Description = componentTemplate.Description,
+                            Quantity = componentTemplate.Quantity
+                        });
+                        components[^1].Quantity *= quantytiDevices[indexDevice];
+                    }
+                    else
+                    {
+                        int index = componentsIds.IndexOf(componentTemplate.Component.Id);
+                        components[index].Quantity += componentTemplate.Quantity * quantytiDevices[indexDevice];
+                    }
+                }
+
+                foreach (DeviceDesignTemplate designTemplate in device.DeviceDesignTemplate)
+                {
+                    if (!designsIds.Contains(designTemplate.Design.Id))
+                    {
+                        designsIds.Add(designTemplate.Design.Id);
+                        designs.Add(new DeviceDesignTemplate
+                        {
+                            Design = designTemplate.Design,
+                            Description = designTemplate.Description,
+                            Quantity = designTemplate.Quantity
+                        });
+                        designs[^1].Quantity *= quantytiDevices[indexDevice];
+                    }
+                    else
+                    {
+                        int index = designsIds.IndexOf(designTemplate.Design.Id);
+                        designs[index].Quantity += designTemplate.Quantity * quantytiDevices[indexDevice];
+                    }
+                }
+
+                indexDevice++;
+            }
+
+            ViewBag.DesignTemplate = designs;
+            ViewBag.ComponentTemplate = components;
             return View();
         }
     }
