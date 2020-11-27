@@ -93,11 +93,13 @@
     <hr />
     <h4>Общее количество монтажа:</h4>
     <table style="width:100%;" class="table-hover">
-        <tr>
-            <td>Наименование</td>
-            <td>В задаче</td>
-            <td>На складе</td>
-        </tr>
+        <thead class="thead-dark">
+            <tr>
+                <td>Наименование</td>
+                <td>В задаче</td>
+                <td>На складе</td>
+            </tr>
+        </thead>
         @foreach (var comp in ViewBag.ComponentTemplate)
         {
             <tr style="cursor: pointer" @if (comp.Component.Quantity < comp.Quantity) { @: class="table-danger"
@@ -114,11 +116,13 @@
     <hr />
     <h4>Общее количество конструктива:</h4>
     <table style="width:100%;" class="table-hover">
-        <tr>
-            <td>Наименование</td>
-            <td>В задаче</td>
-            <td>На складе</td>
-        </tr>
+        <thead class="thead-dark">
+            <tr>
+                <td>Наименование</td>
+                <td>В задаче</td>
+                <td>На складе</td>
+            </tr>
+        </thead>
         @foreach (var des in ViewBag.DesignTemplate)
         {
             <tr style="cursor: pointer" @if (des.Design.Quantity < des.Quantity) { @: class="table-danger"
@@ -130,3 +134,4 @@
         }
     </table>
 </div>
+<button type="button" class="btn" onclick="window.location='/Task/NextStage?taskId=@ViewBag.Task.Id'">Cледующая фаза.</button>

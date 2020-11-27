@@ -4,8 +4,10 @@
     var nullDate = new DateTime();
 
 }
-<a href="/Task/Add">Добавить задачу</a>
-
+@if (User.IsInRole("admin"))
+{
+    <a href="/Task/Add">Добавить задачу</a>
+}
 <table class="table table-hover">
     <thead class="thead-dark">
         <tr>

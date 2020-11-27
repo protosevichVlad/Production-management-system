@@ -23,11 +23,6 @@
                 Монтаж
             </h3>
         </div>
-        <div class="col">
-            <h3>
-                Конструктив
-            </h3>
-        </div>
     </div>
     <div class="row">
         <div class="col" id="Components">
@@ -36,6 +31,7 @@
                     <td>Наименовие</td>
                     <td>Количество в приборе</td>
                     <td>Количество на складе</td>
+                    <td>#</td>
                 </tr>
                 @foreach (var comp in ViewBag.Device.DeviceComponentsTemplate)
                 {
@@ -44,16 +40,28 @@
                         <td>@comp.Component.Name</td>
                         <td>@comp.Quantity</td>
                         <td>@comp.Component.Quantity</td>
+                        <td>@comp.Description</td>
                     </tr>
                 }
             </table>
         </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col">
+            <h3>
+                Конструктив
+            </h3>
+        </div>
+    </div>
+    <div class="row">
         <div class="col" id="Designs">
             <table style="width:100%;">
                 <tr>
                     <td>Наименовие</td>
                     <td>Количество в приборе</td>
                     <td>Количество на складе</td>
+                    <td>#</td>
                 </tr>
                 @foreach (var des in ViewBag.Device.DeviceDesignTemplate)
                 {
@@ -62,6 +70,7 @@
                         <td>@des.Design.Name</td>
                         <td>@des.Quantity</td>
                         <td>@des.Design.Quantity</td>
+                        <td>@des.Description</td>
                     </tr>
                 }
             </table>

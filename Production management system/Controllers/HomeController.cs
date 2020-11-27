@@ -14,10 +14,12 @@ namespace ProductionManagementSystem.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private ApplicationContext _context;
 
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+            _context = new ApplicationContext();
         }
 
         public IActionResult Index()
@@ -27,8 +29,7 @@ namespace ProductionManagementSystem.Controllers
 
         public string Reset()
         {
-            var db = new ApplicationContext();
-            db.ResetDatabase();
+            _context.ResetDatabase();
 
             string adminEmail = "admin";
             string adminPassword = "123456";
@@ -44,16 +45,16 @@ namespace ProductionManagementSystem.Controllers
 
             User adminUser = new User { Login = adminEmail, Password = adminPassword, RoleId = adminRole.Id };
 
-            db.Roles.Add(adminRole);
-            db.Roles.Add(orderPickerRole);
-            db.Roles.Add(assemblerRole);
-            db.Roles.Add(tunerRole);
-            db.Roles.Add(collectorRole);
-            db.Roles.Add(validatingRole);
-            db.Roles.Add(shipperRole);
+            _context.Roles.Add(adminRole);
+            _context.Roles.Add(orderPickerRole);
+            _context.Roles.Add(assemblerRole);
+            _context.Roles.Add(tunerRole);
+            _context.Roles.Add(collectorRole);
+            _context.Roles.Add(validatingRole);
+            _context.Roles.Add(shipperRole);
 
-            db.Users.Add(adminUser);
-            db.SaveChanges();
+            _context.Users.Add(adminUser);
+            _context.SaveChanges();
 
             return "ok";
         }

@@ -35,7 +35,7 @@
     <button type="submit">Принять</button>
 </form>
 <script>
-    function AddDevice() {
+    async function AddDevice() {
         let rows = [...document.getElementsByClassName('row')];
 
         let newSelect = document.createElement("select");
@@ -51,14 +51,17 @@
 
         let option = document.createElement("option");
 
-        @foreach (var d in ViewBag.Devices)
+        let r = await new Request('/Device/GetAllDevices');
+        let devicesJson = await fetch(r).then(c => c.json());
+
+        console.log(devicesJson);
+        for (let i = 0; i < devicesJson.length; i++)
         {
-            <text>
+            let d = devicesJson[i]
             option = document.createElement("option");
-            option.value = "@d.Id";
-            option.text = "@d.Name";
+            option.value = d.id;
+            option.text = d.name;
             newSelect.appendChild(option);
-            </text>
         }
 
         let length = rows.length;

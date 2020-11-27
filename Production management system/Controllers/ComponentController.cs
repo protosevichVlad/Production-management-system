@@ -14,17 +14,18 @@ namespace ProductionManagementSystem.Controllers
     public class ComponentController : Controller
     {
         private readonly ILogger<ComponentController> _logger;
+        private ApplicationContext _context;
 
         public ComponentController(ILogger<ComponentController> logger)
         {
             _logger = logger;
+            _context = new ApplicationContext();
         }
 
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Show(string sortBy, string splitByType)
         {
-            var db = new ApplicationContext();
             if (sortBy == null)
             {
                 ViewBag.SortBy = "Id";
@@ -48,7 +49,7 @@ namespace ProductionManagementSystem.Controllers
 
             if (splitByType == "True")
             {
-                var componentsSortedByType = db.Components.OrderBy(c => c.Type);
+                var componentsSortedByType = _context.Components.OrderBy(c => c.Type);
                 if (sortBy == "Name")
                 {
                     ViewBag.Components = componentsSortedByType.ThenBy(c => c.Name);
@@ -80,7 +81,7 @@ namespace ProductionManagementSystem.Controllers
             }
             else
             {
-                var components = db.Components;
+                var components = _context.Components;
                 if (sortBy == "Name")
                 {
                     ViewBag.Components = components.OrderBy(c => c.Name);
@@ -127,9 +128,8 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Add(Component component)
         {
-            var db = new ApplicationContext();
-            db.Components.Add(component);
-            db.SaveChanges();
+            _context.Components.Add(component);
+            _context.SaveChanges();
             return Redirect("/Component/Show");
         }
 
@@ -137,8 +137,7 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Edit(int id)
         {
-            var db = new ApplicationContext();
-            ViewBag.Component = db.Components.Find(id);
+            ViewBag.Component = _context.Components.Find(id);
             return View();
         }
 
@@ -146,8 +145,7 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Edit(Component component)
         {
-            var db = new ApplicationContext();
-            Component comp = db.Components.Where(c => c.Id == component.Id).FirstOrDefault();
+            Component comp = _context.Components.Where(c => c.Id == component.Id).FirstOrDefault();
 
             comp.Name = component.Name;
             comp.Type = component.Type;
@@ -157,7 +155,7 @@ namespace ProductionManagementSystem.Controllers
             comp.Manufacturer = component.Manufacturer;
             comp.Quantity = component.Quantity;
 
-            db.SaveChanges();
+            _context.SaveChanges();
             return Redirect("/Component/Show");
         }
 
@@ -165,17 +163,15 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Remove(int id)
         {
-            ApplicationContext db = new ApplicationContext();
-
             Component comp = new Component
             {
                 Id = id
             };
 
-            db.Components.Attach(comp);
-            db.Components.Remove(comp);
+            _context.Components.Attach(comp);
+            _context.Components.Remove(comp);
 
-            db.SaveChanges();
+            _context.SaveChanges();
             return Redirect("/Component/Show");
         }
 
@@ -183,20 +179,26 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Adding(int taskId, int componentId, int addedQuntity=0)
         {
-            var db = new ApplicationContext();
             if (addedQuntity == 0)
             {
                 ViewBag.TaskId = taskId;
-                ViewBag.Component = db.Components.Where(c => c.Id == componentId).FirstOrDefault(); ;
+                ViewBag.Component = _context.Components.Where(c => c.Id == componentId).FirstOrDefault(); ;
                 return View();
             }
             else
             {
-                Component component = db.Components.Where(c => c.Id == componentId).FirstOrDefault();
+                Component component = _context.Components.Where(c => c.Id == componentId).FirstOrDefault();
                 component.Quantity += addedQuntity;
-                db.SaveChanges();
+                _context.SaveChanges();
                 return Redirect($"/Task/ShowTask/{taskId}");
             }
+        }
+
+        [HttpGet]
+        public JsonResult GetAllComponents()
+        {
+            List<Component> components = _context.Components.OrderBy(c => c.Name).ToList();
+            return Json(components);
         }
     }
 }

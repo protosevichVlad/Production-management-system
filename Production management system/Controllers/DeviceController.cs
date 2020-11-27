@@ -14,17 +14,18 @@ namespace ProductionManagementSystem.Controllers
     public class DeviceController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private ApplicationContext _context;
 
         public DeviceController(ILogger<HomeController> logger)
         {
             _logger = logger;
+            _context = new ApplicationContext();
         }
 
         [Authorize(Roles = "admin")]
         public IActionResult Show()
         {
-            var db = new ApplicationContext();
-            ViewBag.Devices = db.Devices;
+            ViewBag.Devices = _context.Devices;
             return View();
         }
 
@@ -32,9 +33,20 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Add()
         {
-            var db = new ApplicationContext();
-            ViewBag.Components = db.Components.OrderBy(c => c.Name);
-            ViewBag.Designs = db.Designs.OrderBy(d => d.Name);
+            List<Design> designs = _context.Designs.OrderBy(d => d.Name).ToList<Design>();
+            designs.ForEach((d) => {
+                byte[] bytes = System.Text.Encoding.Default.GetBytes(d.Name);
+                d.Name = System.Text.Encoding.UTF8.GetString(bytes);
+            });
+
+            List<Component> components = _context.Components.OrderBy(c => c.Name).ToList<Component>();
+            components.ForEach((c) => {
+                byte[] bytes = System.Text.Encoding.Default.GetBytes(c.Name);
+                c.Name = System.Text.Encoding.UTF8.GetString(bytes);
+            });
+
+            ViewBag.Designs = designs;
+            ViewBag.Components = components;
             return View();
         }
 
@@ -42,26 +54,26 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Add(IFormCollection collection)
         {
-            var db = new ApplicationContext();
-
             List<DeviceComponentsTemplate> componentsTemplate = new List<DeviceComponentsTemplate>();
             List<DeviceDesignTemplate> designTemplate = new List<DeviceDesignTemplate>();
 
             int idComponent = 0;
             int idDesign = 0;
 
+            int quantity = 0;
             Device device = new Device();
             foreach (var key in collection.Keys)
             {
+
                 if (key == "Name")
                 {
                     device.Name = collection[key];
                 }
                 else if (key == "Quantity")
                 {
-                    if (int.TryParse(collection[key], out int quantity))
+                    if (int.TryParse(collection[key], out int q))
                     {
-                        device.Quantity = quantity;
+                        device.Quantity = q;
                     }
                     else
                     {
@@ -72,23 +84,19 @@ namespace ProductionManagementSystem.Controllers
                 {
                     if (key.Contains("Input"))
                     {
-                        if (int.TryParse(collection[key], out int quantity))
+                        if (!int.TryParse(collection[key], out quantity))
                         {
-                            componentsTemplate.Add(new DeviceComponentsTemplate
-                            {
-                                Component = db.Components.Where(c => c.Id == idComponent).FirstOrDefault(),
-                                Quantity = quantity,
-                            });
+                            quantity = 0;
                         }
-                        else
+                    }
+                    else if (key.Contains("Text"))
+                    {
+                        componentsTemplate.Add(new DeviceComponentsTemplate
                         {
-                            componentsTemplate.Add(new DeviceComponentsTemplate
-                            {
-                                Component = db.Components.Where(c => c.Id == idComponent).FirstOrDefault(),
-                                Quantity = 0,
-                            });
-                        }
-                        
+                            Component = _context.Components.Where(c => c.Id == idComponent).FirstOrDefault(),
+                            Quantity = quantity,
+                            Description = collection[key],
+                        });
                     }
                     else
                     {
@@ -106,23 +114,19 @@ namespace ProductionManagementSystem.Controllers
                 {
                     if (key.Contains("Input"))
                     {
-                        if (int.TryParse(collection[key], out int quantity))
+                        if (!int.TryParse(collection[key], out quantity))
                         {
-                            designTemplate.Add(new DeviceDesignTemplate
-                            {
-                                Design = db.Designs.Where(c => c.Id == idDesign).FirstOrDefault(),
-                                Quantity = quantity,
-                            });
+                            quantity = 0;
                         }
-                        else
+                    }
+                    else if (key.Contains("Text"))
+                    {
+                        designTemplate.Add(new DeviceDesignTemplate
                         {
-                            designTemplate.Add(new DeviceDesignTemplate
-                            {
-                                Design = db.Designs.Where(c => c.Id == idDesign).FirstOrDefault(),
-                                Quantity = 0,
-                            });
-                        }
-                        
+                            Design = _context.Designs.Where(c => c.Id == idDesign).FirstOrDefault(),
+                            Quantity = quantity,
+                            Description = collection[key],
+                        });
                     }
                     else
                     {
@@ -139,8 +143,8 @@ namespace ProductionManagementSystem.Controllers
             }
             device.DeviceComponentsTemplate = componentsTemplate;
             device.DeviceDesignTemplate = designTemplate;
-            db.Devices.Add(device);
-            db.SaveChanges();
+            _context.Devices.Add(device);
+            _context.SaveChanges();
             return Redirect("/Device/Show");
         }
 
@@ -148,15 +152,27 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Edit(int id)
         {
-            var db = new ApplicationContext();
-            ViewBag.Device = db.Devices
+            ViewBag.Device = _context.Devices
                 .Include(d => d.DeviceComponentsTemplate)
                 .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
                 .ThenInclude(d => d.Design)
                 .Where(d => d.Id == id).FirstOrDefault();
-            ViewBag.Components = db.Components.OrderBy(c => c.Name);
-            ViewBag.Designs = db.Designs.OrderBy(d => d.Name);
+
+            List<Design> designs = _context.Designs.OrderBy(d => d.Name).ToList<Design>();
+            designs.ForEach((d) => {
+                byte[] bytes = System.Text.Encoding.Default.GetBytes(d.Name);
+                d.Name = System.Text.Encoding.UTF8.GetString(bytes);
+            });
+
+            List<Component> components = _context.Components.OrderBy(c => c.Name).ToList<Component>();
+            components.ForEach((c) => {
+                byte[] bytes = System.Text.Encoding.Default.GetBytes(c.Name);
+                c.Name = System.Text.Encoding.UTF8.GetString(bytes);
+            });
+
+            ViewBag.Designs = designs;
+            ViewBag.Components = components;
             return View();
         }
 
@@ -164,13 +180,12 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Edit(IFormCollection collection)
         {
-            var db = new ApplicationContext();
-
             List<DeviceComponentsTemplate> componentsTemplate = new List<DeviceComponentsTemplate>();
             List<DeviceDesignTemplate> designTemplate = new List<DeviceDesignTemplate>();
 
             int idComponent = 0;
             int idDesign = 0;
+            int quantity = 0;
 
             int idDevice = 0;
             if (!int.TryParse(collection["Id"], out idDevice))
@@ -178,7 +193,7 @@ namespace ProductionManagementSystem.Controllers
 
             }
 
-            Device device = db.Devices
+            Device device = _context.Devices
                 .Include(d => d.DeviceComponentsTemplate)
                 .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
@@ -193,7 +208,7 @@ namespace ProductionManagementSystem.Controllers
                 }
                 else if (key == "Quantity")
                 {
-                    if (int.TryParse(collection[key], out int quantity))
+                    if (int.TryParse(collection[key], out quantity))
                     {
                         device.Quantity = quantity;
                     }
@@ -206,23 +221,19 @@ namespace ProductionManagementSystem.Controllers
                 {
                     if (key.Contains("Input"))
                     {
-                        if (int.TryParse(collection[key], out int quantity))
+                        if (!int.TryParse(collection[key], out quantity))
                         {
-                            componentsTemplate.Add(new DeviceComponentsTemplate
-                            {
-                                Component = db.Components.Where(c => c.Id == idComponent).FirstOrDefault(),
-                                Quantity = quantity,
-                            });
+                            quantity = 0;
                         }
-                        else
+                    }
+                    else if (key.Contains("Text"))
+                    {
+                        componentsTemplate.Add(new DeviceComponentsTemplate
                         {
-                            componentsTemplate.Add(new DeviceComponentsTemplate
-                            {
-                                Component = db.Components.Where(c => c.Id == idComponent).FirstOrDefault(),
-                                Quantity = 0,
-                            });
-                        }
-
+                            Component = _context.Components.Where(c => c.Id == idComponent).FirstOrDefault(),
+                            Quantity = quantity,
+                            Description = collection[key],
+                        });
                     }
                     else
                     {
@@ -240,23 +251,19 @@ namespace ProductionManagementSystem.Controllers
                 {
                     if (key.Contains("Input"))
                     {
-                        if (int.TryParse(collection[key], out int quantity))
+                        if (!int.TryParse(collection[key], out quantity))
                         {
-                            designTemplate.Add(new DeviceDesignTemplate
-                            {
-                                Design = db.Designs.Where(c => c.Id == idDesign).FirstOrDefault(),
-                                Quantity = quantity,
-                            });
+                            quantity = 0;
                         }
-                        else
+                    }
+                    else if (key.Contains("Text"))
+                    {
+                        designTemplate.Add(new DeviceDesignTemplate
                         {
-                            designTemplate.Add(new DeviceDesignTemplate
-                            {
-                                Design = db.Designs.Where(c => c.Id == idDesign).FirstOrDefault(),
-                                Quantity = 0,
-                            });
-                        }
-
+                            Design = _context.Designs.Where(c => c.Id == idDesign).FirstOrDefault(),
+                            Quantity = quantity,
+                            Description = collection[key],
+                        });
                     }
                     else
                     {
@@ -273,7 +280,7 @@ namespace ProductionManagementSystem.Controllers
             }
             device.DeviceComponentsTemplate = componentsTemplate;
             device.DeviceDesignTemplate = designTemplate;
-            db.SaveChanges();
+            _context.SaveChanges();
             return Redirect($"/Device/ShowDevice/{idDevice}");
         }
 
@@ -281,8 +288,7 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult ShowDevice(int id)
         {
-            var db = new ApplicationContext();
-            ViewBag.Device = db.Devices
+            ViewBag.Device = _context.Devices
                 .Include(d => d.DeviceComponentsTemplate)
                 .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
@@ -295,19 +301,25 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Remove(int id)
         {
-            var db = new ApplicationContext();
-            var device = db.Devices
+            var device = _context.Devices
                 .Include(d => d.DeviceComponentsTemplate)
                 .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
                 .ThenInclude(d => d.Design)
                 .Where(d => d.Id == id).FirstOrDefault();
 
-            db.Devices.Attach(device);
-            db.Devices.Remove(device);
+            _context.Devices.Attach(device);
+            _context.Devices.Remove(device);
 
-            db.SaveChanges();
+            _context.SaveChanges();
             return Redirect("/Device/Show");
+        }
+
+        [HttpGet]
+        public JsonResult GetAllDevices()
+        {
+            List<Device> devices = _context.Devices.OrderBy(d => d.Name).ToList();
+            return Json(devices);
         }
     }
     

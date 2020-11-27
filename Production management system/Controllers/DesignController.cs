@@ -13,17 +13,18 @@ namespace ProductionManagementSystem.Controllers
     public class DesignController : Controller
     {
         private readonly ILogger<DesignController> _logger;
+        private ApplicationContext _context;
 
         public DesignController(ILogger<DesignController> logger)
         {
             _logger = logger;
+            _context = new ApplicationContext();
         }
 
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Show(string sortBy, string splitByType)
         {
-            var db = new ApplicationContext();
             if (sortBy == null)
             {
                 ViewBag.SortBy = "Id";
@@ -46,7 +47,7 @@ namespace ProductionManagementSystem.Controllers
             
             if (splitByType == "True")
             {
-                var sortedByType = db.Designs.OrderBy(d => d.Type);
+                var sortedByType = _context.Designs.OrderBy(d => d.Type);
                 if (sortBy == "Id")
                 {
                     ViewBag.Designs = sortedByType.ThenBy(d => d.Id);
@@ -66,7 +67,7 @@ namespace ProductionManagementSystem.Controllers
             }
             else
             {
-                var designs = db.Designs;
+                var designs = _context.Designs;
                 if (sortBy == "Id")
                 {
                     ViewBag.Designs = designs.OrderBy(d => d.Id);
@@ -102,9 +103,8 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Add(Design design)
         {
-            var db = new ApplicationContext();
-            db.Designs.Add(design);
-            db.SaveChanges();
+            _context.Designs.Add(design);
+            _context.SaveChanges();
             return Redirect("/Design/Show");
         }
 
@@ -112,8 +112,7 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Edit(int id)
         {
-            var db = new ApplicationContext();
-            ViewBag.Design = db.Designs.Find(id);
+            ViewBag.Design = _context.Designs.Find(id);
             return View();
         }
 
@@ -121,14 +120,13 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Edit(Design design)
         {
-            var db = new ApplicationContext();
-            Design des = db.Designs.Where(c => c.Id == design.Id).FirstOrDefault();
+            Design des = _context.Designs.Where(c => c.Id == design.Id).FirstOrDefault();
 
             des.Name = design.Name;
             des.Type = design.Type;
             des.Quantity = design.Quantity;
 
-            db.SaveChanges();
+            _context.SaveChanges();
             return Redirect("/Design/Show");
         }
 
@@ -136,17 +134,15 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Remove(int id)
         {
-            ApplicationContext db = new ApplicationContext();
-
             Design des = new Design
             {
                 Id = id
             };
 
-            db.Designs.Attach(des);
-            db.Designs.Remove(des);
+            _context.Designs.Attach(des);
+            _context.Designs.Remove(des);
 
-            db.SaveChanges();
+            _context.SaveChanges();
             return Redirect("/Design/Show");
         }
 
@@ -154,20 +150,25 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Adding(int taskId, int designId, int addedQuntity = 0)
         {
-            var db = new ApplicationContext();
             if (addedQuntity == 0)
             {
                 ViewBag.TaskId = taskId;
-                ViewBag.Design = db.Designs.Where(d => d.Id == designId).FirstOrDefault(); ;
+                ViewBag.Design = _context.Designs.Where(d => d.Id == designId).FirstOrDefault(); ;
                 return View();
             }
             else
             {
-                Design design = db.Designs.Where(d => d.Id == designId).FirstOrDefault();
+                Design design = _context.Designs.Where(d => d.Id == designId).FirstOrDefault();
                 design.Quantity += addedQuntity;
-                db.SaveChanges();
+                _context.SaveChanges();
                 return Redirect($"/Task/ShowTask/{taskId}");
             }
+        }
+
+        public JsonResult GetAllDesigns()
+        {
+            List<Design> designs = _context.Designs.OrderBy(d => d.Name).ToList();
+            return Json(designs);
         }
     }
 }
