@@ -200,5 +200,12 @@ namespace ProductionManagementSystem.Controllers
             List<Component> components = _context.Components.OrderBy(c => c.Name).ToList();
             return Json(components);
         }
+
+        public JsonResult GetAllTypes()
+        {
+            List<string> types = _context.Components.OrderBy(c => c.Type).Select(c => c.Type).ToList();
+            types = types.Distinct().ToList();
+            return Json(types);
+        }
     }
 }
