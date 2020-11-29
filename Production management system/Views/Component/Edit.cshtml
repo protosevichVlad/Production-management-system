@@ -6,8 +6,12 @@
 }
 <form method="post" action="">
 
-    Тип: <input type="text" name="Type" value="@ViewBag.Component.Type" required autocomplete="off"><br>
-    Наименование: <input type="text" name="Name" value="@ViewBag.Component.Name"required autocomplete="off"><br>
+    Тип:
+    <div class="autocomplete">
+        <input type="text" name="Type" value="@ViewBag.Component.Type" required autocomplete="off">
+    </div>
+    <br>
+    Наименование: <input type="text" name="Name" value="@ViewBag.Component.Name" required autocomplete="off"><br>
     Номинал: <input type="text" name="Nominal" value="@ViewBag.Component.Nominal" autocomplete="off"><br>
     Корпус: <input type="text" name="Corpus" value="@ViewBag.Component.Corpus" autocomplete="off"><br>
     Пояснение: <input type="text" name="Explanation" value="@ViewBag.Component.Explanation" autocomplete="off"><br>
@@ -16,3 +20,13 @@
     <button type="submit">Изменить</button>
 </form>
 <button onclick="window.location='/Component/Remove/@ViewBag.Component.Id'">Удалить</button>
+<script defer>
+    async function createComplete() {
+        let r = await new Request('/Component/GetAllTypes');
+        let availableTags = await fetch(r).then(c => c.json());
+
+        autocomplete(document.getElementById("tags"), availableTags);
+    }
+
+    createComplete();
+</script>

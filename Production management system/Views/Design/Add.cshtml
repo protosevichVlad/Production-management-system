@@ -6,8 +6,22 @@
 }
 
 <form method="post" action="">
-    Конструктивная единица: <input type="text" name="Type" required autocomplete="off"><br>
+    Конструктивная единица: 
+    <div class="autocomplete">
+        <input type="text" name="Type" required autocomplete="off">
+    </div>
+    <br>
     Наименовие: <input type="text" name="Name" required autocomplete="off"><br>
     Количество: <input type="number" name="Quantity" required autocomplete="off" min="0"><br>
     <button type="submit">Добавить</button>
 </form>
+<script defer>
+    async function createComplete() {
+        let r = await new Request('/Design/GetAllTypes');
+        let availableTags = await fetch(r).then(c => c.json());
+
+        autocomplete(document.getElementById("tags"), availableTags);
+    }
+
+    createComplete();
+</script>

@@ -5,8 +5,11 @@
     ViewData["Title"] = "Добавление монтажа";
 }
 
-<form method="post" action="">
-    Тип: <input type="text" name="Type" required autocomplete="off">
+<form method="post" action="" autocomplete="off">
+    Тип:
+    <div class="autocomplete">
+        <input id="tags" type="text" name="Type" required autocomplete="off">
+    </div>
     <br>
     Наименование: <input type="text" name="Name" autocomplete="off" required>
     <br>
@@ -22,3 +25,14 @@
     <br>
     <button type="submit">Добавить</button>
 </form>
+
+<script defer>
+    async function createComplete() {
+        let r = await new Request('/Component/GetAllTypes');
+        let availableTags = await fetch(r).then(c => c.json());
+
+        autocomplete(document.getElementById("tags"), availableTags);
+    }
+
+    createComplete();
+</script>

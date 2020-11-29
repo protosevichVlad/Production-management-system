@@ -170,5 +170,12 @@ namespace ProductionManagementSystem.Controllers
             List<Design> designs = _context.Designs.OrderBy(d => d.Name).ToList();
             return Json(designs);
         }
+
+        public JsonResult GetAllTypes()
+        {
+            List<string> types = _context.Designs.OrderBy(d => d.Type).Select(d => d.Type).ToList();
+            types = types.Distinct().ToList();
+            return Json(types);
+        }
     }
 }
