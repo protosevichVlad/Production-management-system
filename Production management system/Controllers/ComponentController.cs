@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 
 namespace ProductionManagementSystem.Controllers
 {
     public class ComponentController : Controller
     {
-        private readonly ILogger<ComponentController> _logger;
         private ApplicationContext _context;
 
-        public ComponentController(ILogger<ComponentController> logger)
+        public ComponentController()
         {
-            _logger = logger;
             _context = new ApplicationContext();
         }
 
@@ -145,7 +138,7 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Edit(Component component)
         {
-            Component comp = _context.Components.Where(c => c.Id == component.Id).FirstOrDefault();
+            Component comp = _context.Components.FirstOrDefault(c => c.Id == component.Id);
 
             comp.Name = component.Name;
             comp.Type = component.Type;
@@ -182,12 +175,12 @@ namespace ProductionManagementSystem.Controllers
             if (addedQuntity == 0)
             {
                 ViewBag.TaskId = taskId;
-                ViewBag.Component = _context.Components.Where(c => c.Id == componentId).FirstOrDefault(); ;
+                ViewBag.Component = _context.Components.FirstOrDefault(c => c.Id == componentId); ;
                 return View();
             }
             else
             {
-                Component component = _context.Components.Where(c => c.Id == componentId).FirstOrDefault();
+                Component component = _context.Components.FirstOrDefault(c => c.Id == componentId);
                 component.Quantity += addedQuntity;
                 _context.SaveChanges();
                 return Redirect($"/Task/ShowTask/{taskId}");

@@ -78,13 +78,13 @@ namespace ProductionManagementSystem.Controllers
             if (ModelState.IsValid)
             {
                 User user = null;
-                user = _context.Users.Where(u => u.Login == model.Login).FirstOrDefault();
+                user = _context.Users.FirstOrDefault(u => u.Login == model.Login);
                 if (user == null)
                 {
                     user = new User();
                     user.Login = model.Login;
                     user.Password = model.Password;
-                    user.Role = _context.Roles.Where(r => r.Id == model.RoleId).FirstOrDefault();
+                    user.Role = _context.Roles.FirstOrDefault(r => r.Id == model.RoleId);
                     _context.Users.Add(user);
                     _context.SaveChanges();
                     return Redirect("/Account/Show");
@@ -112,7 +112,7 @@ namespace ProductionManagementSystem.Controllers
         public ActionResult Edit(int id)
         {
             ViewBag.Roles = new SelectList(_context.Roles, "Id", "RusName");
-            User user = _context.Users.Include(u => u.Role).Where(u => u.Id == id).FirstOrDefault();
+            User user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Id == id);
             RegisterModel regModel = new RegisterModel { Login = user.Login, Password = user.Password, RoleId = user.Role.Id };
             return View(regModel);
         }
@@ -125,13 +125,13 @@ namespace ProductionManagementSystem.Controllers
             if (ModelState.IsValid)
             {
                 User user = null;
-                user = _context.Users.Where(u => u.Login == model.Login).FirstOrDefault();
+                user = _context.Users.FirstOrDefault(u => u.Login == model.Login);
                 if (user == null)
                 {
                     ModelState.AddModelError("Login", "Данный логин не используется");
                 }
                 user.Password = model.Password;
-                user.Role = _context.Roles.Where(r => r.Id == model.RoleId).FirstOrDefault();
+                user.Role = _context.Roles.FirstOrDefault(r => r.Id == model.RoleId);
                 _context.SaveChanges();
                 return Redirect("/Account/Show");
             }
@@ -142,7 +142,7 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult Remove(string login)
         {
-            User user = _context.Users.Where(u => u.Login == login).FirstOrDefault();
+            User user = _context.Users.FirstOrDefault(u => u.Login == login);
             _context.Users.Attach(user);
             _context.Users.Remove(user);
             _context.SaveChanges();

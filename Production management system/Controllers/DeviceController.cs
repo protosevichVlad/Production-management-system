@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +12,10 @@ namespace ProductionManagementSystem.Controllers
 {
     public class DeviceController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private ApplicationContext _context;
 
-        public DeviceController(ILogger<HomeController> logger)
+        public DeviceController()
         {
-            _logger = logger;
             _context = new ApplicationContext();
         }
 
@@ -33,13 +30,13 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Add()
         {
-            List<Design> designs = _context.Designs.OrderBy(d => d.Name).ToList<Design>();
+            List<Design> designs = _context.Designs.OrderBy(d => d.Name).ToList();
             designs.ForEach((d) => {
                 byte[] bytes = System.Text.Encoding.Default.GetBytes(d.Name);
                 d.Name = System.Text.Encoding.UTF8.GetString(bytes);
             });
 
-            List<Component> components = _context.Components.OrderBy(c => c.Name).ToList<Component>();
+            List<Component> components = _context.Components.OrderBy(c => c.Name).ToList();
             components.ForEach((c) => {
                 byte[] bytes = System.Text.Encoding.Default.GetBytes(c.Name);
                 c.Name = System.Text.Encoding.UTF8.GetString(bytes);
@@ -156,16 +153,15 @@ namespace ProductionManagementSystem.Controllers
                 .Include(d => d.DeviceComponentsTemplate)
                 .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
-                .ThenInclude(d => d.Design)
-                .Where(d => d.Id == id).FirstOrDefault();
+                .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == id);
 
-            List<Design> designs = _context.Designs.OrderBy(d => d.Name).ToList<Design>();
+            List<Design> designs = _context.Designs.OrderBy(d => d.Name).ToList();
             designs.ForEach((d) => {
                 byte[] bytes = System.Text.Encoding.Default.GetBytes(d.Name);
                 d.Name = System.Text.Encoding.UTF8.GetString(bytes);
             });
 
-            List<Component> components = _context.Components.OrderBy(c => c.Name).ToList<Component>();
+            List<Component> components = _context.Components.OrderBy(c => c.Name).ToList();
             components.ForEach((c) => {
                 byte[] bytes = System.Text.Encoding.Default.GetBytes(c.Name);
                 c.Name = System.Text.Encoding.UTF8.GetString(bytes);
@@ -187,8 +183,7 @@ namespace ProductionManagementSystem.Controllers
             int idDesign = 0;
             int quantity = 0;
 
-            int idDevice = 0;
-            if (!int.TryParse(collection["Id"], out idDevice))
+            if (!int.TryParse(collection["Id"], out var idDevice))
             {
 
             }
@@ -197,8 +192,7 @@ namespace ProductionManagementSystem.Controllers
                 .Include(d => d.DeviceComponentsTemplate)
                 .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
-                .ThenInclude(d => d.Design)
-                .Where(d => d.Id == idDevice).FirstOrDefault();
+                .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == idDevice);
 
             foreach (var key in collection.Keys)
             {
@@ -292,8 +286,7 @@ namespace ProductionManagementSystem.Controllers
                 .Include(d => d.DeviceComponentsTemplate)
                 .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
-                .ThenInclude(d => d.Design)
-                .Where(d => d.Id == id).FirstOrDefault();
+                .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == id);
             return View();
         }
 
@@ -305,9 +298,13 @@ namespace ProductionManagementSystem.Controllers
                 .Include(d => d.DeviceComponentsTemplate)
                 .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
-                .ThenInclude(d => d.Design)
-                .Where(d => d.Id == id).FirstOrDefault();
+                .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == id);
 
+            if (device is null)
+            {
+                return Redirect("/Device/Show");
+            }
+            
             _context.Devices.Attach(device);
             _context.Devices.Remove(device);
 

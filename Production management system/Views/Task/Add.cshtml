@@ -19,7 +19,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <select class="Select" id="SelectDevice1" name="NameDivice1">
+                <select class="Select" id="SelectDevice1" name="NameDevice1">
                     @foreach (var d in ViewBag.Devices)
                     {
                         <option value="@d.Id">@d.Name</option>
@@ -68,7 +68,7 @@
 
         newSelect.classList.add('Select');
         newSelect.id = 'SelectDevice' + length;
-        newSelect.name = 'NameDivice' + length;
+        newSelect.name = 'NameDevice' + length;
 
         newInput.classList.add('DesignInput');
         newInput.name = 'Quantity' + length + 'Input';

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
@@ -64,7 +63,7 @@ namespace ProductionManagementSystem.Controllers
             int idDevice = 0;
             foreach(var key in collection.Keys)
             {
-                if (key.Contains("NameDivice"))
+                if (key.Contains("NameDevice"))
                 {
                     int.TryParse(collection[key], out idDevice);
                 } else if (key.Contains("Quantity"))
@@ -72,7 +71,7 @@ namespace ProductionManagementSystem.Controllers
                     int.TryParse(collection[key], out int quantity);
                     devicesInTask.Add(new DeviceInTask
                     {
-                        Device = _context.Devices.Where(d => d.Id == idDevice).FirstOrDefault(),
+                        Device = _context.Devices.FirstOrDefault(d => d.Id == idDevice),
                         Quantity = quantity,
                     });
                 }
@@ -90,11 +89,10 @@ namespace ProductionManagementSystem.Controllers
         {
             ViewBag.Task = _context.Tasks
                 .Include(t => t.DevicesInTask)
-                .ThenInclude(d => d.Device)
-                .Where(t => t.Id == id).FirstOrDefault();
+                .ThenInclude(d => d.Device).FirstOrDefault(t => t.Id == id);
 
-            ViewBag.Devices = GetAllDeviceFromTask(id, out List<int> quantytiDevicesInTask);        
-            ViewBag.QuantytiDevices = quantytiDevicesInTask;
+            ViewBag.Devices = GetAllDeviceFromTask(id, out List<int> quantityDevicesInTask);        
+            ViewBag.QuantytiDevices = quantityDevicesInTask;
 
             ViewBag.DesignTemplate = GetAllDeviceDesignTemplateFromTask(id);
             ViewBag.ComponentTemplate = GetAllDeviceComponentsTemplateFromTask(id);
@@ -105,8 +103,7 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult NextStage(int taskId)
         {
-            Models.Task task = _context.Tasks
-                .Where(t => t.Id == taskId).FirstOrDefault();
+            Models.Task task = _context.Tasks.FirstOrDefault(t => t.Id == taskId);
 
             if (task.Status.Contains("Комплектация"))
             {
@@ -164,7 +161,7 @@ namespace ProductionManagementSystem.Controllers
         
         private List<DeviceComponentsTemplate> GetAllDeviceComponentsTemplateFromTask(int taskId)
         {
-            List<Device> devices = GetAllDeviceFromTask(taskId, out List<int> quantytiDevicesInTask);
+            List<Device> devices = GetAllDeviceFromTask(taskId, out List<int> quantityDevicesInTask);
 
             List<DeviceComponentsTemplate> components = new List<DeviceComponentsTemplate>();
             List<int> componentsIds = new List<int>();
@@ -183,12 +180,12 @@ namespace ProductionManagementSystem.Controllers
                             Description = componentTemplate.Description,
                             Quantity = componentTemplate.Quantity
                         });
-                        components[^1].Quantity *= quantytiDevicesInTask[indexDevice];
+                        components[^1].Quantity *= quantityDevicesInTask[indexDevice];
                     }
                     else
                     {
                         int index = componentsIds.IndexOf(componentTemplate.Component.Id);
-                        components[index].Quantity += componentTemplate.Quantity * quantytiDevicesInTask[indexDevice];
+                        components[index].Quantity += componentTemplate.Quantity * quantityDevicesInTask[indexDevice];
                     }
                 }
 
@@ -203,9 +200,8 @@ namespace ProductionManagementSystem.Controllers
             quantytiDevicesInTask = new List<int>();
 
             Models.Task task = _context.Tasks
-                                .Include(t => t.DevicesInTask)
-                                .ThenInclude(d => d.Device)
-                                .Where(t => t.Id == taskId).FirstOrDefault();
+                .Include(t => t.DevicesInTask)
+                .ThenInclude(d => d.Device).FirstOrDefault(t => t.Id == taskId);
 
             List<int> idsDevices = new List<int>();
 
@@ -222,8 +218,7 @@ namespace ProductionManagementSystem.Controllers
                     .Include(d => d.DeviceComponentsTemplate)
                     .ThenInclude(d => d.Component)
                     .Include(d => d.DeviceDesignTemplate)
-                    .ThenInclude(d => d.Design)
-                    .Where(d => d.Id == idDevice).FirstOrDefault());
+                    .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == idDevice));
             }
 
             return devices;

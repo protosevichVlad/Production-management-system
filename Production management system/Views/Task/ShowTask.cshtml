@@ -17,7 +17,7 @@
     </div>
 </div>
 
-@foreach (var Device in ViewBag.Devices)
+@foreach (var device in ViewBag.Devices)
 {
     var quantity = ViewBag.QuantytiDevices[index];
     index++;
@@ -26,9 +26,9 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <h5>Наименование прибора: @Device.Name</h5>
+                <h5>Наименование прибора: @device.Name</h5>
                 <h5>Количество в задаче: @quantity</h5>
-                <p>Количество на складе: @Device.Quantity</p>
+                <p>Количество на складе: @device.Quantity</p>
             </div>
             <div class="col">
             </div>
@@ -54,7 +54,7 @@
                         <td>В задаче</td>
                         <td>На складе</td>
                     </tr>
-                    @foreach (var comp in Device.DeviceComponentsTemplate)
+                    @foreach (var comp in device.DeviceComponentsTemplate)
                     {
                         <tr @if (comp.Component.Quantity < comp.Quantity * quantity) { @: class="table-danger"
                             }>
@@ -74,7 +74,7 @@
                         <td>В задаче</td>
                         <td>На складе</td>
                     </tr>
-                    @foreach (var des in Device.DeviceDesignTemplate)
+                    @foreach (var des in device.DeviceDesignTemplate)
                     {
                         <tr @if (des.Design.Quantity < des.Quantity * quantity) { @: class="table-danger"
                             }>

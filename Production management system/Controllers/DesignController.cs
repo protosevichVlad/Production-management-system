@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 
@@ -12,12 +8,10 @@ namespace ProductionManagementSystem.Controllers
 {
     public class DesignController : Controller
     {
-        private readonly ILogger<DesignController> _logger;
-        private ApplicationContext _context;
+        private readonly ApplicationContext _context;
 
-        public DesignController(ILogger<DesignController> logger)
+        public DesignController()
         {
-            _logger = logger;
             _context = new ApplicationContext();
         }
 
@@ -120,7 +114,7 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Edit(Design design)
         {
-            Design des = _context.Designs.Where(c => c.Id == design.Id).FirstOrDefault();
+            Design des = _context.Designs.FirstOrDefault(c => c.Id == design.Id);
 
             des.Name = design.Name;
             des.Type = design.Type;
@@ -153,12 +147,12 @@ namespace ProductionManagementSystem.Controllers
             if (addedQuntity == 0)
             {
                 ViewBag.TaskId = taskId;
-                ViewBag.Design = _context.Designs.Where(d => d.Id == designId).FirstOrDefault(); ;
+                ViewBag.Design = _context.Designs.FirstOrDefault(d => d.Id == designId);
                 return View();
             }
             else
             {
-                Design design = _context.Designs.Where(d => d.Id == designId).FirstOrDefault();
+                Design design = _context.Designs.FirstOrDefault(d => d.Id == designId);
                 design.Quantity += addedQuntity;
                 _context.SaveChanges();
                 return Redirect($"/Task/ShowTask/{taskId}");
