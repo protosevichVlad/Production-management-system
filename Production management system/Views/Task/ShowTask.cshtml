@@ -9,6 +9,7 @@
     <div class="row">
         <div class="col">
             <h4>Заказчик: @ViewBag.Task.Customer</h4>
+            <h4>Статус: @ViewBag.Task.Status</h4>
             <h4>Deadline: @ViewBag.Task.Deadline.ToString("dd.MM.yyyy")</h4>
         </div>
         <div class="col">
@@ -126,16 +127,16 @@
     <h4>Общее количество конструктива:</h4>
     <table style="width:100%;" class="table-hover">
         <thead class="thead-dark">
-            <tr>
-                <td>Наименование</td>
-                <td>В задаче</td>
-                <td>На складе</td>
-            </tr>
+        <tr>
+            <td>Наименование</td>
+            <td>В задаче</td>
+            <td>На складе</td>
+        </tr>
         </thead>
         @foreach (var des in ViewBag.DesignTemplate)
         {
             <tr style="cursor: pointer" @if (des.Design.Quantity < des.Quantity) { @: class="table-danger"
-                } onclick="window.location = '/Design/Adding?taskId=@ViewBag.Task.Id&designId=@des.Design.Id'">
+                                        } onclick="window.location = '/Design/Adding?taskId=@ViewBag.Task.Id&designId=@des.Design.Id'">
                 <td>@des.Design.Name</td>
                 <td>@des.Quantity</td>
                 <td>@des.Design.Quantity</td>
@@ -143,4 +144,33 @@
         }
     </table>
 </div>
-<button type="button" class="btn" onclick="window.location='/Task/NextStage?taskId=@ViewBag.Task.Id'">Cледующая фаза.</button>
+<button type="button" class="btn btn-link" onclick="window.location='/Task/NextStage?taskId=@ViewBag.Task.Id'">
+@if (User.IsInRole(RoleEnum.OrderPicker))
+{   
+    @: Передать монтажнику
+} 
+else if (User.IsInRole(RoleEnum.Admin))
+{   
+    @: Передать дальше
+}
+else if (User.IsInRole(RoleEnum.Assembler))
+{   
+    @: Передать настройщику
+}
+else if (User.IsInRole(RoleEnum.Tuner))
+{   
+    @: Передать сборщику
+}
+else if (User.IsInRole(RoleEnum.Collector))
+{   
+    @: Передать проверяющему
+}
+else if (User.IsInRole(RoleEnum.Validating))
+{   
+    @: Передать грузоотправителю
+}
+else if (User.IsInRole(RoleEnum.Shipper))
+{   
+    @: Завершить задачу
+}
+</button>

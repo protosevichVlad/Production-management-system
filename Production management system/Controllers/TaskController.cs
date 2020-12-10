@@ -18,10 +18,10 @@ namespace ProductionManagementSystem.Controllers
             _context = new ApplicationContext();
         }
 
-        [Authorize(Roles = "admin, order_picker, assembler, tuner")]
+        [Authorize]
         public IActionResult Show()
         {
-            List<Models.Task> tasks = new List<Models.Task>();
+            List<Task> tasks = new List<Task>();
             if (User.IsInRole("admin"))
             {
                 tasks = _context.Tasks.ToList();
@@ -51,7 +51,7 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Add(IFormCollection collection)
         {
-            Models.Task task = new Models.Task();
+            Task task = new Task();
             task.Customer = collection["Customer"];
             task.StartTime = DateTime.Now;
             task.Deadline = DateTime.Parse(collection["Deadline"]);
@@ -111,7 +111,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin, order_picker, assembler")]
+        [Authorize]
         public IActionResult ShowTask(int id)
         {
             ViewBag.Task = _context.Tasks
@@ -131,22 +131,49 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker, assembler")]
         public IActionResult NextStage(int taskId)
         {
-            Models.Task task = _context.Tasks.FirstOrDefault(t => t.Id == taskId);
+            Task task = _context.Tasks.FirstOrDefault(t => t.Id == taskId);
 
+            if (task is null)
+            {
+                return Redirect($"/Task/Show");
+            }
+            
             if (task.Status.Contains("Комплектация"))
             {
                 if (IsAllComponentsEnough(taskId))
                 {
                     task.Status = "Монтаж";
-                } else
+                } 
+                else
                 {
-                    task.Status += ", монтаж";
-
+                    if (!task.Status.Contains("монтаж"))
+                    {
+                        task.Status += ", монтаж";
+                    }
                 }
-            } else if (task.Status.Contains("Монтаж"))
+            } 
+            else if (task.Status.Contains("Монтаж"))
             {
-                
+                task.Status = "Настройка";
             }
+            else if (task.Status.Contains("Настройка"))
+            {
+                task.Status = "Сборка";
+            }
+            else if (task.Status.Contains("Сборка"))
+            {
+                task.Status = "Проверка";
+            }
+            else if (task.Status.Contains("Проверка"))
+            {
+                task.Status = "Отправка";
+            }
+            else if (task.Status.Contains("Отправка"))
+            {
+                task.Status = "Задача выполнена";
+                task.EndTime = DateTime.Now;
+            }
+            
             _context.SaveChanges();
             return Redirect($"/Task/ShowTask/{taskId}");
         }
@@ -227,10 +254,15 @@ namespace ProductionManagementSystem.Controllers
         {
             quantytiDevicesInTask = new List<int>();
 
-            Models.Task task = _context.Tasks
+            Task task = _context.Tasks
                 .Include(t => t.DevicesInTask)
                 .ThenInclude(d => d.Device).FirstOrDefault(t => t.Id == taskId);
 
+            if (task is null)
+            {
+                return new List<Device>();
+            }
+            
             List<int> idsDevices = new List<int>();
 
             foreach (var d in task.DevicesInTask)

@@ -26,13 +26,13 @@ namespace ProductionManagementSystem.Controllers
             string adminPassword = "123456";
 
             // добавляем роли
-            Role adminRole = new Role { Id = 1, Name = "admin", RusName = "Администратор" };
-            Role orderPickerRole = new Role { Id = 2, Name = "order_picker", RusName = "Комплектовщик" };
-            Role assemblerRole = new Role { Id = 3, Name = "assembler", RusName = "Монтажник" };
-            Role tunerRole = new Role { Id = 4, Name = "tuner", RusName = "Настройщик" };
-            Role collectorRole = new Role { Id = 5, Name = "collector", RusName = "Сборщик" };
-            Role validatingRole = new Role { Id = 6, Name = "validating", RusName = "Проверяющий" };
-            Role shipperRole = new Role { Id = 7, Name = "shipper", RusName = "Грузоотправитель" };
+            Role adminRole = new Role { Id = 1, Name = RoleEnum.Admin, RusName = "Администратор" };
+            Role orderPickerRole = new Role { Id = 2, Name = RoleEnum.OrderPicker, RusName = "Комплектовщик" };
+            Role assemblerRole = new Role { Id = 3, Name = RoleEnum.Assembler, RusName = "Монтажник" };
+            Role tunerRole = new Role { Id = 4, Name = RoleEnum.Tuner, RusName = "Настройщик" };
+            Role collectorRole = new Role { Id = 5, Name = RoleEnum.Collector, RusName = "Сборщик" };
+            Role validatingRole = new Role { Id = 6, Name = RoleEnum.Validating, RusName = "Проверяющий" };
+            Role shipperRole = new Role { Id = 7, Name = RoleEnum.Shipper, RusName = "Грузоотправитель" };
 
             User adminUser = new User { Login = adminEmail, Password = adminPassword, RoleId = adminRole.Id };
 
