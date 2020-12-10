@@ -6,16 +6,16 @@
 }
 <form method="post" action="">
     
-    Type: 
+    Конструктивная единица: 
     <div class="autocomplete">
         <input id="tags" type="text" name="Type" value="@ViewBag.Design.Type" required autocomplete="off">
     </div>
     <br>
-    Name: <input type="text" name="Name"  value="@ViewBag.Design.Name" required  autocomplete="off"><br>
-    Quantity: <input type="text" name="Quantity" value="@ViewBag.Design.Quantity" required min="0" autocomplete="off"><br>
+    Наименование: <input type="text" name="Name"  value="@ViewBag.Design.Name" required  autocomplete="off"><br>
+    Количество: <input type="text" name="Quantity" value="@ViewBag.Design.Quantity" required min="0" autocomplete="off"><br>
     <button type="submit">Изменить</button>
 </form>
-<button onclick="window.location='/Design/Remove/@ViewBag.Design.Id'">Удалить</button>
+<button onclick="window.location='/Design/Delete/@ViewBag.Design.Id'">Удалить</button>
 <script defer>
     async function createComplete() {
         let r = await new Request('/Design/GetAllTypes');

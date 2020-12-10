@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Получение монтажа";
+}
+<button class="btn" type="button" onclick="window.location = '/Task/ShowTask/@ViewBag.TaskId'">Перейти к заданию</button>
+<form action="" method="post">
+    <input hidden value="@ViewBag.TaskId" name="TaskId">
+    <table class="table">
+        <thead>
+        <tr>
+            <td>Наименование</td>
+            <td>Количество в задании</td>
+            <td>Количество на складе</td>
+            <td>Получено</td>
+            <td>Получить</td>
+        </tr>
+        </thead>
+        @foreach (var comp in ViewBag.Components)
+        {
+            var obtainedComp = ((IEnumerable<dynamic>) ViewBag.ObtainedComponents).FirstOrDefault(c => comp.Component.Id == c.Component.Id);
+            <tr @if (@comp.Quantity <= @obtainedComp.Obtained) 
+                { 
+                    @:class="table-success" 
+                }> 
+                <td>@comp.Component.Name</td>
+                <td>@comp.Quantity</td>
+                <td>@comp.Component.Quantity</td>
+                <td>@obtainedComp.Obtained</td>
+                <td><input type="number" name="@obtainedComp.Id" autocomplete="off" required min="-@obtainedComp.Obtained" max="@comp.Component.Quantity" value="0"></td>
+            </tr>
+        }
+    </table>
+    <button class="btn">Получить</button>
+</form>
+

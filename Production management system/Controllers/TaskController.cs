@@ -79,12 +79,39 @@ namespace ProductionManagementSystem.Controllers
             task.DevicesInTask = devicesInTask;
             _context.Tasks.Add(task);
             _context.SaveChanges();
-            int idTasks = task.Id;
-            return Redirect($"/Task/ShowTask/{idTasks}");
+            int taskId = task.Id;
+
+            var compInTask = GetAllDeviceComponentsTemplateFromTask(taskId);
+
+            foreach (var componentTemplate in compInTask)
+            {
+                _context.ObtainedСomponents.Add(new ObtainedСomponent
+                {
+                    Component = componentTemplate.Component,
+                    Obtained = 0,
+                    Task = task,
+                });
+            }
+            
+            var desInTask = GetAllDeviceDesignTemplateFromTask(taskId);
+
+            foreach (var designTemplate in desInTask)
+            {
+                _context.ObtainedDesigns.Add(new ObtainedDesign
+                {
+                    Design = designTemplate.Design,
+                    Obtained = 0,
+                    Task = task,
+                });
+            }
+
+            _context.SaveChanges();
+            
+            return Redirect($"/Task/ShowTask/{taskId}");
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin, order_picker")]
+        [Authorize(Roles = "admin, order_picker, assembler")]
         public IActionResult ShowTask(int id)
         {
             ViewBag.Task = _context.Tasks
@@ -96,11 +123,12 @@ namespace ProductionManagementSystem.Controllers
 
             ViewBag.DesignTemplate = GetAllDeviceDesignTemplateFromTask(id);
             ViewBag.ComponentTemplate = GetAllDeviceComponentsTemplateFromTask(id);
+            ViewBag.ObtainedComponents = GetObtainedСomponents(id);
             return View();
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin, order_picker")]
+        [Authorize(Roles = "admin, order_picker, assembler")]
         public IActionResult NextStage(int taskId)
         {
             Models.Task task = _context.Tasks.FirstOrDefault(t => t.Id == taskId);
@@ -125,7 +153,7 @@ namespace ProductionManagementSystem.Controllers
 
         private List<DeviceDesignTemplate> GetAllDeviceDesignTemplateFromTask(int taskId)
         {
-            List<Device> devices = GetAllDeviceFromTask(taskId, out List<int> quantytiDevicesInTask);
+            List<Device> devices = GetAllDeviceFromTask(taskId, out List<int> quantityDevicesInTask);
 
             List<DeviceDesignTemplate> designs = new List<DeviceDesignTemplate>();
             List<int> designsIds = new List<int>();
@@ -144,12 +172,12 @@ namespace ProductionManagementSystem.Controllers
                             Description = designTemplate.Description,
                             Quantity = designTemplate.Quantity
                         });
-                        designs[^1].Quantity *= quantytiDevicesInTask[indexDevice];
+                        designs[^1].Quantity *= quantityDevicesInTask[indexDevice];
                     }
                     else
                     {
                         int index = designsIds.IndexOf(designTemplate.Design.Id);
-                        designs[index].Quantity += designTemplate.Quantity * quantytiDevicesInTask[indexDevice];
+                        designs[index].Quantity += designTemplate.Quantity * quantityDevicesInTask[indexDevice];
                     }
                 }
 
@@ -248,6 +276,58 @@ namespace ProductionManagementSystem.Controllers
             }
 
             return true;
+        }
+
+        [HttpGet]
+        public IActionResult ReceiveComponent(int taskId)
+        {
+            ViewBag.TaskId = taskId;
+            ViewBag.Components = GetAllDeviceComponentsTemplateFromTask(taskId);
+            ViewBag.ObtainedComponents = GetObtainedСomponents(taskId);
+            return View();
+        }
+
+        private List<ObtainedСomponent> GetObtainedСomponents(int taskId)
+        {
+            return _context.ObtainedСomponents.
+                Include(c => c.Task).
+                Include(c => c.Component).
+                Where(c => c.Task.Id == taskId).ToList();
+        }
+        
+        [HttpPost]
+        public IActionResult ReceiveComponent(IFormCollection collection)
+        {
+            int taskId = 0;
+
+            List<ObtainedСomponent> obtainedComp = null;
+            
+            foreach (var key in collection.Keys)
+            {
+                if (key.Contains("TaskId"))
+                {
+                    int.TryParse(collection[key], out taskId);
+                    obtainedComp = _context.ObtainedСomponents
+                        .Include(c => c.Component)
+                        .Include(c => c.Task)
+                        .Where(c => c.Task.Id == taskId).ToList();
+                }
+                else
+                {
+                    int.TryParse(collection[key], out int obtained);
+                    int.TryParse(key, out int keyInt);
+                    
+                    var obtComp = obtainedComp.FirstOrDefault(c => c.Id == keyInt);
+                    if (obtained != 0 && obtComp != null)
+                    {
+                        obtComp.Obtained += obtained;
+                        obtComp.Component.Quantity -= obtained;
+                    }
+                }
+            }
+
+            _context.SaveChanges();
+            return Redirect($"/Task/ReceiveComponent?taskId={taskId}");
         }
     }
 }

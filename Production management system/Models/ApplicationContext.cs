@@ -10,6 +10,8 @@ namespace ProductionManagementSystem.Models
         public DbSet<Task> Tasks { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<ObtainedСomponent> ObtainedСomponents { get; set; }
+        public DbSet<ObtainedDesign> ObtainedDesigns { get; set; }
 
         public ApplicationContext()
         {

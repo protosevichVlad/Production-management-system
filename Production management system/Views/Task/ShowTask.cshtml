@@ -91,22 +91,31 @@
 }
 <div class="table-responsive-xl">
     <hr />
-    <h4>Общее количество монтажа:</h4>
+    <h4>Общее количество монтажа:
+    @if (User.IsInRole("assembler"))
+    {
+        <button type="button" class="btn btn-link btn-sm" onclick="window.location='/Task/ReceiveComponent?taskId=@ViewBag.Task.Id'">Получить</button>
+    }
+    </h4>
     <table style="width:100%;" class="table-hover">
         <thead class="thead-dark">
             <tr>
                 <td>Наименование</td>
                 <td>В задаче</td>
                 <td>На складе</td>
+                <td>Получено</td>
             </tr>
         </thead>
         @foreach (var comp in ViewBag.ComponentTemplate)
         {
-            <tr style="cursor: pointer" @if (comp.Component.Quantity < comp.Quantity) { @: class="table-danger"
-                } onclick="window.location = '/Component/Adding?taskId=@ViewBag.Task.Id&componentId=@comp.Component.Id'">
+            var obtainedComp = ((IEnumerable<dynamic>) ViewBag.ObtainedComponents).FirstOrDefault(c => comp.Component.Id == c.Component.Id);
+            <tr style="cursor: pointer" @if (obtainedComp.Obtained + comp.Component.Quantity < comp.Quantity) { @: class="table-danger"
+                                        } else if (comp.Quantity <= obtainedComp.Obtained) { @: class="table-success"
+                                        } onclick="window.location = '/Component/Adding?taskId=@ViewBag.Task.Id&componentId=@comp.Component.Id'">
                 <td>@comp.Component.Name</td>
                 <td>@comp.Quantity</td>
                 <td>@comp.Component.Quantity</td>
+                <td>@obtainedComp.Obtained</td>
             </tr>
         }
     </table>

@@ -4,23 +4,23 @@
 @{
     ViewData["Title"] = "Конструктив";
     string lastType = null;
-    string url = "/Design/Show?";
+    string url = "/Design/Index?";
     string splitByType = $"splitByType={ViewBag.SplitByType.ToString()}";
     string sort = $"sortBy={ViewBag.SortBy}";
 }
 <div class="container">
     <div class="row">
         <div class="col">
-            <a href="/Design/Add">Добавить конструктив</a>
+            <a href="/Design/Create">Добавить конструктив</a>
         </div>
         <div class="col">
             @if (ViewBag.SplitByType == "True")
             {
-                <button type="button" onclick="window.location='/Design/Show?splitByType=False&@sort'" class="float-right btn btn-success">Разделение по типу</button>
+                <button type="button" onclick="window.location='@(url)splitByType=False&@sort'" class="float-right btn btn-success">Разделение по типу</button>
             }
             else
             {
-        <button type="button" onclick="window.location='/Design/Show?splitByType=True&@sort'" class="float-right btn btn-light">Разделение по типу</button>
+        <button type="button" onclick="window.location='@(url)splitByType=True&@sort'" class="float-right btn btn-light">Разделение по типу</button>
             }
         </div>
     </div>
@@ -29,13 +29,13 @@
     <table class="table table-hover">
         <thead class="thead-dark">
             <tr>
-                <td><a href='/Design/Show?sortBy=Id&@splitByType' class="badge badge-light">#</a></td>
+                <td><a href='@(url)sortBy=Id&@splitByType' class="badge badge-light">#</a></td>
                 @if (ViewBag.SplitByType != "True")
                 {
-                    <td><a href='/Design/Show?sortBy=Type&@splitByType' class="badge badge-light">Конструктивная единица</a></td>
+                    <td><a href='@(url)sortBy=Type&@splitByType' class="badge badge-light">Конструктивная единица</a></td>
                 }
-                <td><a href='/Design/Show?sortBy=Name&@splitByType' class="badge badge-light">Наименовие</a></td>
-                <td><a href='/Design/Show?sortBy=Quantity&@splitByType' class="badge badge-light">Количество</a></td>
+                <td><a href='@(url)sortBy=Name&@splitByType' class="badge badge-light">Наименовие</a></td>
+                <td><a href="@(url)sortBy=Quantity&@splitByType" class="badge badge-light">Количество</a></td>
             </tr>
         </thead>
         <tbody>

@@ -17,7 +17,7 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
-        public IActionResult Show(string sortBy, string splitByType)
+        public IActionResult Index(string sortBy, string splitByType)
         {
             if (sortBy == null)
             {
@@ -88,18 +88,18 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
-        public IActionResult Add()
+        public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
         [Authorize(Roles = "admin, order_picker")]
-        public IActionResult Add(Design design)
+        public IActionResult Create(Design design)
         {
             _context.Designs.Add(design);
             _context.SaveChanges();
-            return Redirect("/Design/Show");
+            return Redirect("/Design/Index");
         }
 
         [HttpGet]
@@ -121,12 +121,12 @@ namespace ProductionManagementSystem.Controllers
             des.Quantity = design.Quantity;
 
             _context.SaveChanges();
-            return Redirect("/Design/Show");
+            return Redirect("/Design/Index");
         }
 
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
-        public IActionResult Remove(int id)
+        public IActionResult Delete(int id)
         {
             Design des = new Design
             {
@@ -137,10 +137,17 @@ namespace ProductionManagementSystem.Controllers
             _context.Designs.Remove(des);
 
             _context.SaveChanges();
-            return Redirect("/Design/Show");
+            return Redirect("/Design/Index");
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin, order_picker")]
+        public IActionResult Details(int id)
+        {
+            return View(_context.Designs.FirstOrDefault(d => d.Id == id));
+        }
+
+            [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Adding(int taskId, int designId, int addedQuntity = 0)
         {
