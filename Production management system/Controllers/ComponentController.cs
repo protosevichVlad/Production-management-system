@@ -17,121 +17,101 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
-        public IActionResult Show(string sortBy, string splitByType)
+        public IActionResult Index(string sortBy, string splitByType)
         {
             if (sortBy == null)
             {
-                ViewBag.SortBy = "Id";
                 sortBy = "Id";
-            }
-            else
-            {
-                ViewBag.SortBy = sortBy;
             }
 
             if (splitByType == null)
             {
-                ViewBag.SplitByType = "True";
                 splitByType = "True";
-            }
-            else
-            {
-                ViewBag.SplitByType = splitByType;
-            }
+            } 
+            
+            ViewBag.SortBy = sortBy;
+            ViewBag.SplitByType = splitByType;
             
 
             if (splitByType == "True")
             {
                 var componentsSortedByType = _context.Components.OrderBy(c => c.Type);
-                if (sortBy == "Name")
+                switch (sortBy)
                 {
-                    ViewBag.Components = componentsSortedByType.ThenBy(c => c.Name);
-                }
-                else if (sortBy == "Nominal")
-                {
-                    ViewBag.Components = componentsSortedByType.ThenBy(c => c.Nominal);
-                }
-                else if (sortBy == "Corpus")
-                {
-                    ViewBag.Components = componentsSortedByType.ThenBy(c => c.Corpus);
-                }
-                else if (sortBy == "Explanation")
-                {
-                    ViewBag.Components = componentsSortedByType.ThenBy(c => c.Explanation);
-                }
-                else if (sortBy == "Manufacturer")
-                {
-                    ViewBag.Components = componentsSortedByType.ThenBy(c => c.Manufacturer);
-                }
-                else if (sortBy == "Quantity")
-                {
-                    ViewBag.Components = componentsSortedByType.ThenBy(c => c.Quantity);
-                }
-                else
-                {
-                    ViewBag.Components = componentsSortedByType;
+                    case "Name":
+                        ViewBag.Components = componentsSortedByType.ThenBy(c => c.Name);
+                        break;
+                    case "Nominal":
+                        ViewBag.Components = componentsSortedByType.ThenBy(c => c.Nominal);
+                        break;
+                    case "Corpus":
+                        ViewBag.Components = componentsSortedByType.ThenBy(c => c.Corpus);
+                        break;
+                    case "Explanation":
+                        ViewBag.Components = componentsSortedByType.ThenBy(c => c.Explanation);
+                        break;
+                    case "Manufacturer":
+                        ViewBag.Components = componentsSortedByType.ThenBy(c => c.Manufacturer);
+                        break;
+                    case "Quantity":
+                        ViewBag.Components = componentsSortedByType.ThenBy(c => c.Quantity);
+                        break;
+                    default:
+                        ViewBag.Components = componentsSortedByType;
+                        break;
                 }
             }
             else
             {
                 var components = _context.Components;
-                if (sortBy == "Name")
+                switch (sortBy)
                 {
-                    ViewBag.Components = components.OrderBy(c => c.Name);
-                }
-                else if (sortBy == "Nominal")
-                {
-                    ViewBag.Components = components.OrderBy(c => c.Nominal);
-                }
-                else if (sortBy == "Corpus")
-                {
-                    ViewBag.Components = components.OrderBy(c => c.Corpus);
-                }
-                else if (sortBy == "Explanation")
-                {
-                    ViewBag.Components = components.OrderBy(c => c.Explanation);
-                }
-                else if (sortBy == "Manufacturer")
-                {
-                    ViewBag.Components = components.OrderBy(c => c.Manufacturer);
-                }
-                else if (sortBy == "Quantity")
-                {
-                    ViewBag.Components = components.OrderBy(c => c.Quantity);
-                }
-                else if (sortBy == "Type")
-                {
-                    ViewBag.Components = components.OrderBy(c => c.Type);
-                }
-                else
-                {
-                    ViewBag.Components = components;
+                    case "Name":
+                        ViewBag.Components = components.OrderBy(c => c.Name);
+                        break;
+                    case "Nominal":
+                        ViewBag.Components = components.OrderBy(c => c.Nominal);
+                        break;
+                    case "Corpus":
+                        ViewBag.Components = components.OrderBy(c => c.Corpus);
+                        break;
+                    case "Explanation":
+                        ViewBag.Components = components.OrderBy(c => c.Explanation);
+                        break;
+                    case "Manufacturer":
+                        ViewBag.Components = components.OrderBy(c => c.Manufacturer);
+                        break;
+                    case "Quantity":
+                        ViewBag.Components = components.OrderBy(c => c.Quantity);
+                        break;
+                    default:
+                        ViewBag.Components = components;
+                        break;
                 }
             }
             return View();
         }
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
-        public IActionResult Add()
+        public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
         [Authorize(Roles = "admin, order_picker")]
-        public IActionResult Add(Component component)
+        public IActionResult Create(Component component)
         {
             _context.Components.Add(component);
             _context.SaveChanges();
-            return Redirect("/Component/Show");
+            return Redirect("/Component/Index");
         }
 
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Edit(int id)
         {
-            ViewBag.Component = _context.Components.Find(id);
-            return View();
+            return View(_context.Components.Find(id));
         }
 
         [HttpPost]
@@ -149,7 +129,7 @@ namespace ProductionManagementSystem.Controllers
             comp.Quantity = component.Quantity;
 
             _context.SaveChanges();
-            return Redirect("/Component/Show");
+            return Redirect("/Component/Index");
         }
 
         [HttpGet]
@@ -165,7 +145,7 @@ namespace ProductionManagementSystem.Controllers
             _context.Components.Remove(comp);
 
             _context.SaveChanges();
-            return Redirect("/Component/Show");
+            return Redirect("/Component/Index");
         }
 
         [HttpGet]

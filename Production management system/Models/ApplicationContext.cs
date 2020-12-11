@@ -26,7 +26,7 @@ namespace ProductionManagementSystem.Models
                 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseMySQL("server = db; UserId = root; Password = 123PassWord123; database = new_schema;");
+            // optionsBuilder.UseMySQL("server = db; UserId = root; Password = 123PassWord123; database = new_schema;");
             optionsBuilder.UseMySQL("server = localhost; UserId = user1; Password = 123Pass123; database = new_schema;");
         }
     }

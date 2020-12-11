@@ -94,7 +94,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin, order_picker")]
+        // [Authorize(Roles = "admin, order_picker")]
         public IActionResult Create(Design design)
         {
             _context.Designs.Add(design);
@@ -106,8 +106,7 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Edit(int id)
         {
-            ViewBag.Design = _context.Designs.Find(id);
-            return View();
+            return View(_context.Designs.FirstOrDefault(d => d.Id == id));
         }
 
         [HttpPost]
@@ -115,6 +114,11 @@ namespace ProductionManagementSystem.Controllers
         public IActionResult Edit(Design design)
         {
             Design des = _context.Designs.FirstOrDefault(c => c.Id == design.Id);
+
+            if (des is null)
+            {
+                return NotFound();
+            }
 
             des.Name = design.Name;
             des.Type = design.Type;
@@ -125,29 +129,6 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin, order_picker")]
-        public IActionResult Delete(int id)
-        {
-            Design des = new Design
-            {
-                Id = id
-            };
-
-            _context.Designs.Attach(des);
-            _context.Designs.Remove(des);
-
-            _context.SaveChanges();
-            return Redirect("/Design/Index");
-        }
-
-        [HttpGet]
-        [Authorize(Roles = "admin, order_picker")]
-        public IActionResult Details(int id)
-        {
-            return View(_context.Designs.FirstOrDefault(d => d.Id == id));
-        }
-
-            [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Adding(int taskId, int designId, int addedQuntity = 0)
         {
@@ -160,6 +141,11 @@ namespace ProductionManagementSystem.Controllers
             else
             {
                 Design design = _context.Designs.FirstOrDefault(d => d.Id == designId);
+                if (design is null)
+                {
+                    return NotFound();
+                }
+                
                 design.Quantity += addedQuntity;
                 _context.SaveChanges();
                 return Redirect($"/Task/ShowTask/{taskId}");
@@ -177,6 +163,56 @@ namespace ProductionManagementSystem.Controllers
             List<string> types = _context.Designs.OrderBy(d => d.Type).Select(d => d.Type).ToList();
             types = types.Distinct().ToList();
             return Json(types);
+        }
+        
+        public IActionResult Details(int? id)
+        {
+            if (id is null)
+            {
+                return NotFound();
+            }
+
+            var design = _context.Designs
+                .FirstOrDefault(m => m.Id == id);
+            if (design is null)
+            {
+                return NotFound();
+            }
+
+            return View(design);
+        }
+        
+        public IActionResult Delete(int? id)
+        {
+            if (id is null)
+            {
+                return NotFound();
+            }
+
+            var design = _context.Designs
+                .FirstOrDefault(m => m.Id == id);
+            if (design is null)
+            {
+                return NotFound();
+            }
+
+            return View(design);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var design =  _context.Designs.FirstOrDefault(d => d.Id ==id);
+            if (design is null)
+            {
+                return NotFound();
+            }
+            
+            _context.Designs.Attach(design);
+            _context.Designs.Remove(design);
+            _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }

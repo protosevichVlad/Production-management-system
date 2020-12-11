@@ -14,4 +14,8 @@
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.22" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="App_code\23.razor" />
+  </ItemGroup>
+
 </Project>

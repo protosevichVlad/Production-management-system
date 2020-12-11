@@ -5,10 +5,11 @@
     Layout = "_Layout";
 }
 
-<h1>Details</h1>
+<h2>Удалить</h2>
 
+<h3>Вы уверены, что хотите удалить это?</h3>
 <div>
-    <h4>Products</h4>
+    <h4>Конструктив</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -30,8 +31,10 @@
             @Html.DisplayFor(model => model.Quantity)
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="Id">Редактировать</a> |
-    <a asp-action="Index">Вернутся к списку конструктива</a>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Вернутся к списку конструктива</a>
+    </form>
 </div>

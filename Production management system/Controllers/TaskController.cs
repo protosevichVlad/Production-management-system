@@ -124,6 +124,7 @@ namespace ProductionManagementSystem.Controllers
             ViewBag.DesignTemplate = GetAllDeviceDesignTemplateFromTask(id);
             ViewBag.ComponentTemplate = GetAllDeviceComponentsTemplateFromTask(id);
             ViewBag.ObtainedComponents = GetObtainedСomponents(id);
+            ViewBag.ObtainedDesigns = GetObtainedDesigns(id);
             return View();
         }
 
@@ -339,10 +340,7 @@ namespace ProductionManagementSystem.Controllers
                 if (key.Contains("TaskId"))
                 {
                     int.TryParse(collection[key], out taskId);
-                    obtainedComp = _context.ObtainedСomponents
-                        .Include(c => c.Component)
-                        .Include(c => c.Task)
-                        .Where(c => c.Task.Id == taskId).ToList();
+                    obtainedComp = GetObtainedСomponents(taskId);
                 }
                 else
                 {
@@ -360,6 +358,55 @@ namespace ProductionManagementSystem.Controllers
 
             _context.SaveChanges();
             return Redirect($"/Task/ReceiveComponent?taskId={taskId}");
+        }
+        
+        [HttpGet]
+        public IActionResult ReceiveDesign(int taskId)
+        {
+            ViewBag.TaskId = taskId;
+            ViewBag.Designs = GetAllDeviceDesignTemplateFromTask(taskId);
+            ViewBag.ObtainedDesigns = GetObtainedDesigns(taskId);
+            return View();
+        }
+
+        private List<ObtainedDesign> GetObtainedDesigns(int taskId)
+        {
+            return _context.ObtainedDesigns.
+                Include(d => d.Task).
+                Include(d => d.Design).
+                Where(d => d.Task.Id == taskId).ToList();
+        }
+        
+        [HttpPost]
+        public IActionResult ReceiveDesign(IFormCollection collection)
+        {
+            int taskId = 0;
+
+            List<ObtainedDesign> obtainedDes = null;
+            
+            foreach (var key in collection.Keys)
+            {
+                if (key.Contains("TaskId"))
+                {
+                    int.TryParse(collection[key], out taskId);
+                    obtainedDes = GetObtainedDesigns(taskId);
+                }
+                else
+                {
+                    int.TryParse(collection[key], out int obtained);
+                    int.TryParse(key, out int keyInt);
+                    
+                    var obtDes = obtainedDes.FirstOrDefault(c => c.Id == keyInt);
+                    if (obtained != 0 && obtDes != null)
+                    {
+                        obtDes.Obtained += obtained;
+                        obtDes.Design.Quantity -= obtained;
+                    }
+                }
+            }
+
+            _context.SaveChanges();
+            return Redirect($"/Task/ReceiveDesign?taskId={taskId}");
         }
     }
 }

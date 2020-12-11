@@ -11,7 +11,7 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <a href="/Design/Create">Добавить конструктив</a>
+            <a href="/Design/Create">Cоздать конструктив</a>
         </div>
         <div class="col">
             @if (ViewBag.SplitByType == "True")
@@ -26,16 +26,17 @@
     </div>
 </div>
 <div class="table-responsive-lg">
-    <table class="table table-hover">
+    <table class="table table-hover table-sm">
         <thead class="thead-dark">
             <tr>
                 <td><a href='@(url)sortBy=Id&@splitByType' class="badge badge-light">#</a></td>
                 @if (ViewBag.SplitByType != "True")
                 {
-                    <td><a href='@(url)sortBy=Type&@splitByType' class="badge badge-light">Конструктивная единица</a></td>
+                    <td><a href="@(url)sortBy=Type&@splitByType" class="badge badge-light">Конструктивная единица</a></td>
                 }
-                <td><a href='@(url)sortBy=Name&@splitByType' class="badge badge-light">Наименовие</a></td>
+                <td><a href="@(url)sortBy=Name&@splitByType" class="badge badge-light">Наименовие</a></td>
                 <td><a href="@(url)sortBy=Quantity&@splitByType" class="badge badge-light">Количество</a></td>
+                <td></td>
             </tr>
         </thead>
         <tbody>
@@ -44,11 +45,11 @@
                 @if (ViewBag.SplitByType == "True" && lastType != d.Type)
                 {
                     <tr class="table-info">
-                        <td colspan="3"><p class="text-center">@d.Type</p></td>
+                        <td colspan="4"><p class="text-center">@d.Type</p></td>
                     </tr>
                     lastType = d.Type;
                 }
-                <tr onclick="window.location='/Design/Edit/@d.Id'" style="cursor: pointer;">
+                <tr>
                     <td><p>@d.Id</p></td>
                     @if (ViewBag.SplitByType != "True")
                     {
@@ -56,6 +57,11 @@
                     }
                     <td><p>@d.Name</p></td>
                     <td><p>@d.Quantity</p></td>
+                    <td width="300px">
+                        <a asp-action="Edit" asp-route-id="@d.Id">Редактировать</a> |
+                        <a asp-action="Details" asp-route-id="@d.Id">Подробнее</a> |
+                        <a asp-action="Delete" asp-route-id="@d.Id">Удалить</a>
+                    </td>
                 </tr>
             }
         </tbody>
