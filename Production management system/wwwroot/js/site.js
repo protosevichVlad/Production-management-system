@@ -25,7 +25,7 @@ async function createDesign() {
 async function createTextComponent(id) {
     let str = `<tr id="comTr${id}"><td>${id}</td><td><select class="ComponentSelect align-top width-100" id="Component${id}" name="Component${id}">`;
 
-    let r = await new Request('/Component/GetAllComponents');
+    let r = await new Request('/Components/GetAllComponents');
     let componentsJson = await fetch(r).then(c => c.json());
 
     for (let i = 0; i < componentsJson.length; i++) {
@@ -40,7 +40,7 @@ async function createTextComponent(id) {
 async function createTextDesign(id) {
     let str = `<tr id="desTr${id}"><td>${id}</td><td><select class="DesignSelect align-top width-100" id="Design${id}" name="Design${id}">`;
 
-    let r = await new Request('/Design/GetAllDesigns');
+    let r = await new Request('/Designs/GetAllDesigns');
     let componentsJson = await fetch(r).then(c => c.json());
 
     for (let i = 0; i < componentsJson.length; i++) {
@@ -56,6 +56,10 @@ function removeComponent() {
     let component_selects = [...document.getElementsByClassName('ComponentSelect')];
     let length = component_selects.length;
 
+    if (length == 0)
+    {
+        return;
+    }
     let lastTr = document.querySelector(`#comTr${length}`);
     lastTr.remove()
 }
@@ -64,6 +68,10 @@ function removeDesign() {
     let design_selects = [...document.getElementsByClassName('DesignSelect')];
     let length = design_selects.length;
 
+    if (length == 0)
+    {
+        return;
+    }
     let lastTr = document.querySelector(`#desTr${length}`);
     lastTr.remove()
 }

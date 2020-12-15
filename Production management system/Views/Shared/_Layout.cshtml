@@ -9,15 +9,25 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ProductionManagementSystem</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse d-lg-inline-flex flex-lg-row-reverse">
+                    <ul class="navbar-nav">
+                        @if (User.Identity.Name == null)
+                        {
+                            <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Login">Войти</a>
+                        }
+                        else
+                        {
+                            <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Logout">Выйти(@User.Identity.Name)</a>
+                        }
+                    </ul>
+                    <ul class="navbar-nav mr-auto">
                         @if (User.IsInRole("admin"))
                         {
                             <li class="nav-item">
@@ -33,34 +43,20 @@
                         @if (User.IsInRole("admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Device" asp-action="Show">Приборы</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Devices" asp-action="Show">Приборы</a>
                             </li>
                         }
                         @if (User.IsInRole("admin") || User.IsInRole("order_picker"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Component" asp-action="Index">Монтаж</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Components" asp-action="Index">Монтаж</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Design" asp-action="Index">Конструктив</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Designs" asp-action="Index">Конструктив</a>
                             </li>
                         }
-                        @if (User.Identity.Name == null)
-                        {
-                            <li class="nav-item">
-                                <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Login">Войти</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                
-                                <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Logout">Выйти(@User.Identity.Name)</a>
-                            </li>
-                        }
-                        </ul>
+                    </ul>
                 </div>
-                
             </div>
         </nav>
     </header>

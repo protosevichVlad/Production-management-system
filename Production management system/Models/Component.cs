@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProductionManagementSystem.Models
 {
@@ -12,6 +13,7 @@ namespace ProductionManagementSystem.Models
         public string Type { get; set; }
 
         [Display(Name = "Наименование")]
+        [Required]
         public string Name { get; set; }
         
         [Display(Name = "Номинал")]
@@ -27,6 +29,8 @@ namespace ProductionManagementSystem.Models
         public string Manufacturer { get; set; }
 
         [Display(Name = "Количество")]
+        [Range(0, Int32.MaxValue, ErrorMessage = "Поле Количество должно быть больше 0")]
+        [Required]
         public int Quantity { get; set; }
     }
 }

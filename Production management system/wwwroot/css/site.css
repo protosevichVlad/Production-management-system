@@ -113,3 +113,11 @@ hr {
     background-color: DodgerBlue !important;
     color: #ffffff;
 }
+
+.password {
+    display: none;
+}
+
+tr:hover .password {
+    display: block;
+}

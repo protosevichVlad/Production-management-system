@@ -10,11 +10,11 @@ using ProductionManagementSystem.Models;
 
 namespace ProductionManagementSystem.Controllers
 {
-    public class DeviceController : Controller
+    public class DevicesController : Controller
     {
         private ApplicationContext _context;
 
-        public DeviceController()
+        public DevicesController()
         {
             _context = new ApplicationContext();
         }
@@ -142,7 +142,7 @@ namespace ProductionManagementSystem.Controllers
             device.DeviceDesignTemplate = designTemplate;
             _context.Devices.Add(device);
             _context.SaveChanges();
-            return Redirect("/Device/Show");
+            return Redirect("/Devices/Show");
         }
 
         [HttpGet]
@@ -275,7 +275,7 @@ namespace ProductionManagementSystem.Controllers
             device.DeviceComponentsTemplate = componentsTemplate;
             device.DeviceDesignTemplate = designTemplate;
             _context.SaveChanges();
-            return Redirect($"/Device/ShowDevice/{idDevice}");
+            return Redirect($"/Devices/ShowDevice/{idDevice}");
         }
 
         [HttpGet]
@@ -302,14 +302,14 @@ namespace ProductionManagementSystem.Controllers
 
             if (device is null)
             {
-                return Redirect("/Device/Show");
+                return Redirect("/Devices/Show");
             }
             
             _context.Devices.Attach(device);
             _context.Devices.Remove(device);
 
             _context.SaveChanges();
-            return Redirect("/Device/Show");
+            return Redirect("/Devices/Show");
         }
 
         [HttpGet]

@@ -6,11 +6,21 @@
 }
 
 <form method="post" action="">
-    Заказчик: <input type="text" autocomplete="off" required name="Customer"/>
-    Deadline: <input type="date" name="Deadline" min="@ViewBag.Date" value="@ViewBag.Date">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="Name" class="control-label">Заказчик: </label>
+                <input name="Name" id="Name" class="form-control" autocomplete="off" required/>
+            </div>
+            <div class="form-group">
+                <label for="Deadline" class="control-label">Deadline: </label>
+                <input id="Deadline" class="form-control"type="date" name="Deadline" min="@ViewBag.Date" value="@ViewBag.Date"/>
+            </div>
+        </div>
+    </div>
     <br>
-    <button onclick="AddDevice()" type="button">Добавить прибор</button>
-    <button onclick="RemoveDevice()" type="button">Удалить прибор</button>
+    <button onclick="AddDevice()" type="button" class="btn">Добавить прибор</button>
+    <button onclick="RemoveDevice()" type="button" class="btn">Удалить прибор</button>
     <br>
     <div class="container" id="container">
         <div class="row">
@@ -32,7 +42,7 @@
         </div>
     </div>
 
-    <button type="submit">Принять</button>
+    <button type="submit" class="btn btn-info">Принять</button>
 </form>
 <script>
     async function AddDevice() {
@@ -51,7 +61,7 @@
 
         let option = document.createElement("option");
 
-        let r = await new Request('/Device/GetAllDevices');
+        let r = await new Request('/Devices/GetAllDevices');
         let devicesJson = await fetch(r).then(c => c.json());
 
         console.log(devicesJson);

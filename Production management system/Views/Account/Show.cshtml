@@ -10,9 +10,9 @@
     <thead class="thead-dark">
         <tr>
             <td><p>#</p></td>
-            <td><p>Login</p></td>
-            <td><p>Password</p></td>
-            <td><p>Role</p></td>
+            <td><p>Логин</p></td>
+            <td><p>Пароль</p></td>
+            <td><p>Роль</p></td>
         </tr>
     </thead>
     <tbody>
@@ -21,7 +21,7 @@
         <tr onclick="window.location='/Account/Edit/@u.Id'" style="cursor: pointer;">
             <td><p>@u.Id</p></td>
             <td><p>@u.Login</p></td>
-            <td><p>@u.Password</p></td>
+            <td><p class="password">@u.Password</p></td>
             <td><p>@u.Role.RusName</p></td>
         </tr>
         }
