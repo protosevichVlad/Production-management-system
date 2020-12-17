@@ -20,10 +20,35 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public IActionResult Show()
+        public IActionResult Show(string sortOrder)
         {
-            ViewBag.Devices = _context.Devices;
-            return View();
+            ViewData["NumSortParm"] = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
+            ViewData["NameSortParm"] = sortOrder == "Name" ? "name_desc" : "Name";
+            ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
+            var devices = from s in _context.Devices
+                select s;
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    devices = devices.OrderByDescending(d => d.Name);
+                    break;
+                case "Name":
+                    devices = devices.OrderBy(d => d.Name);
+                    break;
+                case "num_desc":
+                    devices = devices.OrderByDescending(d => d.Id);
+                    break;
+                case "Quantity":
+                    devices = devices.OrderBy(d => d.Quantity);
+                    break;
+                case "quantity_desc":
+                    devices = devices.OrderByDescending(d => d.Quantity);
+                    break;
+                default:
+                    devices = devices.OrderBy(d => d.Id);
+                    break;
+            }
+            return View(devices.ToList());
         }
 
         [HttpGet]

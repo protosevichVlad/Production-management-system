@@ -1,26 +1,45 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<ProductionManagementSystem.Models.Device>
 @{
     ViewData["Title"] = "Приборы";
 }
+<h2>Cписок приборов</h2>
 
-<a href="/Devices/Add">Добавить прибор</a>
-<table class="table table-hover">
-    <thead class="thead-dark">
+<p>
+    <a asp-action="Add">Создать новый прибор</a>
+</p>
+<table class="table">
+    <thead>
         <tr>
-            <td><p>#</p></td>
-            <td><p>Наименовие</p></td>
-            <td><p>Количество</p></td>
+            <th>
+                <a asp-action="Show" asp-route-sortOrder="@ViewData["NumSortParm"]">№</a>
+            </th>
+            <th>
+                <a asp-action="Show" asp-route-sortOrder="@ViewData["NameSortParm"]">Наименовие</a>
+            </th>
+            <th>
+                <a asp-action="Show" asp-route-sortOrder="@ViewData["QuantitySortParm"]">Количество</a>
+            </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var d in ViewBag.Devices)
+        @foreach (var d in Model)
         {
-            <tr  onclick="window.location='/Devices/ShowDevice/@d.Id'" style="cursor: pointer;">
-                <td><p>@d.Id</p></td>
-                <td><p>@d.Name</p></td>
-                <td><p>@d.Quantity</p></td>
+            <tr>
+                <td>
+                    @d.Id
+                </td>
+                <td>
+                    @d.Name
+                </td>
+                <td>
+                    @d.Quantity
+                </td>
+                <td width="315px">
+                    <a asp-action="Edit" asp-route-id="@d.Id">Редактировать</a> |
+                    <a asp-action="ShowDevice" asp-route-id="@d.Id">Подробности</a> |
+                    <a asp-action="Remove" asp-route-id="@d.Id">Удалить</a>
+                </td>
             </tr>
         }
     </tbody>

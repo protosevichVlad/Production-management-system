@@ -74,6 +74,30 @@ namespace ProductionManagementSystem.Controllers
         {
             return View();
         }
+        
+        public IActionResult CreateMore()
+        {
+            string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            int count = 200;
+            var random = new Random();
+            List<Component> components = new List<Component>();
+            for (int i = 0; i < count; i++)
+            {
+                components.Add(new Component
+                {
+                    Name = $"{letters[random.Next(letters.Length)]}Name{i}",
+                    Corpus = $"{letters[random.Next(letters.Length)]}Corpus{i}",
+                    Explanation = $"{letters[random.Next(letters.Length)]}Explanation{i}",
+                    Manufacturer = $"{letters[random.Next(letters.Length)]}Manufacturer{i}",
+                    Nominal = $"{letters[random.Next(letters.Length)]}Nominal{i}",
+                    Type = $"Type{random.Next(10)}",
+                    Quantity = random.Next(10000),
+                });
+            }
+            _context.Components.AddRange(components);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));
+        }
 
         // POST: Components/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 

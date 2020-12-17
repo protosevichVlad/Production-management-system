@@ -12,6 +12,9 @@ namespace ProductionManagementSystem.Models
         public DbSet<Role> Roles { get; set; }
         public DbSet<ObtainedСomponent> ObtainedСomponents { get; set; }
         public DbSet<ObtainedDesign> ObtainedDesigns { get; set; }
+        
+        public DbSet<OrderComponent> OrderComponents { get; set; }
+        public DbSet<OrderDesign> OrderDesign { get; set; }
 
         public ApplicationContext()
         {

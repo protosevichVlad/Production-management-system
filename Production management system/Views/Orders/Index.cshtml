@@ -1,0 +1,80 @@
+﻿@model IEnumerable<ProductionManagementSystem.Models.Order>
+@{
+    ViewBag.Title = "title";
+}
+
+<h2>Cписок заказов</h2>
+
+<p>
+    <a asp-action="CreateComponent">Создать новый</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TypeSortParm"]">Наименование</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TaskSortParm"]">Задание №</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateStartSortParm"]">Дата заказа</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DeadlineSortParm"]">Дата доставки</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in ViewBag.OrderComponents) {
+        <tr>
+            <td>
+                @item.Component.Name
+            </td>
+            <td>
+                @item.Task.Id
+            </td>
+            <td>
+                @item.DateStart
+            </td>
+            <td>
+                @item.Deadline
+            </td>
+            <td width="315px">
+                <a asp-action="" asp-route-id="@item.Id">Редактировать</a> |
+                <a asp-action="" asp-route-id="@item.Id">Подробности</a> |
+                <a asp-action="" asp-route-id="@item.Id">Удалить</a>
+            </td>
+        </tr>
+}
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td width="315px"></td>
+    </tr>
+@foreach (var item in ViewBag.OrderDesign) {
+        <tr>
+            <td>
+                @item.Design.Name
+            </td>
+            <td>
+                @item.Task.Id
+            </td>
+            <td>
+                @item.DateStart
+            </td>
+            <td>
+                @item.Deadline
+            </td>
+            <td width="315px">
+                <a asp-action="" asp-route-id="@item.Id">Редактировать</a> |
+                <a asp-action="" asp-route-id="@item.Id">Подробности</a> |
+                <a asp-action="" asp-route-id="@item.Id">Удалить</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

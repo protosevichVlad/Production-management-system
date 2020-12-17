@@ -74,6 +74,27 @@ namespace ProductionManagementSystem.Controllers
         {
             return View();
         }
+        
+        // GET: Designs/Create
+        public IActionResult CreateMore()
+        {
+            string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            int count = 200;
+            var random = new Random();
+            List<Design> designs = new List<Design>();
+            for (int i = 0; i < count; i++)
+            {
+                designs.Add(new Design
+                {
+                    Name = $"{letters[random.Next(letters.Length)]}Name{i}",
+                    Type = $"Type{random.Next(10)}",
+                    Quantity = random.Next(10000),
+                });
+            }
+            _context.Designs.AddRange(designs);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));
+        }
 
         // POST: Designs/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 

@@ -17,79 +17,27 @@
         </div>
     </div>
 </div>
-
-@foreach (var device in ViewBag.Devices)
-{
-    var quantity = ViewBag.QuantytiDevices[index];
-    index++;
-
-    <hr />
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <h5>Наименование прибора: @device.Name</h5>
-                <h5>Количество в задаче: @quantity</h5>
-                <p>Количество на складе: @device.Quantity</p>
+<div class="accordion" id="accordionExample">
+    @foreach (var device in ViewBag.Devices)
+    {
+        var quantity = ViewBag.QuantytiDevices[index];
+        index++;
+        <div class="card">
+            <div class="card-header" id="heading@(device.Id)">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse@(device.Id)" aria-expanded="true" aria-controls="collapse@(device.Id)">
+                        @device.Name
+                    </button>
+                </h2>
             </div>
-            <div class="col">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h6>
-                    Монтаж
-                </h6>
-            </div>
-            <div class="col">
-                <h6>
-                    Конструктив
-                </h6>
+            <div id="collapse@(device.Id)" class="collapse show" aria-labelledby="heading@(device.Id)" data-parent="#accordionExample">
+                <div class="card-body">
+                    @DeviceHelper.CreateDevice(Html, device, false, quantity)
+                  </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col" id="Components">
-                <table style="width:100%;">
-                    <tr>
-                        <td>Наименование</td>
-                        <td>В приборе</td>
-                        <td>В задаче</td>
-                        <td>На складе</td>
-                    </tr>
-                    @foreach (var comp in device.DeviceComponentsTemplate)
-                    {
-                        <tr @if (comp.Component.Quantity < comp.Quantity * quantity) { @: class="table-danger"
-                            }>
-                            <td>@comp.Component.Name</td>
-                            <td>@comp.Quantity</td>
-                            <td>@(comp.Quantity * quantity)</td>
-                            <td>@comp.Component.Quantity</td>
-                        </tr>
-                    }
-                </table>
-            </div>
-            <div class="col" id="Designs">
-                <table style="width:100%;">
-                    <tr>
-                        <td>Наименование</td>
-                        <td>В приборе</td>
-                        <td>В задаче</td>
-                        <td>На складе</td>
-                    </tr>
-                    @foreach (var des in device.DeviceDesignTemplate)
-                    {
-                        <tr @if (des.Design.Quantity < des.Quantity * quantity) { @: class="table-danger"
-                            }>
-                            <td>@des.Design.Name</td>
-                            <td>@des.Quantity</td>
-                            <td>@(des.Quantity * quantity)</td>
-                            <td>@des.Design.Quantity</td>
-                        </tr>
-                    }
-                </table>
-            </div>
-        </div>
-    </div>
-}
+    }
+</div>
 <div class="table-responsive-xl">
     <hr />
     <h4>Общее количество монтажа:
@@ -98,7 +46,7 @@
         <button type="button" class="btn btn-link btn-sm" onclick="window.location='/Task/ReceiveComponent?taskId=@ViewBag.Task.Id'">Получить</button>
     }
     </h4>
-    <table style="width:100%;" class="table-hover">
+    <table style="width:100%;" class="table table-sm table-hover">
         <thead class="thead-dark">
             <tr>
                 <td>Наименование</td>
@@ -139,7 +87,7 @@
         <button type="button" class="btn btn-link btn-sm" onclick="window.location='/Task/ReceiveDesign?taskId=@ViewBag.Task.Id'">Получить</button>
     }
     </h4>
-    <table style="width:100%;" class="table-hover">
+    <table style="width:100%;" class="table table-sm table-hover">
         <thead class="thead-dark">
         <tr>
             <td>Наименование</td>
