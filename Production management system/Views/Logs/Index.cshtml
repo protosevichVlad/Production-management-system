@@ -1,0 +1,43 @@
+﻿@model IEnumerable<ProductionManagementSystem.Models.Log>
+
+@{
+    ViewData["Title"] = "Логи";
+}
+
+<h2>Логи</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DateTime)
+            </th>
+            <th>
+               @Html.DisplayNameFor(model => model.UserLogin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Message)
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserLogin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Message)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Подробности</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

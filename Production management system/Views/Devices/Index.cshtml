@@ -5,19 +5,19 @@
 <h2>Cписок приборов</h2>
 
 <p>
-    <a asp-action="Add">Создать новый прибор</a>
+    <a asp-action="Create">Создать новый прибор</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                <a asp-action="Show" asp-route-sortOrder="@ViewData["NumSortParm"]">№</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NumSortParm"]">№</a>
             </th>
             <th>
-                <a asp-action="Show" asp-route-sortOrder="@ViewData["NameSortParm"]">Наименовие</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Наименовие</a>
             </th>
             <th>
-                <a asp-action="Show" asp-route-sortOrder="@ViewData["QuantitySortParm"]">Количество</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]">Количество</a>
             </th>
             <th></th>
         </tr>
@@ -37,8 +37,8 @@
                 </td>
                 <td width="315px">
                     <a asp-action="Edit" asp-route-id="@d.Id">Редактировать</a> |
-                    <a asp-action="ShowDevice" asp-route-id="@d.Id">Подробности</a> |
-                    <a asp-action="Remove" asp-route-id="@d.Id">Удалить</a>
+                    <a asp-action="Details" asp-route-id="@d.Id">Подробности</a> |
+                    <a asp-action="Delete" asp-route-id="@d.Id">Удалить</a>
                 </td>
             </tr>
         }

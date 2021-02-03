@@ -63,7 +63,7 @@ namespace ProductionManagementSystem.Controllers
             int idDevice = 0;
             foreach(var key in collection.Keys)
             {
-                if (key.Contains("NameDevice"))
+                if (key.Contains("Id"))
                 {
                     int.TryParse(collection[key], out idDevice);
                 } else if (key.Contains("Quantity"))
@@ -134,7 +134,7 @@ namespace ProductionManagementSystem.Controllers
         {
             Task task = _context.Tasks.FirstOrDefault(t => t.Id == taskId);
 
-            if (task is null)
+            if (task == null)
             {
                 return Redirect($"/Task/Show");
             }

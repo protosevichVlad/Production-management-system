@@ -17,16 +17,38 @@ namespace ProductionManagementSystem.Controllers
         {
             _context = new ApplicationContext();
         }
-
+        
+        private void Log(string message, Design design=null)
+        {
+            var log = new Log() {DateTime = DateTime.Now, UserLogin = User.Identity.Name, Message = message};
+            _context.Logs.Add(log);
+            if (design != null)
+            {
+                var logDesign = new LogDesign() {Log = log, Design = design};
+                _context.LogsDesign.Add(logDesign);
+            }
+            
+            _context.SaveChanges();
+        }
+        
         // GET: Designs
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
+            ViewData["CurrentFilter"] = searchString;
             var designs = from s in _context.Designs
                 select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                designs = designs.Where(d => d.Name.Contains(searchString)
+                                             || d.Type.Contains(searchString)
+                                             || d.ShortDescription.Contains(searchString));
+            }
+            
             switch (sortOrder)
             {
                 case "name_desc":
@@ -89,6 +111,8 @@ namespace ProductionManagementSystem.Controllers
                     Name = $"{letters[random.Next(letters.Length)]}Name{i}",
                     Type = $"Type{random.Next(10)}",
                     Quantity = random.Next(10000),
+                    ShortDescription = $"ShortDescription{random.Next(100)}",
+                    Description = $"Description{random.Next(100)}",
                 });
             }
             _context.Designs.AddRange(designs);
@@ -101,12 +125,13 @@ namespace ProductionManagementSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Type,Name,Quantity")] Design design)
+        public async Task<IActionResult> Create([Bind("Id,Type,Name,Quantity,ShortDescription,Description")] Design design)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(design);
                 await _context.SaveChangesAsync();
+                Log($"Был создан: {design}.", design);
                 return RedirectToAction(nameof(Index));
             }
             return View(design);
@@ -133,7 +158,7 @@ namespace ProductionManagementSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Name,Quantity")] Design design)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Name,Quantity,ShortDescription,Description")] Design design)
         {
             if (id != design.Id)
             {
@@ -146,6 +171,9 @@ namespace ProductionManagementSystem.Controllers
                 {
                     _context.Update(design);
                     await _context.SaveChangesAsync();
+                    // TODO: delete
+                    var designInDb = _context.Designs.FirstOrDefault(d => d.Id == id);
+                    Log($"Был изменён {design}.", design);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -187,6 +215,13 @@ namespace ProductionManagementSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var design = await _context.Designs.FindAsync(id);
+            var logs = _context.LogsDesign.Where(l => l.DesignId == id).ToList();
+            foreach (var log in logs)
+            {
+                _context.LogsDesign.Remove(log);
+            }
+            
+            Log($"Был удалён {design}.");
             _context.Designs.Remove(design);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -201,6 +236,10 @@ namespace ProductionManagementSystem.Controllers
         public async Task<JsonResult> GetAllDesigns()
         {
             List<Design> designs = await _context.Designs.OrderBy(d => d.Name).ToListAsync();
+            foreach (var des in designs)
+            {
+                des.Name = $"{des.Name} {des.ShortDescription}";
+            }
             return Json(designs);
         }
 
@@ -214,11 +253,45 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
-        public IActionResult Add(int taskId, int designId)
+        public IActionResult Add(int id, int? taskId)
         {
 
+            var design = _context.Designs.FirstOrDefault(d => d.Id == id);
+            if (design is null)
+            {
+                return NotFound();
+            }
+            
             ViewBag.TaskId = taskId;
-            var design = _context.Designs.FirstOrDefault(d => d.Id == designId);
+            return View(design);
+        }
+        
+        [HttpPost]
+        public IActionResult Add(int designId, int quantity, int taskId)
+        {
+
+            Design design = _context.Designs.FirstOrDefault(d => d.Id == designId);
+            if (design is null)
+            {
+                return NotFound();
+            }
+            design.Quantity += quantity;
+            Log($"Было добавлено {quantity}шт. После добавления: {design}.", design);
+            _context.SaveChanges();
+            
+            if (taskId != null)
+            {
+                return RedirectToAction("ShowTask", "Task", new {id = taskId});
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        
+        [HttpGet]
+        [Authorize(Roles = "admin, order_picker")]
+        public IActionResult Receive(int id)
+        {
+
+            var design = _context.Designs.FirstOrDefault(d => d.Id == id);
             if (design is null)
             {
                 return NotFound();
@@ -227,7 +300,7 @@ namespace ProductionManagementSystem.Controllers
             return View(design);
         }
         [HttpPost]
-        public IActionResult Add(int taskId, int designId, int quantity)
+        public IActionResult Receive(int designId, int quantity)
         {
 
             Design design = _context.Designs.FirstOrDefault(d => d.Id == designId);
@@ -236,9 +309,10 @@ namespace ProductionManagementSystem.Controllers
                 return NotFound();
             }
             
-            design.Quantity += quantity;
+            design.Quantity -= quantity;
+            Log($"Было получено {quantity}шт. После получения: {design}.", design);
             _context.SaveChanges();
-            return Redirect($"/Task/ShowTask/{taskId}");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

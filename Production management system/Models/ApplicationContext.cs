@@ -15,6 +15,9 @@ namespace ProductionManagementSystem.Models
         
         public DbSet<OrderComponent> OrderComponents { get; set; }
         public DbSet<OrderDesign> OrderDesign { get; set; }
+        public DbSet<Log> Logs { get; set; }
+        public DbSet<LogDesign> LogsDesign { get; set; }
+        public DbSet<LogComponent> LogsComponent { get; set; }
 
         public ApplicationContext()
         {
@@ -23,14 +26,15 @@ namespace ProductionManagementSystem.Models
 
         public void ResetDatabase()
         {
-            Database.EnsureDeleted();   // удаляем бд со старой схемой
+            // Database.EnsureDeleted();   // удаляем бд со старой схемой
             Database.EnsureCreated();   // создаем бд с новой схемой
         }
                 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // optionsBuilder.UseMySQL("server = db; UserId = root; Password = 123PassWord123; database = new_schema;");
-            optionsBuilder.UseMySQL("server = localhost; UserId = user1; Password = 123Pass123; database = new_schema;");
+            //optionsBuilder.UseMySQL("server = db; UserId = root; Password = 123PassWord123; database = new_schema;");
+            // optionsBuilder.UseMySQL("server = localhost; UserId = user1; Password = 123PassWord; database = production-management-system;");
+            optionsBuilder.UseSqlServer("Server=tcp:productionmanagementsystem.database.windows.net,1433;Initial Catalog=productionmanagementsystem;Persist Security Info=False;User ID=user1;Password=123Pass123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
         }
     }
 }

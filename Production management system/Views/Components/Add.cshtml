@@ -1,8 +1,11 @@
 ﻿@model ProductionManagementSystem.Models.Component;
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Добавить " + Model.Name;
 }
+<h2>Добавить</h2>
+
+<h4>Конструктив</h4>
 <dl class="row">
     <dt class = "col-sm-2">
         @Html.DisplayNameFor(model => model.Type)
@@ -43,19 +46,20 @@
     <dt class = "col-sm-2">
         @Html.DisplayNameFor(model => model.Quantity)
     </dt>
-    <dd class = "col-sm-10">
+    <dt class = "col-sm-10">
         @Html.DisplayFor(model => model.Quantity)
-    </dd>
+    </dt>
     <div class="col-md-4">
         <form action="" method="post">
             <input hidden id="taskId" name="taskId" value="@ViewBag.TaskId">
             <input hidden id="componentId" name="componentId" value="@Model.Id">
             <div class="form-group">
                 <label for="quantity" class="control-label">Добавить</label>
-                <input name="quantity" id="quantity" class="form-control" type="number" autocomplete="off" value="0" min="-@Model.Quantity" required/>
+                <input name="quantity" id="quantity" class="form-control" type="number" autocomplete="off" value="0" min="0" required/>
             </div>
-            <button class="btn btn-info" onclick="">Добавить</button>    
-            <a href="/Orders/CreateComponent?taskId=@(ViewBag.TaskId)&componentId=@(Model.Id)">Заказать</a>
+            <button class="btn btn-info" onclick="">Добавить</button>
+            <a hidden href="/Orders/CreateDesign?taskId=@(ViewBag.TaskId)&designId=@(Model.Id)">Заказать</a>
         </form>
     </div>
 </dl>
+

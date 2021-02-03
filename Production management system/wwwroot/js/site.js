@@ -76,6 +76,42 @@ function removeDesign() {
     lastTr.remove()
 }
 
+async function createDevice() {
+    let component_selects = [...document.getElementsByClassName('DeviceSelect')];
+    let length = component_selects.length + 1;
+    let str = await createTextDevice(length);
+
+    let lastTr = document.querySelector(`#devTr${length - 1}`);
+    lastTr.insertAdjacentHTML('afterEnd', str);
+}
+
+async function createTextDevice(id) {
+    let str = `<tr id="devTr${id}"><td>${id}</td><td><select class="DeviceSelect align-top width-100" id="Id${id}" name="Id${id}">`;
+
+    let r = await new Request('/Devices/GetAllDevices');
+    let devicesJson = await fetch(r).then(c => c.json());
+
+    for (let i = 0; i < devicesJson.length; i++) {
+        let c = devicesJson[i]
+        str += `<option value="${c.id}">${c.name}</option>`;
+    }
+    str += `</select></td><td><input class="DeviceInput align-top" id="Quantity${id}" name="Quantity${id}" type="number" required autocomplete="off" min="0" />`;
+    str += `</td></tr>`;
+    return str;
+}
+
+function removeDevice() {
+    let device_selects = [...document.getElementsByClassName('DeviceSelect')];
+    let length = device_selects.length;
+
+    if (length == 0)
+    {
+        return;
+    }
+    let lastTr = document.querySelector(`#devTr${length}`);
+    lastTr.remove()
+}
+
 function autocomplete(inp, arr) {
     /*the autocomplete function takes two arguments,
     the text field element and an array of possible autocompleted values:*/

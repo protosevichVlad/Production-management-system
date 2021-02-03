@@ -1,9 +1,9 @@
 ﻿@model ProductionManagementSystem.Models.Design;
 
 @{
-    ViewBag.Title = "Добавить " + Model.Name;
+    ViewBag.Title = "Получить " + Model.Name;
 }
-<h2>Добавить</h2>
+<h2>Получить</h2>
 
 <h4>Конструктив</h4>
 <dl class="row">
@@ -42,12 +42,10 @@
             <input hidden id="taskId" name="taskId" value="@ViewBag.TaskId">
             <input hidden id="designId" name="designId" value="@Model.Id">
             <div class="form-group">
-                <label for="quantity" class="control-label">Добавить</label>
-                <input name="quantity" id="quantity" class="form-control" type="number" autocomplete="off" value="0" min="0" required/>
+                <label for="quantity" class="control-label">Получить</label>
+                <input name="quantity" id="quantity" class="form-control" type="number" autocomplete="off" value="0" min="0" max="@Model.Quantity" required/>
             </div>
-            <button class="btn btn-info" onclick="">Добавить</button>
-            <a hidden href="/Orders/CreateDesign?taskId=@(ViewBag.TaskId)&designId=@(Model.Id)">Заказать</a>
+            <button class="btn btn-info" onclick="">Получить</button>
         </form>
     </div>
 </dl>
-

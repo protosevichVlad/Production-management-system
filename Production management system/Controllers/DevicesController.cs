@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ProductionManagementSystem.Models;
 
 namespace ProductionManagementSystem.Controllers
@@ -20,7 +20,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public IActionResult Show(string sortOrder)
+        public IActionResult Index(string sortOrder)
         {
             ViewData["NumSortParm"] = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
             ViewData["NameSortParm"] = sortOrder == "Name" ? "name_desc" : "Name";
@@ -53,7 +53,7 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpGet]
         [Authorize(Roles = "admin")]
-        public IActionResult Add()
+        public IActionResult Create()
         {
             List<Design> designs = _context.Designs.OrderBy(d => d.Name).ToList();
             designs.ForEach((d) => {
@@ -74,7 +74,7 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public IActionResult Add(IFormCollection collection)
+        public IActionResult Create(IFormCollection collection)
         {
             List<DeviceComponentsTemplate> componentsTemplate = new List<DeviceComponentsTemplate>();
             List<DeviceDesignTemplate> designTemplate = new List<DeviceDesignTemplate>();
@@ -167,7 +167,7 @@ namespace ProductionManagementSystem.Controllers
             device.DeviceDesignTemplate = designTemplate;
             _context.Devices.Add(device);
             _context.SaveChanges();
-            return Redirect("/Devices/Show");
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
@@ -218,6 +218,11 @@ namespace ProductionManagementSystem.Controllers
                 .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
                 .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == idDevice);
+
+            if (device == null)
+            {
+                return NotFound();
+            }
 
             foreach (var key in collection.Keys)
             {
@@ -300,12 +305,12 @@ namespace ProductionManagementSystem.Controllers
             device.DeviceComponentsTemplate = componentsTemplate;
             device.DeviceDesignTemplate = designTemplate;
             _context.SaveChanges();
-            return Redirect($"/Devices/ShowDevice/{idDevice}");
+            return RedirectToAction(nameof(Details), new { id = idDevice });
         }
 
         [HttpGet]
         [Authorize(Roles = "admin")]
-        public IActionResult ShowDevice(int id)
+        public IActionResult Details(int id)
         {
             ViewBag.Device = _context.Devices
                 .Include(d => d.DeviceComponentsTemplate)
@@ -315,26 +320,47 @@ namespace ProductionManagementSystem.Controllers
             return View();
         }
 
-        [HttpGet]
-        [Authorize(Roles = "admin")]
-        public IActionResult Remove(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            var device = _context.Devices
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var device = await _context.Devices
                 .Include(d => d.DeviceComponentsTemplate)
                 .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
-                .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == id);
-
-            if (device is null)
+                .ThenInclude(d => d.Design).FirstOrDefaultAsync(d => d.Id == id);
+            
+            if (device == null)
             {
-                return Redirect("/Devices/Show");
+                return NotFound();
+            }
+
+            return View(device);
+        }
+
+        // POST: Designs/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var device = await _context.Devices
+                .Include(d => d.DeviceComponentsTemplate)
+                .ThenInclude(d => d.Component)
+                .Include(d => d.DeviceDesignTemplate)
+                .ThenInclude(d => d.Design).FirstOrDefaultAsync(d => d.Id == id);
+
+            if (device == null)
+            {
+                return NotFound();
             }
             
             _context.Devices.Attach(device);
             _context.Devices.Remove(device);
-
-            _context.SaveChanges();
-            return Redirect("/Devices/Show");
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]

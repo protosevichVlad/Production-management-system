@@ -33,13 +33,15 @@
         <div class="row">
             <table class="table">
                 <thead>
-                    <tr>
-                        <td>№</td>    
-                        <td>Наименовие</td>
-                        <td>Количество в приборе</td>
-                        <td width="40%">Примечание</td>
-                    </tr>
+                <tr>
+                    <td>№</td>    
+                    <td>Наименовие</td>
+                    <td>Количество в приборе</td>
+                    <td width="40%">Примечание</td>
+                </tr>
                 </thead>
+                <tr id="comTr0">
+                </tr>
                 @{index = 1; }
                 @foreach (var comp in ViewBag.Device.DeviceComponentsTemplate)
                 {
@@ -93,6 +95,8 @@
                             <td width="40%">Примечание</td>
                         </tr>
                     </thead>
+                    <tr id="desTr0">
+                    </tr>   
                     @{index = 1; }
                     @foreach (var des in ViewBag.Device.DeviceDesignTemplate)
                     {
@@ -132,5 +136,5 @@
 </form>
 
 <div>
-    <a asp-action="Show">Вернуться к списку приборов</a>
+    <a asp-action="Index">Вернуться к списку приборов</a>
 </div>

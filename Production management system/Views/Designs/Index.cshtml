@@ -9,6 +9,15 @@
 <p>
     <a asp-action="Create">Создать новый</a>
 </p>
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Поиск: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Поиск" class="btn btn-default" autocomplete="off" /> |
+            <a asp-action="Index">Вернуться к полному списку</a>
+        </p>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
@@ -20,6 +29,9 @@
             </th>
             <th>
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]">@Html.DisplayNameFor(model => model.Quantity)</a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShortDescription)
             </th>
             <th></th>
         </tr>
@@ -36,10 +48,16 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Quantity)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShortDescription)
+            </td>
             <td width="315px">
                 <a asp-action="Edit" asp-route-id="@item.Id">Редактировать</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Подробности</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a> |
+                <a asp-action="Add" asp-route-id="@item.Id">Добавить</a> |
+                <a asp-action="Receive" asp-route-id="@item.Id">Получить</a> |
+                <a asp-controller="Logs" asp-action="Index" asp-route-designId="@item.Id">Логи</a> 
             </td>
         </tr>
 }

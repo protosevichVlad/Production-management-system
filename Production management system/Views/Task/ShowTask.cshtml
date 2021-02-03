@@ -68,7 +68,7 @@
                 } 
                 @if (User.IsInRole(RoleEnum.Admin) || User.IsInRole(RoleEnum.OrderPicker))
                 {
-                    @:onclick="window.location = '/Components/Add?taskId=@ViewBag.Task.Id&componentId=@comp.Component.Id'" style="cursor: pointer" 
+                    @:onclick="window.location = '/Components/Add/@comp.Component.Id?taskId=@ViewBag.Task.Id'" style="cursor: pointer" 
                 }>
                 <td>@comp.Component.Name</td>
                 <td>@comp.Quantity</td>
@@ -109,7 +109,7 @@
                 } 
                 @if (User.IsInRole(RoleEnum.Admin) || User.IsInRole(RoleEnum.OrderPicker))
                 {
-                    @:onclick="window.location = '/Designs/Add?taskId=@ViewBag.Task.Id&designId=@des.Design.Id'" style="cursor: pointer" 
+                    @:onclick="window.location = '/Designs/Add/@des.Design.Id?taskId=@ViewBag.Task.Id'" style="cursor: pointer" 
                 }>
                 <td>@des.Design.Name</td>
                 <td>@des.Quantity</td>

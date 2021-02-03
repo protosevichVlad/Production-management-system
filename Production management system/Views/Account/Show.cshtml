@@ -23,6 +23,9 @@
             <td><p>@u.Login</p></td>
             <td><p class="password">@u.Password</p></td>
             <td><p>@u.Role.RusName</p></td>
+            <td>
+                <a asp-controller="Logs" asp-action="Index" asp-route-userLogin="@u.Login">Логи</a>
+            </td>
         </tr>
         }
     </tbody>

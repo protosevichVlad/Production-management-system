@@ -1,0 +1,47 @@
+﻿@model ProductionManagementSystem.Models.Log
+
+@{
+    ViewData["Title"] = "Подробная информация";
+}
+
+<h2>Подробная информация</h2>
+
+<div>
+    <h4>Логи</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-1">
+            @Html.DisplayNameFor(model => model.DateTime)
+        </dt>
+        <dd class="col-6">
+            @Html.DisplayFor(model => model.DateTime)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-1">
+            @Html.DisplayNameFor(model => model.UserLogin)
+        </dt>
+        <dd class="col-6">
+            @Html.DisplayFor(model => model.UserLogin)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-1">
+            @Html.DisplayNameFor(model => model.Message)
+        </dt>
+        <dd class="col-6">
+            @Html.DisplayFor(model => model.Message)
+        </dd>
+    </dl>
+    @if (!(ViewBag.DesignId is null))
+    {
+        <a asp-controller="Designs" asp-action="Details" asp-route-id="@ViewBag.DesignId">Перейти к конструктиву</a>
+    }
+    @if (!(ViewBag.ComponentId is null))
+    {
+        <a asp-controller="Components" asp-action="Details" asp-route-id="@ViewBag.ComponentId">Перейти к монтажу</a>
+    }
+</div>
+<div>
+    <a asp-action="Index">Вернуться к логам</a>
+</div>

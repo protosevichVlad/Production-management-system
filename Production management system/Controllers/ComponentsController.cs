@@ -17,16 +17,42 @@ namespace ProductionManagementSystem.Controllers
         {
             _context = new ApplicationContext();
         }
+        
+        private void Log(string message, Component component=null)
+        {
+            var log = new Log() {DateTime = DateTime.Now, UserLogin = User.Identity.Name, Message = message};
+            _context.Logs.Add(log);
+            if (component != null)
+            {
+                var logComponent = new LogComponent() {Log = log, Component = component};
+                _context.LogsComponent.Add(logComponent);
+            }
+            
+            _context.SaveChanges();
+        }
 
         // GET: Components
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
+            ViewData["CurrentFilter"] = searchString;
+            
             var components = from s in _context.Components
                 select s;
+            
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                components = components.Where(c => c.Name.Contains(searchString)
+                                                    || c.Corpus.Contains(searchString)
+                                                    || c.Explanation.Contains(searchString)
+                                                    || c.Nominal.Contains(searchString)
+                                                    || c.Type.Contains(searchString)
+                                                    || c.Manufacturer.Contains(searchString));
+            }
+            
             switch (sortOrder)
             {
                 case "name_desc":
@@ -110,6 +136,7 @@ namespace ProductionManagementSystem.Controllers
             {
                 _context.Add(component);
                 await _context.SaveChangesAsync();
+                Log($"Был создан: {component}.", component);
                 return RedirectToAction(nameof(Index));
             }
             return View(component);
@@ -149,6 +176,7 @@ namespace ProductionManagementSystem.Controllers
                 {
                     _context.Update(component);
                     await _context.SaveChangesAsync();
+                    Log($"Был изменён {component}.", component);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -190,6 +218,13 @@ namespace ProductionManagementSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var component = await _context.Components.FindAsync(id);
+            var logs = _context.LogsComponent.Where(l => l.ComponentId == id).ToList();
+            foreach (var log in logs)
+            {
+                _context.LogsComponent.Remove(log);
+            }
+            
+            Log($"Был удалён {component}.");
             _context.Components.Remove(component);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -204,6 +239,11 @@ namespace ProductionManagementSystem.Controllers
         public async Task<JsonResult> GetAllComponents()
         {
             List<Component> components = await _context.Components.OrderBy(c => c.Name).ToListAsync();
+            foreach (var comp in components)
+            {
+                comp.Name = $"{comp.Name} {comp.Nominal} {comp.Corpus}";
+            }
+            
             return Json(components);
         }
 
@@ -217,11 +257,45 @@ namespace ProductionManagementSystem.Controllers
         
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
-        public IActionResult Add(int taskId, int componentId)
+        public IActionResult Add(int id, int? taskId)
         {
 
+            var component = _context.Components.FirstOrDefault(d => d.Id == id);
+            if (component == null)
+            {
+                return NotFound();
+            }
+
             ViewBag.TaskId = taskId;
-            var component = _context.Components.FirstOrDefault(c => c.Id == componentId);
+            return View(component);
+        }
+        
+        [HttpPost]
+        public IActionResult Add(int componentId, int quantity, int? taskId)
+        {
+
+            var component = _context.Components.FirstOrDefault(d => d.Id == componentId);
+            if (component is null)
+            {
+                return NotFound();
+            }
+            component.Quantity += quantity;
+            Log($"Было добавлено {quantity}шт. После добавления: {component}.", component);
+            _context.SaveChanges();
+            if (taskId != null)
+            {
+                return RedirectToAction("ShowTask", "Task", new {id = taskId});
+            }
+            
+            return RedirectToAction(nameof(Index));
+        }
+        
+        [HttpGet]
+        [Authorize(Roles = "admin, order_picker")]
+        public IActionResult Receive(int id)
+        {
+
+            var component = _context.Components.FirstOrDefault(d => d.Id == id);
             if (component is null)
             {
                 return NotFound();
@@ -230,17 +304,19 @@ namespace ProductionManagementSystem.Controllers
             return View(component);
         }
         [HttpPost]
-        public IActionResult Add(int taskId, int componentId, int quantity)
+        public IActionResult Receive(int componentId, int quantity)
         {
-            var component = _context.Components.FirstOrDefault(c => c.Id == componentId);
+
+            Component component = _context.Components.FirstOrDefault(d => d.Id == componentId);
             if (component is null)
             {
                 return NotFound();
             }
             
-            component.Quantity += quantity;
+            component.Quantity -= quantity;
+            Log($"Было получено {quantity}шт. После получения: {component}.", component);
             _context.SaveChanges();
-            return Redirect($"/Task/ShowTask/{taskId}");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

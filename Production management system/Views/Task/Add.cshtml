@@ -9,8 +9,8 @@
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
-                <label for="Name" class="control-label">Заказчик: </label>
-                <input name="Name" id="Name" class="form-control" autocomplete="off" required/>
+                <label for="Customer" class="control-label">Заказчик: </label>
+                <input name="Customer" id="Customer" class="form-control" autocomplete="off" required/>
             </div>
             <div class="form-group">
                 <label for="Deadline" class="control-label">Deadline: </label>
@@ -19,89 +19,30 @@
         </div>
     </div>
     <br>
-    <button onclick="AddDevice()" type="button" class="btn">Добавить прибор</button>
-    <button onclick="RemoveDevice()" type="button" class="btn">Удалить прибор</button>
-    <br>
-    <div class="container" id="container">
-        <div class="row">
-            <div class="col">Наименование прибора:</div>
-            <div class="col">Количество:</div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <select class="Select" id="SelectDevice1" name="NameDevice1">
-                    @foreach (var d in ViewBag.Devices)
-                    {
-                        <option value="@d.Id">@d.Name</option>
-                    }
-                </select>
-            </div>
-            <div class="col">
-                <input type="number" name="Quantity1" autocomplete="off" min="0"><br>
-            </div>
+    <div class="row">
+        <div class="col">
+            <h3>
+                Приборы
+                <button type="button" onclick="createDevice()" class="btn btn-link">Добавить прибор</button>
+                <button type="button" onclick="removeDevice()" class="btn btn-link">Удалить последний прибор</button>
+            </h3>
         </div>
     </div>
-
+    <div class="row">
+        <table class="table">
+            <thead>
+            <tr>
+                <td>№</td>    
+                <td>Наименование прибора</td>
+                <td>Количество</td>
+            </tr>
+            </thead>
+            <tr id="devTr0">
+            </tr>
+        </table>
+    </div>
     <button type="submit" class="btn btn-info">Принять</button>
 </form>
 <script>
-    async function AddDevice() {
-        let rows = [...document.getElementsByClassName('row')];
-
-        let newSelect = document.createElement("select");
-        let newInput = document.createElement("input");
-
-        let row = document.createElement("div");
-        let col1 = document.createElement("div");
-        let col2 = document.createElement("div");
-
-        row.classList.add("row");
-        col1.classList.add("col");
-        col2.classList.add("col");
-
-        let option = document.createElement("option");
-
-        let r = await new Request('/Devices/GetAllDevices');
-        let devicesJson = await fetch(r).then(c => c.json());
-
-        console.log(devicesJson);
-        for (let i = 0; i < devicesJson.length; i++)
-        {
-            let d = devicesJson[i]
-            option = document.createElement("option");
-            option.value = d.id;
-            option.text = d.name;
-            newSelect.appendChild(option);
-        }
-
-        let length = rows.length;
-
-        newSelect.classList.add('Select');
-        newSelect.id = 'SelectDevice' + length;
-        newSelect.name = 'NameDevice' + length;
-
-        newInput.classList.add('DesignInput');
-        newInput.name = 'Quantity' + length + 'Input';
-        newInput.type = 'number';
-        newInput.required = true;
-        newInput.autocomplete = 'off';
-        newInput.min = 0;
-
-
-        col1.insertAdjacentElement('afterbegin', newSelect);
-        col2.insertAdjacentElement('afterbegin', newInput);
-
-        row.insertAdjacentElement('afterbegin', col1);
-        row.insertAdjacentElement('beforeend', col2);
-
-        document.getElementById('container').insertAdjacentElement('beforeend', row);
-    }
-
-    function RemoveDevice() {
-        let rows = [...document.getElementsByClassName('row')];
-
-        if (rows.length > 1) {
-            rows[rows.length - 1].remove();
-        }
-    }
+    
 </script>

@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  productionmanagementsystem:
-    image: ${DOCKER_REGISTRY-}productionmanagementsystem
+  production-management-system:
+    image: protosevich2001/production-management-system
     build:
       context: .
       dockerfile: Production management system/Dockerfile
