@@ -10,9 +10,9 @@ namespace ProductionManagementSystem.Controllers
     {
         private readonly ApplicationContext _context;
 
-        public HomeController()
+        public HomeController(ApplicationContext context)
         {
-            _context = new ApplicationContext();
+            _context = context;
         }
 
         public IActionResult Index()

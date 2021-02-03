@@ -23,7 +23,7 @@ async function createDesign() {
 }
 
 async function createTextComponent(id) {
-    let str = `<tr id="comTr${id}"><td>${id}</td><td><select class="ComponentSelect align-top width-100" id="Component${id}" name="Component${id}">`;
+    let str = `<tr id="comTr${id}"><td>${id}</td><td><select class="ComponentSelect align-top width-100" name="ComponentIds">`;
 
     let r = await new Request('/Components/GetAllComponents');
     let componentsJson = await fetch(r).then(c => c.json());
@@ -32,13 +32,13 @@ async function createTextComponent(id) {
         let c = componentsJson[i]
         str += `<option value="${c.id}">${c.name}</option>`;
     }
-    str += `</select></td><td><input class="ComponentInput align-top" id="Component${id}Input" name="Component${id}Input" type="number" required autocomplete="off" min="0" />`;
-    str += `</td><td><textarea name="Component${id}Text" class="align-top w-100"></textarea></td></tr>`;
+    str += `</select></td><td><input class="ComponentInput align-top" name="ComponentQuantity" type="number" required autocomplete="off" min="0" />`;
+    str += `</td><td><textarea name="ComponentDescriptions" class="align-top w-100"></textarea></td></tr>`;
     return str;
 }
 
 async function createTextDesign(id) {
-    let str = `<tr id="desTr${id}"><td>${id}</td><td><select class="DesignSelect align-top width-100" id="Design${id}" name="Design${id}">`;
+    let str = `<tr id="desTr${id}"><td>${id}</td><td><select class="DesignSelect align-top width-100" name="DesignIds">`;
 
     let r = await new Request('/Designs/GetAllDesigns');
     let componentsJson = await fetch(r).then(c => c.json());
@@ -47,8 +47,8 @@ async function createTextDesign(id) {
         let c = componentsJson[i]
         str += `<option value="${c.id}">${c.name}</option>`;
     }
-    str += `</select></td><td><input class="DesignInput align-top" id="Design${id}Input" name="Design${id}Input" type="number" required autocomplete="off" min="0" />`;
-    str += `</td><td><textarea name="Design${id}Text" class="align-top w-100"></textarea></td></tr>`;
+    str += `</select></td><td><input class="DesignInput align-top" name="DesignQuantity" type="number" required autocomplete="off" min="0" />`;
+    str += `</td><td><textarea name="DesignDescriptions" class="align-top w-100"></textarea></td></tr>`;
     return str;
 }
 

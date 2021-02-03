@@ -17,9 +17,9 @@ namespace ProductionManagementSystem.Controllers
     public class AccountController : Controller
     {
         private ApplicationContext _context;
-        public AccountController()
+        public AccountController(ApplicationContext context)
         {
-            _context = new ApplicationContext();
+            _context = context;
         }
 
         [HttpGet]

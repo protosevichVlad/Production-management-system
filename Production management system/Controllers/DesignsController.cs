@@ -13,9 +13,9 @@ namespace ProductionManagementSystem.Controllers
     {
         private readonly ApplicationContext _context;
 
-        public DesignsController()
+        public DesignsController(ApplicationContext context)
         {
-            _context = new ApplicationContext();
+            _context = context;
         }
         
         private void Log(string message, Design design=null)

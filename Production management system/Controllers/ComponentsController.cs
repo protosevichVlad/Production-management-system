@@ -17,7 +17,11 @@ namespace ProductionManagementSystem.Controllers
         {
             _context = new ApplicationContext();
         }
-        
+        /// <summary>
+        /// The recording of information on the change object
+        /// </summary>
+        /// <param name="message">Description of changes</param>
+        /// <param name="component">Element to change</param>
         private void Log(string message, Component component=null)
         {
             var log = new Log() {DateTime = DateTime.Now, UserLogin = User.Identity.Name, Message = message};
@@ -32,6 +36,12 @@ namespace ProductionManagementSystem.Controllers
         }
 
         // GET: Components
+        /// <summary>
+        /// Display index page
+        /// </summary>
+        /// <param name="sortOrder">Used for sorting</param>
+        /// <param name="searchString">Used for searching</param>
+        /// <returns>A page with all components sorted by parameter <paramref name="sortOrder"/> and satisfying <paramref name="searchString"/></returns>
         [HttpGet]
         public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
@@ -235,6 +245,11 @@ namespace ProductionManagementSystem.Controllers
             return _context.Components.Any(e => e.Id == id);
         }
         
+        /// <summary>
+        /// Method for getting all components in the form:
+        /// {component.Name} {component.Nominal} {component.Corpus}
+        /// </summary>
+        /// <returns>JSON. Array of all components</returns>
         [HttpGet]
         public async Task<JsonResult> GetAllComponents()
         {
@@ -247,6 +262,10 @@ namespace ProductionManagementSystem.Controllers
             return Json(components);
         }
 
+        /// <summary>
+        /// Method for getting all types of components
+        /// </summary>
+        /// <returns>JSON. Array of all types of components</returns>
         [HttpGet]
         public async Task<JsonResult> GetAllTypes()
         {
@@ -255,6 +274,12 @@ namespace ProductionManagementSystem.Controllers
             return Json(types);
         }
         
+        /// <summary>
+        /// Page with the addition to the component.
+        /// </summary>
+        /// <param name="id">Id of the component to add.</param>
+        /// <param name="taskId">Task ID for quick return</param>
+        /// <returns>Page with form</returns>
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Add(int id, int? taskId)
@@ -270,6 +295,13 @@ namespace ProductionManagementSystem.Controllers
             return View(component);
         }
         
+        /// <summary>
+        /// Adding logic
+        /// </summary>
+        /// <param name="componentId">Id of the component to add.</param>
+        /// <param name="quantity">Quantity to add</param>
+        /// <param name="taskId">Task ID for quick return</param>
+        /// <returns>Page /Components or the page with the task from which this page was called</returns>
         [HttpPost]
         public IActionResult Add(int componentId, int quantity, int? taskId)
         {
@@ -290,6 +322,11 @@ namespace ProductionManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
         
+        /// <summary>
+        /// Page with the access to the component
+        /// </summary>
+        /// <param name="id">Id of the component to receive.</param>
+        /// <returns>Page with form</returns>
         [HttpGet]
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Receive(int id)
@@ -303,6 +340,13 @@ namespace ProductionManagementSystem.Controllers
             
             return View(component);
         }
+        
+        /// <summary>
+        /// Receiving logic
+        /// </summary>
+        /// <param name="componentId">Id of the component to add.</param>
+        /// <param name="quantity">Quantity to receive</param>
+        /// <returns>Page /Components</returns>
         [HttpPost]
         public IActionResult Receive(int componentId, int quantity)
         {

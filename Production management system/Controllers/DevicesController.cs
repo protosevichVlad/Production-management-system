@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Models;
+using ProductionManagementSystem.ViewModels;
 
 namespace ProductionManagementSystem.Controllers
 {
@@ -14,9 +15,9 @@ namespace ProductionManagementSystem.Controllers
     {
         private ApplicationContext _context;
 
-        public DevicesController()
+        public DevicesController(ApplicationContext context)
         {
-            _context = new ApplicationContext();
+            _context = context;
         }
 
         [Authorize(Roles = "admin")]
@@ -55,116 +56,41 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
-            List<Design> designs = _context.Designs.OrderBy(d => d.Name).ToList();
-            designs.ForEach((d) => {
-                byte[] bytes = System.Text.Encoding.Default.GetBytes(d.Name);
-                d.Name = System.Text.Encoding.UTF8.GetString(bytes);
-            });
-
-            List<Component> components = _context.Components.OrderBy(c => c.Name).ToList();
-            components.ForEach((c) => {
-                byte[] bytes = System.Text.Encoding.Default.GetBytes(c.Name);
-                c.Name = System.Text.Encoding.UTF8.GetString(bytes);
-            });
-
-            ViewBag.Designs = designs;
-            ViewBag.Components = components;
             return View();
         }
 
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public IActionResult Create(IFormCollection collection)
+        public IActionResult Create(DeviceViewModel deviceViewModel)
         {
-            List<DeviceComponentsTemplate> componentsTemplate = new List<DeviceComponentsTemplate>();
-            List<DeviceDesignTemplate> designTemplate = new List<DeviceDesignTemplate>();
-
-            int idComponent = 0;
-            int idDesign = 0;
-
-            int quantity = 0;
             Device device = new Device();
-            foreach (var key in collection.Keys)
-            {
+            device.Name = deviceViewModel.Name;
+            device.Quantity = deviceViewModel.Quantity;
+            device.DeviceDesignTemplate = new List<DeviceDesignTemplate>();
+            device.DeviceComponentsTemplate = new List<DeviceComponentsTemplate>();
 
-                if (key == "Name")
+            for (int i = 0; i < deviceViewModel.ComponentIds.Length; i++)
+            {
+                device.DeviceComponentsTemplate.Add(new DeviceComponentsTemplate
                 {
-                    device.Name = collection[key];
-                }
-                else if (key == "Quantity")
-                {
-                    if (int.TryParse(collection[key], out int q))
-                    {
-                        device.Quantity = q;
-                    }
-                    else
-                    {
-                        device.Quantity = 0;
-                    }
-                }
-                else if (key.Contains("Component"))
-                {
-                    if (key.Contains("Input"))
-                    {
-                        if (!int.TryParse(collection[key], out quantity))
-                        {
-                            quantity = 0;
-                        }
-                    }
-                    else if (key.Contains("Text"))
-                    {
-                        componentsTemplate.Add(new DeviceComponentsTemplate
-                        {
-                            Component = _context.Components.Where(c => c.Id == idComponent).FirstOrDefault(),
-                            Quantity = quantity,
-                            Description = collection[key],
-                        });
-                    }
-                    else
-                    {
-                        if (int.TryParse(collection[key], out int id))
-                        {
-                            idComponent = id;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("id");
-                        }
-                    }
-                }
-                else if (key.Contains("Design"))
-                {
-                    if (key.Contains("Input"))
-                    {
-                        if (!int.TryParse(collection[key], out quantity))
-                        {
-                            quantity = 0;
-                        }
-                    }
-                    else if (key.Contains("Text"))
-                    {
-                        designTemplate.Add(new DeviceDesignTemplate
-                        {
-                            Design = _context.Designs.Where(c => c.Id == idDesign).FirstOrDefault(),
-                            Quantity = quantity,
-                            Description = collection[key],
-                        });
-                    }
-                    else
-                    {
-                        if (int.TryParse(collection[key], out int id))
-                        {
-                            idDesign = id;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("id");
-                        }
-                    }
-                }
+                    Component =
+                        _context.Components.Where(c => c.Id == deviceViewModel.ComponentIds[i]).FirstOrDefault(),
+                    Quantity = deviceViewModel.ComponentQuantity[i],
+                    Description = deviceViewModel.ComponentDescriptions[i],
+                });
             }
-            device.DeviceComponentsTemplate = componentsTemplate;
-            device.DeviceDesignTemplate = designTemplate;
+            
+            for (int i = 0; i < deviceViewModel.DesignIds.Length; i++)
+            {
+                device.DeviceDesignTemplate.Add(new DeviceDesignTemplate
+                {
+                    Design =
+                        _context.Designs.Where(c => c.Id == deviceViewModel.DesignIds[i]).FirstOrDefault(),
+                    Quantity = deviceViewModel.DesignQuantity[i],
+                    Description = deviceViewModel.DesignDescriptions[i],
+                });
+            }
+            
             _context.Devices.Add(device);
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
@@ -199,113 +125,49 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public IActionResult Edit(IFormCollection collection)
+        public IActionResult Edit(DeviceViewModel deviceViewModel)
         {
-            List<DeviceComponentsTemplate> componentsTemplate = new List<DeviceComponentsTemplate>();
-            List<DeviceDesignTemplate> designTemplate = new List<DeviceDesignTemplate>();
-
-            int idComponent = 0;
-            int idDesign = 0;
-            int quantity = 0;
-
-            if (!int.TryParse(collection["Id"], out var idDevice))
-            {
-
-            }
-
             Device device = _context.Devices
                 .Include(d => d.DeviceComponentsTemplate)
-                .ThenInclude(d => d.Component)
+                    .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
-                .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == idDevice);
+                    .ThenInclude(d => d.Design)
+                .FirstOrDefault(d => d.Id == deviceViewModel.Id);
 
             if (device == null)
             {
                 return NotFound();
             }
 
-            foreach (var key in collection.Keys)
+            device.Name = deviceViewModel.Name;
+            device.Quantity = deviceViewModel.Quantity;
+            device.DeviceDesignTemplate = new List<DeviceDesignTemplate>();
+            device.DeviceComponentsTemplate = new List<DeviceComponentsTemplate>();
+            
+            for (int i = 0; i < deviceViewModel.ComponentIds.Length; i++)
             {
-                if (key == "Name")
+                device.DeviceComponentsTemplate.Add(new DeviceComponentsTemplate
                 {
-                    device.Name = collection[key];
-                }
-                else if (key == "Quantity")
-                {
-                    if (int.TryParse(collection[key], out quantity))
-                    {
-                        device.Quantity = quantity;
-                    }
-                    else
-                    {
-                        device.Quantity = 0;
-                    }
-                }
-                else if (key.Contains("Component"))
-                {
-                    if (key.Contains("Input"))
-                    {
-                        if (!int.TryParse(collection[key], out quantity))
-                        {
-                            quantity = 0;
-                        }
-                    }
-                    else if (key.Contains("Text"))
-                    {
-                        componentsTemplate.Add(new DeviceComponentsTemplate
-                        {
-                            Component = _context.Components.Where(c => c.Id == idComponent).FirstOrDefault(),
-                            Quantity = quantity,
-                            Description = collection[key],
-                        });
-                    }
-                    else
-                    {
-                        if (int.TryParse(collection[key], out int id))
-                        {
-                            idComponent = id;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("id");
-                        }
-                    }
-                }
-                else if (key.Contains("Design"))
-                {
-                    if (key.Contains("Input"))
-                    {
-                        if (!int.TryParse(collection[key], out quantity))
-                        {
-                            quantity = 0;
-                        }
-                    }
-                    else if (key.Contains("Text"))
-                    {
-                        designTemplate.Add(new DeviceDesignTemplate
-                        {
-                            Design = _context.Designs.Where(c => c.Id == idDesign).FirstOrDefault(),
-                            Quantity = quantity,
-                            Description = collection[key],
-                        });
-                    }
-                    else
-                    {
-                        if (int.TryParse(collection[key], out int id))
-                        {
-                            idDesign = id;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("id");
-                        }
-                    }
-                }
+                    Component =
+                        _context.Components.Where(c => c.Id == deviceViewModel.ComponentIds[i]).FirstOrDefault(),
+                    Quantity = deviceViewModel.ComponentQuantity[i],
+                    Description = deviceViewModel.ComponentDescriptions[i],
+                });
             }
-            device.DeviceComponentsTemplate = componentsTemplate;
-            device.DeviceDesignTemplate = designTemplate;
+            
+            for (int i = 0; i < deviceViewModel.DesignIds.Length; i++)
+            {
+                device.DeviceDesignTemplate.Add(new DeviceDesignTemplate
+                {
+                    Design =
+                        _context.Designs.Where(c => c.Id == deviceViewModel.DesignIds[i]).FirstOrDefault(),
+                    Quantity = deviceViewModel.DesignQuantity[i],
+                    Description = deviceViewModel.DesignDescriptions[i],
+                });
+            }
+
             _context.SaveChanges();
-            return RedirectToAction(nameof(Details), new { id = idDevice });
+            return RedirectToAction(nameof(Details), new { id = device.Id });
         }
 
         [HttpGet]
@@ -314,9 +176,9 @@ namespace ProductionManagementSystem.Controllers
         {
             ViewBag.Device = _context.Devices
                 .Include(d => d.DeviceComponentsTemplate)
-                .ThenInclude(d => d.Component)
+                    .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
-                .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == id);
+                    .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == id);
             return View();
         }
 

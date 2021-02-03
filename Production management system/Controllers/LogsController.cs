@@ -10,9 +10,9 @@ namespace ProductionManagementSystem.Controllers
     {
         private readonly ApplicationContext _context;
 
-        public LogsController()
+        public LogsController(ApplicationContext context)
         {
-            _context = new ApplicationContext();
+            _context = context;
         }
 
         public IActionResult Index(int? componentId, int? designId, string userLogin)

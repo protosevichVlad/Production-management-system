@@ -13,9 +13,9 @@ namespace ProductionManagementSystem.Controllers
     {
         private ApplicationContext _context;
 
-        public TaskController()
+        public TaskController(ApplicationContext context)
         {
-            _context = new ApplicationContext();
+            _context = context;
         }
 
         [Authorize]

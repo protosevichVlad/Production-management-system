@@ -50,7 +50,7 @@
                             @index
                         </td>
                         <td>
-                            <select class="ComponentSelect align-top width-100" id="Component@(index)" name="Component@(index)">
+                            <select class="ComponentSelect align-top width-100" name="ComponentIds">
                                 @foreach (var c in ViewBag.Components)
                                 {
                                     @if (c.Id == comp.Component.Id)
@@ -65,10 +65,10 @@
                             </select>
                         </td>
                         <td>
-                            <input class="ComponentInput align-top" id="Component@(index)Input" name="Component@(index)Input" type="number" value="@comp.Quantity" required autocomplete="off" min="0" />
+                            <input class="ComponentInput align-top" name="ComponentQuantity" type="number" value="@comp.Quantity" required autocomplete="off" min="0" />
                         </td>
                         <td>
-                            <textarea class="align-top w-100" name="Component@(index)Text">@comp.Description</textarea>
+                            <textarea class="align-top w-100" name="ComponentDescriptions">@comp.Description</textarea>
                         </td>
                     </tr>
                     index++;
@@ -105,7 +105,7 @@
                                 @index
                             </td>
                             <td>
-                                <select class="DesignSelect align-top width-100" id="Design@(index)" name="Design@(index)">
+                                <select class="DesignSelect align-top width-100" name="DesignIds">
                                     @foreach (var d in ViewBag.Designs)
                                     {
                                         @if (des.Design.Id == d.Id)
@@ -120,10 +120,10 @@
                                 </select>
                             </td>
                             <td>
-                                <input class="DesignInput align-top" id="Design@(index)Input" name="Design@(index)Input" type="number" required value="@des.Quantity" autocomplete="off" min="0" />
+                                <input class="DesignInput align-top" name="DesignQuantity" type="number" required value="@des.Quantity" autocomplete="off" min="0" />
                             </td>
                             <td>
-                                <textarea class="align-top w-100" name="Design@(index)Text">@des.Description</textarea>
+                                <textarea class="align-top w-100" name="DesignDescriptions">@des.Description</textarea>
                             </td>
                         </tr>
                         index++;

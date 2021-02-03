@@ -11,9 +11,9 @@ namespace ProductionManagementSystem.Controllers
     {
         private ApplicationContext _context;
         
-        public OrdersController()
+        public OrdersController(ApplicationContext context)
         {
-            _context = new ApplicationContext();
+            _context = context;
         }
 
         // GET
