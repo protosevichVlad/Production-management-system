@@ -6,14 +6,15 @@
 
 <h2>Логи</h2>
 
-<table class="table">
-    <thead>
+<div class="table-responsive">
+    <table class="table table-sm">
+        <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.DateTime)
             </th>
             <th>
-               @Html.DisplayNameFor(model => model.UserLogin)
+                @Html.DisplayNameFor(model => model.UserLogin)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Message)
@@ -21,23 +22,26 @@
             <th>
             </th>
         </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserLogin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Message)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Подробности</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td style="min-width: 170px;">
+                    @Html.DisplayFor(modelItem => item.DateTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserLogin)
+                </td>
+                <td>
+                    <div class="text-truncate td-with-log-message">
+                        @Html.DisplayFor(modelItem => item.Message)
+                    </div>
+                </td>
+                <td>
+                    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@item.Id">Подробности</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

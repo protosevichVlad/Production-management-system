@@ -3,9 +3,11 @@
 @{
     ViewData["Title"] = "Подробная информация";
 }
-
-<h2>Подробная информация</h2>
-
+<h4>Подробная информация</h4>
+<div class="alert alert-info" role="alert">
+    Здесь вы можете узнать подробную информацию о сообшении №@Model.Id
+</div>
+<hr />
 <div>
     <h4>Логи</h4>
     <hr />
@@ -33,15 +35,15 @@
             @Html.DisplayFor(model => model.Message)
         </dd>
     </dl>
-    @if (!(ViewBag.DesignId is null))
-    {
-        <a asp-controller="Designs" asp-action="Details" asp-route-id="@ViewBag.DesignId">Перейти к конструктиву</a>
-    }
-    @if (!(ViewBag.ComponentId is null))
-    {
-        <a asp-controller="Components" asp-action="Details" asp-route-id="@ViewBag.ComponentId">Перейти к монтажу</a>
-    }
 </div>
 <div>
-    <a asp-action="Index">Вернуться к логам</a>
+    <a class="btn btn-light btn-sm" asp-action="Index">Вернуться к логам</a>
+    @if (ViewBag.DesignId != null)
+    {
+        <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="Details" asp-route-id="@ViewBag.DesignId">Перейти к конструктиву</a>
+    }
+    @if (ViewBag.ComponentId != null)
+    {
+        <a class="btn btn-light btn-sm" asp-controller="Components" asp-action="Details" asp-route-id="@ViewBag.ComponentId">Перейти к монтажу</a>
+    }
 </div>

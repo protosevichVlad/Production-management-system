@@ -5,6 +5,11 @@
     ViewData["Title"] = "Прибор: " + ViewBag.Device.Name;
 }
 
+<h4>Подробная информация</h4>
+<div class="alert alert-info" role="alert">
+    Здесь вы можете узнать подробную информацию о @Model.Name.
+</div>
+<hr />
 <div class="container">
     @DeviceHelper.CreateDevice(Html, ViewBag.Device, true, null)
 </div>

@@ -3,9 +3,11 @@
 @{
     ViewBag.Title = "Добавить " + Model.Name;
 }
-<h2>Добавить</h2>
-
-<h4>Конструктив</h4>
+<h4>Добавить монтаж</h4>
+<div class="alert alert-info" role="alert">
+    Здесь вы можете добавить @Model.Name на склад
+</div>
+<hr />
 <dl class="row">
     <dt class = "col-sm-2">
         @Html.DisplayNameFor(model => model.Type)

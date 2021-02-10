@@ -3,9 +3,11 @@
 @{
     ViewBag.Title = "Получить " + Model.Name;
 }
-<h2>Получить</h2>
-
-<h4>Конструктив</h4>
+<h4>Получить монтаж</h4>
+<div class="alert alert-info" role="alert">
+    Здесь вы можете получить @Model.Name
+</div>
+<hr />
 <dl class="row">
     <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Type)

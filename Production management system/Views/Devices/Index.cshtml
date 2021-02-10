@@ -35,10 +35,10 @@
                 <td>
                     @d.Quantity
                 </td>
-                <td width="315px">
-                    <a asp-action="Edit" asp-route-id="@d.Id">Редактировать</a> |
-                    <a asp-action="Details" asp-route-id="@d.Id">Подробности</a> |
-                    <a asp-action="Delete" asp-route-id="@d.Id">Удалить</a>
+                <td class="td-with-buttons">
+                    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@d.Id">Подробности</a>
+                    <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@d.Id">Редактировать</a>
+                    <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@d.Id">Удалить</a>
                 </td>
             </tr>
         }

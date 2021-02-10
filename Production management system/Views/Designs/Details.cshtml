@@ -4,11 +4,12 @@
     ViewData["Title"] = "Подробная информация";
 }
 
-<h2>Подробная информация</h2>
-
+<h4>Подробная информация</h4>
+<div class="alert alert-info" role="alert">
+    Здесь вы можете узнать подробную информацию или совершить дополнительные действие с @Model.Name.
+</div>
+<hr />
 <div>
-    <h4>Конструктив</h4>
-    <hr />
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Type)
@@ -43,6 +44,10 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a> |
-    <a asp-action="Index">Вернуться к списку конструктива</a>
+    <a class="btn btn-light" asp-action="Index">Вернуться к списку монтажа</a>
+    <a class="btn btn-light" asp-action="Add" asp-route-id="@Model.Id">Добавить</a>
+    <a class="btn btn-light" asp-action="Receive" asp-route-id="@Model.Id">Получить</a>
+    <a class="btn btn-light" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+    <a class="btn btn-light" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+    <a class="btn btn-light" asp-controller="Logs" asp-action="Index" asp-route-designId="@Model.Id">Логи</a>
 </div>

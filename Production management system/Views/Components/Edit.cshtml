@@ -4,9 +4,10 @@
     ViewData["Title"] = "Редактировать " + @Model.Name;
 }
 
-<h2>Редактировать</h2>
-
-<h4>Монтаж</h4>
+<h4>Редактировать монтаж</h4>
+<div class="alert alert-info" role="alert">
+    Здесь вы можете изменить информацию о @Model.Name.
+</div>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -51,7 +52,7 @@
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Сохранить" class="btn btn-primary" />
+                <input type="submit" value="Принять" class="btn btn-primary" />
             </div>
         </form>
     </div>

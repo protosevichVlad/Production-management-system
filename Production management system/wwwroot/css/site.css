@@ -121,3 +121,39 @@ hr {
 tr:hover .password {
     display: block;
 }
+
+.td-with-buttons {
+    width: 290px;
+}
+
+.td-with-log-message {
+  width: 180px;
+}
+
+.description {
+  width: 200px;
+}
+
+@media (min-width: 576px) {
+  .td-with-log-message {
+    width: 180px;
+  }
+}
+
+@media (min-width: 768px) {
+  .td-with-log-message {
+    width: 300px;
+  }
+}
+
+@media (min-width: 992px) {
+  .td-with-log-message {
+    width: 400px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .td-with-log-message {
+    width: 500px;
+  }
+}

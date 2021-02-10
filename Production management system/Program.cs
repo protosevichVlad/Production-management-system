@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,7 @@ namespace ProductionManagementSystem
     {
         public static void Main(string[] args)
         {
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("ru-RU");
             CreateHostBuilder(args).Build().Run();
         }
 
