@@ -6,16 +6,10 @@ namespace ProductionManagementSystem
 {
     public static class DeviceHelper
     {
-        public static HtmlString CreateDevice(this IHtmlHelper html, Device device, bool print, int? quantity)
+        public static HtmlString CreateDevice(this IHtmlHelper html, Device device, int? quantity)
         {
-            string result = "<dl class='row'><div class='col-sm-10'>";
-            if (print)
-            {
-                result +=
-                    @"<button class='btn btn-link float-right' type='button' onclick='window.print()'>Распечатать(Сохранить)</button>";
-            }
-
-            result += @"</div><dt class = 'col-sm-4'>Наименовие</dt><dd class = 'col-sm-10'>" + device.Name + @"</dd>
+            string result = "<dl class='row'>";
+            result += @"<dt class = 'col-sm-4'>Наименовие</dt><dd class = 'col-sm-10'>" + device.Name + @"</dd>
                       <dt class = 'col-sm-4'>Количество на складе:</dt><dd class = 'col-sm-10'>" + device.Quantity + "</dd>";
             if (!(quantity is null))
             {
@@ -36,7 +30,7 @@ namespace ProductionManagementSystem
                 { 
                     result += "class='table-danger'";
                 };
-                result += $"><td>{comp.Component.Name}</td>";
+                result += $"><td>{comp.Component.ToString()}</td>";
                 result += $"<td>{comp.Quantity}</td>";
                 if (!(quantity is null))
                 {
@@ -62,7 +56,7 @@ namespace ProductionManagementSystem
                     result += "class='table-danger'";
                 }
 
-                result += $"><td>{des.Design.Name}</td>";
+                result += $"><td>{des.Design.ToString()}</td>";
                 result += $"<td>{des.Quantity}</td>";
                 if (!(quantity is null))
                 {

@@ -174,12 +174,12 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Details(int id)
         {
-            ViewBag.Device = _context.Devices
+            var model = _context.Devices
                 .Include(d => d.DeviceComponentsTemplate)
                     .ThenInclude(d => d.Component)
                 .Include(d => d.DeviceDesignTemplate)
                     .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == id);
-            return View();
+            return View(model);
         }
 
         public async Task<IActionResult> Delete(int? id)

@@ -34,7 +34,7 @@ namespace ProductionManagementSystem.Models
         
         public override string ToString()
         {
-            return $"Монтаж: {Type} {Name} {Nominal} {Corpus} {Explanation} {Manufacturer} количество {Quantity}";
+            return $"{Type} {Name} {Nominal}";
         }
     }
 }

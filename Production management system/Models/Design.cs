@@ -30,7 +30,7 @@ namespace ProductionManagementSystem.Models
 
         public override string ToString()
         {
-            return $"Конструктив: {Type} {Name} {ShortDescription} количество {Quantity}";
+            return $"{Type} {Name} {ShortDescription}";
         }
     }
 }

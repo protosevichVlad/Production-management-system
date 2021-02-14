@@ -92,8 +92,9 @@ namespace ProductionManagementSystem.Controllers
         }
 
         // GET: Designs/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.AllTypes = await GetAllTypes();
             return View();
         }
         
@@ -150,6 +151,8 @@ namespace ProductionManagementSystem.Controllers
             {
                 return NotFound();
             }
+            
+            ViewBag.AllTypes = await GetAllTypes();
             return View(design);
         }
 
@@ -243,12 +246,12 @@ namespace ProductionManagementSystem.Controllers
             return Json(designs);
         }
 
-        [HttpGet]
-        public async Task<JsonResult> GetAllTypes()
+        [NonAction]
+        private async Task<List<string>> GetAllTypes()
         {
             List<string> types = await  _context.Designs.OrderBy(d => d.Type).Select(d => d.Type).ToListAsync();
             types = types.Distinct().ToList();
-            return Json(types);
+            return types;
         }
 
         [HttpGet]

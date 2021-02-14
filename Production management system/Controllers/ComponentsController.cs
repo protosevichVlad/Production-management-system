@@ -106,33 +106,10 @@ namespace ProductionManagementSystem.Controllers
         }
 
         // GET: Components/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.AllTypes = await GetAllTypes();
             return View();
-        }
-        
-        public IActionResult CreateMore()
-        {
-            string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-            int count = 200;
-            var random = new Random();
-            List<Component> components = new List<Component>();
-            for (int i = 0; i < count; i++)
-            {
-                components.Add(new Component
-                {
-                    Name = $"{letters[random.Next(letters.Length)]}Name{i}",
-                    Corpus = $"{letters[random.Next(letters.Length)]}Corpus{i}",
-                    Explanation = $"{letters[random.Next(letters.Length)]}Explanation{i}",
-                    Manufacturer = $"{letters[random.Next(letters.Length)]}Manufacturer{i}",
-                    Nominal = $"{letters[random.Next(letters.Length)]}Nominal{i}",
-                    Type = $"Type{random.Next(10)}",
-                    Quantity = random.Next(10000),
-                });
-            }
-            _context.Components.AddRange(components);
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
         }
 
         // POST: Components/Create
@@ -165,6 +142,8 @@ namespace ProductionManagementSystem.Controllers
             {
                 return NotFound();
             }
+            
+            ViewBag.AllTypes = await GetAllTypes();
             return View(component);
         }
 
@@ -266,12 +245,12 @@ namespace ProductionManagementSystem.Controllers
         /// Method for getting all types of components
         /// </summary>
         /// <returns>JSON. Array of all types of components</returns>
-        [HttpGet]
-        public async Task<JsonResult> GetAllTypes()
+        [NonAction]
+        private async Task<List<string>> GetAllTypes()
         {
             List<string> types = await _context.Components.OrderBy(c => c.Type).Select(c => c.Type).ToListAsync();
             types = types.Distinct().ToList();
-            return Json(types);
+            return types;
         }
         
         /// <summary>
