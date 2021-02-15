@@ -22,19 +22,35 @@ namespace ProductionManagementSystem.Controllers
         public IActionResult Show()
         {
             List<Task> tasks = new List<Task>();
-            if (User.IsInRole("admin"))
+            if (User.IsInRole(RoleEnum.Admin))
             {
                 tasks = _context.Tasks.ToList();
             } 
-            else if (User.IsInRole("order_picker"))
+            else if (User.IsInRole(RoleEnum.OrderPicker))
             {
                 tasks = _context.Tasks.Where(t => t.Status.Contains("Комплектация")).ToList();
             }
-            else if (User.IsInRole("assembler"))
+            else if (User.IsInRole(RoleEnum.Assembler))
             {
                 tasks = _context.Tasks.Where(t => t.Status.Contains("Монтаж") || t.Status.Contains("монтаж")).ToList();
             }
-
+            else if (User.IsInRole(RoleEnum.Collector))
+            {
+                tasks = _context.Tasks.Where(t => t.Status.Contains("Сборка")).ToList();
+            }
+            else if (User.IsInRole(RoleEnum.Shipper))
+            {
+                tasks = _context.Tasks.Where(t => t.Status.Contains("Отправка")).ToList();
+            }
+            else if (User.IsInRole(RoleEnum.Tuner))
+            {
+                tasks = _context.Tasks.Where(t => t.Status.Contains("Настройка")).ToList();
+            }
+            else if (User.IsInRole(RoleEnum.Validating))
+            {
+                tasks = _context.Tasks.Where(t => t.Status.Contains("Проверка")).ToList();
+            }
+            
             return View(tasks);
         }
 
@@ -130,9 +146,12 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpGet]
         [Authorize(Roles = "admin, order_picker, assembler")]
-        public IActionResult NextStage(int taskId)
+        public async System.Threading.Tasks.Task<IActionResult> NextStage(int taskId)
         {
-            Task task = _context.Tasks.FirstOrDefault(t => t.Id == taskId);
+            Task task = await _context.Tasks
+                .Include(t => t.DevicesInTask)
+                    .ThenInclude(dt => dt.Device)
+                .FirstOrDefaultAsync(t => t.Id == taskId);
 
             if (task == null)
             {
