@@ -69,11 +69,11 @@
                         @Html.DisplayFor(modelItem => item.ShortDescription)
                     </div>
                 </td>
-               <td class="td-with-buttons">
-                   <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@item.Id">Подробности</a>
-                   <a class="btn btn-light btn-sm" asp-action="Add" asp-route-id="@item.Id">Добавить</a>
-                   <a class="btn btn-light btn-sm" asp-action="Receive" asp-route-id="@item.Id">Получить</a>
-               </td>
+                <td class="td-with-buttons">
+                    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@item.Id">Подробности</a>
+                    <a class="btn btn-light btn-sm" asp-action="Add" asp-route-id="@item.Id">Добавить</a>
+                    <a class="btn btn-light btn-sm" asp-action="Receive" asp-route-id="@item.Id">Получить</a>
+                </td>
             </tr>
         }
         </tbody>

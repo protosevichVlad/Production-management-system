@@ -52,6 +52,9 @@
             <th>
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]">@Html.DisplayNameFor(model => model.Quantity)</a>
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Explanation)
+            </th>
             <th></th>
         </tr>
         </thead>
@@ -72,6 +75,11 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    <div class="overflow-hidden text-truncate description">
+                        @Html.DisplayFor(modelItem => item.Explanation)
+                    </div>
                 </td>
                 <td class="td-with-buttons">
                     <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@item.Id">Подробности</a>

@@ -66,6 +66,7 @@ namespace ProductionManagementSystem.Controllers
             Device device = new Device();
             device.Name = deviceViewModel.Name;
             device.Quantity = deviceViewModel.Quantity;
+            device.Description = deviceViewModel.Description;
             device.DeviceDesignTemplate = new List<DeviceDesignTemplate>();
             device.DeviceComponentsTemplate = new List<DeviceComponentsTemplate>();
 
@@ -141,6 +142,7 @@ namespace ProductionManagementSystem.Controllers
 
             device.Name = deviceViewModel.Name;
             device.Quantity = deviceViewModel.Quantity;
+            device.Description = deviceViewModel.Description;
             device.DeviceDesignTemplate = new List<DeviceDesignTemplate>();
             device.DeviceComponentsTemplate = new List<DeviceComponentsTemplate>();
             

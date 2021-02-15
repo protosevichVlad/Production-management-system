@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public string Name { get; set; }
         public int Quantity { get; set; }
+        public string Description { get; set; }
         public int[] DesignIds { get; set; }
         public int[] ComponentIds { get; set; }
         public int[] DesignQuantity { get; set; }

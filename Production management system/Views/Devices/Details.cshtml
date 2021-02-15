@@ -21,3 +21,8 @@
 <div class="container">
     @DeviceHelper.CreateDevice(Html, Model, null)
 </div>
+<div>
+    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@Model.Id">Подробности</a>
+    <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+    <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+</div>

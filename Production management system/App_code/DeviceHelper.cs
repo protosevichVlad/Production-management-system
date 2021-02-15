@@ -10,7 +10,8 @@ namespace ProductionManagementSystem
         {
             string result = "<dl class='row'>";
             result += @"<dt class = 'col-sm-4'>Наименовие</dt><dd class = 'col-sm-10'>" + device.Name + @"</dd>
-                      <dt class = 'col-sm-4'>Количество на складе:</dt><dd class = 'col-sm-10'>" + device.Quantity + "</dd>";
+                      <dt class = 'col-sm-4'>Количество на складе:</dt><dd class = 'col-sm-10'>" + device.Quantity + "</dd>" +
+                      "<dt class = 'col-sm-4'>Описание</dt><dd class = 'col-sm-10'>" + device.Description + @"</dd>";
             if (!(quantity is null))
             {
                 result += "<dt class = 'col-sm-4'>Количество в задаче</dt><dd class = 'col-sm-10'>" + quantity + "</dd>";

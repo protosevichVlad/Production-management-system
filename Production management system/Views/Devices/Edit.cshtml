@@ -1,4 +1,5 @@
-﻿@*
+﻿@model ProductionManagementSystem.ViewModels.DeviceViewModel;
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -20,6 +21,10 @@
             <div class="form-group">
                 <label for="Quantity" class="control-label">Количество на складе:</label>
                 <input id="Quantity" name="Quantity" class="form-control" type="number" required value="@ViewBag.Device.Quantity" autocomplete="off" min="0"/>
+            </div>
+            <div class="form-group">
+                <label for="Description" class="control-label">Описание:</label>
+                <textarea id="Description" name="Description" class="form-control"  value="@ViewBag.Device.Description" autocomplete="off"></textarea>
             </div>
         </div>
     </div>

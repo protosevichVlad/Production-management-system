@@ -1,4 +1,5 @@
-﻿@*
+﻿@model ProductionManagementSystem.ViewModels.DeviceViewModel;
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -13,12 +14,16 @@
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
-                <label for="Name" class="control-label">Наименовие:</label>
-                <input id="Name" name="Name" class="form-control" autocomplete="off" required/>
+                <label asp-for="Name" class="control-label">Наименовие:</label>
+                <input asp-for="Name" class="form-control" autocomplete="off" required/>
             </div>
             <div class="form-group">
-                <label for="Quantity" class="control-label">Количество на складе:</label>
-                <input id="Quantity" name="Quantity" class="form-control" type="number" autocomplete="off" min="0" required/>
+                <label asp-for="Quantity" class="control-label">Количество на складе:</label>
+                <input asp-for="Quantity" class="form-control" autocomplete="off" min="0" required  value="0"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Описание:</label>
+                <textarea asp-for="Description" class="form-control" autocomplete="off"></textarea>
             </div>
         </div>
     </div>

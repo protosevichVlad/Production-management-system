@@ -7,8 +7,9 @@
 <p>
     <a asp-action="Create">Создать новый прибор</a>
 </p>
-<table class="table">
-    <thead>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
         <tr>
             <th>
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["NumSortParm"]">№</a>
@@ -19,10 +20,13 @@
             <th>
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]">Количество</a>
             </th>
+            <th>
+                Описание
+            </th>
             <th></th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         @foreach (var d in Model)
         {
             <tr>
@@ -35,12 +39,16 @@
                 <td>
                     @d.Quantity
                 </td>
-                <td class="td-with-buttons">
+                <td>
+                    <div class="overflow-hidden text-truncate description">
+                        @d.Description
+                    </div>
+                </td>
+                <td>
                     <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@d.Id">Подробности</a>
-                    <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@d.Id">Редактировать</a>
-                    <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@d.Id">Удалить</a>
                 </td>
             </tr>
         }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
