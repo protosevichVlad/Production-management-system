@@ -241,7 +241,7 @@ namespace ProductionManagementSystem.Controllers
             List<Design> designs = await _context.Designs.OrderBy(d => d.Name).ToListAsync();
             foreach (var des in designs)
             {
-                des.Name = $"{des.Name} {des.ShortDescription}";
+                des.Name = des.ToString();
             }
             return Json(designs);
         }
@@ -284,8 +284,9 @@ namespace ProductionManagementSystem.Controllers
             
             if (taskId != null)
             {
-                return RedirectToAction("ShowTask", "Task", new {id = taskId});
+                return RedirectToAction("Details", "Tasks", new {id = taskId});
             }
+            
             return RedirectToAction(nameof(Index));
         }
         

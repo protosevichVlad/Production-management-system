@@ -11,5 +11,19 @@ namespace ProductionManagementSystem.Models
         public List<DeviceComponentsTemplate> DeviceComponentsTemplate { get; set; }
         public List<DeviceDesignTemplate> DeviceDesignTemplate { get; set; }
 
+        public override string ToString()
+        {
+            string result = Name + " ";
+            if (Description.Length > 25)
+            {
+                result += Description[..25] + "..";
+            }
+            else
+            {
+                result += Description;
+            }
+
+            return result;
+        }
     }
 }

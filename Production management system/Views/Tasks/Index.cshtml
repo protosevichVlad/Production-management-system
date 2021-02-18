@@ -1,0 +1,67 @@
+﻿@model IEnumerable<ProductionManagementSystem.Models.Task>
+@{
+    ViewData["Title"] = "Задачи";
+    var nullDate = new DateTime();
+}
+<h2>Cписок задач</h2>
+
+<p>
+    <a asp-action="Create">Создать новую задачу</a>
+</p>
+<div class="table-responsive">
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NumSortParm"]">№</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Прибор</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]">Дата начала</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]">Срок</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]">Статус</a>
+            </th>
+            <th>
+                Описание
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var t in Model)
+        {
+            <tr>
+                <td>
+                    @t.Id
+                </td>
+                <td>
+                    @t.Device.ToString()
+                </td>
+                <td>
+                    @t.StartTime.Date
+                </td>
+                <td>
+                    @t.Deadline.Date
+                </td>
+                <td>
+                    @t.Status
+                </td>
+                <td>
+                    <div class="overflow-hidden text-truncate description">
+                        @t.Description
+                    </div>
+                </td>
+                <td>
+                    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@t.Id">Подробности</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

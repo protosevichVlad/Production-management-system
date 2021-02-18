@@ -1,0 +1,109 @@
+﻿@model ProductionManagementSystem.ViewModels.TaskViewModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Задача №" + Model.Id;
+}
+
+<div class="row">
+    <div class="col">
+        <h4>Подробная информация</h4>
+    </div>
+</div>
+<div class="alert alert-info" role="alert">
+    Здесь вы можете узнать подробную информацию о задаче №@Model.Id.
+</div>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h4>Задача №@Model.Id</h4>
+            <h4>Прибор: <a asp-controller="Devices" asp-action="Details" asp-route-id="@Model.Device.Id">@Model.Device.ToString()</a></h4>
+            <h4>Статус: @Model.Status</h4>
+            <h4>Срок: @Model.Deadline.ToString("dd.MM.yyyy")</h4>
+            <h4>Описание:</h4>
+            <p>@Model.Description</p>
+        </div>
+    </div>
+    <div class="table-responsive-xl">
+        <h4>Общее количество монтажа:
+        <a class="btn btn-light btn-sm" asp-action="ReceiveComponent" asp-route-taskId="@Model.Id">Получить</a>
+        </h4>
+        <table style="width:100%;" class="table table-sm">
+            <thead class="thead-dark">
+            <tr>
+                <th>Наименование</th>
+                <th>В задаче</th>
+                <th>На складе</th>
+                <th>Получено</th>
+                <th></th>
+            </tr>
+            </thead>
+            @foreach (var comp in Model.ComponentTemplate)
+            {
+                var obtainedComp = Model.ObtainedComponents.FirstOrDefault(d => comp.Component.Id == d.Component.Id);
+                <tr @if (obtainedComp.Obtained + comp.Component.Quantity < comp.Quantity) 
+                    { 
+                        @: class="table-danger"
+                    } 
+                    else if (comp.Quantity <= obtainedComp.Obtained) 
+                    { 
+                        @: class="table-success"
+                    } 
+                    >
+                    <td>@comp.Component.ToString()</td>
+                    <td>@comp.Quantity</td>
+                    <td>@comp.Component.Quantity</td>
+                    <td>@obtainedComp.Obtained</td>
+                    <td>
+                        <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="Add" asp-route-id="@comp.Component.Id" asp-route-taskId="@Model.Id">Добавить</a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div class="table-responsive-xl">
+        <hr />
+        <h4>Общее количество конструктива:
+        <a class="btn btn-light btn-sm" asp-action="ReceiveDesign" asp-route-taskId="@Model.Id">Получить</a>
+        </h4>
+        <table style="width:100%;" class="table table-sm">
+            <thead class="thead-dark">
+            <tr>
+                <th>Наименование</th>
+                <th>В задаче</th>
+                <th>На складе</th>
+                <th>Получено</th>
+                <th></th>
+            </tr>
+            </thead>
+            @foreach (var des in Model.DesignTemplate)
+            {
+                var obtainedDes = Model.ObtainedDesigns.FirstOrDefault(d => des.Design.Id == d.Design.Id);
+                <tr @if (obtainedDes.Obtained + des.Design.Quantity < des.Quantity) 
+                    { 
+                        @: class="table-danger"
+                    } 
+                    else if (des.Quantity <= obtainedDes.Obtained) 
+                    { 
+                        @: class="table-success"
+                    } 
+                    >
+                    <td>@des.Design.ToString()</td>
+                    <td>@des.Quantity</td>
+                    <td>@des.Design.Quantity</td>
+                    <td>@obtainedDes.Obtained</td>
+                    <td>
+                        <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="Add" asp-route-id="@des.Design.Id" asp-route-taskId="@Model.Id">Добавить</a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+<div>
+    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@Model.Id">Подробности</a>
+    <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+    <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+</div>

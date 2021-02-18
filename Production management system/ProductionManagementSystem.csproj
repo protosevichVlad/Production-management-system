@@ -24,6 +24,11 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="App_code\23.razor" />
+    <_ContentIncludedByDefault Remove="Views\Task_old\Add.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Task_old\ReceiveComponent.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Task_old\ReceiveDesign.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Task_old\Show.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Task_old\ShowTask.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

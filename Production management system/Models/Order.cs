@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ProductionManagementSystem.Models
@@ -7,7 +8,7 @@ namespace ProductionManagementSystem.Models
     {
         public int Id { get; set; }
         
-        [Display(Name = "Дата доставки")]
+        [Display(Name = "Срок")]
         public DateTime Deadline { get; set; }
         
         [Display(Name = "Дата заказа")]

@@ -235,7 +235,7 @@ namespace ProductionManagementSystem.Controllers
             List<Component> components = await _context.Components.OrderBy(c => c.Name).ToListAsync();
             foreach (var comp in components)
             {
-                comp.Name = $"{comp.Name} {comp.Nominal} {comp.Corpus}";
+                comp.Name = comp.ToString();
             }
             
             return Json(components);
@@ -295,7 +295,7 @@ namespace ProductionManagementSystem.Controllers
             _context.SaveChanges();
             if (taskId != null)
             {
-                return RedirectToAction("ShowTask", "Task", new {id = taskId});
+                return RedirectToAction("Details", "Tasks", new {id = taskId});
             }
             
             return RedirectToAction(nameof(Index));

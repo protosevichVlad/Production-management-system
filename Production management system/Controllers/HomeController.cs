@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -22,11 +23,19 @@ namespace ProductionManagementSystem.Controllers
 
         public string Reset()
         {
-            if (_context.Users.FirstOrDefault(u => u.Login == "admin") != null)
+            try
             {
-                return "ok";
+                if (_context.Users.FirstOrDefault(u => u.Login == "admin") != null)
+                {
+                    return "ok";
+                }
             }
-
+            catch (Exception e)
+            {
+                _context.ResetDatabase();
+            }
+            
+            
             string adminEmail = "admin";
             string adminPassword = "123456";
 

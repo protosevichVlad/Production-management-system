@@ -63,12 +63,14 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Create(DeviceViewModel deviceViewModel)
         {
-            Device device = new Device();
-            device.Name = deviceViewModel.Name;
-            device.Quantity = deviceViewModel.Quantity;
-            device.Description = deviceViewModel.Description;
-            device.DeviceDesignTemplate = new List<DeviceDesignTemplate>();
-            device.DeviceComponentsTemplate = new List<DeviceComponentsTemplate>();
+            Device device = new Device
+            {
+                Name = deviceViewModel.Name,
+                Quantity = deviceViewModel.Quantity,
+                Description = deviceViewModel.Description,
+                DeviceDesignTemplate = new List<DeviceDesignTemplate>(),
+                DeviceComponentsTemplate = new List<DeviceComponentsTemplate>()
+            };
 
             for (int i = 0; i < deviceViewModel.ComponentIds.Length; i++)
             {

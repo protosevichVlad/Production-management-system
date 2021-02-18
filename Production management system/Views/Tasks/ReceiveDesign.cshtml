@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Получение конструктива";
 }
-<button class="btn" type="button" onclick="window.location = '/Task/ShowTask/@ViewBag.TaskId'">Перейти к заданию</button>
+<a class="btn btn-light" asp-action="Details" asp-route-id="@ViewBag.TaskId">Перейти к задаче</a>
 <form action="" method="post">
     <input hidden value="@ViewBag.TaskId" name="TaskId">
     <table class="table">
@@ -17,18 +17,18 @@
         @foreach (var des in ViewBag.Designs)
         {
             var obtainedDes = ((IEnumerable<dynamic>) ViewBag.ObtainedDesigns).FirstOrDefault(d => des.Design.Id == d.Design.Id);
-            <tr @if (@des.Quantity <= @obtainedDes.Obtained) 
+            <tr @if (des.Quantity <= obtainedDes.Obtained) 
                 { 
                     @:class="table-success" 
                 }> 
-                <td>@des.Design.Name</td>
+                <td>@des.Design.ToString()</td>
                 <td>@des.Quantity</td>
                 <td>@des.Design.Quantity</td>
                 <td>@obtainedDes.Obtained</td>
-                <td><input type="number" name="@obtainedDes.Id" autocomplete="off" required min="-@obtainedDes.Obtained" max="@des.Design.Quantity" value="0"></td>
+                <td><input type="number" name="DesignObt" autocomplete="off" required min="-@obtainedDes.Obtained" max="@des.Design.Quantity" value="0"></td>
             </tr>
+            <input type="number" name="DesignIds" hidden value="@obtainedDes.Id"/>
         }
     </table>
     <button class="btn">Получить</button>
 </form>
-
