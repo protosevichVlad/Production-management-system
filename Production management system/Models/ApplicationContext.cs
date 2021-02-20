@@ -6,6 +6,9 @@ namespace ProductionManagementSystem.Models
     {
         public DbSet<Device> Devices { get; set; }
         public DbSet<Component> Components { get; set; }
+        public DbSet<DeviceComponentsTemplate> DeviceComponentsTemplate { get; set; }
+        public DbSet<DeviceDesignTemplate> DeviceDesignTemplate { get; set; }
+        
         public DbSet<Design> Designs { get; set; }
         public DbSet<Task> Tasks { get; set; }
         public DbSet<User> Users { get; set; }

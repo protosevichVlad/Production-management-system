@@ -212,11 +212,38 @@ namespace ProductionManagementSystem.Controllers
             {
                 _context.LogsComponent.Remove(log);
             }
-            
-            Log($"Был удалён {component}.");
+
+            if (!CheckInDevices(component, out string errorMessage))
+            {
+                ViewBag.ErrorMessage = errorMessage;
+                return View(component);
+            }
+
             _context.Components.Remove(component);
             await _context.SaveChangesAsync();
+            Log($"Был удалён {component}.");
+            
+            
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool CheckInDevices(Component component , out string errorMessage)
+        {
+            var componentsInDevices = _context.DeviceComponentsTemplate.ToList();
+            foreach (var componentInDevice in componentsInDevices)
+            {
+                if (component.Id == componentInDevice.ComponentId)
+                {
+                    var device = _context.Devices.FirstOrDefault(d => d.Id == componentInDevice.DeviceId);
+                    errorMessage = "Невозможно удаление монтажа.<br />" +
+                                   $"<i class='bg-light'>{component}</i> используется в <i class='bg-light'>{device}</i>.<br />" +
+                                   $"Для удаления <i class='bg-light'>{component}</i>, удалите <i class='bg-light'>{device}</i>.<br />";
+                    return false;
+                }
+            }
+
+            errorMessage = "";
+            return true;
         }
 
         private bool ComponentExists(int id)
