@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductionManagementSystem.ViewModels;
 
@@ -18,22 +14,60 @@ namespace ProductionManagementSystem.Controllers
     public class TasksController : Controller
     {
         private ApplicationContext _context;
-        private object List;
 
         public TasksController(ApplicationContext context)
         {
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, string searchString)
         {
-            var tasks = _context.Tasks
-                .Include(t => t.Device);
-            if (tasks == null)
+            ViewData["NumSortParm"] = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
+            ViewData["DeviceSortParm"] = sortOrder == "Device" ? "device_desc" : "Device";
+            ViewData["StartDateSortParm"] = sortOrder == "StartDate" ? "startdate_desc" : "StartDate";
+            ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
+            ViewData["OrderIdSortParm"] = sortOrder == "OrderId" ? "orderid_desc" : "OrderId";
+                        
+            ViewData["CurrentFilter"] = searchString;
+            
+            var tasks = from s in _context.Tasks.Include(t => t.Device)
+                select s;
+            
+            
+            switch (sortOrder)
             {
-                return NotFound();
+                case "num_desc":
+                    tasks = tasks.OrderByDescending(t => t.Id);
+                    break;
+                case "Device":
+                    tasks = tasks.OrderBy(t => t.Device.Name);
+                    break;
+                case "device_desc":
+                    tasks = tasks.OrderByDescending(t => t.Device.Name);
+                    break;
+                case "StartDate":
+                    tasks = tasks.OrderBy(t => t.StartTime);
+                    break;
+                case "startdate_desc":
+                    tasks = tasks.OrderByDescending(t => t.StartTime);
+                    break;
+                case "Status":
+                    tasks = tasks.OrderBy(t => t.Status);
+                    break;
+                case "status_desc":
+                    tasks = tasks.OrderByDescending(t => t.Status);
+                    break;
+                case "OrderId":
+                    tasks = tasks.OrderBy(t => t.OrderId);
+                    break;
+                case "orderid_desc":
+                    tasks = tasks.OrderByDescending(t => t.OrderId);
+                    break;
+                default:
+                    tasks = tasks.OrderBy(t => t.Id);
+                    break;
             }
-           
+            
             List<TaskViewModel> taskModels = new List<TaskViewModel>();
             foreach (var task in tasks)
             {
