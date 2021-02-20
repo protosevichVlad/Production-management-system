@@ -13,6 +13,11 @@ namespace ProductionManagementSystem.Models
 
         public override string ToString()
         {
+            if (string.IsNullOrEmpty(Description))
+            {
+                return Name;
+            }
+            
             string result = Name + " ";
             if (Description.Length > 25)
             {

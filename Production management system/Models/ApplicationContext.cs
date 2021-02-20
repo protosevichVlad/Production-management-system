@@ -13,11 +13,10 @@ namespace ProductionManagementSystem.Models
         public DbSet<ObtainedСomponent> ObtainedСomponents { get; set; }
         public DbSet<ObtainedDesign> ObtainedDesigns { get; set; }
         
-        public DbSet<OrderComponent> OrderComponents { get; set; }
-        public DbSet<OrderDesign> OrderDesign { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<LogDesign> LogsDesign { get; set; }
         public DbSet<LogComponent> LogsComponent { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         public ApplicationContext()
         {

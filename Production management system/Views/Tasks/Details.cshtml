@@ -26,9 +26,10 @@
             <p>@Model.Description</p>
         </div>
     </div>
+    <hr/>
     <div class="table-responsive-xl">
         <h4>Общее количество монтажа:
-        <a class="btn btn-light btn-sm" asp-action="ReceiveComponent" asp-route-taskId="@Model.Id">Получить</a>
+            <a class="btn btn-light btn-sm" asp-action="ReceiveComponent" asp-route-taskId="@Model.Id">Получить</a>
         </h4>
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">
@@ -51,7 +52,7 @@
                     { 
                         @: class="table-success"
                     } 
-                    >
+                >
                     <td>@comp.Component.ToString()</td>
                     <td>@comp.Quantity</td>
                     <td>@comp.Component.Quantity</td>
@@ -64,9 +65,8 @@
         </table>
     </div>
     <div class="table-responsive-xl">
-        <hr />
         <h4>Общее количество конструктива:
-        <a class="btn btn-light btn-sm" asp-action="ReceiveDesign" asp-route-taskId="@Model.Id">Получить</a>
+            <a class="btn btn-light btn-sm" asp-action="ReceiveDesign" asp-route-taskId="@Model.Id">Получить</a>
         </h4>
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">
@@ -89,7 +89,7 @@
                     { 
                         @: class="table-success"
                     } 
-                    >
+                >
                     <td>@des.Design.ToString()</td>
                     <td>@des.Quantity</td>
                     <td>@des.Design.Quantity</td>
@@ -102,8 +102,51 @@
         </table>
     </div>
 </div>
+
 <div>
     <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@Model.Id">Подробности</a>
     <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
     <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#transferModal">Передать</button>
+</div>
+<div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="transferModalLabel">Передача задачи</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-action="Transfer" id="transferForm">
+                    <input name="taskId" value="@Model.Id" hidden>
+                    <div class="mb-3">
+                        <label for="to" class="col-form-label"></label>
+                        <select class="form-select" id="to" name="to" asp-items="ViewBag.States"></select>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="full" id="flexRadioDefault1" checked value="true">
+                            <label class="form-check-label" for="flexRadioDefault1">
+                                Предать полностью
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="full" id="flexRadioDefault2" value="false">
+                            <label class="form-check-label" for="flexRadioDefault2">
+                                Предать частично
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">Примечание:</label>
+                        <textarea class="form-control" id="message-text" name="message"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" onclick="document.querySelector('#transferForm').submit()">Передать</button>
+            </div>
+        </div>
+    </div>
 </div>

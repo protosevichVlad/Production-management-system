@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ProductionManagementSystem.Models;
 
-namespace ProductionManagementSystem.Models
+namespace ProductionManagementSystem.ViewModels
 {
-    public class Order
+    public class OrderViewModel
     {
         public int Id { get; set; }
-        
+
         [Display(Name = "Срок")]
         public DateTime Deadline { get; set; }
         
@@ -20,6 +20,10 @@ namespace ProductionManagementSystem.Models
         [Display(Name = "Описание")]
         public string Description { get; set; }
         
-        public List<Task> Tasks { get; set; }
+        [Display(Name = "Статус")]
+        public string Status { get; set; }
+        public int[] DeviceIds { get; set; }
+        public int[] DeviceQuantity { get; set; }
+        public string[] DeviceDescriptions { get; set; }
     }
 }

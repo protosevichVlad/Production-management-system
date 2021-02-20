@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Models;
@@ -15,6 +18,7 @@ namespace ProductionManagementSystem.Controllers
     public class TasksController : Controller
     {
         private ApplicationContext _context;
+        private object List;
 
         public TasksController(ApplicationContext context)
         {
@@ -23,9 +27,29 @@ namespace ProductionManagementSystem.Controllers
 
         public IActionResult Index()
         {
-            return View(_context.Tasks
-                .Include(t => t.Device)
-                .ToList());
+            var tasks = _context.Tasks
+                .Include(t => t.Device);
+            if (tasks == null)
+            {
+                return NotFound();
+            }
+           
+            List<TaskViewModel> taskModels = new List<TaskViewModel>();
+            foreach (var task in tasks)
+            {
+                taskModels.Add(new TaskViewModel()
+                {
+                    Deadline = task.Deadline,
+                    Description = task.Description,
+                    Id = task.Id,
+                    Status = GetDisplayName(task.Status),
+                    Device = task.Device,
+                    StartTime = task.StartTime,
+                    OrderId = task.OrderId
+                });
+            }
+            
+            return View(taskModels);
         }
         
         public IActionResult Create()
@@ -42,7 +66,7 @@ namespace ProductionManagementSystem.Controllers
             task.StartTime = DateTime.Today;
             task.Description = taskModel.Description;
             task.EndTime = new DateTime();
-            task.Status = "Комплектация";
+            task.Status = StatusEnum.Equipment;
             task.Device = await _context.Devices
                 .FirstOrDefaultAsync(d => d.Id == taskModel.DeviceId);
 
@@ -101,13 +125,26 @@ namespace ProductionManagementSystem.Controllers
                 Description = task.Description,
                 Deadline = task.Deadline,
                 Device = task.Device,
-                Status = task.Status,
+                Status = GetDisplayName(task.Status),
                 DesignTemplate = GetAllDeviceDesignTemplateFromTask((int) id),
                 ComponentTemplate = GetAllDeviceComponentsTemplateFromTask((int) id),
                 ObtainedComponents = GetObtainedСomponents((int) id),
                 ObtainedDesigns = GetObtainedDesigns((int) id)
             };
-            
+
+            var states = new List<object>();
+            foreach( StatusEnum foo in Enum.GetValues(typeof(StatusEnum)) )
+            {
+                states.Add(new {Id = (int)foo, Name = GetDisplayName(foo)});
+                
+                if (task.Status < foo)
+                {
+                    break;
+                } 
+            }
+
+            states.Reverse();
+            ViewBag.States = new SelectList(states, "Id", "Name");
             return View(taskModel);
         }
         
@@ -172,6 +209,23 @@ namespace ProductionManagementSystem.Controllers
             await _context.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
+        }
+        
+        [HttpPost]
+        public async System.Threading.Tasks.Task<IActionResult> Transfer(int taskId, string full, int to, string message)
+        {
+            var task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == taskId);
+            if (full == "true")
+            {
+                task.Status = (StatusEnum) to;
+            }
+            else
+            {
+                task.Status |= (StatusEnum) to;
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new {id = taskId});
         }
         
         private List<DeviceDesignTemplate> GetAllDeviceDesignTemplateFromTask(int taskId)
@@ -327,6 +381,24 @@ namespace ProductionManagementSystem.Controllers
 
             _context.SaveChanges();
             return RedirectToAction(nameof(Details), new {id = TaskId});
+        }
+        
+        private string GetDisplayName(StatusEnum item)
+        {
+            List<string> result = new List<string>();
+            foreach( StatusEnum foo in Enum.GetValues(typeof(StatusEnum)) )
+            {
+                if ((item & foo) == foo)
+                {
+                    result.Add(foo.GetType()
+                                    .GetMember(foo.ToString())
+                                    .First()
+                                    .GetCustomAttribute<DisplayAttribute>()
+                                    ?.GetName());
+                }
+            }
+
+            return string.Join(", ", result);
         }
     }
 }

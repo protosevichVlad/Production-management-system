@@ -15,6 +15,8 @@ namespace ProductionManagementSystem.ViewModels
         [Required]
         public DateTime Deadline { get; set; }
         
+        public DateTime StartTime { get; set; }
+        
         [Display(Name = "Прибор")]
         public int DeviceId { get; set; }
         
@@ -25,6 +27,7 @@ namespace ProductionManagementSystem.ViewModels
         public string Status { get; set; }
 
         public Device Device { get; set; }
+        public int? OrderId { get; set; }
 
         public List<DeviceDesignTemplate> DesignTemplate { get; set; }
         public List<DeviceComponentsTemplate> ComponentTemplate { get; set; }

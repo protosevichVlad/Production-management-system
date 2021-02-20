@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Models;
+using ProductionManagementSystem.ViewModels;
 
 namespace ProductionManagementSystem.Controllers
 {
@@ -16,78 +19,82 @@ namespace ProductionManagementSystem.Controllers
             _context = context;
         }
 
-        // GET
         public IActionResult Index()
         {
-            ViewBag.OrderComponents = _context.OrderComponents
-                .Include(o => o.Task)
-                .Include(o => o.Component)
+            var orders = _context.Orders
+                .Include(o => o.Tasks)
                 .ToList();
-            ViewBag.OrderDesign = _context.OrderDesign
-                .Include(o => o.Task)
-                .Include(o => o.Design)
-                .ToList();
+            List<OrderViewModel> orderModels = new List<OrderViewModel>();
+            foreach (var order in orders)
+            {
+                orderModels.Add(new OrderViewModel()
+                {
+                    Customer = order.Customer,
+                    Deadline = order.Deadline,
+                    Description = order.Description,
+                    Id = order.Id,
+                    DateStart = order.DateStart,
+                    Status = GetDisplayName(order.Tasks.Min(a => a.Status))
+                });
+            }
+            return View(orderModels);
+        }
+        
+        public IActionResult Create()
+        {
             return View();
         }
-        
-        public IActionResult CreateDesign(int designId, int taskId)
-        {
-            ViewBag.Date = DateTime.Now.ToString("yyyy-MM-ddThh:mm");
-            OrderDesign order = new OrderDesign();
-            ViewBag.Design = _context.Designs.FirstOrDefault(d => d.Id == designId);
-            order.DateStart = DateTime.Now;
-            ViewBag.TaskId = taskId;
-            ViewBag.Tasks = new SelectList(_context.Tasks, "Id", "Id");
-            ViewBag.Designs = new SelectList(_context.Designs, "Id", "Name");
-            return View(order);
-        }
 
-        // POST: Designs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateDesign(OrderDesign order, int TaskId, int DesignId)
+        public IActionResult Create(OrderViewModel orderModel)
         {
             if (ModelState.IsValid)
             {
-                order.Design = _context.Designs.FirstOrDefault(d => d.Id == DesignId);
-                order.Task = _context.Tasks.FirstOrDefault(t => t.Id == TaskId);
-                _context.OrderDesign.Add(order);
+                Order order = new Order
+                {
+                    Customer = orderModel.Customer,
+                    Deadline = orderModel.Deadline,
+                    Description = orderModel.Description,
+                    DateStart = DateTime.Now.Date,
+                    Tasks = new List<Task>()
+                };
+                
+                for (int i = 0; i < orderModel.DeviceIds.Length; i++)
+                {
+                    for (int j = 0; j < orderModel.DeviceQuantity[i]; j++)
+                    {
+                        new TasksController(_context)?.Create(new TaskViewModel()
+                        {
+                            Deadline = orderModel.Deadline,
+                            Description = orderModel.DeviceDescriptions[i],
+                            DeviceId = orderModel.DeviceIds[i],
+                        });
+                        var task = _context.Tasks.ToList().LastOrDefault();
+                        if (task != null)
+                        {
+                            order.Tasks.Add(task);
+                        }
+                    }
+                }
+
+                _context.Orders.Add(order);
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction(nameof(Index), new {id = order.Id});
             }
-            return View(order);
-        }
-        
-        public IActionResult CreateComponent(int componentId, int taskId)
-        {
-            ViewBag.Date = DateTime.Now.ToString("yyyy-MM-ddThh:mm");
-            OrderComponent order = new OrderComponent();
-            ViewBag.Component = _context.Components.FirstOrDefault(d => d.Id == componentId);
-            order.DateStart = DateTime.Now;
-            ViewBag.TaskId = taskId;
-            ViewBag.Tasks = new SelectList(_context.Tasks, "Id", "Id");
-            ViewBag.Components = new SelectList(_context.Components, "Id", "Name");
-            return View(order);
+
+            return View(orderModel);
         }
 
-        // POST: Designs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult CreateComponent(OrderComponent order, int TaskId, int ComponentId)
+        private string GetDisplayName<T>(T item)
         {
-            if (ModelState.IsValid)
-            {
-                order.Component = _context.Components.FirstOrDefault(d => d.Id == ComponentId);
-                order.Task = _context.Tasks.FirstOrDefault(t => t.Id == TaskId);
-                _context.OrderComponents.Add(order);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(order);
+            return  item.GetType()
+                        .GetMember(item.ToString())
+                        .First()
+                        .GetCustomAttribute<DisplayAttribute>()
+                        ?.GetName();   
         }
+        
     }
 }

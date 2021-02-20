@@ -109,16 +109,19 @@ function updateIndex(selector)
 }
 
 async function createDevice() {
+    disableButton('#buttonCreateDevice');
     let component_selects = [...document.getElementsByClassName('DeviceSelect')];
     let length = component_selects.length + 1;
     let str = await createTextDevice(length);
 
     let lastTr = document.querySelector(`#devTr${length - 1}`);
     lastTr.insertAdjacentHTML('afterEnd', str);
+    updateIndex('DeviceIds');
+    undisableButton('#buttonCreateDevice');
 }
 
 async function createTextDevice(id) {
-    let str = `<tr id="devTr${id}"><td>${id}</td><td><select class="DeviceSelect align-top width-100 form-<select name="" id=""></select>" id="Id${id}" name="Id${id}">`;
+    let str = `<tr id="devTr${id}"><td class="DeviceIds"></td><td><select class="DeviceSelect align-top width-100 form-select" name="DeviceIds">`;
 
     let r = await new Request('/Devices/GetAllDevices');
     let devicesJson = await fetch(r).then(c => c.json());
@@ -127,19 +130,23 @@ async function createTextDevice(id) {
         let c = devicesJson[i]
         str += `<option value="${c.id}">${c.name}</option>`;
     }
-    str += `</select></td><td><input class="DeviceInput align-top form-control" id="Quantity${id}" name="Quantity${id}" type="number" required autocomplete="off" min="0" />`;
-    str += `</td></tr>`;
+    str += `</select></td><td><input class="DeviceInput align-top form-control" name="DeviceQuantity" type="number" required autocomplete="off" min="0" />`;
+    str += `</td><td><textarea name="DeviceDescriptions" class="align-top form-control w-100"></textarea></td>`;
+    str += `<td class="border-0"><button type="button" class="btn-close" aria-label="Close" onclick="removeDevice(${id})"></button></td></tr>`;
     return str;
 }
 
-function removeDevice() {
+function removeDevice(index) {
     let device_selects = [...document.getElementsByClassName('DeviceSelect')];
     let length = device_selects.length;
 
-    if (length == 0)
+    if (length === 0)
     {
         return;
     }
-    let lastTr = document.querySelector(`#devTr${length}`);
-    lastTr.remove()
+    
+    let tr = document.querySelector(`#devTr${index}`);
+    tr.remove();
+    updateIndex('DeviceIds');
 }
+

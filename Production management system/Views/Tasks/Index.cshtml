@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductionManagementSystem.Models.Task>
+﻿@model IEnumerable<ProductionManagementSystem.ViewModels.TaskViewModel>
 @{
     ViewData["Title"] = "Задачи";
     var nullDate = new DateTime();
@@ -28,6 +28,9 @@
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]">Статус</a>
             </th>
             <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]">№ заказа</a>
+            </th>
+            <th>
                 Описание
             </th>
             <th></th>
@@ -51,6 +54,9 @@
                 </td>
                 <td>
                     @t.Status
+                </td>
+                <td>
+                    @t.OrderId
                 </td>
                 <td>
                     <div class="overflow-hidden text-truncate description">
