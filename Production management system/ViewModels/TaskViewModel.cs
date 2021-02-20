@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Reflection;
 using ProductionManagementSystem.Models;
 
 namespace ProductionManagementSystem.ViewModels
@@ -33,5 +35,35 @@ namespace ProductionManagementSystem.ViewModels
         public List<DeviceComponentsTemplate> ComponentTemplate { get; set; }
         public List<ObtainedСomponent> ObtainedComponents { get; set; }
         public List<ObtainedDesign> ObtainedDesigns { get; set; }
+
+        public TaskViewModel() {}
+        public TaskViewModel(Task task)
+        {
+            Deadline = task.Deadline;
+            Description = task.Description;
+            Id = task.Id;
+            Status = GetDisplayName(task.Status);
+            Device = task.Device;
+            StartTime = task.StartTime;
+            OrderId = task.OrderId;
+        }
+        
+        private string GetDisplayName(StatusEnum item)
+        {
+            List<string> result = new List<string>();
+            foreach( StatusEnum foo in Enum.GetValues(typeof(StatusEnum)) )
+            {
+                if ((item & foo) == foo)
+                {
+                    result.Add(foo.GetType()
+                        .GetMember(foo.ToString())
+                        .First()
+                        .GetCustomAttribute<DisplayAttribute>()
+                        ?.GetName());
+                }
+            }
+
+            return string.Join(", ", result);
+        }
     }
 }

@@ -38,16 +38,7 @@ namespace ProductionManagementSystem.Controllers
             List<TaskViewModel> taskModels = new List<TaskViewModel>();
             foreach (var task in tasks)
             {
-                taskModels.Add(new TaskViewModel()
-                {
-                    Deadline = task.Deadline,
-                    Description = task.Description,
-                    Id = task.Id,
-                    Status = GetDisplayName(task.Status),
-                    Device = task.Device,
-                    StartTime = task.StartTime,
-                    OrderId = task.OrderId
-                });
+                taskModels.Add(new TaskViewModel(task));
             }
             
             return View(taskModels);
@@ -120,13 +111,8 @@ namespace ProductionManagementSystem.Controllers
                 return NotFound();
             }
 
-            TaskViewModel taskModel = new TaskViewModel()
+            TaskViewModel taskModel = new TaskViewModel(task)
             {
-                Id = task.Id,
-                Description = task.Description,
-                Deadline = task.Deadline,
-                Device = task.Device,
-                Status = GetDisplayName(task.Status),
                 DesignTemplate = GetAllDeviceDesignTemplateFromTask((int) id),
                 ComponentTemplate = GetAllDeviceComponentsTemplateFromTask((int) id),
                 ObtainedComponents = GetObtainedСomponents((int) id),
@@ -183,13 +169,7 @@ namespace ProductionManagementSystem.Controllers
             }
             
             ViewBag.Devices = new SelectList(_context.Devices.ToList(), "Id", "Name");
-            return View(new TaskViewModel()
-            {
-                DeviceId = task.Device.Id, 
-                Deadline = task.Deadline,
-                Description = task.Description,
-                Id = task.Id
-            });
+            return View(new TaskViewModel(task));
         }
         
         [HttpPost]
@@ -383,25 +363,16 @@ namespace ProductionManagementSystem.Controllers
             _context.SaveChanges();
             return RedirectToAction(nameof(Details), new {id = TaskId});
         }
-        
+
         private string GetDisplayName(StatusEnum item)
         {
-            List<string> result = new List<string>();
-            foreach( StatusEnum foo in Enum.GetValues(typeof(StatusEnum)) )
-            {
-                if ((item & foo) == foo)
-                {
-                    result.Add(foo.GetType()
-                                    .GetMember(foo.ToString())
-                                    .First()
-                                    .GetCustomAttribute<DisplayAttribute>()
-                                    ?.GetName());
-                }
-            }
-
-            return string.Join(", ", result);
+            return item.GetType()
+                        .GetMember(item.ToString())
+                        .First()
+                        .GetCustomAttribute<DisplayAttribute>()
+                        ?.GetName();
         }
-
+        
         public static void SortingTasks(ref IQueryable<Task> tasks, string sortOrder)
         {
             switch (sortOrder)
