@@ -58,3 +58,19 @@
         <a asp-action="Index">Вернуться к списку конструктива</a>
     </form>
 </div>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <partial name="Partail/PartialError" />
+    
+    @section Scripts
+    {
+        <script>
+            let errorModal = new bootstrap.Modal(document.getElementById('errorModal'), 
+            {
+                keyboard: false
+            })
+            errorModal.show();
+        </script>
+    }
+}

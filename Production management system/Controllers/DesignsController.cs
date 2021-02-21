@@ -224,10 +224,34 @@ namespace ProductionManagementSystem.Controllers
                 _context.LogsDesign.Remove(log);
             }
             
-            Log($"Был удалён {design}.");
+            if (!CheckInDevices(design, out string errorMessage))
+            {
+                ViewBag.ErrorMessage = errorMessage;
+                return View(design);
+            }
+
             _context.Designs.Remove(design);
             await _context.SaveChangesAsync();
+            Log($"Был удалён {design}.");
+            
             return RedirectToAction(nameof(Index));
+        }
+        
+        private bool CheckInDevices(Design design , out string errorMessage)
+        {
+            var designInDevice = _context.DeviceDesignTemplate
+                            .FirstOrDefault(d => design.Id == d.DesignId);
+            if (designInDevice != null)
+            {
+                var device = _context.Devices.FirstOrDefault(d => d.Id == designInDevice.DeviceId);
+                errorMessage = "Невозможно удаление конструктива.<br />" +
+                               $"<i class='bg-light'>{design}</i> используется в <i class='bg-light'>{device}</i>.<br />" +
+                               $"Для удаления <i class='bg-light'>{design}</i>, удалите <i class='bg-light'>{device}</i>.<br />";
+                return false;
+            }
+
+            errorMessage = "";
+            return true;
         }
 
         private bool DesignExists(int id)
