@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>ProductionManagementSystem</RootNamespace>
+    <UserSecretsId>5a0d0b0a-e9d2-4d6c-836f-4305d56333b0</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0-preview.1.21102.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="MySql.Data" Version="8.0.22" />
+    <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.22" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="App_code\23.razor" />
+    <_ContentIncludedByDefault Remove="Views\Task_old\Add.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Task_old\ReceiveComponent.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Task_old\ReceiveDesign.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Task_old\Show.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Task_old\ShowTask.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services" />
+  </ItemGroup>
+
+</Project>
