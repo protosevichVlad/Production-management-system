@@ -9,18 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EntityFramework" Version="6.4.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0-preview.1.21102.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.10">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
-    <PackageReference Include="MySql.Data" Version="8.0.22" />
-    <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.22" />
+    <PackageReference Include="Ninject" Version="3.3.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,10 +21,60 @@
     <_ContentIncludedByDefault Remove="Views\Task_old\ReceiveDesign.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Task_old\Show.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Task_old\ShowTask.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Account\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Account\Login.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Account\Register.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Account\Show.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Designs\Add.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Designs\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Designs\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Designs\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Designs\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Designs\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Designs\Receive.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Devices\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Devices\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Devices\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Devices\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Devices\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Logs\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Logs\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Orders\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Orders\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Orders\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Orders\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Orders\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Tasks\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Tasks\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Tasks\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Tasks\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Tasks\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Tasks\ReceiveComponent.cshtml" />
+    <_ContentIncludedByDefault Remove="Новая папка\Views\Tasks\ReceiveDesign.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Services" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProductionManagementSystem.BLL\ProductionManagementSystem.BLL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Новая папка\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Новая папка\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Новая папка\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Новая папка\**" />
   </ItemGroup>
 
 </Project>

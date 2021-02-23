@@ -9,6 +9,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductionManagementSystem.DAL", "ProductionManagementSystem.DAL\ProductionManagementSystem.DAL.csproj", "{A38448C7-CA34-4428-83DD-1A7FBA363AE8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductionManagementSystem.BLL", "ProductionManagementSystem.BLL\ProductionManagementSystem.BLL.csproj", "{B1735050-602B-45EB-BA4A-9A5425AB0087}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{A38448C7-CA34-4428-83DD-1A7FBA363AE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A38448C7-CA34-4428-83DD-1A7FBA363AE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A38448C7-CA34-4428-83DD-1A7FBA363AE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1735050-602B-45EB-BA4A-9A5425AB0087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1735050-602B-45EB-BA4A-9A5425AB0087}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1735050-602B-45EB-BA4A-9A5425AB0087}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1735050-602B-45EB-BA4A-9A5425AB0087}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

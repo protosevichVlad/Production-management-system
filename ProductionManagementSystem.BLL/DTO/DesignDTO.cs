@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-namespace ProductionManagementSystem.DAL.Entities
+﻿namespace ProductionManagementSystem.BLL.DTO
 {
-    public class Design
+    public class DesignDTO
     {
         public int Id { get; set; }
         public string Type { get; set; }
@@ -11,5 +8,11 @@ namespace ProductionManagementSystem.DAL.Entities
         public int Quantity { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
+        
+        // TODO delete and add to viewModel
+        public override string ToString()
+        {
+            return $"{Type} {Name} {ShortDescription}";
+        }
     }
 }
