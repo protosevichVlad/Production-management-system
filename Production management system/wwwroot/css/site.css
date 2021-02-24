@@ -165,3 +165,11 @@ tr:hover .password {
 .mr-auto {
   margin-right: auto!important;
 }
+
+.td-with-name {
+    width: 30%;
+}
+
+.td-with-description {
+    width: 45%;
+}

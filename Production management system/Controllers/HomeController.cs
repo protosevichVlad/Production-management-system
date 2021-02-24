@@ -3,15 +3,18 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.Models;
 
 namespace ProductionManagementSystem.Controllers
 {
     public class HomeController : Controller
     {
-
-        public HomeController()
+        private IDatabaseService _databaseService;
+        
+        public HomeController(IDatabaseService databaseService)
         {
+            _databaseService = databaseService;
         }
 
         public IActionResult Index()
@@ -19,8 +22,8 @@ namespace ProductionManagementSystem.Controllers
             return View();
         }
 
-        // public string Reset()
-        // {
+        public string Reset()
+        {
         //     try
         //     {
         //         if (_context.Users.FirstOrDefault(u => u.Login == "admin") != null)
@@ -30,7 +33,7 @@ namespace ProductionManagementSystem.Controllers
         //     }
         //     catch (Exception e)
         //     {
-        //         _context.ResetDatabase();
+                _databaseService.ResetDatabase();
         //     }
         //     
         //     
@@ -62,7 +65,7 @@ namespace ProductionManagementSystem.Controllers
         //     _context.Users.Add(adminUser);
         //     _context.SaveChanges();
         //
-        //     return "complite";
-        // }
+            return "complite";
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
@@ -168,7 +169,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         private bool _disposed;
 
-        public virtual void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
             {
@@ -179,6 +180,11 @@ namespace ProductionManagementSystem.DAL.Repositories
 
                 _disposed = true;
             }
+        }
+
+        public void ResetDatabase()
+        {
+            _db.ResetDatabase();
         }
 
         public void Dispose()

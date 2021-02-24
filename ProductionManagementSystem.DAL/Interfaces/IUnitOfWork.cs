@@ -22,6 +22,8 @@ namespace ProductionManagementSystem.DAL.Interfaces
         
         IRepository<LogDesign> LogsDesign { get; }
         IRepository<LogComponent> LogsComponent { get; }
+
+        void ResetDatabase();
         
         void Save();
     }

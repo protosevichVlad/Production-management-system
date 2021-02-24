@@ -29,9 +29,16 @@ namespace ProductionManagementSystem.DAL.EF
         {
             _connectionString = connectionString;
         }
+
+        public void ResetDatabase()
+        {
+            Database.EnsureDeleted();
+            Database.EnsureCreated(); 
+        }
                 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.EnableSensitiveDataLogging();
             optionsBuilder.UseMySql(_connectionString, new MySqlServerVersion(new Version(8, 0, 24)));
             // optionsBuilder.UseMySQL("server = db; UserId = root; Password = 123PassWord123; database = new_schema;");
             // optionsBuilder.UseMySQL("server = localhost; UserId = user1; Password = 123PassWord; database = production-management-system;");

@@ -43,6 +43,8 @@ namespace ProductionManagementSystem
             
             services.AddScoped<IComponentService>(parm => new ComponentService(uow));
             services.AddScoped<IDesignService>(parm => new DesignService(uow));
+            services.AddScoped<IDeviceService>(parm => new DeviceService(uow));
+            services.AddScoped<IDatabaseService>(parm => new DatabaseService(uow));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

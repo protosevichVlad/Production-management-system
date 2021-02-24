@@ -1,6 +1,6 @@
-﻿namespace ProductionManagementSystem.BLL.DTO
+﻿namespace ProductionManagementSystem.WEB.Models
 {
-    public class DeviceDTO
+    public class DeviceViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -12,10 +12,8 @@
         public int[] ComponentQuantity { get; set; }
         public string[] DesignDescriptions { get; set; }
         public string[] ComponentDescriptions { get; set; }
-        public string[] DesignNames { get; set; }
         public string[] ComponentNames { get; set; }
-        public int[] DesignTemplateId { get; set; }
-        public int[] ComponentTemplateId { get; set; }
+        public string[] DesignNames { get; set; }
 
         public override string ToString()
         {
