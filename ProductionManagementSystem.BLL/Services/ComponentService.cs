@@ -103,18 +103,16 @@ namespace ProductionManagementSystem.BLL.Services
         /// <returns>Return true, if component not using in devices.</returns>
         private bool CheckInDevices(Component component , out string errorMessage)
         {
-            var componentsInDevices = _database.DeviceComponentsTemplate.GetAll();
-            foreach (var componentInDevice in componentsInDevices)
+            var componentInDevice = _database.DeviceComponentsTemplate.GetAll()
+                .FirstOrDefault(c => component.Id == c.ComponentId);
+            if (componentInDevice != null)
             {
-                if (component.Id == componentInDevice.ComponentId)
-                {
-                    var device = _database.Devices.GetAll().FirstOrDefault(d => d.Id == componentInDevice.DeviceId);
-                    errorMessage = $"<i class='bg-light'>{component.ToString()}</i> используется в <i class='bg-light'>{device.ToString()}</i>.<br />" +
-                                   $"Для удаления <i class='bg-light'>{component.ToString()}</i>, удалите <i class='bg-light'>{device.ToString()}</i>.<br />";
-                    return false;
-                }
+                var device = _database.Devices.GetAll().FirstOrDefault(d => d.Id == componentInDevice.DeviceId);
+                errorMessage = $"<i class='bg-light'>{component.ToString()}</i> используется в <i class='bg-light'>{device.ToString()}</i>.<br />" +
+                               $"Для удаления <i class='bg-light'>{component.ToString()}</i>, удалите <i class='bg-light'>{device.ToString()}</i>.<br />";
+                return false;
             }
-
+            
             errorMessage = "";
             return true;
         }
