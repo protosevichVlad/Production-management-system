@@ -51,34 +51,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public void Update(Device item)
         {
-            var device = _db.Devices
-                .Include(d => d.DeviceComponentsTemplate)
-                .ThenInclude(c => c.Component)
-                .Include(d => d.DeviceDesignTemplate)
-                .ThenInclude(d => d.Design)
-                .FirstOrDefault(d => d.Id == item.Id);
-            
-            if (device == null)
-            {
-                throw new NotImplementedException();
-            }
-
-            device.Name = item.Name;
-            device.Description = item.Description;
-            device.Quantity = item.Quantity;
-            
-            foreach (var comp in device.DeviceComponentsTemplate)
-            {
-                _db.DeviceComponentsTemplates.Remove(comp);
-            }
-
-            foreach (var des in device.DeviceDesignTemplate)
-            {
-                _db.DeviceDesignTemplates.Remove(des);
-            }
-
-            device.DeviceComponentsTemplate = item.DeviceComponentsTemplate;
-            device.DeviceDesignTemplate = item.DeviceDesignTemplate;
+            _db.Entry(item).State = EntityState.Modified;
         }
 
         public void Delete(int id)

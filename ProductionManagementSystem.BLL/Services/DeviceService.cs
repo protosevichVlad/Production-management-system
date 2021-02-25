@@ -36,11 +36,31 @@ namespace ProductionManagementSystem.BLL.Services
 
         public void UpdateDevice(DeviceDTO deviceDto)
         {
-            var device = _mapperFromDto.Map<DeviceDTO, Device>(deviceDto);
-            device.DeviceDesignTemplate = GetDesignsFromDeviceDto(deviceDto);
-            device.DeviceComponentsTemplate = GetComponentsFromDeviceDto(deviceDto);
+            var deviceFromDb = _database.Devices.Get(deviceDto.Id);
+            if (deviceFromDb == null)
+            {
+                throw new NotImplementedException();
+            }
+
+            deviceFromDb.Name = deviceDto.Name;
+            deviceFromDb.Description = deviceDto.Description;
+            deviceFromDb.Quantity = deviceDto.Quantity;
             
-            _database.Devices.Update(device);
+            foreach (var comp in deviceFromDb.DeviceComponentsTemplate)
+            {
+                _database.DeviceComponentsTemplate.Delete(comp.Id);
+            }
+
+            foreach (var des in deviceFromDb.DeviceDesignTemplate)
+            {
+                _database.DeviceDesignTemplate.Delete(des.Id);
+
+            }
+
+            deviceFromDb.DeviceDesignTemplate = GetDesignsFromDeviceDto(deviceDto);
+            deviceFromDb.DeviceComponentsTemplate = GetComponentsFromDeviceDto(deviceDto);
+            
+            _database.Devices.Update(deviceFromDb);
             _database.Save();
         }
 
