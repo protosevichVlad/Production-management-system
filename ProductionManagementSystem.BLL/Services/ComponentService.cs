@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using ProductionManagementSystem.BLL.DTO;
+using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
@@ -59,6 +60,12 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 throw new NotImplementedException();
             }
+
+            var component = _database.Components.Get((int) id);
+            if (!CheckInDevices(component, out string errorMessage))
+            {
+                throw new IntersectionOfEntitiesException("Ошибка. Невозможно удаление монтажа.", errorMessage);
+            }
             
             _database.Components.Delete((int) id);
             _database.Save();
@@ -88,6 +95,12 @@ namespace ProductionManagementSystem.BLL.Services
             _database.Dispose();
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="errorMessage"></param>
+        /// <returns>Return true, if component not using in devices.</returns>
         private bool CheckInDevices(Component component , out string errorMessage)
         {
             var componentsInDevices = _database.DeviceComponentsTemplate.GetAll();
@@ -95,10 +108,9 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 if (component.Id == componentInDevice.ComponentId)
                 {
-                    var device = _database.Devices.Find(d => d.Id == componentInDevice.DeviceId);
-                    errorMessage = "Невозможно удаление монтажа.<br />" +
-                                   $"<i class='bg-light'>{component}</i> используется в <i class='bg-light'>{device}</i>.<br />" +
-                                   $"Для удаления <i class='bg-light'>{component}</i>, удалите <i class='bg-light'>{device}</i>.<br />";
+                    var device = _database.Devices.GetAll().FirstOrDefault(d => d.Id == componentInDevice.DeviceId);
+                    errorMessage = $"<i class='bg-light'>{component.ToString()}</i> используется в <i class='bg-light'>{device.ToString()}</i>.<br />" +
+                                   $"Для удаления <i class='bg-light'>{component.ToString()}</i>, удалите <i class='bg-light'>{device.ToString()}</i>.<br />";
                     return false;
                 }
             }

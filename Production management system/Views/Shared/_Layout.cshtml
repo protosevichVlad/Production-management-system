@@ -74,15 +74,27 @@
             @RenderBody()
         </main>
     </div>
-
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2020-2021 - ProductionManagementSystem
         </div>
     </footer>
+    
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js"></script>
     @RenderSection("Scripts", required: false)
+@if (ViewBag.ErrorMessage != null)
+    {
+        <partial name="Partail/PartialError" />
+        <script>
+            let errorModal = new bootstrap.Modal(document.getElementById('errorModal'), 
+            {
+                keyboard: false
+            })
+            errorModal.show();
+        </script>
+    }
 </body>
 </html>

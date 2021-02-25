@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.DTO;
+using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.WEB.Models;
 
@@ -28,7 +29,7 @@ namespace ProductionManagementSystem.Controllers
 
         // GET: Designs
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        public IActionResult Index(string sortOrder, string searchString)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
@@ -142,7 +143,7 @@ namespace ProductionManagementSystem.Controllers
                 }
                 catch (Exception e)
                 {
-                    throw e;
+                    throw;
                 }
             }
             return View(designViewModel);
@@ -172,6 +173,13 @@ namespace ProductionManagementSystem.Controllers
             {
                 _designService.DeleteDesign(id);
                 return RedirectToAction(nameof(Index));
+            }
+            catch (IntersectionOfEntitiesException e)
+            {
+                ViewBag.ErrorMessage = e.Message;
+                ViewBag.ErrorHeader = e.Header;
+                return View(
+                    _mapperToViewModel.Map<DesignDTO, DesignViewModel>(_designService.GetDesign(id)));
             }
             catch (Exception e)
             {

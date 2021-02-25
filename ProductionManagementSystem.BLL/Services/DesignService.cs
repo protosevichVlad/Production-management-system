@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using ProductionManagementSystem.BLL.DTO;
+using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
@@ -60,6 +61,12 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new NotImplementedException();
             }
 
+            var design = _database.Designs.Get((int) id);
+            if (!CheckInDevices(design, out string errorMessage))
+            {
+                throw new IntersectionOfEntitiesException("Ошибка. Невозможно удаление конструктива.", errorMessage);
+            }
+            
             _database.Designs.Delete((int) id);
             _database.Save();
         }
@@ -95,9 +102,8 @@ namespace ProductionManagementSystem.BLL.Services
             if (designInDevice != null)
             {
                 var device = _database.Devices.GetAll().FirstOrDefault(d => d.Id == designInDevice.DeviceId);
-                errorMessage = "Невозможно удаление конструктива.<br />" +
-                               $"<i class='bg-light'>{design}</i> используется в <i class='bg-light'>{device}</i>.<br />" +
-                               $"Для удаления <i class='bg-light'>{design}</i>, удалите <i class='bg-light'>{device}</i>.<br />";
+                errorMessage = $"<i class='bg-light'>{design.ToString()}</i> используется в <i class='bg-light'>{device.ToString()}</i>.<br />" +
+                               $"Для удаления <i class='bg-light'>{design.ToString()}</i>, удалите <i class='bg-light'>{device.ToString()}</i>.<br />";
                 return false;
             }
 

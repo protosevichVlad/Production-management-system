@@ -64,18 +64,4 @@
         </dd>
     </dl>
 </div>
-@if (ViewBag.ErrorMessage != null)
-{
-    <partial name="Partail/PartialError" />
-    
-    @section Scripts
-    {
-        <script>
-            let errorModal = new bootstrap.Modal(document.getElementById('errorModal'), 
-            {
-                keyboard: false
-            })
-            errorModal.show();
-        </script>
-    }
-}
+

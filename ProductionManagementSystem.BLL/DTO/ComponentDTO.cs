@@ -11,7 +11,6 @@
         public string Explanation { get; set; }
         public string Manufacturer { get; set; }
         
-        // TODO delete and add to viewModel
         public override string ToString()
         {
             return $"{Type} {Name} {Nominal}";

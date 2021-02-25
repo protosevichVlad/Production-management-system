@@ -9,7 +9,6 @@
         public string ShortDescription { get; set; }
         public string Description { get; set; }
         
-        // TODO delete and add to viewModel
         public override string ToString()
         {
             return $"{Type} {Name} {ShortDescription}";

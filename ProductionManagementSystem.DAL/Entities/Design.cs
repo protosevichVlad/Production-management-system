@@ -11,5 +11,10 @@ namespace ProductionManagementSystem.DAL.Entities
         public int Quantity { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
+        
+        public override string ToString()
+        {
+            return $"{Type} {Name} {ShortDescription}";
+        }
     }
 }

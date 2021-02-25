@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.DTO;
+using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.WEB.Models;
 
@@ -34,7 +35,7 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="searchString">Used for searching</param>
         /// <returns>A page with all components sorted by parameter <paramref name="sortOrder"/> and satisfying <paramref name="searchString"/></returns>
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        public IActionResult Index(string sortOrder, string searchString)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
@@ -98,7 +99,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         // GET: Components/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             ViewBag.AllTypes = GetAllTypes();
             return View();
@@ -122,7 +123,7 @@ namespace ProductionManagementSystem.Controllers
         }
 
         // GET: Components/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             try
             {
@@ -145,7 +146,7 @@ namespace ProductionManagementSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] ComponentViewModel componentViewModel)
+        public IActionResult Edit(int id, [Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] ComponentViewModel componentViewModel)
         {
             if (id != componentViewModel.Id)
             {
@@ -162,7 +163,7 @@ namespace ProductionManagementSystem.Controllers
                 }
                 catch (Exception exception)
                 {
-                    throw exception;
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -190,16 +191,22 @@ namespace ProductionManagementSystem.Controllers
         // POST: Components/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
             try
             {
                 _componentService.DeleteComponent(id);
                 return RedirectToAction(nameof(Index));
             }
+            catch (IntersectionOfEntitiesException e)
+            {
+                ViewBag.ErrorMessage = e.Message;
+                ViewBag.ErrorHeader = e.Header;
+                return View(
+                    _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(_componentService.GetComponent(id)));
+            }
             catch (Exception e)
             {
-                Console.WriteLine(e);
                 throw;
             }
         }

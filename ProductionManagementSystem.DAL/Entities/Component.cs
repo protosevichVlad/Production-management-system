@@ -14,5 +14,9 @@ namespace ProductionManagementSystem.DAL.Entities
         public string Explanation { get; set; }
         public string Manufacturer { get; set; }
         
+        public override string ToString()
+        {
+            return $"{Type} {Name} {Nominal}";
+        }
     }
 }
