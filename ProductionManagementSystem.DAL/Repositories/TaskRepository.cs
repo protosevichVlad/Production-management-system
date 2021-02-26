@@ -19,17 +19,34 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public IEnumerable<Task> GetAll()
         {
-            return _db.Tasks;
+            return _db.Tasks
+                .Include(t => t.Device)
+                .Include(t => t.ObtainedDesigns)
+                .ThenInclude(t => t.Design)
+                .Include(t => t.ObtainedComponents)
+                .ThenInclude(t => t.Component);
         }
 
         public Task Get(int id)
         {
-            return _db.Tasks.Find(id);
+            return _db.Tasks
+                .Include(t => t.Device)
+                .Include(t => t.ObtainedDesigns)
+                .ThenInclude(t => t.Design)
+                .Include(t => t.ObtainedComponents)
+                .ThenInclude(t => t.Component)
+                .FirstOrDefault(t => t.Id == id);
         }
 
         public IEnumerable<Task> Find(Func<Task, bool> predicate)
         {
-            return _db.Tasks.Where(predicate).ToList();
+            return _db.Tasks
+                .Include(t => t.Device)
+                .Include(t => t.ObtainedDesigns)
+                .ThenInclude(t => t.Design)
+                .Include(t => t.ObtainedComponents)
+                .ThenInclude(t => t.Component)
+                .Where(predicate).ToList();
         }
 
         public void Create(Task item)
@@ -39,7 +56,8 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public void Update(Task item)
         {
-            _db.Entry(item).State = EntityState.Modified;
+            // _db.Entry(item).State = EntityState.Modified;
+            _db.Tasks.Update(item);
         }
 
         public void Delete(int id)

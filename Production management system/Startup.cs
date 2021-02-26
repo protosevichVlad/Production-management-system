@@ -44,6 +44,7 @@ namespace ProductionManagementSystem
             services.AddScoped<IComponentService>(parm => new ComponentService(uow));
             services.AddScoped<IDesignService>(parm => new DesignService(uow));
             services.AddScoped<IDeviceService>(parm => new DeviceService(uow));
+            services.AddScoped<ITaskService>(parm => new TaskService(uow));
             services.AddScoped<IDatabaseService>(parm => new DatabaseService(uow));
         }
 

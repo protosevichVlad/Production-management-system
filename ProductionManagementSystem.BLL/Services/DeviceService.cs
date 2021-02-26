@@ -116,6 +116,18 @@ namespace ProductionManagementSystem.BLL.Services
             return devices.Select(d => d.ToString());
         }
 
+        public IEnumerable<DeviceComponentsTemplate> GetComponentsTemplates(int deviceId)
+        {
+            var device = _database.Devices.Get(deviceId);
+            return device.DeviceComponentsTemplate;
+        }
+
+        public IEnumerable<DeviceDesignTemplate> GetDesignTemplates(int deviceId)
+        {
+            var device = _database.Devices.Get(deviceId);
+            return device.DeviceDesignTemplate;
+        }
+
         public void Dispose()
         {
             _database.Dispose();

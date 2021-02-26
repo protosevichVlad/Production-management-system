@@ -19,17 +19,25 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public IEnumerable<ObtainedDesign> GetAll()
         {
-            return _db.ObtainedDesigns;
+            return _db.ObtainedDesigns
+                .Include(c => c.Task)
+                .Include(c => c.Design);
         }
 
         public ObtainedDesign Get(int id)
         {
-            return _db.ObtainedDesigns.Find(id);
+            return _db.ObtainedDesigns
+                .Include(c => c.Task)
+                .Include(c => c.Design)
+                .FirstOrDefault(d => d.Id == id);
         }
 
         public IEnumerable<ObtainedDesign> Find(Func<ObtainedDesign, bool> predicate)
         {
-            return _db.ObtainedDesigns.Where(predicate).ToList();
+            return _db.ObtainedDesigns
+                .Include(c => c.Task)
+                .Include(c => c.Design)
+                .Where(predicate).ToList();
         }
 
         public void Create(ObtainedDesign item)

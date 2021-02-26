@@ -17,7 +17,7 @@ namespace ProductionManagementSystem.DAL.Interfaces
         IRepository<DeviceComponentsTemplate> DeviceComponentsTemplate { get; }
         IRepository<DeviceDesignTemplate> DeviceDesignTemplate { get; }
         
-        IRepository<ObtainedСomponent> ObtainedСomponents { get; }
+        IRepository<ObtainedComponent> ObtainedСomponents { get; }
         IRepository<ObtainedDesign> ObtainedDesigns { get; }
         
         IRepository<LogDesign> LogsDesign { get; }

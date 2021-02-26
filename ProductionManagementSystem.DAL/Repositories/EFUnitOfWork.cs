@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
@@ -124,7 +123,7 @@ namespace ProductionManagementSystem.DAL.Repositories
             }
         }
 
-        public IRepository<ObtainedСomponent> ObtainedСomponents
+        public IRepository<ObtainedComponent> ObtainedСomponents
         {
             get
             {

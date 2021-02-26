@@ -8,7 +8,7 @@ using ProductionManagementSystem.DAL.Interfaces;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
-    public class ObtainedСomponentRepository : IRepository<ObtainedСomponent>
+    public class ObtainedСomponentRepository : IRepository<ObtainedComponent>
     {
         private ApplicationContext _db;
 
@@ -17,27 +17,35 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db = context;
         }
 
-        public IEnumerable<ObtainedСomponent> GetAll()
+        public IEnumerable<ObtainedComponent> GetAll()
         {
-            return _db.ObtainedСomponents;
+            return _db.ObtainedСomponents
+                .Include(c => c.Task)
+                .Include(c => c.Component);
         }
 
-        public ObtainedСomponent Get(int id)
+        public ObtainedComponent Get(int id)
         {
-            return _db.ObtainedСomponents.Find(id);
+            return _db.ObtainedСomponents
+                .Include(c => c.Task)
+                .Include(c => c.Component)
+                .FirstOrDefault(c => c.Id == id);
         }
 
-        public IEnumerable<ObtainedСomponent> Find(Func<ObtainedСomponent, bool> predicate)
+        public IEnumerable<ObtainedComponent> Find(Func<ObtainedComponent, bool> predicate)
         {
-            return _db.ObtainedСomponents.Where(predicate).ToList();
+            return _db.ObtainedСomponents
+                .Include(c => c.Task)
+                .Include(c => c.Component)
+                .Where(predicate).ToList();
         }
 
-        public void Create(ObtainedСomponent item)
+        public void Create(ObtainedComponent item)
         {
             _db.ObtainedСomponents.Add(item);
         }
 
-        public void Update(ObtainedСomponent item)
+        public void Update(ObtainedComponent item)
         {
             _db.Entry(item).State = EntityState.Modified;
         }
