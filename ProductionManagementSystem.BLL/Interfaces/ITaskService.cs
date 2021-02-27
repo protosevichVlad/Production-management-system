@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.DAL.Entities;
+using ProductionManagementSystem.Models;
 
 namespace ProductionManagementSystem.BLL.Interfaces
 {
@@ -17,8 +18,10 @@ namespace ProductionManagementSystem.BLL.Interfaces
         IEnumerable<DeviceComponentsTemplate> GetDeviceComponentsTemplatesFromTask(int taskId);
         IEnumerable<ObtainedComponent> GetObtainedСomponents(int taskId);
         IEnumerable<ObtainedDesign> GetObtainedDesigns(int taskId);
+        string GetTaskStatusName(StatusEnum item);
         void ReceiveComponent(int taskId, int[] componentIds, int[] componentObt);
         void ReceiveDesign(int taskId, int[] designIds, int[] designObt);
+        
         void Dispose();
     }
 }

@@ -31,7 +31,7 @@ namespace ProductionManagementSystem.Controllers
                         .ForMember(
                             task => task.Status, 
                             opt => opt.MapFrom(
-                                src => GetDisplayName(src.Status)
+                                src => _taskService.GetTaskStatusName(src.Status)
                                 )
                             );
                     cfg.CreateMap<DeviceDTO, DeviceViewModel>();
@@ -180,23 +180,6 @@ namespace ProductionManagementSystem.Controllers
             _taskService.ReceiveDesign(TaskId, DesignIds, DesignObt);
             return RedirectToAction(nameof(Details), new {id = TaskId});
         }
-
-        private string GetDisplayName(StatusEnum item)
-        {
-            List<string> result = new List<string>();
-            foreach (var value in Enum.GetValues<StatusEnum>())
-            {
-                if ((item & value) == value)
-                {
-                    result.Add(value.GetType()
-                        .GetMember(value.ToString())
-                        .First()
-                        .GetCustomAttribute<DisplayAttribute>()
-                        ?.GetName());
-                }
-            }
-            return String.Join(", ", result);
-        }
         
         public static void SortingTasks(IEnumerable<TaskViewModel> tasks, string sortOrder)
         {
@@ -245,7 +228,7 @@ namespace ProductionManagementSystem.Controllers
             var states = new List<object>();
             foreach( StatusEnum status in Enum.GetValues(typeof(StatusEnum)) )
             {
-                states.Add(new {Id = (int)status, Name = GetDisplayName(status)});
+                states.Add(new {Id = (int)status, Name = _taskService.GetTaskStatusName(status)});
                 
                 if (task.Status < status)
                 {

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using AutoMapper;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
@@ -143,6 +145,23 @@ namespace ProductionManagementSystem.BLL.Services
         public IEnumerable<ObtainedDesign> GetObtainedDesigns(int taskId)
         {
             return _database.ObtainedDesigns.Find(c => c.Task.Id == taskId);
+        }
+
+        public string GetTaskStatusName(StatusEnum item)
+        {
+            List<string> result = new List<string>();
+            foreach (var value in Enum.GetValues<StatusEnum>())
+            {
+                if ((item & value) == value)
+                {
+                    result.Add(value.GetType()
+                        .GetMember(value.ToString())
+                        .First()
+                        .GetCustomAttribute<DisplayAttribute>()
+                        ?.GetName());
+                }
+            }
+            return String.Join(", ", result);
         }
 
         public void ReceiveComponent(int taskId, int[] componentIds, int[] componentObt)
