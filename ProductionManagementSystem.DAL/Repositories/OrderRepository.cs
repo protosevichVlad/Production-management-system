@@ -19,17 +19,25 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public IEnumerable<Order> GetAll()
         {
-            return _db.Orders;
+            return _db.Orders
+                .Include(o => o.Tasks)
+                .ThenInclude(t => t.Device);
         }
 
         public Order Get(int id)
         {
-            return _db.Orders.Find(id);
+            return _db.Orders
+                .Include(o => o.Tasks)
+                .ThenInclude(t => t.Device)
+                .FirstOrDefault(o => o.Id == id);
         }
 
         public IEnumerable<Order> Find(Func<Order, bool> predicate)
         {
-            return _db.Orders.Where(predicate).ToList();
+            return _db.Orders
+                .Include(o => o.Tasks)
+                .ThenInclude(t => t.Device)
+                .Where(predicate).ToList();
         }
 
         public void Create(Order item)

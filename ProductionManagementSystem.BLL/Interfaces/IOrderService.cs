@@ -8,7 +8,7 @@ namespace ProductionManagementSystem.BLL.Interfaces
         void CreateOrder(OrderDTO orderDto);
         void UpdateOrder(OrderDTO orderDto);
         IEnumerable<OrderDTO> GetOrders();
-        IEnumerable<TaskDTO> GetTasksFromOrder();
+        IEnumerable<TaskDTO> GetTasksFromOrder(int orderId);
         OrderDTO GetOrder(int? id);
         void DeleteOrder(int? id);
 
