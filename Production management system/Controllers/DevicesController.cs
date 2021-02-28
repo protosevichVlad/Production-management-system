@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.DTO;
+using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.WEB.Models;
 
@@ -147,6 +148,12 @@ namespace ProductionManagementSystem.Controllers
             {
                 _deviceService.DeleteDevice(id);
                 return RedirectToAction(nameof(Index));
+            }
+            catch (IntersectionOfEntitiesException e)
+            {
+                ViewBag.ErrorMessage = e.Message;
+                ViewBag.ErrorHeader = e.Header;
+                return View(_mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(_deviceService.GetDevice(id)));
             }
             catch (Exception e)
             {

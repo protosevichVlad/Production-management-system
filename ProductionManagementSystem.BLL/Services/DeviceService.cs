@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using ProductionManagementSystem.BLL.DTO;
+using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
@@ -101,8 +102,29 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new NotImplementedException();
             }
             
+            var device = _database.Devices.Get((int) id);
+            if (!CheckInTask(device, out string errorMessage))
+            {
+                throw new IntersectionOfEntitiesException("Ошибка. Невозможно удаление прибора.", errorMessage);
+            }
+            
             _database.Devices.Delete((int) id);
             _database.Save();
+        }
+
+        private bool CheckInTask(Device device, out string errorMessage)
+        {
+            var task = _database.Tasks.GetAll()
+                .FirstOrDefault(t => device.Id == t.DeviceId);
+            if (task != null)
+            {
+                errorMessage = $"<i class='bg-light'>{device.ToString()}</i> используется в <i class='bg-light'>задаче №{task.Id}</i>.<br />" +
+                               $"Для удаления <i class='bg-light'>{device.ToString()}</i>, удалите <i class='bg-light'>задачу №{task.Id}</i>.<br />";
+                return false;
+            }
+            
+            errorMessage = "";
+            return true;
         }
 
         public IEnumerable<string> GetNames()
