@@ -10,6 +10,9 @@ namespace ProductionManagementSystem.WEB.Models
         public int Id { get; set; }
 
         [Display(Name = "Срок")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
+        [Required]
         public DateTime Deadline { get; set; }
         
         [Display(Name = "Дата заказа")]
