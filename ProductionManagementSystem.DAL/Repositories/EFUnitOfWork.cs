@@ -23,9 +23,9 @@ namespace ProductionManagementSystem.DAL.Repositories
         private ObtainedDesignRepository _obtainedDesignRepository;
         private ObtainedСomponentRepository _obtainedСomponentRepository;
 
-        public EFUnitOfWork(string connectionString)
+        public EFUnitOfWork()
         {
-            _db = new ApplicationContext(connectionString);
+            _db = new ApplicationContextFactory().CreateDbContext(new []{"Develop"});
         }
 
 

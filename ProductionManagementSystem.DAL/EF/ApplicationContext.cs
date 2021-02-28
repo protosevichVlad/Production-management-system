@@ -25,24 +25,23 @@ namespace ProductionManagementSystem.DAL.EF
 
         private string _connectionString;
 
-        public ApplicationContext(string connectionString)
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
-            _connectionString = connectionString;
         }
 
         public void ResetDatabase()
         {
-            Database.EnsureDeleted();
             Database.EnsureCreated(); 
         }
                 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.UseMySql(_connectionString, new MySqlServerVersion(new Version(8, 0, 24)));
+            // optionsBuilder.UseMySql(_connectionString, new MySqlServerVersion(new Version(8, 0, 24)));
             // optionsBuilder.UseMySQL("server = db; UserId = root; Password = 123PassWord123; database = new_schema;");
             // optionsBuilder.UseMySQL("server = localhost; UserId = user1; Password = 123PassWord; database = production-management-system;");
-            // optionsBuilder.UseSqlServer("Server=tcp:productionmanagementsystem.database.windows.net,1433;Initial Catalog=productionmanagementsystem;Persist Security Info=False;User ID=user1;Password=123Pass123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+            // optionsBuilder.UseSqlServer(_connectionString);
+            // optionsBuilder.UseSqlServer();
         }
     }
 }

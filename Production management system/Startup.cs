@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
+using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models;
 
@@ -39,7 +40,7 @@ namespace ProductionManagementSystem
                     options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
 
-            var uow = new EFUnitOfWork("server = localhost; UserId = user1; Password = 123PassWord; database = production-management-system;");
+            var uow = new EFUnitOfWork();
             
             services.AddScoped<IComponentService>(parm => new ComponentService(uow));
             services.AddScoped<IDesignService>(parm => new DesignService(uow));
