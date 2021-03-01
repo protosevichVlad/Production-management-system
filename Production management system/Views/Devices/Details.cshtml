@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.Models.Device
+﻿@model ProductionManagementSystem.WEB.Models.DeviceViewModel;
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -17,9 +17,73 @@
 <div class="alert alert-info" role="alert">
     Здесь вы можете узнать подробную информацию о @Model.Name.
 </div>
-<hr />
+<hr/>
 <div class="container">
-    @DeviceHelper.CreateDevice(Html, Model, null)
+    <dl class='row'>
+        <dt class='col-sm-4'>Наименовие</dt>
+        <dd class='col-sm-10'>@Model.Name</dd>
+        <dt class='col-sm-4'>Количество на складе:</dt>
+        <dd class='col-sm-10'>@Model.Quantity</dd>
+        <dt class='col-sm-4'>Описание</dt>
+        <dd class='col-sm-10'>@Model.Description</dd>
+    </dl>
+    <div class='row'>
+        <div class='col'>
+            <h3>Монтаж</h3>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col table-responsive' id='Components'>
+            <table class='table table-sm' style='width:100%;'>
+                <thead>
+                <tr>
+                    <th class="td-with-name">Наименовие</th>
+                    <th>Количество в приборе</th>
+                    <th class="td-with-description">Примечание</th>
+                </tr>
+                </thead>
+                <tbody>
+                @for (int i = 0; i < Model.ComponentNames.Length; i++)
+                {
+                    <tr>
+                        <td class="td-with-name">@Model.ComponentNames[i]</td>
+                        <td>@Model.ComponentQuantity[i]</td>
+                        <td class="td-with-description">@Model.ComponentDescriptions[i]</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br/>
+    <div class='row'>
+        <div class='col'>
+            <h3>Конструктив</h3>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col table-responsive' id='Designs'>
+            <table class='table table-sm' style='width:100%;'>
+                <thead>
+                <tr>
+                    <th class="td-with-name">Наименовие</th>
+                    <th>Количество в приборе</th>
+                    <th class="td-with-description">Примечание</th>
+                </tr>
+                </thead>
+                <tbody>
+                @for (int i = 0; i < Model.DesignNames.Length; i++)
+                {
+                    <tr>
+                        <td class="td-with-name">@Model.DesignNames[i]</td>
+                        <td>@Model.DesignQuantity[i]</td>
+                        <td class="td-with-description">@Model.DesignDescriptions[i]</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <div>
     <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@Model.Id">Подробности</a>

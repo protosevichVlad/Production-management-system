@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductionManagementSystem", "Production management system\ProductionManagementSystem.csproj", "{050C64AE-3CF0-427F-A29D-49C03E3ACC1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductionManagementSystem.WEB", "Production management system\ProductionManagementSystem.WEB.csproj", "{050C64AE-3CF0-427F-A29D-49C03E3ACC1C}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{486FA0BF-000E-4DBC-887A-B701B752C4FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductionManagementSystem.DAL", "ProductionManagementSystem.DAL\ProductionManagementSystem.DAL.csproj", "{A38448C7-CA34-4428-83DD-1A7FBA363AE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductionManagementSystem.BLL", "ProductionManagementSystem.BLL\ProductionManagementSystem.BLL.csproj", "{B1735050-602B-45EB-BA4A-9A5425AB0087}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{486FA0BF-000E-4DBC-887A-B701B752C4FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{486FA0BF-000E-4DBC-887A-B701B752C4FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{486FA0BF-000E-4DBC-887A-B701B752C4FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A38448C7-CA34-4428-83DD-1A7FBA363AE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A38448C7-CA34-4428-83DD-1A7FBA363AE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A38448C7-CA34-4428-83DD-1A7FBA363AE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A38448C7-CA34-4428-83DD-1A7FBA363AE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1735050-602B-45EB-BA4A-9A5425AB0087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1735050-602B-45EB-BA4A-9A5425AB0087}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1735050-602B-45EB-BA4A-9A5425AB0087}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1735050-602B-45EB-BA4A-9A5425AB0087}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

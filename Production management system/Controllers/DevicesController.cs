@@ -2,32 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProductionManagementSystem.Models;
-using ProductionManagementSystem.ViewModels;
+using ProductionManagementSystem.BLL.DTO;
+using ProductionManagementSystem.BLL.Infrastructure;
+using ProductionManagementSystem.BLL.Interfaces;
+using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.Controllers
 {
     public class DevicesController : Controller
     {
-        private ApplicationContext _context;
+        private readonly IDeviceService _deviceService;
+        private readonly IComponentService _componentService;
+        private readonly IDesignService _designService;
+        private IMapper _mapperToViewModel;
+        private IMapper _mapperFromViewModel;
 
-        public DevicesController(ApplicationContext context)
+        public DevicesController(IDeviceService deviceService, IComponentService componentService, IDesignService designService)
         {
-            _context = context;
+            _deviceService = deviceService;
+            _componentService = componentService;
+            _designService = designService;
+            _mapperToViewModel = new MapperConfiguration(cfg => cfg.CreateMap<DeviceDTO, DeviceViewModel>())
+                .CreateMapper();
+            _mapperFromViewModel = new MapperConfiguration(cfg => cfg.CreateMap<DeviceViewModel, DeviceDTO>())
+                .CreateMapper();
         }
 
-        [Authorize(Roles = "admin")]
         public IActionResult Index(string sortOrder)
         {
             ViewData["NumSortParm"] = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
             ViewData["NameSortParm"] = sortOrder == "Name" ? "name_desc" : "Name";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
-            var devices = from s in _context.Devices
-                select s;
+            var devices = _deviceService.GetDevices();
+            
             switch (sortOrder)
             {
                 case "name_desc":
@@ -49,188 +58,114 @@ namespace ProductionManagementSystem.Controllers
                     devices = devices.OrderBy(d => d.Id);
                     break;
             }
-            return View(devices.ToList());
+            
+            return View(_mapperToViewModel.Map<IEnumerable<DeviceDTO>, IEnumerable<DeviceViewModel>>(devices));
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
         public IActionResult Create(DeviceViewModel deviceViewModel)
         {
-            Device device = new Device();
-            device.Name = deviceViewModel.Name;
-            device.Quantity = deviceViewModel.Quantity;
-            device.Description = deviceViewModel.Description;
-            device.DeviceDesignTemplate = new List<DeviceDesignTemplate>();
-            device.DeviceComponentsTemplate = new List<DeviceComponentsTemplate>();
-
-            for (int i = 0; i < deviceViewModel.ComponentIds.Length; i++)
-            {
-                device.DeviceComponentsTemplate.Add(new DeviceComponentsTemplate
-                {
-                    Component =
-                        _context.Components.Where(c => c.Id == deviceViewModel.ComponentIds[i]).FirstOrDefault(),
-                    Quantity = deviceViewModel.ComponentQuantity[i],
-                    Description = deviceViewModel.ComponentDescriptions[i],
-                });
-            }
-            
-            for (int i = 0; i < deviceViewModel.DesignIds.Length; i++)
-            {
-                device.DeviceDesignTemplate.Add(new DeviceDesignTemplate
-                {
-                    Design =
-                        _context.Designs.Where(c => c.Id == deviceViewModel.DesignIds[i]).FirstOrDefault(),
-                    Quantity = deviceViewModel.DesignQuantity[i],
-                    Description = deviceViewModel.DesignDescriptions[i],
-                });
-            }
-            
-            _context.Devices.Add(device);
-            _context.SaveChanges();
+            DeviceDTO device = _mapperFromViewModel.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
+            _deviceService.CreateDevice(device);
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
         public IActionResult Edit(int id)
         {
-            ViewBag.Device = _context.Devices
-                .Include(d => d.DeviceComponentsTemplate)
-                .ThenInclude(d => d.Component)
-                .Include(d => d.DeviceDesignTemplate)
-                .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == id);
-
-            List<Design> designs = _context.Designs.OrderBy(d => d.Name).ToList();
-            designs.ForEach((d) => {
-                byte[] bytes = System.Text.Encoding.Default.GetBytes(d.Name);
-                d.Name = System.Text.Encoding.UTF8.GetString(bytes);
-            });
-
-            List<Component> components = _context.Components.OrderBy(c => c.Name).ToList();
-            components.ForEach((c) => {
-                byte[] bytes = System.Text.Encoding.Default.GetBytes(c.Name);
-                c.Name = System.Text.Encoding.UTF8.GetString(bytes);
-            });
-
-            ViewBag.Designs = designs;
-            ViewBag.Components = components;
-            return View();
+            try
+            {
+                var device = _deviceService.GetDevice(id);
+                var deviceViewModel = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(device);
+                ViewBag.Components = _componentService.GetComponents();
+                ViewBag.Designs = _designService.GetDesigns();
+                return View(deviceViewModel);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
         public IActionResult Edit(DeviceViewModel deviceViewModel)
         {
-            Device device = _context.Devices
-                .Include(d => d.DeviceComponentsTemplate)
-                    .ThenInclude(d => d.Component)
-                .Include(d => d.DeviceDesignTemplate)
-                    .ThenInclude(d => d.Design)
-                .FirstOrDefault(d => d.Id == deviceViewModel.Id);
-
-            if (device == null)
+            try
             {
-                return NotFound();
+                DeviceDTO device = _mapperFromViewModel.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
+                _deviceService.UpdateDevice(device);
+                return RedirectToAction(nameof(Details), new {id = device.Id});
             }
-
-            device.Name = deviceViewModel.Name;
-            device.Quantity = deviceViewModel.Quantity;
-            device.Description = deviceViewModel.Description;
-            device.DeviceDesignTemplate = new List<DeviceDesignTemplate>();
-            device.DeviceComponentsTemplate = new List<DeviceComponentsTemplate>();
-            
-            for (int i = 0; i < deviceViewModel.ComponentIds.Length; i++)
+            catch (Exception e)
             {
-                device.DeviceComponentsTemplate.Add(new DeviceComponentsTemplate
-                {
-                    Component =
-                        _context.Components.Where(c => c.Id == deviceViewModel.ComponentIds[i]).FirstOrDefault(),
-                    Quantity = deviceViewModel.ComponentQuantity[i],
-                    Description = deviceViewModel.ComponentDescriptions[i],
-                });
+                Console.WriteLine(e);
+                throw;
             }
-            
-            for (int i = 0; i < deviceViewModel.DesignIds.Length; i++)
-            {
-                device.DeviceDesignTemplate.Add(new DeviceDesignTemplate
-                {
-                    Design =
-                        _context.Designs.Where(c => c.Id == deviceViewModel.DesignIds[i]).FirstOrDefault(),
-                    Quantity = deviceViewModel.DesignQuantity[i],
-                    Description = deviceViewModel.DesignDescriptions[i],
-                });
-            }
-
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Details), new { id = device.Id });
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
         public IActionResult Details(int id)
         {
-            var model = _context.Devices
-                .Include(d => d.DeviceComponentsTemplate)
-                    .ThenInclude(d => d.Component)
-                .Include(d => d.DeviceDesignTemplate)
-                    .ThenInclude(d => d.Design).FirstOrDefault(d => d.Id == id);
-            return View(model);
+            try
+            {
+                var device = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(_deviceService.GetDevice(id));
+                return View(device);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                var device = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(_deviceService.GetDevice(id));
+                return View(device);
             }
-
-            var device = await _context.Devices
-                .Include(d => d.DeviceComponentsTemplate)
-                .ThenInclude(d => d.Component)
-                .Include(d => d.DeviceDesignTemplate)
-                .ThenInclude(d => d.Design).FirstOrDefaultAsync(d => d.Id == id);
-            
-            if (device == null)
+            catch (Exception e)
             {
-                return NotFound();
+                Console.WriteLine(e);
+                throw;
             }
-
-            return View(device);
         }
 
         // POST: Designs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id)
         {
-            var device = await _context.Devices
-                .Include(d => d.DeviceComponentsTemplate)
-                .ThenInclude(d => d.Component)
-                .Include(d => d.DeviceDesignTemplate)
-                .ThenInclude(d => d.Design).FirstOrDefaultAsync(d => d.Id == id);
-
-            if (device == null)
+            try
             {
-                return NotFound();
+                _deviceService.DeleteDevice(id);
+                return RedirectToAction(nameof(Index));
             }
-            
-            _context.Devices.Attach(device);
-            _context.Devices.Remove(device);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (IntersectionOfEntitiesException e)
+            {
+                ViewBag.ErrorMessage = e.Message;
+                ViewBag.ErrorHeader = e.Header;
+                return View(_mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(_deviceService.GetDevice(id)));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         [HttpGet]
         public JsonResult GetAllDevices()
         {
-            List<Device> devices = _context.Devices.OrderBy(d => d.Name).ToList();
+            var devices = _deviceService.GetDevices();
             return Json(devices);
         }
     }

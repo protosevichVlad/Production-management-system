@@ -11,6 +11,10 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProductionManagementSystem.BLL.Interfaces;
+using ProductionManagementSystem.BLL.Services;
+using ProductionManagementSystem.DAL.EF;
+using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models;
 
 namespace ProductionManagementSystem
@@ -36,7 +40,14 @@ namespace ProductionManagementSystem
                     options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
 
-            services.AddScoped<ApplicationContext>();
+            var uow = new EFUnitOfWork();
+            
+            services.AddScoped<IComponentService>(parm => new ComponentService(uow));
+            services.AddScoped<IDesignService>(parm => new DesignService(uow));
+            services.AddScoped<IDeviceService>(parm => new DeviceService(uow));
+            services.AddScoped<ITaskService>(parm => new TaskService(uow));
+            services.AddScoped<IOrderService>(parm => new OrderService(uow));
+            services.AddScoped<IDatabaseService>(parm => new DatabaseService(uow));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

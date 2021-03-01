@@ -2,39 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ProductionManagementSystem.Models;
+using ProductionManagementSystem.BLL.DTO;
+using ProductionManagementSystem.BLL.Infrastructure;
+using ProductionManagementSystem.BLL.Interfaces;
+using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.Controllers
 {
     public class ComponentsController : Controller
     {
-        private readonly ApplicationContext _context;
+        private readonly IComponentService _componentService;
+        private IMapper _mapperToViewModel;
+        private IMapper _mapperFromViewModel;
 
-        public ComponentsController()
+        public ComponentsController(IComponentService service)
         {
-            _context = new ApplicationContext();
+            _componentService = service;
+            _mapperToViewModel = new MapperConfiguration(cfg => cfg.CreateMap<ComponentDTO, ComponentViewModel>())
+                .CreateMapper();
+            _mapperFromViewModel = new MapperConfiguration(cfg => cfg.CreateMap<ComponentViewModel, ComponentDTO>())
+                .CreateMapper();
         }
-        /// <summary>
-        /// The recording of information on the change object
-        /// </summary>
-        /// <param name="message">Description of changes</param>
-        /// <param name="component">Element to change</param>
-        private void Log(string message, Component component=null)
-        {
-            var log = new Log() {DateTime = DateTime.Now, UserLogin = User.Identity.Name, Message = message};
-            _context.Logs.Add(log);
-            if (component != null)
-            {
-                var logComponent = new LogComponent() {Log = log, Component = component};
-                _context.LogsComponent.Add(logComponent);
-            }
-            
-            _context.SaveChanges();
-        }
-
+        
         // GET: Components
         /// <summary>
         /// Display index page
@@ -43,15 +35,14 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="searchString">Used for searching</param>
         /// <returns>A page with all components sorted by parameter <paramref name="sortOrder"/> and satisfying <paramref name="searchString"/></returns>
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        public IActionResult Index(string sortOrder, string searchString)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
             ViewData["CurrentFilter"] = searchString;
-            
-            var components = from s in _context.Components
-                select s;
+
+            var components = _componentService.GetComponents();
             
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -84,31 +75,33 @@ namespace ProductionManagementSystem.Controllers
                     components = components.OrderBy(d => d.Name);
                     break;
             }
-            return View(await components.ToListAsync());
+
+            var componentsViewModel =
+                _mapperToViewModel.Map<IEnumerable<ComponentDTO>, IEnumerable<ComponentViewModel>>(components);
+            return View(componentsViewModel);
         }
 
         // GET: Components/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                var component = _componentService.GetComponent(id);
+                var componentViewModel =
+                    _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(component);
+                return View(componentViewModel);
             }
-
-            var component = await _context.Components
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (component == null)
+            catch (Exception e)
             {
-                return NotFound();
+                Console.WriteLine(e);
+                throw;
             }
-
-            return View(component);
         }
 
         // GET: Components/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            ViewBag.AllTypes = await GetAllTypes();
+            ViewBag.AllTypes = GetAllTypes();
             return View();
         }
 
@@ -117,34 +110,35 @@ namespace ProductionManagementSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] Component component)
+        public IActionResult Create([Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] ComponentViewModel componentViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(component);
-                await _context.SaveChangesAsync();
-                Log($"Был создан: {component}.", component);
+                var component =
+                    _mapperFromViewModel.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
+                _componentService.CreateComponent(component);
                 return RedirectToAction(nameof(Index));
             }
-            return View(component);
+            return View(componentViewModel);
         }
 
         // GET: Components/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                var component = _componentService.GetComponent(id);
+                var componentViewModel =
+                    _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(component);
+                ViewBag.AllTypes = GetAllTypes();
+                return View(componentViewModel);
             }
-
-            var component = await _context.Components.FindAsync(id);
-            if (component == null)
+            catch (Exception e)
             {
-                return NotFound();
+                Console.WriteLine(e);
+                throw;
             }
             
-            ViewBag.AllTypes = await GetAllTypes();
-            return View(component);
         }
 
         // POST: Components/Edit/5
@@ -152,9 +146,9 @@ namespace ProductionManagementSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] Component component)
+        public IActionResult Edit(int id, [Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] ComponentViewModel componentViewModel)
         {
-            if (id != component.Id)
+            if (id != componentViewModel.Id)
             {
                 return NotFound();
             }
@@ -163,65 +157,58 @@ namespace ProductionManagementSystem.Controllers
             {
                 try
                 {
-                    _context.Update(component);
-                    await _context.SaveChangesAsync();
-                    Log($"Был изменён {component}.", component);
+                    var component =
+                        _mapperFromViewModel.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
+                    _componentService.UpdateComponent(component);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception exception)
                 {
-                    if (!ComponentExists(component.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(component);
+            return View(componentViewModel);
         }
 
         // GET: Components/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                var component = _componentService.GetComponent(id);
+                var componentViewModel =
+                    _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(component);
+                return View(componentViewModel);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
 
-            var component = await _context.Components
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (component == null)
-            {
-                return NotFound();
-            }
-
-            return View(component);
         }
 
         // POST: Components/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var component = await _context.Components.FindAsync(id);
-            var logs = _context.LogsComponent.Where(l => l.ComponentId == id).ToList();
-            foreach (var log in logs)
+            try
             {
-                _context.LogsComponent.Remove(log);
+                _componentService.DeleteComponent(id);
+                return RedirectToAction(nameof(Index));
             }
-            
-            Log($"Был удалён {component}.");
-            _context.Components.Remove(component);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ComponentExists(int id)
-        {
-            return _context.Components.Any(e => e.Id == id);
+            catch (IntersectionOfEntitiesException e)
+            {
+                ViewBag.ErrorMessage = e.Message;
+                ViewBag.ErrorHeader = e.Header;
+                return View(
+                    _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(_componentService.GetComponent(id)));
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
         
         /// <summary>
@@ -230,12 +217,12 @@ namespace ProductionManagementSystem.Controllers
         /// </summary>
         /// <returns>JSON. Array of all components</returns>
         [HttpGet]
-        public async Task<JsonResult> GetAllComponents()
+        public JsonResult GetAllComponents()
         {
-            List<Component> components = await _context.Components.OrderBy(c => c.Name).ToListAsync();
+            IEnumerable<ComponentDTO> components = _componentService.GetComponents();
             foreach (var comp in components)
             {
-                comp.Name = $"{comp.Name} {comp.Nominal} {comp.Corpus}";
+                comp.Name = comp.ToString();
             }
             
             return Json(components);
@@ -246,11 +233,9 @@ namespace ProductionManagementSystem.Controllers
         /// </summary>
         /// <returns>JSON. Array of all types of components</returns>
         [NonAction]
-        private async Task<List<string>> GetAllTypes()
+        private IEnumerable<string> GetAllTypes()
         {
-            List<string> types = await _context.Components.OrderBy(c => c.Type).Select(c => c.Type).ToListAsync();
-            types = types.Distinct().ToList();
-            return types;
+            return _componentService.GetTypes();
         }
         
         /// <summary>
@@ -263,15 +248,12 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Add(int id, int? taskId)
         {
-
-            var component = _context.Components.FirstOrDefault(d => d.Id == id);
-            if (component == null)
-            {
-                return NotFound();
-            }
-
+            var component = _componentService.GetComponent(id);
+            var componentViewModel =
+                _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(component);
             ViewBag.TaskId = taskId;
-            return View(component);
+            
+            return View(componentViewModel);
         }
         
         /// <summary>
@@ -282,23 +264,18 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="taskId">Task ID for quick return</param>
         /// <returns>Page /Components or the page with the task from which this page was called</returns>
         [HttpPost]
-        public IActionResult Add(int componentId, int quantity, int? taskId)
+        public IActionResult Add(int componentId, int quantity)
         {
-
-            var component = _context.Components.FirstOrDefault(d => d.Id == componentId);
-            if (component is null)
+            try
             {
-                return NotFound();
+                _componentService.AddComponent(componentId, quantity);
+                return RedirectToAction(nameof(Index));
             }
-            component.Quantity += quantity;
-            Log($"Было добавлено {quantity}шт. После добавления: {component}.", component);
-            _context.SaveChanges();
-            if (taskId != null)
+            catch (Exception e)
             {
-                return RedirectToAction("ShowTask", "Task", new {id = taskId});
+                Console.WriteLine(e);
+                throw;
             }
-            
-            return RedirectToAction(nameof(Index));
         }
         
         /// <summary>
@@ -310,14 +287,10 @@ namespace ProductionManagementSystem.Controllers
         [Authorize(Roles = "admin, order_picker")]
         public IActionResult Receive(int id)
         {
-
-            var component = _context.Components.FirstOrDefault(d => d.Id == id);
-            if (component is null)
-            {
-                return NotFound();
-            }
-            
-            return View(component);
+            var component = _componentService.GetComponent(id);
+            var componentViewModel =
+                _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(component);
+            return View(componentViewModel);
         }
         
         /// <summary>
@@ -329,17 +302,16 @@ namespace ProductionManagementSystem.Controllers
         [HttpPost]
         public IActionResult Receive(int componentId, int quantity)
         {
-
-            Component component = _context.Components.FirstOrDefault(d => d.Id == componentId);
-            if (component is null)
+            try
             {
-                return NotFound();
+                _componentService.AddComponent(componentId, -quantity);
+                return RedirectToAction(nameof(Index));
             }
-            
-            component.Quantity -= quantity;
-            Log($"Было получено {quantity}шт. После получения: {component}.", component);
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

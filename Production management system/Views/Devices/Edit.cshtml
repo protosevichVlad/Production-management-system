@@ -1,14 +1,13 @@
-﻿@model ProductionManagementSystem.ViewModels.DeviceViewModel;
+﻿@model ProductionManagementSystem.WEB.Models.DeviceViewModel;
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
     ViewData["Title"] = "Изменение прибора";
-    int index = 1;
 }
 <h4>Редактировать прибор</h4>
 <div class="alert alert-info" role="alert">
-    Здесь вы можете изменить информацию о @ViewBag.Device.Name.
+    Здесь вы можете изменить информацию о @Model.Name.
 </div>
 <hr/>
 <form method="post" action="">
@@ -16,19 +15,19 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Name" class="control-label">Наименовие:</label>
-                <input id="Name" name="Name" class="form-control" autocomplete="off" required value="@ViewBag.Device.Name"/>
+                <input id="Name" name="Name" class="form-control" autocomplete="off" required value="@Model.Name"/>
             </div>
             <div class="form-group">
                 <label for="Quantity" class="control-label">Количество на складе:</label>
-                <input id="Quantity" name="Quantity" class="form-control" type="number" required value="@ViewBag.Device.Quantity" autocomplete="off" min="0"/>
+                <input id="Quantity" name="Quantity" class="form-control" type="number" required value="@Model.Quantity" autocomplete="off" min="0"/>
             </div>
             <div class="form-group">
                 <label for="Description" class="control-label">Описание:</label>
-                <textarea id="Description" name="Description" class="form-control"  value="@ViewBag.Device.Description" autocomplete="off"></textarea>
+                <textarea id="Description" name="Description" class="form-control" autocomplete="off">@Model.Description</textarea>
             </div>
         </div>
     </div>
-    <input type="number" name="Id" value="@ViewBag.Device.Id" hidden><br>
+    <input type="number" name="Id" value="@Model.Id" hidden><br>
     <div class="container">
         <div class="row">
             <div class="col">
@@ -37,31 +36,28 @@
                 </h3>
             </div>
         </div>
-        <div class="row">
-            <table class="table">
+        <div class="row table-responsive">
+            <table class="table table-sm">
                 <thead>
                 <tr>
                     <th>№</th>
-                    <th width="30%">Наименовие</th>
+                    <th class="td-with-name">Наименовие</th>
                     <th>Количество</th>
-                    <th width="45%">Примечание</th>
+                    <th class="td-with-description">Примечание</th>
                     <th class="border-0"></th>
                 </tr>
                 </thead>
-                <tr id="comTr0">
-                </tr>
-                @{ index = 1; }
-                @foreach (var comp in ViewBag.Device.DeviceComponentsTemplate)
+                @for (int i = 0; i < Model.ComponentNames.Length; i++)
                 {
-                    <tr id="comTr@(index)">
+                    <tr id="comTr@(i + 1)">
                         <td class="ComponentIds">
-                            @index
+                            @(i + 1)
                         </td>
-                        <td>
+                        <td class="td-with-name">
                             <select class="ComponentSelect align-top width-100 form-select" name="ComponentIds">
                                 @foreach (var c in ViewBag.Components)
                                 {
-                                    @if (c.Id == comp.Component.Id)
+                                    @if (c.Id == Model.ComponentIds[i])
                                     {
                                         <option value="@c.Id" selected>@c.ToString()</option>
                                     }
@@ -73,17 +69,17 @@
                             </select>
                         </td>
                         <td>
-                            <input class="ComponentInput align-top form-select" name="ComponentQuantity" type="number" value="@comp.Quantity" required autocomplete="off" min="0"/>
+                            <input class="ComponentInput align-top form-control" name="ComponentQuantity" type="number" value="@Model.ComponentQuantity[i]" required autocomplete="off" min="0"/>
                         </td>
-                        <td>
-                            <textarea class="align-top w-100 form-select" name="ComponentDescriptions">@comp.Description</textarea>
+                        <td class="td-with-description">
+                            <textarea class="align-top w-100 form-control" name="ComponentDescriptions">@Model.ComponentDescriptions[i]</textarea>
                         </td>
                         <td class="border-0">
-                            <button type="button" class="btn-close" aria-label="Close" onclick="removeComponent(@index)"></button>
+                            <button type="button" class="btn-close" aria-label="Close" onclick="removeComponent(@(i + 1))"></button>
                         </td>
                     </tr>
-                    index++;
                 }
+                <tr id="comTr0"></tr>
             </table>
             <button type="button" onclick="createComponent()" class="btn btn-link" id="buttonCreateComponent">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
@@ -97,31 +93,28 @@
                 </h3>
             </div>
         </div>
-        <div class="row">
-            <table class="table">
+        <div class="row table-responsive">
+            <table class="table table-sm">
                 <thead>
                 <tr>
                     <th>№</th>
-                    <th width="30%">Наименовие</th>
+                    <th class="td-with-name">Наименовие</th>
                     <th>Количество</th>
-                    <th width="45%">Примечание</th>
+                    <th class="td-with-description">Примечание</th>
                     <th class="border-0"></th>
                 </tr>
                 </thead>
-                <tr id="desTr0">
-                </tr>
-                @{ index = 1; }
-                @foreach (var des in ViewBag.Device.DeviceDesignTemplate)
+                @for (int i = 0; i < Model.DesignNames.Length; i++)
                 {
-                    <tr id="desTr@(index)">
+                    <tr id="desTr@(i + 1)">
                         <td class="DesignIds">
-                            @index
+                            @(i + 1)
                         </td>
-                        <td>
+                        <td class="td-with-name">
                             <select class="DesignSelect align-top width-100 form-select" name="DesignIds">
                                 @foreach (var d in ViewBag.Designs)
                                 {
-                                    @if (des.Design.Id == d.Id)
+                                    @if (Model.DesignIds[i] == d.Id)
                                     {
                                         <option value="@d.Id" selected>@d.ToString()</option>
                                     }
@@ -133,17 +126,17 @@
                             </select>
                         </td>
                         <td>
-                            <input class="DesignInput align-top  form-select" name="DesignQuantity" type="number" required value="@des.Quantity" autocomplete="off" min="0"/>
+                            <input class="DesignInput align-top form-control" name="DesignQuantity" type="number" required value="@Model.DesignQuantity[i]" autocomplete="off" min="0"/>
                         </td>
-                        <td>
-                            <textarea class="align-top w-100  form-select" name="DesignDescriptions">@des.Description</textarea>
+                        <td class="td-with-description">
+                            <textarea class="align-top w-100 form-control" name="DesignDescriptions">@Model.DesignDescriptions[i]</textarea>
                         </td>
                         <td class="border-0">
-                            <button type="button" class="btn-close" aria-label="Close" onclick="removeDesign(@index)"></button>
+                            <button type="button" class="btn-close" aria-label="Close" onclick="removeDesign(@(i + 1))"></button>
                         </td>
                     </tr>
-                    index++;
                 }
+                <tr id="desTr0"></tr>
             </table>
             <button type="button" onclick="createDesign()" class="btn btn-link" id="buttonCreateDesign">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>

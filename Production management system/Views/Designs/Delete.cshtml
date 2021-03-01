@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.Models.Design
+﻿@model ProductionManagementSystem.WEB.Models.DesignViewModel;
 
 @{
     ViewData["Title"] = "Удалить конструктив";
@@ -8,7 +8,7 @@
         <h4>Удалить</h4>
         <h5>Вы уверены, что хотите удалить это?</h5>
     </div>
-    <div class="col">
+    <div class="col d-flex justify-content-end">
         <form asp-action="Delete" class="text-right">
             <input type="hidden" asp-for="Id"/>
             <input type="submit" value="Удалить" class="btn btn-danger"/>
