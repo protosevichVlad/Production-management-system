@@ -24,7 +24,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public Component Get(int id)
         {
-            return _db.Components.Find(id);
+            return _db.Components.FirstOrDefault(c => c.Id == id);
         }
 
         public IEnumerable<Component> Find(Func<Component, bool> predicate)

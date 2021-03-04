@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
@@ -12,6 +14,7 @@ namespace ProductionManagementSystem.BLL.Services
     {
         private IUnitOfWork _database { get; set; }
         private IMapper _mapper;
+        public static string UserName;
 
         public LogService(IUnitOfWork uow)
         {
@@ -27,13 +30,14 @@ namespace ProductionManagementSystem.BLL.Services
         public void CreateLog(LogDTO logDto)
         {
             var log = _mapper.Map<LogDTO, Log>(logDto);
+            log.UserLogin = UserName;
             _database.Logs.Create(log);
             _database.Save();
         }
 
         public IEnumerable<LogDTO> GetLogs()
         {
-            return _mapper.Map<IEnumerable<Log>, IEnumerable<LogDTO>>(_database.Logs.GetAll());
+            return _mapper.Map<IEnumerable<Log>, IEnumerable<LogDTO>>(_database.Logs.GetAll().Reverse());
         }
 
         public LogDTO GetLog(int? id)

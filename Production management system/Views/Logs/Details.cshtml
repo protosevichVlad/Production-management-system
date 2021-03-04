@@ -40,22 +40,22 @@
     <a class="btn btn-light btn-sm" asp-action="Index">Вернуться к логам</a>
     @if (Model.DesignId != null)
     {
-        <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="Details" asp-route-id="@ViewBag.DesignId">Перейти к конструктиву</a>
+        <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="Details" asp-route-id="@Model.DesignId">Перейти к конструктиву</a>
     }
     @if (Model.ComponentId != null)
     {
-        <a class="btn btn-light btn-sm" asp-controller="Components" asp-action="Details" asp-route-id="@ViewBag.ComponentId">Перейти к монтажу</a>
+        <a class="btn btn-light btn-sm" asp-controller="Components" asp-action="Details" asp-route-id="@Model.ComponentId">Перейти к монтажу</a>
     }
     @if (Model.DeviceId != null)
     {
-        <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="Details" asp-route-id="@ViewBag.DesignId">Перейти к прибору</a>
+        <a class="btn btn-light btn-sm" asp-controller="Devices" asp-action="Details" asp-route-id="@Model.DeviceId">Перейти к прибору</a>
     }
     @if (Model.TaskId != null)
     {
-        <a class="btn btn-light btn-sm" asp-controller="Components" asp-action="Details" asp-route-id="@ViewBag.ComponentId">Перейти к задаче</a>
+        <a class="btn btn-light btn-sm" asp-controller="Tasks" asp-action="Details" asp-route-id="@Model.TaskId">Перейти к задаче</a>
     }
     @if (Model.OrderId != null)
     {
-        <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="Details" asp-route-id="@ViewBag.DesignId">Перейти к заказу</a>
+        <a class="btn btn-light btn-sm" asp-controller="Orders" asp-action="Details" asp-route-id="@Model.OrderId">Перейти к заказу</a>
     }
 </div>

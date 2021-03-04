@@ -13,12 +13,14 @@ namespace ProductionManagementSystem.BLL.Services
     public class ComponentService : IComponentService
     {
         private IUnitOfWork _database { get; set; }
+        private ILogService _log;
         private IMapper _mapperToDTO;
         private IMapper _mapperFromDTO;
         
         public ComponentService(IUnitOfWork uow)
         {
             _database = uow;
+            _log = new LogService(uow);
             _mapperToDTO = new MapperConfiguration(cfg => cfg.CreateMap<Component, ComponentDTO>())
                 .CreateMapper();
             _mapperFromDTO = new MapperConfiguration(cfg => cfg.CreateMap<ComponentDTO, Component>())
@@ -30,13 +32,26 @@ namespace ProductionManagementSystem.BLL.Services
             var component = _mapperFromDTO.Map<ComponentDTO, Component>(componentDto);
             _database.Components.Create(component);
             _database.Save();
+            
+            _log.CreateLog(new LogDTO($"Был создан новый монтаж: {component}"){ComponentId = component.Id});
         }
 
         public void UpdateComponent(ComponentDTO componentDto)
         {
-            var component = _mapperFromDTO.Map<ComponentDTO, Component>(componentDto);
+            var component = _database.Components.Get(componentDto.Id);
+
+            component.Corpus = componentDto.Corpus;
+            component.Explanation = componentDto.Explanation;
+            component.Manufacturer = componentDto.Manufacturer;
+            component.Name = componentDto.Name;
+            component.Nominal = componentDto.Nominal;
+            component.Quantity = componentDto.Quantity;
+            component.Type = componentDto.Type;
+
             _database.Components.Update(component);
             _database.Save();
+            
+            _log.CreateLog(new LogDTO($"Был изменён монтаж: {component}"){ComponentId = component.Id});
         }
 
         public IEnumerable<ComponentDTO> GetComponents()
@@ -48,7 +63,7 @@ namespace ProductionManagementSystem.BLL.Services
         {
             if (id == null)
             {
-                throw new NotImplementedException();
+                throw new PageNotFoundException();
             }
             
             return _mapperToDTO.Map<Component, ComponentDTO>(_database.Components.Get((int) id));
@@ -58,7 +73,7 @@ namespace ProductionManagementSystem.BLL.Services
         {
             if (id == null)
             {
-                throw new NotImplementedException();
+                throw new PageNotFoundException();
             }
 
             var component = _database.Components.Get((int) id);
@@ -69,6 +84,17 @@ namespace ProductionManagementSystem.BLL.Services
             
             _database.Components.Delete((int) id);
             _database.Save();
+
+            var componetLogs = _database.Logs.GetAll().Where(l => l.ComponentId == component.Id);
+            foreach (var log in componetLogs)
+            {
+                log.ComponentId = null;
+                _database.Logs.Update(log);
+            }
+            
+            _database.Save();
+            
+            _log.CreateLog(new LogDTO($"Был удалён монтаж: {component}"));
         }
 
         public IEnumerable<string> GetTypes()
@@ -82,12 +108,21 @@ namespace ProductionManagementSystem.BLL.Services
         {
             if (id == null)
             {
-                throw new NotImplementedException();
+                throw new PageNotFoundException();
             }
 
             var component = _database.Components.Get((int) id);
             component.Quantity += quantity;
             _database.Save();
+
+            if (quantity < 0)
+            {
+                _log.CreateLog(new LogDTO($"Былы получено {-quantity}ед. монтажа {component}"){ComponentId = component.Id});
+            }
+            else
+            {
+                _log.CreateLog(new LogDTO($"Былы добавлено {quantity}ед. монтажа {component}"){ComponentId = component.Id});
+            }
         }
 
         public void Dispose()

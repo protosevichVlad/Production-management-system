@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
+using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.Controllers
@@ -91,10 +92,9 @@ namespace ProductionManagementSystem.Controllers
                     _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(component);
                 return View(componentViewModel);
             }
-            catch (Exception e)
+            catch (PageNotFoundException e)
             {
-                Console.WriteLine(e);
-                throw;
+                return NotFound();
             }
         }
 
@@ -116,6 +116,7 @@ namespace ProductionManagementSystem.Controllers
             {
                 var component =
                     _mapperFromViewModel.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
+                LogService.UserName = User.Identity?.Name;
                 _componentService.CreateComponent(component);
                 return RedirectToAction(nameof(Index));
             }
@@ -133,12 +134,10 @@ namespace ProductionManagementSystem.Controllers
                 ViewBag.AllTypes = GetAllTypes();
                 return View(componentViewModel);
             }
-            catch (Exception e)
+            catch (PageNotFoundException e)
             {
-                Console.WriteLine(e);
-                throw;
+                return NotFound();
             }
-            
         }
 
         // POST: Components/Edit/5
@@ -159,13 +158,14 @@ namespace ProductionManagementSystem.Controllers
                 {
                     var component =
                         _mapperFromViewModel.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
+                    LogService.UserName = User.Identity?.Name;
                     _componentService.UpdateComponent(component);
                 }
                 catch (Exception exception)
                 {
                     throw;
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Edit), new {id = componentViewModel.Id});
             }
             return View(componentViewModel);
         }
@@ -195,6 +195,7 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
+                LogService.UserName = User.Identity?.Name;
                 _componentService.DeleteComponent(id);
                 return RedirectToAction(nameof(Index));
             }
@@ -268,6 +269,7 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
+                LogService.UserName = User.Identity?.Name;
                 _componentService.AddComponent(componentId, quantity);
                 return RedirectToAction(nameof(Index));
             }
@@ -304,6 +306,7 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
+                LogService.UserName = User.Identity?.Name;
                 _componentService.AddComponent(componentId, -quantity);
                 return RedirectToAction(nameof(Index));
             }

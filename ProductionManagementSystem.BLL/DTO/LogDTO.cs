@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Http;
 
 namespace ProductionManagementSystem.BLL.DTO
 {
@@ -13,5 +14,11 @@ namespace ProductionManagementSystem.BLL.DTO
         public int? DeviceId { get; set; }
         public int? TaskId { get; set; }
         public int? OrderId { get; set; }
+
+        public LogDTO(string message)
+        {
+            Message = message;
+            DateTime = DateTime.Now;
+        }
     }
 }
