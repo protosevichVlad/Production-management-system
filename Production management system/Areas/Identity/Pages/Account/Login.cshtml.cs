@@ -45,13 +45,15 @@ namespace ProductionManagementSystem.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            [Display(Name="Логин")]
             public string UserName { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
+            [Display(Name="Пароль")]
             public string Password { get; set; }
 
-            [Display(Name = "Remember me?")]
+            [Display(Name = "Запомнить меня?")]
             public bool RememberMe { get; set; }
         }
 
