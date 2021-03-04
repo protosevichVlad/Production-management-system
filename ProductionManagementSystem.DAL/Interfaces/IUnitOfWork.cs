@@ -18,9 +18,6 @@ namespace ProductionManagementSystem.DAL.Interfaces
         IRepository<ObtainedComponent> ObtainedСomponents { get; }
         IRepository<ObtainedDesign> ObtainedDesigns { get; }
         
-        IRepository<LogDesign> LogsDesign { get; }
-        IRepository<LogComponent> LogsComponent { get; }
-
         void ResetDatabase();
         
         void Save();

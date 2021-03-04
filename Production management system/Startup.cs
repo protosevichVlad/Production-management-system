@@ -60,6 +60,7 @@ namespace ProductionManagementSystem
             services.AddScoped<ITaskService>(_ => new TaskService(uow));
             services.AddScoped<IOrderService>(_ => new OrderService(uow));
             services.AddScoped<IDatabaseService>(_ => new DatabaseService(uow));
+            services.AddScoped<ILogService>(_ => new LogService(uow));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

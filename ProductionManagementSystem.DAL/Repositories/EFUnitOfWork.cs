@@ -16,8 +16,6 @@ namespace ProductionManagementSystem.DAL.Repositories
         private TaskRepository _taskRepository;
         private DeviceComponentsTemplateRepository _deviceComponentsTemplateRepository;
         private DeviceDesignTemplateRepository _deviceDesignTemplateRepository;
-        private LogComponentRepository _logComponentRepository;
-        private LogDesignRepository _logDesignRepository;
         private ObtainedDesignRepository _obtainedDesignRepository;
         private ObtainedСomponentRepository _obtainedСomponentRepository;
 
@@ -123,24 +121,6 @@ namespace ProductionManagementSystem.DAL.Repositories
             }
         }
         
-        public IRepository<LogDesign> LogsDesign {
-            get
-            {
-                if (_logDesignRepository == null)
-                    _logDesignRepository = new LogDesignRepository(_db);
-                return _logDesignRepository;
-            }
-        }
-
-        public IRepository<LogComponent> LogsComponent {
-            get
-            {
-                if (_logComponentRepository == null)
-                    _logComponentRepository = new LogComponentRepository(_db);
-                return _logComponentRepository;
-            }
-        }
-
         public void Save()
         {
             _db.SaveChanges();

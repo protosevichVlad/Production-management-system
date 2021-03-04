@@ -18,8 +18,6 @@ namespace ProductionManagementSystem.DAL.EF
         public DbSet<ObtainedDesign> ObtainedDesigns { get; set; }
         
         public DbSet<Log> Logs { get; set; }
-        public DbSet<LogDesign> LogDesigns { get; set; }
-        public DbSet<LogComponent> LogComponents { get; set; }
         public DbSet<Order> Orders { get; set; }
 
         private string _connectionString;

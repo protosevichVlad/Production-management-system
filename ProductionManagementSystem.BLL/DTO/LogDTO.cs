@@ -1,21 +1,13 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
-namespace ProductionManagementSystem.DAL.Entities
+namespace ProductionManagementSystem.BLL.DTO
 {
-    public class Log
+    public class LogDTO
     {
         public int Id { get; set; }
-        
-        [Display(Name = "Дата и время")]
         public DateTime DateTime { get; set; }
-        
-        [Display(Name = "Пользователь")]
         public string UserLogin { get; set; }
-        
-        [Display(Name = "Сообщение")]
         public string Message { get; set; }
-
         public int? ComponentId { get; set; }
         public int? DesignId { get; set; }
         public int? DeviceId { get; set; }

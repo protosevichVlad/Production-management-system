@@ -294,11 +294,26 @@ namespace ProductionManagementSystem.DAL.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("ComponentId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DesignId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DeviceId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TaskId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserLogin")
                         .HasColumnType("nvarchar(max)");
@@ -306,50 +321,6 @@ namespace ProductionManagementSystem.DAL.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Logs");
-                });
-
-            modelBuilder.Entity("ProductionManagementSystem.DAL.Entities.LogComponent", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("ComponentId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("LogId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ComponentId");
-
-                    b.HasIndex("LogId");
-
-                    b.ToTable("LogComponents");
-                });
-
-            modelBuilder.Entity("ProductionManagementSystem.DAL.Entities.LogDesign", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("DesignId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("LogId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DesignId");
-
-                    b.HasIndex("LogId");
-
-                    b.ToTable("LogDesigns");
                 });
 
             modelBuilder.Entity("ProductionManagementSystem.DAL.Entities.ObtainedComponent", b =>
@@ -611,36 +582,6 @@ namespace ProductionManagementSystem.DAL.EF.Migrations
                         .IsRequired();
 
                     b.Navigation("Design");
-                });
-
-            modelBuilder.Entity("ProductionManagementSystem.DAL.Entities.LogComponent", b =>
-                {
-                    b.HasOne("ProductionManagementSystem.DAL.Entities.Component", "Component")
-                        .WithMany()
-                        .HasForeignKey("ComponentId");
-
-                    b.HasOne("ProductionManagementSystem.DAL.Entities.Log", "Log")
-                        .WithMany()
-                        .HasForeignKey("LogId");
-
-                    b.Navigation("Component");
-
-                    b.Navigation("Log");
-                });
-
-            modelBuilder.Entity("ProductionManagementSystem.DAL.Entities.LogDesign", b =>
-                {
-                    b.HasOne("ProductionManagementSystem.DAL.Entities.Design", "Design")
-                        .WithMany()
-                        .HasForeignKey("DesignId");
-
-                    b.HasOne("ProductionManagementSystem.DAL.Entities.Log", "Log")
-                        .WithMany()
-                        .HasForeignKey("LogId");
-
-                    b.Navigation("Design");
-
-                    b.Navigation("Log");
                 });
 
             modelBuilder.Entity("ProductionManagementSystem.DAL.Entities.ObtainedComponent", b =>
