@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
+using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.Controllers
@@ -103,6 +104,7 @@ namespace ProductionManagementSystem.Controllers
             if (ModelState.IsValid)
             {
                 var design = _mapperFromViewModel.Map<DesignViewModel, DesignDTO>(designViewModel);
+                LogService.UserName = User.Identity?.Name;
                 _designService.CreateDesign(design);
                 return RedirectToAction(nameof(Index));
             }
@@ -138,6 +140,7 @@ namespace ProductionManagementSystem.Controllers
                 try
                 {
                     var design = _mapperFromViewModel.Map<DesignViewModel, DesignDTO>(designViewModel);
+                    LogService.UserName = User.Identity?.Name;
                     _designService.UpdateDesign(design);
                     return RedirectToAction(nameof(Index));
                 }
@@ -171,6 +174,7 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
+                LogService.UserName = User.Identity?.Name;
                 _designService.DeleteDesign(id);
                 return RedirectToAction(nameof(Index));
             }
@@ -214,6 +218,7 @@ namespace ProductionManagementSystem.Controllers
 
             try
             {
+                LogService.UserName = User.Identity?.Name;
                 _designService.AddDesign(designId, quantity);
                 return RedirectToAction(nameof(Index));
             }

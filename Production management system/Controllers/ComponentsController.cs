@@ -246,7 +246,6 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="taskId">Task ID for quick return</param>
         /// <returns>Page with form</returns>
         [HttpGet]
-        [Authorize(Roles = "admin, order_picker")]
         public IActionResult Add(int id, int? taskId)
         {
             var component = _componentService.GetComponent(id);
@@ -286,7 +285,6 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="id">Id of the component to receive.</param>
         /// <returns>Page with form</returns>
         [HttpGet]
-        [Authorize(Roles = "admin, order_picker")]
         public IActionResult Receive(int id)
         {
             var component = _componentService.GetComponent(id);

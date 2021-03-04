@@ -117,11 +117,11 @@ namespace ProductionManagementSystem.BLL.Services
 
             if (quantity < 0)
             {
-                _log.CreateLog(new LogDTO($"Былы получено {-quantity}ед. монтажа {component}"){ComponentId = component.Id});
+                _log.CreateLog(new LogDTO($"Было получено {-quantity}ед. монтажа {component}"){ComponentId = component.Id});
             }
             else
             {
-                _log.CreateLog(new LogDTO($"Былы добавлено {quantity}ед. монтажа {component}"){ComponentId = component.Id});
+                _log.CreateLog(new LogDTO($"Было добавлено {quantity}ед. монтажа {component}"){ComponentId = component.Id});
             }
         }
 

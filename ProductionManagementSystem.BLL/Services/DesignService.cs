@@ -13,12 +13,14 @@ namespace ProductionManagementSystem.BLL.Services
     public class DesignService : IDesignService
     {
         private IUnitOfWork _database { get; }
+        private ILogService _log;
         private IMapper _mapperToDTO;
         private IMapper _mapperFromDTO;
         
         public DesignService(IUnitOfWork uow)
         {
             _database = uow;
+            _log = new LogService(uow);
             _mapperToDTO = new MapperConfiguration(cfg => cfg.CreateMap<Design, DesignDTO>())
                 .CreateMapper();
             _mapperFromDTO = new MapperConfiguration(cfg => cfg.CreateMap<DesignDTO, Design>())
@@ -30,13 +32,24 @@ namespace ProductionManagementSystem.BLL.Services
             var design = _mapperFromDTO.Map<DesignDTO, Design>(designDto);
             _database.Designs.Create(design);
             _database.Save();
+            
+            _log.CreateLog(new LogDTO($"Был создан конструктив {design}"){ComponentId = design.Id});
         }
 
         public void UpdateDesign(DesignDTO designDto)
         {
-            var design = _mapperFromDTO.Map<DesignDTO, Design>(designDto);
+            var design = _database.Designs.Get(designDto.Id);
+
+            design.Name = designDto.Name;
+            design.Quantity = designDto.Quantity;
+            design.Type = designDto.Type;
+            design.Description = designDto.Description;
+            design.ShortDescription = designDto.ShortDescription;
+            
             _database.Designs.Update(design);
             _database.Save();
+            
+            _log.CreateLog(new LogDTO($"Был изменён конструктив {design}"){ComponentId = design.Id});
         }
 
         public IEnumerable<DesignDTO> GetDesigns()
@@ -69,6 +82,17 @@ namespace ProductionManagementSystem.BLL.Services
             
             _database.Designs.Delete((int) id);
             _database.Save();
+            
+            var designLogs = _database.Logs.GetAll().Where(l => l.DeviceId == design.Id);
+            foreach (var log in designLogs)
+            {
+                log.DesignId = null;
+                _database.Logs.Update(log);
+            }
+            
+            _database.Save();
+            
+            _log.CreateLog(new LogDTO($"Был удалён конструктив: {design}"));
         }
 
         public IEnumerable<string> GetTypes()
@@ -88,6 +112,15 @@ namespace ProductionManagementSystem.BLL.Services
             var design = _database.Designs.Get((int) id);
             design.Quantity += quantity;
             _database.Save();
+            
+            if (quantity < 0)
+            {
+                _log.CreateLog(new LogDTO($"Было получено {-quantity}ед. конструктива {design}"){ComponentId = design.Id});
+            }
+            else
+            {
+                _log.CreateLog(new LogDTO($"Было добавлено {quantity}ед. конструктива {design}"){ComponentId = design.Id});
+            }
         }
 
         public void Dispose()
