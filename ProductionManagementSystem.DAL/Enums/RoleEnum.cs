@@ -2,12 +2,12 @@
 {
     public static class RoleEnum
     {
-        public static string Admin => "admin";
-        public static string OrderPicker => "order_picker";
-        public static string Assembler => "assembler";
-        public static string Tuner => "tuner";
-        public static string Collector => "collector";
-        public static string Validating => "validating";
-        public static string Shipper => "shipper";
+        public const string Admin = "Администратор";
+        public const string OrderPicker = "Снабженец ";
+        public const string Assembler = "Монтажник";
+        public const string Tuner = "Настройщик";
+        public const string Collector = "Сборщик";
+        public const string Validating = "Поверитель";
+        public const string Shipper = "Отгрузчик";
     }
 }

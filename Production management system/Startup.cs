@@ -32,7 +32,7 @@ namespace ProductionManagementSystem
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")) 
             );
 
-            services.AddDefaultIdentity<ProductionManagementSystemUser>(options =>
+            services.AddIdentity<ProductionManagementSystemUser, IdentityRole>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = true;
                     options.Password.RequireDigit = false;
