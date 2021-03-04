@@ -1,21 +1,16 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.DAL.EF;
+using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Repositories;
-using ProductionManagementSystem.Models;
 
 namespace ProductionManagementSystem
 {
@@ -33,21 +28,30 @@ namespace ProductionManagementSystem
         {
             services.AddControllersWithViews();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-                    options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-                });
+            services.AddDbContext<ApplicationContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")) 
+            );
 
-            var uow = new EFUnitOfWork();
+            services.AddDefaultIdentity<ProductionManagementSystemUser>(options =>
+                    options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationContext>()
+                .AddDefaultUI();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = $"/Identity/Account/Login";
+                options.LogoutPath = $"/Identity/Account/Logout";
+                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+            });
+
+            var uow = new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection"));
             
-            services.AddScoped<IComponentService>(parm => new ComponentService(uow));
-            services.AddScoped<IDesignService>(parm => new DesignService(uow));
-            services.AddScoped<IDeviceService>(parm => new DeviceService(uow));
-            services.AddScoped<ITaskService>(parm => new TaskService(uow));
-            services.AddScoped<IOrderService>(parm => new OrderService(uow));
-            services.AddScoped<IDatabaseService>(parm => new DatabaseService(uow));
+            services.AddScoped<IComponentService>(_ => new ComponentService(uow));
+            services.AddScoped<IDesignService>(_ => new DesignService(uow));
+            services.AddScoped<IDeviceService>(_ => new DeviceService(uow));
+            services.AddScoped<ITaskService>(_ => new TaskService(uow));
+            services.AddScoped<IOrderService>(_ => new OrderService(uow));
+            services.AddScoped<IDatabaseService>(_ => new DatabaseService(uow));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,6 +85,7 @@ namespace ProductionManagementSystem
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
 
         }

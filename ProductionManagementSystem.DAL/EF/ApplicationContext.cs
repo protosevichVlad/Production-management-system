@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.Entities;
 
 namespace ProductionManagementSystem.DAL.EF
 {
-    public class ApplicationContext : DbContext
+    public class ApplicationContext : IdentityDbContext<ProductionManagementSystemUser>
     {
         public DbSet<Device> Devices { get; set; }
         public DbSet<Component> Components { get; set; }
@@ -13,8 +14,6 @@ namespace ProductionManagementSystem.DAL.EF
         
         public DbSet<Design> Designs { get; set; }
         public DbSet<Task> Tasks { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
         public DbSet<ObtainedComponent> ObtainedСomponents { get; set; }
         public DbSet<ObtainedDesign> ObtainedDesigns { get; set; }
         

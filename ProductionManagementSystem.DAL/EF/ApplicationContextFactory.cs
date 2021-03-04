@@ -8,7 +8,14 @@ namespace ProductionManagementSystem.DAL.EF
         public ApplicationContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
-            optionsBuilder.UseSqlServer("Server=tcp:productionmanagementsystem.database.windows.net,1433;Initial Catalog=productionmanagementsystem;Persist Security Info=False;User ID=user1;Password=123Pass123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+            if (args.Length == 1)
+            {
+                optionsBuilder.UseSqlServer(args[0]);
+            }
+            else
+            {
+                optionsBuilder.UseSqlServer("Server=tcp:productionmanagementsystem.database.windows.net,1433;Initial Catalog=productionmanagementsystem;Persist Security Info=False;User ID=user1;Password=123Pass123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+            }
 
             return new ApplicationContext(optionsBuilder.Options);
         }

@@ -10,8 +10,6 @@ namespace ProductionManagementSystem.DAL.Interfaces
         IRepository<Component> Components { get; }
         IRepository<Order> Orders { get; }
         IRepository<Task> Tasks { get; }
-        IRepository<User> Users { get; }
-        IRepository<Role> Roles { get; }
         IRepository<Log> Logs { get; }
 
         IRepository<DeviceComponentsTemplate> DeviceComponentsTemplate { get; }

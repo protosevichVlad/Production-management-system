@@ -13,9 +13,7 @@ namespace ProductionManagementSystem.DAL.Repositories
         private DeviceRepository _deviceRepository;
         private LogRepository _logRepository;
         private OrderRepository _orderRepository;
-        private RoleRepository _roleRepository;
         private TaskRepository _taskRepository;
-        private UserRepository _userRepository;
         private DeviceComponentsTemplateRepository _deviceComponentsTemplateRepository;
         private DeviceDesignTemplateRepository _deviceDesignTemplateRepository;
         private LogComponentRepository _logComponentRepository;
@@ -23,9 +21,9 @@ namespace ProductionManagementSystem.DAL.Repositories
         private ObtainedDesignRepository _obtainedDesignRepository;
         private ObtainedСomponentRepository _obtainedСomponentRepository;
 
-        public EFUnitOfWork()
+        public EFUnitOfWork(string connectionString)
         {
-            _db = new ApplicationContextFactory().CreateDbContext(new []{"Develop"});
+            _db = new ApplicationContextFactory().CreateDbContext(new []{connectionString});
         }
 
 
@@ -77,24 +75,6 @@ namespace ProductionManagementSystem.DAL.Repositories
             }
         }
         
-        public IRepository<User> Users {
-            get
-            {
-                if (_userRepository == null)
-                    _userRepository = new UserRepository(_db);
-                return _userRepository;
-            }
-        }
-        
-        public IRepository<Role> Roles {
-            get
-            {
-                if (_roleRepository == null)
-                    _roleRepository = new RoleRepository(_db);
-                return _roleRepository;
-            }
-        }
-
         public IRepository<Log> Logs
         {
             get
