@@ -48,15 +48,15 @@ namespace ProductionManagementSystem.Controllers
             
             if (!String.IsNullOrEmpty(searchString))
             {
-                components = components.Where(c => c.Name.Contains(searchString)
-                                                    || c.Corpus.Contains(searchString)
-                                                    || c.Explanation.Contains(searchString)
-                                                    || c.Nominal.Contains(searchString)
-                                                    || c.Type.Contains(searchString)
-                                                    || c.Manufacturer.Contains(searchString));
+                components = components.Where(c => (c.Name?.Contains(searchString) ?? false)
+                                                    || (c.Corpus?.Contains(searchString) ?? false)
+                                                    || (c.Explanation?.Contains(searchString) ?? false)
+                                                    || (c.Nominal?.Contains(searchString) ?? false)
+                                                    || (c.Type?.Contains(searchString) ?? false)
+                                                    || (c.Manufacturer?.Contains(searchString) ?? false));
             }
             
-            switch (sortOrder)
+            switch (sortOrder)  
             {
                 case "name_desc":
                     components = components.OrderByDescending(d => d.Name);
