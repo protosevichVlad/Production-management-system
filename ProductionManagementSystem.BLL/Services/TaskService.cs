@@ -17,30 +17,29 @@ namespace ProductionManagementSystem.BLL.Services
     {
         private IUnitOfWork _database { get; }
         private IDeviceService _deviceService;
-        private IMapper _mapperToDto;
-        private IMapper _mapperFromDto;
+        private ILogService _logService;
+        private IMapper _mapper;
 
         public TaskService(IUnitOfWork uow)
         {
-            _deviceService = new DeviceService(uow);
             _database = uow;
-            _mapperToDto = new MapperConfiguration(cfg =>
+            _deviceService = new DeviceService(uow);
+            _logService = new LogService(uow);
+            
+            _mapper = new MapperConfiguration(cfg =>
                 {
                     cfg.CreateMap<Task, TaskDTO>();
                     cfg.CreateMap<Device, DeviceDTO>();
-                })
-                .CreateMapper();
-            _mapperFromDto = new MapperConfiguration(cfg =>
-                {
                     cfg.CreateMap<TaskDTO, Task>();
                     cfg.CreateMap<DeviceDTO, Device>();
+                    cfg.CreateMap<Log, LogDTO>();
                 })
                 .CreateMapper();
         }
 
         public void CreateTask(TaskDTO taskDto)
         {
-            var task = _mapperFromDto.Map<TaskDTO, Task>(taskDto);
+            var task = _mapper.Map<TaskDTO, Task>(taskDto);
             task.Status = StatusEnum.Equipment;
             task.EndTime = new DateTime();
             task.StartTime = DateTime.Now;
@@ -55,7 +54,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public void UpdateTask(TaskDTO taskDto)
         {
-            var task = _mapperFromDto.Map<TaskDTO, Task>(taskDto);
+            var task = _mapper.Map<TaskDTO, Task>(taskDto);
             
             _database.Tasks.Update(task);
             _database.Save();
@@ -70,7 +69,7 @@ namespace ProductionManagementSystem.BLL.Services
         }
 
         public IEnumerable<TaskDTO> GetTasks() =>
-            _mapperToDto.Map<IEnumerable<Task>, IEnumerable<TaskDTO>>(_database.Tasks.GetAll());
+            _mapper.Map<IEnumerable<Task>, IEnumerable<TaskDTO>>(_database.Tasks.GetAll());
 
         public TaskDTO GetTask(int? id)
         {
@@ -80,7 +79,7 @@ namespace ProductionManagementSystem.BLL.Services
             }
 
             var task = _database.Tasks.Get((int) id) ?? throw new PageNotFoundException();
-            var taskDto = _mapperToDto.Map<Task, TaskDTO>(task) ?? throw new PageNotFoundException();
+            var taskDto = _mapper.Map<Task, TaskDTO>(task) ?? throw new PageNotFoundException();
 
             return taskDto;
         }
@@ -88,6 +87,7 @@ namespace ProductionManagementSystem.BLL.Services
         public void Transfer(int taskId, bool full, int to, string message)
         {
             var task = _database.Tasks.Get(taskId);
+            var logString = $"{LogService.UserName} изменил статус задачи №{taskId} с {GetTaskStatusName(task.Status)} ";
             if (full)
             {
                 task.Status = (StatusEnum) to;
@@ -98,6 +98,9 @@ namespace ProductionManagementSystem.BLL.Services
             }
             
             _database.Save();
+
+            logString += $"на {GetTaskStatusName(task.Status)} с сообщением: {message}";
+            _logService.CreateLog(new LogDTO(logString) {TaskId = task.Id, OrderId = task.OrderId});
         }
 
         public void DeleteTask(int? id)
@@ -145,6 +148,22 @@ namespace ProductionManagementSystem.BLL.Services
         public IEnumerable<ObtainedDesign> GetObtainedDesigns(int taskId)
         {
             return _database.ObtainedDesigns.Find(c => c.Task.Id == taskId);
+        }
+
+        public IEnumerable<LogDTO> GetLogs(int? taskId)
+        {
+            if (taskId == null)
+            {
+                throw new PageNotFoundException();
+            }
+            
+            var logs = _mapper.Map<IEnumerable<Log>, IEnumerable<LogDTO>>(_database.Logs.Find(log => log.TaskId == taskId).Reverse());
+            if (logs == null)
+            {
+                return Array.Empty<LogDTO>();
+            }
+
+            return logs;
         }
 
         public string GetTaskStatusName(StatusEnum item)

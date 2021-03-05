@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
+using ProductionManagementSystem.Models;
 using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.Controllers
 {
+    [Authorize(Roles = RoleEnum.Admin)]
     public class DevicesController : Controller
     {
         private readonly IDeviceService _deviceService;

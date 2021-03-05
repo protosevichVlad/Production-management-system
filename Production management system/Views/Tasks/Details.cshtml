@@ -10,6 +10,12 @@
     <div class="col">
         <h4>Подробная информация</h4>
     </div>
+    <div class="col d-flex justify-content-end">
+        <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@Model.Id">Подробности</a>
+        <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+        <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#transferModal">Передать</button>
+    </div>
 </div>
 <div class="alert alert-info" role="alert">
     Здесь вы можете узнать подробную информацию о задаче №@Model.Id.
@@ -102,51 +108,38 @@
         </table>
     </div>
 </div>
-
-<div>
-    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@Model.Id">Подробности</a>
-    <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
-    <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
-    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#transferModal">Передать</button>
-</div>
-<div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="transferModalLabel">Передача задачи</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="post" asp-action="Transfer" id="transferForm">
-                    <input name="taskId" value="@Model.Id" hidden>
-                    <div class="mb-3">
-                        <label for="to" class="col-form-label"></label>
-                        <select class="form-select" id="to" name="to" asp-items="ViewBag.States"></select>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="full" id="flexRadioDefault1" checked value="true">
-                            <label class="form-check-label" for="flexRadioDefault1">
-                                Предать полностью
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="full" id="flexRadioDefault2" value="false">
-                            <label class="form-check-label" for="flexRadioDefault2">
-                                Предать частично
-                            </label>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="message-text" class="col-form-label">Примечание:</label>
-                        <textarea class="form-control" id="message-text" name="message"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" onclick="document.querySelector('#transferForm').submit()">Передать</button>
-            </div>
-        </div>
-    </div>
+<br>
+<hr/>
+<h3>Логи</h3>
+<div class="table-responsive">
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>
+                Дата и время
+            </th>
+            <th>
+                Сообщение
+            </th>
+            <th>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var log in ViewBag.Logs)
+        {
+            <tr>
+                <td>
+                    @log.DateTime
+                </td>
+                <td>
+                    @log.Message
+                </td>
+                <td>
+                    <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Details" asp-route-id="@log.Id">Подробности</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 </div>

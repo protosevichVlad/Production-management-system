@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
+using ProductionManagementSystem.Models;
 using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.Controllers
 {
+    [Authorize(Roles = RoleEnum.OrderPicker)]
     public class ComponentsController : Controller
     {
         private readonly IComponentService _componentService;

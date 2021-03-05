@@ -18,6 +18,7 @@ namespace ProductionManagementSystem.BLL.Interfaces
         IEnumerable<DeviceComponentsTemplate> GetDeviceComponentsTemplatesFromTask(int taskId);
         IEnumerable<ObtainedComponent> GetObtainedСomponents(int taskId);
         IEnumerable<ObtainedDesign> GetObtainedDesigns(int taskId);
+        IEnumerable<LogDTO> GetLogs(int? taskId);
         string GetTaskStatusName(StatusEnum item);
         void ReceiveComponent(int taskId, int[] componentIds, int[] componentObt);
         void ReceiveDesign(int taskId, int[] designIds, int[] designObt);

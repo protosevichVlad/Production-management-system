@@ -4,16 +4,19 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
+using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.Controllers
 {
+    [Authorize]
     public class TasksController : Controller
     {
         private readonly ITaskService _taskService;
@@ -35,6 +38,7 @@ namespace ProductionManagementSystem.Controllers
                                 )
                             );
                     cfg.CreateMap<DeviceDTO, DeviceViewModel>();
+                    cfg.CreateMap<LogDTO, LogViewModel>();
                 })
                 .CreateMapper();
             _mapperFromViewModel = new MapperConfiguration(cfg => cfg.CreateMap<TaskViewModel, TaskDTO>())
@@ -83,6 +87,7 @@ namespace ProductionManagementSystem.Controllers
                 ViewBag.States = new SelectList(GetStates(taskDto), "Id", "Name");
                 ViewBag.ComponentTemplate = _deviceService.GetComponentsTemplates(taskDto.DeviceId);
                 ViewBag.DesignTemplate = _deviceService.GetDesignTemplates(taskDto.DeviceId);
+                ViewBag.Logs = _taskService.GetLogs(id);
                 return View(taskViewModel);
             }
             catch (PageNotFoundException e)
@@ -145,6 +150,7 @@ namespace ProductionManagementSystem.Controllers
         [HttpPost]
         public IActionResult Transfer(int taskId, string full, int to, string message)
         {
+            LogService.UserName = User.Identity?.Name;
             _taskService.Transfer(taskId, full == "true", to, message);
             return RedirectToAction(nameof(Details), new {id = taskId});
         }

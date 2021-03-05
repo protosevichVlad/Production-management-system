@@ -82,12 +82,12 @@ namespace ProductionManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(string userName)
         {
-            var user = await _userManager.FindByIdAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName);
             if (user != null)
             {
                 IdentityResult result = await _userManager.DeleteAsync(user);
             }
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<ActionResult> ChangeRole(string userName)
