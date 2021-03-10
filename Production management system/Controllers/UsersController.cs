@@ -65,7 +65,7 @@ namespace ProductionManagementSystem.Controllers
                 IdentityResult result = await _userManager.CreateAsync(admin, password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(admin, "Администратор");
+                    await _userManager.AddToRoleAsync(admin, RoleEnum.Admin);
                 }
             }
 
@@ -122,6 +122,37 @@ namespace ProductionManagementSystem.Controllers
             }
  
             return NotFound();
+        }
+
+        public IActionResult Create()
+        {
+            CreateUserViewModel createUserViewModel = new CreateUserViewModel() { 
+                AllRoles = _roleManager.Roles.ToList()
+            };
+            return View(createUserViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateUserViewModel createUserViewModel, List<string> roles)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ProductionManagementSystemUser { UserName = createUserViewModel.UserName, EmailConfirmed = true };
+                var result = await _userManager.CreateAsync(user, createUserViewModel.Password);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRolesAsync(user, roles);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return RedirectToAction(nameof(Index));
         }
     }
 }

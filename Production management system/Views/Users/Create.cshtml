@@ -1,0 +1,51 @@
+﻿@model ProductionManagementSystem.WEB.Models.UserViewModels.CreateUserViewModel
+@{
+    ViewData["Title"] = "Создание пользователя";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form method="post">
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Создайте новую учетную запись.</h4>
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserName"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Зарегистрировать</button>
+        </div>
+        <div class="col-md-6 col-md-offset-2">
+            <div class="form-group">
+                @{ int i = 0; }
+                @foreach (var role in Model.AllRoles)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" name="roles" type="checkbox" value="@role.Name" id="flexCheckDefault@(i)">
+                        <label class="form-check-label" for="flexCheckDefault@(i)">
+                            @role.Name
+                        </label>
+                    </div>
+                    i++;
+                }
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
