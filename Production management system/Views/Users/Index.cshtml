@@ -3,7 +3,7 @@
     ViewBag.Title = "Список пользователей";
 }
  
-<a asp-area="Identity" asp-page="/Account/Register">Добавить пользователя</a>
+<a asp-action="Create">Создать пользователя</a>
  
 <table class="table">
     <tr><th>Логин</th><th></th></tr>
@@ -12,8 +12,11 @@
         <tr>
             <td>@user.UserName</td>
             <td>
-                <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-username="@user.UserName">Удалить</a>
-                <a class="btn btn-light btn-sm" asp-action="ChangeRole" asp-route-username="@user.UserName">Права доступа</a>
+                @if (user.UserName != "admin")
+                {
+                    <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-username="@user.UserName">Удалить</a>
+                    <a class="btn btn-light btn-sm" asp-action="ChangeRole" asp-route-username="@user.UserName">Права доступа</a>
+                }
             </td>
         </tr>
     }

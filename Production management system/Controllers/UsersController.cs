@@ -65,7 +65,7 @@ namespace ProductionManagementSystem.Controllers
                 IdentityResult result = await _userManager.CreateAsync(admin, password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(admin, RoleEnum.Admin);
+                    await _userManager.AddToRolesAsync(admin, new[] { RoleEnum.Admin, RoleEnum.Assembler, RoleEnum.Collector, RoleEnum.OrderPicker, RoleEnum.Shipper, RoleEnum.Tuner, RoleEnum.Validating });
                 }
             }
 
@@ -74,6 +74,11 @@ namespace ProductionManagementSystem.Controllers
 
         public async Task<ActionResult> Delete(string userName)
         {
+            if (userName == "admin")
+            {
+                return NotFound();
+            }
+
             var user = await _userManager.FindByNameAsync(userName);
             return View(user);
         }
@@ -92,6 +97,11 @@ namespace ProductionManagementSystem.Controllers
 
         public async Task<ActionResult> ChangeRole(string userName)
         {
+            if (userName == null || userName == "admin")
+            {
+                return NotFound();
+            }
+
             var user = await _userManager.FindByNameAsync(userName);
             ChangeRoleViewModel changeRoleViewModel = new ChangeRoleViewModel()
             {
@@ -115,7 +125,6 @@ namespace ProductionManagementSystem.Controllers
                 var removedRoles = userRoles.Except(roles);
  
                 await _userManager.AddToRolesAsync(user, addedRoles);
- 
                 await _userManager.RemoveFromRolesAsync(user, removedRoles);
  
                 return RedirectToAction(nameof(Index));
