@@ -13,18 +13,23 @@ using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.WEB.Models;
+using Microsoft.AspNetCore.Identity;
+using ProductionManagementSystem.DAL.Entities;
+using System.Threading.Tasks;
 
 namespace ProductionManagementSystem.Controllers
 {
     [Authorize]
     public class TasksController : Controller
     {
+        private UserManager<ProductionManagementSystemUser> _userManager;
+        private RoleManager<IdentityRole> _roleManager;
         private readonly ITaskService _taskService;
         private readonly IDeviceService _deviceService;
         private IMapper _mapperToViewModel;
         private IMapper _mapperFromViewModel;
 
-        public TasksController(ITaskService taskService, IDeviceService deviceService)
+        public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _taskService = taskService;
             _deviceService = deviceService;
@@ -43,9 +48,11 @@ namespace ProductionManagementSystem.Controllers
                 .CreateMapper();
             _mapperFromViewModel = new MapperConfiguration(cfg => cfg.CreateMap<TaskViewModel, TaskDTO>())
                 .CreateMapper();
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
-        public IActionResult Index(string sortOrder, string searchString)
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
             ViewData["NumSortParm"] = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
             ViewData["DeviceSortParm"] = sortOrder == "Device" ? "device_desc" : "Device";
@@ -53,12 +60,15 @@ namespace ProductionManagementSystem.Controllers
             ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
             ViewData["OrderIdSortParm"] = sortOrder == "OrderId" ? "orderid_desc" : "OrderId";
 
-            var tasksDto = _taskService.GetTasks().ToList();
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var roles = await _userManager.GetRolesAsync(user);
+            var tasksDto = _taskService.GetTasks(roles).ToList();
             var tasksViewModel =
                 _mapperToViewModel.Map<IEnumerable<TaskDTO>, IEnumerable<TaskViewModel>>(tasksDto).ToList();
             
             SortingTasks(tasksViewModel, sortOrder);
             
+
             ViewData["CurrentFilter"] = searchString;
             
             return View(tasksViewModel);

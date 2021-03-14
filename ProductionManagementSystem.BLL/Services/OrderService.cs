@@ -23,8 +23,12 @@ namespace ProductionManagementSystem.BLL.Services
             _mapper = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Order, OrderDTO>()
-                    .ForMember(o => o.Status, opt => opt.MapFrom(
-                        o => _taskService.GetTaskStatusName(o.Tasks.Min(t => t.Status))));
+                    .ForMember(
+                            order => order.Status,
+                            opt => opt.MapFrom(
+                                src => _taskService.GetTaskStatusName(Models.StatusEnum.Assembly)
+                                )
+                            );
                 cfg.CreateMap<OrderDTO, Order>();
                 cfg.CreateMap<Task, TaskDTO>();
                 cfg.CreateMap<TaskDTO, Task>();
@@ -73,7 +77,13 @@ namespace ProductionManagementSystem.BLL.Services
 
         public IEnumerable<OrderDTO> GetOrders()
         {
-            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(_database.Orders.GetAll());
+            var orders = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(_database.Orders.GetAll());
+            foreach (var order in orders)
+            {
+                order.Status = _taskService.GetTaskStatusName(order.Tasks.Min(t => t.Status));
+            }
+
+            return orders;
         }
 
         public IEnumerable<TaskDTO> GetTasksFromOrder(int orderId)

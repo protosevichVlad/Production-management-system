@@ -39,7 +39,7 @@ namespace ProductionManagementSystem.Controllers
             ViewData["NameSortParm"] = sortOrder == "Name" ? "name_desc" : "Name";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
             var devices = _deviceService.GetDevices();
-            
+
             switch (sortOrder)
             {
                 case "name_desc":
@@ -106,6 +106,13 @@ namespace ProductionManagementSystem.Controllers
                 _deviceService.UpdateDevice(device);
                 return RedirectToAction(nameof(Details), new {id = device.Id});
             }
+            catch (IntersectionOfEntitiesException e)
+            {
+                TempData["ErrorMessage"] = e.Message;
+                TempData["ErrorHeader"] = e.Header;
+                return RedirectToAction(nameof(Details), new { id = deviceViewModel.Id });
+                
+            }
             catch (Exception e)
             {
                 Console.WriteLine(e);
@@ -119,6 +126,10 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 var device = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(_deviceService.GetDevice(id));
+                ViewBag.ErrorMessage = TempData["ErrorMessage"];
+                ViewBag.ErrorHeader = TempData["ErrorHeader"];
+                TempData["ErrorMessage"] = null;
+                TempData["ErrorHeader"] = null;
                 return View(device);
             }
             catch (Exception e)

@@ -31,7 +31,7 @@ namespace ProductionManagementSystem.Controllers
                         opt => opt.MapFrom(
                             src => _taskService.GetTaskStatusName(src.Status)
                         )
-                    );;
+                    );
                     cfg.CreateMap<DeviceDTO, DeviceViewModel>();
                     cfg.CreateMap<OrderViewModel, OrderDTO>();
                     cfg.CreateMap<TaskViewModel, TaskDTO>();

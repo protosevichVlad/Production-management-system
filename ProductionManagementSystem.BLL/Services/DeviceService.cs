@@ -36,8 +36,14 @@ namespace ProductionManagementSystem.BLL.Services
         }
 
         public void UpdateDevice(DeviceDTO deviceDto)
-        {
+        { 
             var deviceFromDb = _database.Devices.Get(deviceDto.Id);
+            if (!CheckInTask(deviceFromDb, out string errorMessage))
+            {
+                throw new IntersectionOfEntitiesException("Ошибка. Невозможно изменение прибора.", errorMessage);
+            }
+
+
             if (deviceFromDb == null)
             {
                 throw new NotImplementedException();
@@ -118,8 +124,8 @@ namespace ProductionManagementSystem.BLL.Services
                 .FirstOrDefault(t => device.Id == t.DeviceId);
             if (task != null)
             {
-                errorMessage = $"<i class='bg-light'>{device.ToString()}</i> используется в <i class='bg-light'>задаче №{task.Id}</i>.<br />" +
-                               $"Для удаления <i class='bg-light'>{device.ToString()}</i>, удалите <i class='bg-light'>задачу №{task.Id}</i>.<br />";
+                errorMessage = $"<i class='bg-light'>{device.ToString()}</i> используется в <i class='bg-light'>задаче №{task.Id}</i>.<br />";
+                               //$"Для удаления <i class='bg-light'>{device.ToString()}</i>, удалите <i class='bg-light'>задачу №{task.Id}</i>.<br />"
                 return false;
             }
             

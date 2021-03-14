@@ -11,6 +11,7 @@ namespace ProductionManagementSystem.BLL.Interfaces
         void UpdateTask(TaskDTO taskDto);
         void EditTask(TaskDTO taskDto);
         IEnumerable<TaskDTO> GetTasks();
+        IEnumerable<TaskDTO> GetTasks(IEnumerable<string> roles);
         TaskDTO GetTask(int? id);
         void DeleteTask(int? id);
         void Transfer(int taskId, bool full, int to, string message);

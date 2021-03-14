@@ -68,8 +68,21 @@ namespace ProductionManagementSystem.BLL.Services
             _database.Save();
         }
 
-        public IEnumerable<TaskDTO> GetTasks() =>
-            _mapper.Map<IEnumerable<Task>, IEnumerable<TaskDTO>>(_database.Tasks.GetAll());
+        public IEnumerable<TaskDTO> GetTasks()
+        {
+            return _mapper.Map<IEnumerable<Task>, IEnumerable<TaskDTO>>(_database.Tasks.GetAll());
+        }
+
+        public IEnumerable<TaskDTO> GetTasks(IEnumerable<string> roles)
+        {
+            if (roles == null)
+            {
+                return Array.Empty<TaskDTO>();
+            }
+
+            StatusEnum accessLevel = ToStatus(roles);
+            return _mapper.Map<IEnumerable<Task>, IEnumerable<TaskDTO>>(_database.Tasks.GetAll().Where(task => (task.Status & accessLevel) == task.Status));
+        }
 
         public TaskDTO GetTask(int? id)
         {
@@ -252,6 +265,26 @@ namespace ProductionManagementSystem.BLL.Services
             }
 
             return result;
+        }
+
+        private StatusEnum ToStatus(IEnumerable<string> roles)
+        {
+            StatusEnum status = 0;
+            foreach (var role in roles)
+            {
+                status |= role switch
+                {
+                    RoleEnum.Assembler => StatusEnum.Montage,
+                    RoleEnum.Collector => StatusEnum.Assembly,
+                    RoleEnum.OrderPicker => StatusEnum.Equipment,
+                    RoleEnum.Shipper => StatusEnum.Warehouse,
+                    RoleEnum.Tuner => StatusEnum.Customization,
+                    RoleEnum.Validating => StatusEnum.Validate,
+                    RoleEnum.Admin => (StatusEnum)int.MaxValue,
+                    _ => 0
+                };
+            }
+            return status;
         }
     }
 }

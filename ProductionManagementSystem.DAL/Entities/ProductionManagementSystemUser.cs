@@ -9,5 +9,6 @@ namespace ProductionManagementSystem.DAL.Entities
     // Add profile data for application users by adding properties to the ProductionManagementSystemUser class
     public class ProductionManagementSystemUser : IdentityUser
     {
+
     }
 }

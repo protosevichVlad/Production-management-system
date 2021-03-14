@@ -21,7 +21,8 @@ namespace ProductionManagementSystem.DAL.Repositories
         {
             return _db.Orders
                 .Include(o => o.Tasks)
-                .ThenInclude(t => t.Device);
+                .ThenInclude(t => t.Device)
+                .ToArray() ?? Array.Empty<Order>();
         }
 
         public Order Get(int id)

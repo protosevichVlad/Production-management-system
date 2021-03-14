@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.Entities;
+using System;
 
 namespace ProductionManagementSystem.DAL.EF
 {
@@ -19,8 +20,6 @@ namespace ProductionManagementSystem.DAL.EF
         
         public DbSet<Log> Logs { get; set; }
         public DbSet<Order> Orders { get; set; }
-
-        private string _connectionString;
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
