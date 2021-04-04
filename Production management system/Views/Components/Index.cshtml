@@ -25,11 +25,11 @@
     <div class="col d-flex align-items-center justify-content-end">
         @if (@ViewData["CurrentFilter"] == null)
         {
-            <p class="d-flex">На складе @Model.Count() наименований монтажа</p>
+            <p class="d-flex">На складе @ViewBag.CountComponents наименований монтажа</p>
         }
         else
         {
-            <p class="d-flex">Было найдено @Model.Count() наименований монтажа</p>
+            <p class="d-flex">Было найдено @ViewBag.CountComponents наименований монтажа</p>
         }
     </div>
 </div>
@@ -59,7 +59,8 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.Type)
@@ -90,4 +91,20 @@
         }
         </tbody>
     </table>
+    <nav>
+        <ul class="pagination justify-content-end">
+            <li class="page-item @(ViewBag.Page == 1 ? "disabled": "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page - 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]" tabindex="-1">Предыдущая</a>
+            </li>
+            @for (int numberPage = 1; numberPage <= ViewBag.MaxPage; numberPage++)
+            {
+                <li class="page-item @(numberPage == ViewBag.Page ? "active":"")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@numberPage" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]">@numberPage</a>
+                </li>
+            }
+            <li class="page-item @(ViewBag.Page == ViewBag.MaxPage ? "disabled": "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page + 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]">Cледующая</a>
+            </li>
+        </ul>
+    </nav>
 </div>

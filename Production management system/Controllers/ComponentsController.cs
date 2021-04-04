@@ -33,15 +33,18 @@ namespace ProductionManagementSystem.Controllers
         /// <summary>
         /// Display index page
         /// </summary>
-        /// <param name="sortOrder">Used for sorting</param>
-        /// <param name="searchString">Used for searching</param>
+        /// <param name="sortOrder">Used for sorting.</param>
+        /// <param name="searchString">Used for searching.</param>
+        /// <param name="page">Current page.</param>
         /// <returns>A page with all components sorted by parameter <paramref name="sortOrder"/> and satisfying <paramref name="searchString"/></returns>
         [HttpGet]
-        public IActionResult Index(string sortOrder, string searchString)
+        public IActionResult Index(string sortOrder, string searchString, int page=1, int pageSize = 20)
         {
+            ViewBag.Page = page;
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
+            ViewData["sortOrder"] = sortOrder;
             ViewData["CurrentFilter"] = searchString;
 
             var components = _componentService.GetComponents();
@@ -54,6 +57,14 @@ namespace ProductionManagementSystem.Controllers
                                                     || (c.Nominal?.Contains(searchString) ?? false)
                                                     || (c.Type?.Contains(searchString) ?? false)
                                                     || (c.Manufacturer?.Contains(searchString) ?? false));
+            }
+
+            ViewBag.PageSize = pageSize;
+            ViewBag.MaxPage = components.Count() / pageSize + (components.Count() % pageSize == 0 ? 0: 1);
+            ViewBag.CountComponents = components.Count();
+            if (page > ViewBag.MaxPage)
+            {
+                return NotFound();
             }
             
             switch (sortOrder)  
@@ -78,6 +89,7 @@ namespace ProductionManagementSystem.Controllers
                     break;
             }
 
+            components = components.Skip((page - 1) * pageSize).Take(pageSize);
             var componentsViewModel =
                 _mapperToViewModel.Map<IEnumerable<ComponentDTO>, IEnumerable<ComponentViewModel>>(components);
             return View(componentsViewModel);
