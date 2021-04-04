@@ -8,6 +8,7 @@
         <h4>Подробная информация</h4>
     </div>
     <div class="col d-flex justify-content-end">
+        <a class="btn btn-light" asp-controller="Logs" asp-action="Index" asp-route-orderId="@Model.Id">Логи</a>
         <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Удалить</a>
     </div>
 </div>

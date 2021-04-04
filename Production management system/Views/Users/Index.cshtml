@@ -12,6 +12,7 @@
         <tr>
             <td>@user.UserName</td>
             <td>
+                <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Index" asp-route-userName="@user.UserName">Логи</a>
                 @if (user.UserName != "admin")
                 {
                     <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-username="@user.UserName">Удалить</a>

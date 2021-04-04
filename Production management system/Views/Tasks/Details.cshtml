@@ -14,6 +14,7 @@
         <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@Model.Id">Подробности</a>
         <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
         <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+        <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Index" asp-route-taskId="@Model.Id">Логи</a>
         <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#transferModal">Передать</button>
     </div>
 </div>
