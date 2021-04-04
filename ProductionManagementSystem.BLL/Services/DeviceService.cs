@@ -15,10 +15,12 @@ namespace ProductionManagementSystem.BLL.Services
         private IUnitOfWork _database { get; }
         private IMapper _mapperToDto;
         private IMapper _mapperFromDto;
+        private ILogService _log;
         
         public DeviceService(IUnitOfWork uow)
         {
             _database = uow;
+            _log = new LogService(uow);
             _mapperToDto = new MapperConfiguration(cfg => cfg.CreateMap<Device, DeviceDTO>())
                 .CreateMapper();
             _mapperFromDto = new MapperConfiguration(cfg => cfg.CreateMap<DeviceDTO, Device>())
@@ -154,6 +156,37 @@ namespace ProductionManagementSystem.BLL.Services
         {
             var device = _database.Devices.Get(deviceId);
             return device.DeviceDesignTemplate;
+        }
+        
+        public void ReceiveDevice(int? id)
+        {
+            AddDevice(id, -1);
+        }
+        
+        public void AddDevice(int? id)
+        {
+            AddDevice(id, 1);
+        }
+        
+        private void AddDevice(int? id, int quantity)
+        {
+            if (id == null)
+            {
+                throw new PageNotFoundException();
+            }
+
+            var device = _database.Devices.Get((int) id);
+            device.Quantity += quantity;
+            _database.Save();
+
+            if (quantity < 0)
+            {
+                _log.CreateLog(new LogDTO($"Был получен прибор {device} со склада {-quantity}шт."){DeviceId = device.Id});
+            }
+            else
+            {
+                _log.CreateLog(new LogDTO($"Был добавлен прибор {device} на склад {quantity}шт."){DeviceId = device.Id});
+            }
         }
 
         public void Dispose()

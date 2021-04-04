@@ -101,6 +101,16 @@ namespace ProductionManagementSystem.BLL.Services
         {
             var task = _database.Tasks.Get(taskId);
             var logString = $"{LogService.UserName} изменил статус задачи №{taskId} с {GetTaskStatusName(task.Status)} ";
+            if (task.Status == StatusEnum.Warehouse)
+            {
+                _deviceService.ReceiveDevice(task.DeviceId);
+            }
+            
+            if ((StatusEnum) to == StatusEnum.Warehouse)
+            {
+                _deviceService.AddDevice(task.DeviceId);
+            }
+            
             if (full)
             {
                 task.Status = (StatusEnum) to;

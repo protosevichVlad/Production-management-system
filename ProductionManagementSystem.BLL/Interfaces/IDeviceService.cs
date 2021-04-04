@@ -14,6 +14,8 @@ namespace ProductionManagementSystem.BLL.Interfaces
         IEnumerable<string> GetNames();
         IEnumerable<DeviceComponentsTemplate> GetComponentsTemplates(int deviceId);
         IEnumerable<DeviceDesignTemplate> GetDesignTemplates(int deviceId);
+        void AddDevice(int? id);
+        void ReceiveDevice(int? id);
         
         void Dispose();
     }
