@@ -155,18 +155,18 @@
                     <input name="taskId" value="@Model.Id" hidden>
                     <div class="mb-3">
                         <label for="to" class="col-form-label"></label>
-                        <select class="form-select" id="to" name="to" asp-items="ViewBag.States"></select>
+                        <select class="form-select" id="to" name="to" asp-items="ViewBag.States" onchange="changeStateTransfer()"></select>
                     </div>
                     <div class="mb-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="full" id="flexRadioDefault1" checked value="true">
-                            <label class="form-check-label" for="flexRadioDefault1">
+                            <input class="form-check-input" type="radio" name="full" id="radioTransferTrue" checked value="true">
+                            <label class="form-check-label" for="radioTransferTrue">
                                 Предать полностью
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="full" id="flexRadioDefault2" value="false">
-                            <label class="form-check-label" for="flexRadioDefault2">
+                            <input class="form-check-input" type="radio" name="full" id="radioTransferFalse" value="false">
+                            <label class="form-check-label" for="radioTransferFalse">
                                 Предать частично
                             </label>
                         </div>
@@ -184,3 +184,9 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        changeStateTransfer();
+    </script>
+}

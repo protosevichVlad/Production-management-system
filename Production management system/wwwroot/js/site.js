@@ -150,3 +150,17 @@ function removeDevice(index) {
     updateIndex('DeviceIds');
 }
 
+function changeStateTransfer()
+{
+    let selector = document.querySelector('#to');
+    if (selector.value == 32 || selector.value == 64)
+    {
+        document.querySelector('#radioTransferTrue').checked = true;
+        document.querySelector('#radioTransferFalse').disabled = true;
+    }
+    else 
+    {
+        document.querySelector('#radioTransferFalse').disabled = false;
+    }
+}
+
