@@ -43,9 +43,9 @@ namespace ProductionManagementSystem.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                designs = designs.Where(d => (d.Name?.Contains(searchString) ?? false)
-                                             || (d.Type?.Contains(searchString) ?? false)
-                                             || (d.ShortDescription?.Contains(searchString) ?? false));
+                designs = designs.Where(d => (d.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                             || (d.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                             || (d.ShortDescription?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false));
             }
             
             switch (sortOrder)

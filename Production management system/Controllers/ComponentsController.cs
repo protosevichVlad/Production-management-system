@@ -38,7 +38,7 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="page">Current page.</param>
         /// <returns>A page with all components sorted by parameter <paramref name="sortOrder"/> and satisfying <paramref name="searchString"/></returns>
         [HttpGet]
-        public IActionResult Index(string sortOrder, string searchString, int page=1, int pageSize = 20)
+        public IActionResult Index(string sortOrder, string searchString, int page=1, int pageSize = 50)
         {
             ViewBag.Page = page;
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
@@ -51,12 +51,12 @@ namespace ProductionManagementSystem.Controllers
             
             if (!String.IsNullOrEmpty(searchString))
             {
-                components = components.Where(c => (c.Name?.Contains(searchString) ?? false)
-                                                    || (c.Corpus?.Contains(searchString) ?? false)
-                                                    || (c.Explanation?.Contains(searchString) ?? false)
-                                                    || (c.Nominal?.Contains(searchString) ?? false)
-                                                    || (c.Type?.Contains(searchString) ?? false)
-                                                    || (c.Manufacturer?.Contains(searchString) ?? false));
+                components = components.Where(c => (c.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                                    || (c.Corpus?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                                    || (c.Explanation?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                                    || (c.Nominal?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                                    || (c.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                                    || (c.Manufacturer?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false));
             }
 
             ViewBag.PageSize = pageSize;
