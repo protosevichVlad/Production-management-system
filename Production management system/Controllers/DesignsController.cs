@@ -71,6 +71,7 @@ namespace ProductionManagementSystem.Controllers
             }
 
             var designsViewModule = _mapperToViewModel.Map<IEnumerable<DesignDTO>, IEnumerable<DesignViewModel>>(designs);
+            ViewBag.AllDesigns = _designService.GetDesigns().Select(d => d.Name).Distinct();
             return View(designsViewModule);
         }
 
@@ -94,6 +95,7 @@ namespace ProductionManagementSystem.Controllers
         public IActionResult Create()
         {
             ViewBag.AllTypes = _designService.GetTypes();
+            ViewBag.AllDesigns = _designService.GetDesigns().Select(d => d.Name).Distinct();
             return View();
         }
         

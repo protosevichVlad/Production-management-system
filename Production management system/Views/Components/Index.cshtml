@@ -12,8 +12,14 @@
     <div class="col">
         <form asp-action="Index" method="get">
             <p>
-                Поиск: <input type="text" name="searchString" value="@ViewData["CurrentFilter"]"/>
-                <input type="submit" value="Поиск" class="btn btn-primary" autocomplete="off"/>
+                Поиск: <input type="text" name="searchString" list="datalistNameComponents"  autocomplete="off" value="@ViewData["CurrentFilter"]"/>
+                <datalist id="datalistNameComponents">
+                    @foreach (var name in ViewBag.AllComponents)
+                    {
+                        <option value="@name"/>
+                    }
+                </datalist>
+                <input type="submit" value="Поиск" class="btn btn-primary"/>
                 @if (@ViewData["CurrentFilter"] != null)
                 {
                     <text>|</text>

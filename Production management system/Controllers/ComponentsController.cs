@@ -92,6 +92,8 @@ namespace ProductionManagementSystem.Controllers
             components = components.Skip((page - 1) * pageSize).Take(pageSize);
             var componentsViewModel =
                 _mapperToViewModel.Map<IEnumerable<ComponentDTO>, IEnumerable<ComponentViewModel>>(components);
+            
+            ViewBag.AllComponents = _componentService.GetComponents().Select(c => c.Name).Distinct();
             return View(componentsViewModel);
         }
 
@@ -115,6 +117,7 @@ namespace ProductionManagementSystem.Controllers
         public IActionResult Create()
         {
             ViewBag.AllTypes = GetAllTypes();
+            ViewBag.AllComponents = _componentService.GetComponents().Select(c => c.Name).Distinct();
             return View();
         }
 
