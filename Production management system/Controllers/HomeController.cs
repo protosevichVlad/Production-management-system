@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Linq;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ProductionManagementSystem.BLL.Interfaces;
-using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.Models;
+using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.Controllers
 {
@@ -27,6 +25,14 @@ namespace ProductionManagementSystem.Controllers
         {
             _databaseService.ResetDatabase();
             return "complite";
+        }
+        
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
+            var exception = context?.Error; 
+            return View(new ErrorViewModel { Message = exception?.Message});
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -74,7 +75,7 @@ namespace ProductionManagementSystem.Controllers
             }
             catch (PageNotFoundException)
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");
             }
         }
 
@@ -87,7 +88,7 @@ namespace ProductionManagementSystem.Controllers
             }
             catch (PageNotFoundException)
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");
             }
         }
 
@@ -102,7 +103,7 @@ namespace ProductionManagementSystem.Controllers
             }
             catch (PageNotFoundException)
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");
             }       
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -76,7 +77,7 @@ namespace ProductionManagementSystem.Controllers
         {
             if (userName == "admin")
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");
             }
 
             var user = await _userManager.FindByNameAsync(userName);
@@ -99,7 +100,7 @@ namespace ProductionManagementSystem.Controllers
         {
             if (userName == null || userName == "admin")
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");
             }
 
             var user = await _userManager.FindByNameAsync(userName);
@@ -130,7 +131,7 @@ namespace ProductionManagementSystem.Controllers
                 return RedirectToAction(nameof(Index));
             }
  
-            return NotFound();
+            throw new Exception("Страница не найдена.");
         }
 
         public IActionResult Create()

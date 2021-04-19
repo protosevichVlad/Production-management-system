@@ -73,7 +73,7 @@ namespace ProductionManagementSystem.Controllers
             }
             catch (PageNotFoundException)
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");
             }
         }
     }

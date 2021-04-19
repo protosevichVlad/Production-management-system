@@ -102,7 +102,7 @@ namespace ProductionManagementSystem.Controllers
             }
             catch (PageNotFoundException e)
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");
             }
         }
         
@@ -116,7 +116,7 @@ namespace ProductionManagementSystem.Controllers
             }
             catch (PageNotFoundException e)
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");
             }
         }
         
@@ -130,7 +130,7 @@ namespace ProductionManagementSystem.Controllers
             }
             catch (PageNotFoundException e)
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");
             }
         }
         
@@ -145,7 +145,7 @@ namespace ProductionManagementSystem.Controllers
             }
             catch (PageNotFoundException e)
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");
             }
         }
         

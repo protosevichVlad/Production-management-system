@@ -64,7 +64,7 @@ namespace ProductionManagementSystem.Controllers
             ViewBag.CountComponents = components.Count();
             if (page > ViewBag.MaxPage)
             {
-                return NotFound();
+                throw new ArgumentException($"Страницы №{page} не существует.");
             }
             
             switch (sortOrder)  
@@ -107,7 +107,7 @@ namespace ProductionManagementSystem.Controllers
             }
             catch (PageNotFoundException e)
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");;
             }
         }
 
@@ -149,7 +149,7 @@ namespace ProductionManagementSystem.Controllers
             }
             catch (PageNotFoundException e)
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");
             }
         }
 
@@ -162,7 +162,7 @@ namespace ProductionManagementSystem.Controllers
         {
             if (id != componentViewModel.Id)
             {
-                return NotFound();
+                throw new Exception("Страница не найдена.");;
             }
 
             if (ModelState.IsValid)

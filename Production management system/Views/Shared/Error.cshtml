@@ -1,0 +1,15 @@
+﻿@model ProductionManagementSystem.WEB.Models.ErrorViewModel
+@{
+    ViewData["Title"] = "Ошибка";
+}
+
+<h1 class="text-danger">Ошибка</h1>
+@if (string.IsNullOrEmpty(@Model.Message))
+{
+    <h2 class="text-danger">Страница не найдена.</h2>
+}
+else
+{
+    <h2 class="text-danger">@Model.Message</h2>
+}
+<a class="btn btn-light" type="btn" href="javascript:history.back()">Вернуться назад</a>
