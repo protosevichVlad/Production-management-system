@@ -14,6 +14,9 @@ async function createComponent() {
     lastTr.insertAdjacentHTML('beforeBegin', str);
     updateIndex('ComponentIds');
     undisableButton('#buttonCreateComponent');
+
+    $('.js-example-basic-single').select2();
+
 }
 
 async function createDesign() {
@@ -26,10 +29,12 @@ async function createDesign() {
     lastTr.insertAdjacentHTML('beforeBegin', str);
     updateIndex('DesignIds');
     undisableButton('#buttonCreateDesign');
+
+    $('.js-example-basic-single').select2();
 }
 
 async function createTextComponent(id) {
-    let str = `<tr id="comTr${id}"><td class="ComponentIds"></td><td><select class="ComponentSelect align-top width-100 form-select" name="ComponentIds">`;
+    let str = `<tr id="comTr${id}"><td class="ComponentIds"></td><td><select class="ComponentSelect align-top width-100 form-select js-example-basic-single" name="ComponentIds">`;
 
     let r = await new Request('/Components/GetAllComponents');
     let componentsJson = await fetch(r).then(c => c.json());
@@ -45,7 +50,7 @@ async function createTextComponent(id) {
 }
 
 async function createTextDesign(id) {
-    let str = `<tr id="desTr${id}"><td class="DesignIds"></td><td><select class="DesignSelect align-top width-100 form-select" name="DesignIds">`;
+    let str = `<tr id="desTr${id}"><td class="DesignIds"></td><td><select class="DesignSelect align-top width-100 form-select js-example-basic-single" name="DesignIds">`;
 
     let r = await new Request('/Designs/GetAllDesigns');
     let componentsJson = await fetch(r).then(c => c.json());

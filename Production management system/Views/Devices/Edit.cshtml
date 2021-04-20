@@ -54,7 +54,7 @@
                             @(i + 1)
                         </td>
                         <td class="td-with-name">
-                            <select class="ComponentSelect align-top width-100 form-select" name="ComponentIds">
+                            <select class="ComponentSelect align-top width-100 form-select js-example-basic-single" name="ComponentIds">
                                 @foreach (var c in ViewBag.Components)
                                 {
                                     @if (c.Id == Model.ComponentIds[i])
@@ -111,7 +111,7 @@
                             @(i + 1)
                         </td>
                         <td class="td-with-name">
-                            <select class="DesignSelect align-top width-100 form-select" name="DesignIds">
+                            <select class="DesignSelect align-top width-100 form-select js-example-basic-single" name="DesignIds">
                                 @foreach (var d in ViewBag.Designs)
                                 {
                                     @if (Model.DesignIds[i] == d.Id)
@@ -150,3 +150,10 @@
 <div>
     <a asp-action="Index">Вернуться к списку приборов</a>
 </div>
+
+@section Scripts
+{
+    <script>
+        $('.js-example-basic-single').select2();
+    </script>
+}
