@@ -1,27 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ProductionManagementSystem.BLL.Interfaces;
+using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.Models;
 
 namespace ProductionManagementSystem.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private IDatabaseService _databaseService;
+        
+        public HomeController(IDatabaseService databaseService)
         {
-            _logger = logger;
+            _databaseService = databaseService;
         }
 
         public IActionResult Index()
         {
             return View();
+        }
+
+        public string Reset()
+        {
+            _databaseService.ResetDatabase();
+            return "complite";
         }
     }
 }

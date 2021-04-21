@@ -1,0 +1,95 @@
+﻿@model ProductionManagementSystem.WEB.Models.OrderViewModel
+@{
+    ViewData["Title"] = "Заказ №" + Model.Id;
+}
+
+<div class="row">
+    <div class="col">
+        <div class="col">
+            <h4>Удалить</h4>
+            <h5>Вы уверены, что хотите удалить это?</h5>
+        </div>
+    </div>
+    <div class="col d-flex justify-content-end">
+        <form asp-action="Delete" class="text-right">
+            <input type="hidden" asp-for="Id"/>
+            <input type="submit" value="Удалить" class="btn btn-danger"/>
+        </form>
+    </div>
+</div>
+<div class="alert alert-info" role="alert">
+    При удалении заказа будут удалены все связанные задачи с этим заказом.
+</div>
+<hr/>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h4>Заказ №@Model.Id</h4>
+            <h4>Заказчик: @Model.Customer</h4>
+            <h4>Срок: @Model.Deadline.ToString("dd.MM.yyyy")</h4>
+            <h4>Описание:</h4>
+            <p>@Model.Description</p>
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <h3>Cписок задач</h3>
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["NumSortParm"]">№</a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["DeviceSortParm"]">Прибор</a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["StartDateSortParm"]">Дата начала</a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["DeadlineSortParm"]">Срок</a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["StatusSortParm"]">Статус</a>
+                    </th>
+                    <th>
+                        Описание
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var t in Model.Tasks)
+                {
+                    <tr>
+                        <td>
+                            @t.Id
+                        </td>
+                        <td>
+                            @t.Device.ToString()
+                        </td>
+                        <td>
+                            @t.StartTime.Date
+                        </td>
+                        <td>
+                            @t.Deadline.Date
+                        </td>
+                        <td>
+                            @t.Status
+                        </td>
+                        <td>
+                            <div class="overflow-hidden text-truncate description">
+                                @t.Description
+                            </div>
+                        </td>
+                        <td>
+                            <a class="btn btn-light btn-sm" asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">Подробности</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
