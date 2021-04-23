@@ -4,10 +4,12 @@ using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
+using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.Models;
 using ProductionManagementSystem.WEB.Models;
 
@@ -17,15 +19,21 @@ namespace ProductionManagementSystem.Controllers
     public class ComponentsController : Controller
     {
         private readonly IComponentService _componentService;
-        private IMapper _mapperToViewModel;
-        private IMapper _mapperFromViewModel;
+        private readonly IDeviceService _deviceService;
+        private IMapper _mapper;
 
-        public ComponentsController(IComponentService service)
+        public ComponentsController(IComponentService service, IDeviceService deviceService)
         {
             _componentService = service;
-            _mapperToViewModel = new MapperConfiguration(cfg => cfg.CreateMap<ComponentDTO, ComponentViewModel>())
-                .CreateMapper();
-            _mapperFromViewModel = new MapperConfiguration(cfg => cfg.CreateMap<ComponentViewModel, ComponentDTO>())
+            _deviceService = deviceService;
+            
+            _mapper = new MapperConfiguration(cfg =>
+                {
+                    cfg.CreateMap<ComponentViewModel, ComponentDTO>();
+                    cfg.CreateMap<ComponentDTO, ComponentViewModel>();
+                    cfg.CreateMap<ComponentDTO, Component>();
+                    cfg.CreateMap<Component, ComponentDTO>();
+                })
                 .CreateMapper();
         }
         
@@ -91,7 +99,7 @@ namespace ProductionManagementSystem.Controllers
 
             components = components.Skip((page - 1) * pageSize).Take(pageSize);
             var componentsViewModel =
-                _mapperToViewModel.Map<IEnumerable<ComponentDTO>, IEnumerable<ComponentViewModel>>(components);
+                _mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<ComponentViewModel>>(components);
             
             ViewBag.AllComponents = _componentService.GetComponents().Select(c => c.Name).Distinct();
             return View(componentsViewModel);
@@ -104,7 +112,7 @@ namespace ProductionManagementSystem.Controllers
             {
                 var component = _componentService.GetComponent(id);
                 var componentViewModel =
-                    _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(component);
+                    _mapper.Map<ComponentDTO, ComponentViewModel>(component);
                 return View(componentViewModel);
             }
             catch (PageNotFoundException e)
@@ -131,7 +139,7 @@ namespace ProductionManagementSystem.Controllers
             if (ModelState.IsValid)
             {
                 var component =
-                    _mapperFromViewModel.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
+                    _mapper.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
                 LogService.UserName = User.Identity?.Name;
                 _componentService.CreateComponent(component);
                 return RedirectToAction(nameof(Index));
@@ -146,7 +154,7 @@ namespace ProductionManagementSystem.Controllers
             {
                 var component = _componentService.GetComponent(id);
                 var componentViewModel =
-                    _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(component);
+                    _mapper.Map<ComponentDTO, ComponentViewModel>(component);
                 ViewBag.AllTypes = GetAllTypes();
                 return View(componentViewModel);
             }
@@ -173,7 +181,7 @@ namespace ProductionManagementSystem.Controllers
                 try
                 {
                     var component =
-                        _mapperFromViewModel.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
+                        _mapper.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
                     LogService.UserName = User.Identity?.Name;
                     _componentService.UpdateComponent(component);
                 }
@@ -193,7 +201,7 @@ namespace ProductionManagementSystem.Controllers
             {
                 var component = _componentService.GetComponent(id);
                 var componentViewModel =
-                    _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(component);
+                    _mapper.Map<ComponentDTO, ComponentViewModel>(component);
                 return View(componentViewModel);
             }
             catch (Exception e)
@@ -220,7 +228,7 @@ namespace ProductionManagementSystem.Controllers
                 ViewBag.ErrorMessage = e.Message;
                 ViewBag.ErrorHeader = e.Header;
                 return View(
-                    _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(_componentService.GetComponent(id)));
+                    _mapper.Map<ComponentDTO, ComponentViewModel>(_componentService.GetComponent(id)));
             }
             catch (Exception e)
             {
@@ -266,7 +274,7 @@ namespace ProductionManagementSystem.Controllers
         {
             var component = _componentService.GetComponent(id);
             var componentViewModel =
-                _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(component);
+                _mapper.Map<ComponentDTO, ComponentViewModel>(component);
             ViewBag.TaskId = taskId;
             
             return View(componentViewModel);
@@ -305,7 +313,7 @@ namespace ProductionManagementSystem.Controllers
         {
             var component = _componentService.GetComponent(id);
             var componentViewModel =
-                _mapperToViewModel.Map<ComponentDTO, ComponentViewModel>(component);
+                _mapper.Map<ComponentDTO, ComponentViewModel>(component);
             return View(componentViewModel);
         }
         
@@ -329,6 +337,74 @@ namespace ProductionManagementSystem.Controllers
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public IActionResult AddMultiple(int? deviceId, string typeName)
+        {
+            var selectListDevice = new SelectList(_deviceService.GetDevices(), "Id", "Name");
+            var selectListTypes = new SelectList(_componentService.GetTypes());
+
+            var components = new ComponentsForDevice();
+            List<Component> componentsInDevice = new List<Component>();
+            if (deviceId != null)
+            {
+                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
+                if (device != null)
+                {
+                    device.Selected = true;
+                }
+                
+                componentsInDevice.AddRange(_deviceService.GetComponentsTemplates((int) deviceId).Select(c => c.Component).ToArray());
+            }
+            else
+            {
+                componentsInDevice.AddRange(_mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<Component>>(_componentService.GetComponents()));
+            }
+
+
+            if (typeName != null)
+            {
+                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
+                if (type != null)
+                {
+                    type.Selected = true;
+                }
+                
+                componentsInDevice = componentsInDevice.Where(c => c.Type == typeName).ToList();
+            }
+
+            ViewBag.TypeNames = selectListTypes;
+            ViewBag.Devices = selectListDevice;
+
+            var length = componentsInDevice.Count;
+            components.ComponentId = new int[length];
+            components.ComponentName = new string[length];
+            components.Quantity = new int[length];
+            for (var index = 0; index < length; index++)
+            {
+                var componentInDevice = componentsInDevice[index];
+                components.ComponentName[index] = componentInDevice.ToString();
+                components.ComponentId[index] = componentInDevice.Id;
+            }
+
+            return View(components);
+        }
+        
+        [HttpPost]
+        public IActionResult AddMultiple(ComponentsForDevice components)
+        {
+            if (components == null)
+            {
+                throw new Exception("Device not found.");
+            }
+
+            LogService.UserName = User.Identity?.Name;
+            for (var index = 0; index < components.ComponentId.Length; index++)
+            {
+                _componentService.AddComponent(components.ComponentId[index], components.Quantity[index]);
+            }
+            
+            return View(components);
         }
     }
 }

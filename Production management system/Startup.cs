@@ -78,7 +78,6 @@ namespace ProductionManagementSystem
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                
                 app.UseHsts();
             }
 

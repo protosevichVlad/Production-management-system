@@ -170,7 +170,7 @@ namespace ProductionManagementSystem.Controllers
         {
             ViewBag.TaskId = taskId;
             ViewBag.Components = _taskService.GetDeviceComponentsTemplatesFromTask(taskId);
-            ViewBag.ObtainedComponents = _taskService.GetObtainedСomponents(taskId);
+            ViewBag.ObtainedComponents = _taskService.GetObtainedComponents(taskId);
             return View();
         }
 

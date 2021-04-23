@@ -45,8 +45,14 @@
                         }
                         @if (User.IsInRole(RoleEnum.OrderPicker) || User.IsInRole(RoleEnum.Admin))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Components" asp-action="Index">Монтаж</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownComponents" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Монтаж
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownComponents">
+                                    <li><a class="dropdown-item" asp-controller="Components" asp-action="Index">Список монтажа</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Components" asp-action="AddMultiple">Добавить монтаж</a></li>
+                                </ul>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Designs" asp-action="Index">Конструктив</a>

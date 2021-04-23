@@ -173,3 +173,7 @@ tr:hover .password {
 .td-with-description {
     width: 45%;
 }
+
+.sticky-top {
+    z-index: 999;
+}

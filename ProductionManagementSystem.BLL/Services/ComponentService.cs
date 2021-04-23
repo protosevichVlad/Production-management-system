@@ -111,6 +111,11 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new PageNotFoundException();
             }
 
+            if (quantity == 0)
+            {
+                return;
+            }
+
             var component = _database.Components.Get((int) id);
             component.Quantity += quantity;
             _database.Save();
