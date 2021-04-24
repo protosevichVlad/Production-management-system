@@ -379,12 +379,13 @@ namespace ProductionManagementSystem.Controllers
             var length = componentsInDevice.Count;
             components.ComponentId = new int[length];
             components.ComponentName = new string[length];
-            components.Quantity = new int[length];
+            components.QuantityInStock = new int[length];
             for (var index = 0; index < length; index++)
             {
                 var componentInDevice = componentsInDevice[index];
                 components.ComponentName[index] = componentInDevice.ToString();
                 components.ComponentId[index] = componentInDevice.Id;
+                components.QuantityInStock[index] = componentInDevice.Quantity;
             }
 
             return View(components);
@@ -392,6 +393,75 @@ namespace ProductionManagementSystem.Controllers
         
         [HttpPost]
         public IActionResult AddMultiple(ComponentsForDevice components)
+        {
+            if (components == null)
+            {
+                throw new Exception("Device not found.");
+            }
+
+            LogService.UserName = User.Identity?.Name;
+            for (var index = 0; index < components.ComponentId.Length; index++)
+            {
+                _componentService.AddComponent(components.ComponentId[index], components.Quantity[index]);
+            }
+            
+            return View(components);
+        }
+        
+        public IActionResult ReceiveMultiple(int? deviceId, string typeName)
+        {
+            var selectListDevice = new SelectList(_deviceService.GetDevices(), "Id", "Name");
+            var selectListTypes = new SelectList(_componentService.GetTypes());
+
+            var components = new ComponentsForDevice();
+            List<Component> componentsInDevice = new List<Component>();
+            if (deviceId != null)
+            {
+                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
+                if (device != null)
+                {
+                    device.Selected = true;
+                }
+                
+                componentsInDevice.AddRange(_deviceService.GetComponentsTemplates((int) deviceId).Select(c => c.Component).ToArray());
+            }
+            else
+            {
+                componentsInDevice.AddRange(_mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<Component>>(_componentService.GetComponents()));
+            }
+
+
+            if (typeName != null)
+            {
+                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
+                if (type != null)
+                {
+                    type.Selected = true;
+                }
+                
+                componentsInDevice = componentsInDevice.Where(c => c.Type == typeName).ToList();
+            }
+
+            var length = componentsInDevice.Count;
+            components.ComponentId = new int[length];
+            components.ComponentName = new string[length];
+            components.Quantity = new int[length];
+            components.QuantityInStock = new int[length];
+            for (var index = 0; index < length; index++)
+            {
+                var componentInDevice = componentsInDevice[index];
+                components.ComponentName[index] = componentInDevice.ToString();
+                components.ComponentId[index] = componentInDevice.Id;
+                components.QuantityInStock[index] = componentInDevice.Quantity;
+            }
+
+            ViewBag.TypeNames = selectListTypes;
+            ViewBag.Devices = selectListDevice;
+            return View(components);
+        }
+        
+        [HttpPost]
+        public IActionResult ReceiveMultiple(ComponentsForDevice components)
         {
             if (components == null)
             {
