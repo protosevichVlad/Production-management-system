@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
@@ -33,7 +34,7 @@ namespace ProductionManagementSystem.Controllers
 
         // GET: Designs
         [HttpGet]
-        public IActionResult Index(string sortOrder, string searchString)
+        public IActionResult Index(string sortOrder, string searchString, int page=1, int pageSize = 50)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
@@ -46,6 +47,23 @@ namespace ProductionManagementSystem.Controllers
                 designs = designs.Where(d => (d.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
                                              || (d.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
                                              || (d.ShortDescription?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false));
+            }
+            
+            ViewBag.PageSize = pageSize;
+            var pageSizes = new SelectList(new[] {10, 25, 50, 100});
+            var pageSizeFromList = pageSizes.FirstOrDefault(l => l.Text == pageSize.ToString());
+            if (pageSizeFromList != null)
+            {
+                pageSizeFromList.Selected = true;
+            }
+
+            ViewBag.PageSizes = pageSizes;
+            ViewBag.MaxPage = designs.Count() / pageSize + (designs.Count() % pageSize == 0 ? 0: 1);
+            ViewBag.CountComponents = designs.Count();
+            ViewBag.Page = page;
+            if (page > ViewBag.MaxPage)
+            {
+                page = 1;
             }
             
             switch (sortOrder)
@@ -70,6 +88,7 @@ namespace ProductionManagementSystem.Controllers
                     break;
             }
 
+            designs = designs.Skip((page - 1) * pageSize).Take(pageSize);
             var designsViewModule = _mapperToViewModel.Map<IEnumerable<DesignDTO>, IEnumerable<DesignViewModel>>(designs);
             ViewBag.AllDesigns = _designService.GetDesigns().Select(d => d.Name).Distinct();
             return View(designsViewModule);
