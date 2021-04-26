@@ -31,11 +31,11 @@
     <div class="col d-flex align-items-center justify-content-end">
         @if (@ViewData["CurrentFilter"] == null)
         {
-            <p class="d-flex">На складе @Model.Count() наименований конструктива</p>
+            <p class="d-flex">На складе @ViewBag.CountComponents наименований конструктива</p>
         }
         else
         {
-            <p class="d-flex">Было найдено @Model.Count() наименований конструктива</p>
+            <p class="d-flex">Было найдено @ViewBag.CountComponents наименований конструктива</p>
         }
     </div>
 </div>
