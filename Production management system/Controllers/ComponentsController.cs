@@ -48,7 +48,6 @@ namespace ProductionManagementSystem.Controllers
         [HttpGet]
         public IActionResult Index(string sortOrder, string searchString, int page=1, int pageSize = 50)
         {
-            ViewBag.Page = page;
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
@@ -68,11 +67,20 @@ namespace ProductionManagementSystem.Controllers
             }
 
             ViewBag.PageSize = pageSize;
+            
+            var pageSizes = new SelectList(new[] {10, 25, 50, 100});
+            var pageSizeFromList = pageSizes.FirstOrDefault(l => l.Text == pageSize.ToString());
+            if (pageSizeFromList != null)
+            {
+                pageSizeFromList.Selected = true;
+            }
+
+            ViewBag.PageSizes = pageSizes;
             ViewBag.MaxPage = components.Count() / pageSize + (components.Count() % pageSize == 0 ? 0: 1);
             ViewBag.CountComponents = components.Count();
             if (page > ViewBag.MaxPage)
             {
-                throw new ArgumentException($"Страницы №{page} не существует.");
+                page = 1;
             }
             
             switch (sortOrder)  
@@ -101,6 +109,7 @@ namespace ProductionManagementSystem.Controllers
             var componentsViewModel =
                 _mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<ComponentViewModel>>(components);
             
+            ViewBag.Page = page;
             ViewBag.AllComponents = _componentService.GetComponents().Select(c => c.Name).Distinct();
             return View(componentsViewModel);
         }
