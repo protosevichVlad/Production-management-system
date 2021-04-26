@@ -109,12 +109,36 @@
             <li class="page-item @(ViewBag.Page == 1 ? "disabled" : "")">
                 <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page - 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]" tabindex="-1">Предыдущая</a>
             </li>
-            @for (int numberPage = 1; numberPage <= ViewBag.MaxPage; numberPage++)
+            @if (ViewBag.MaxPage < 8)
             {
-                <li class="page-item @(numberPage == ViewBag.Page ? "active" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@numberPage" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]">@numberPage</a>
-                </li>
+                @for (int numberPage = 1; numberPage <= ViewBag.MaxPage; numberPage++)
+                {
+                    <li class="page-item @(numberPage == ViewBag.Page ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@numberPage" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]">@numberPage</a>
+                    </li>
+                }
             }
+            else
+            {
+                var arrayPages = new int[] {1, ViewBag.Page - 2, ViewBag.Page - 1, ViewBag.Page, ViewBag.Page + 1, ViewBag.Page + 2, ViewBag.MaxPage};
+                arrayPages = arrayPages.Where(page => page > 0 && page <= ViewBag.MaxPage).Distinct().ToArray();
+                var previous = 0; 
+                foreach (var numberPage in arrayPages)
+                {
+                    if (previous + 1 != numberPage)
+                    {
+                        <li class="page-item disabled">
+                            <a class="page-link disabled" href="#">..</a>
+                        </li>
+                    }
+                    
+                    <li class="page-item @(numberPage == ViewBag.Page ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@numberPage" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]">@numberPage</a>
+                    </li>
+                    previous = numberPage;
+                }
+            }
+           
             <li class="page-item @(ViewBag.Page == ViewBag.MaxPage ? "disabled" : "")">
                 <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page + 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]">Cледующая</a>
             </li>
