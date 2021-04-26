@@ -35,6 +35,8 @@ namespace ProductionManagementSystem.BLL.Services
             
             _database.Devices.Create(device);
             _database.Save();
+            
+            _log.CreateLog(new LogDTO($"Был создан новый прибор: {device}"){DeviceId = device.Id});
         }
 
         public void UpdateDevice(DeviceDTO deviceDto)
@@ -63,7 +65,6 @@ namespace ProductionManagementSystem.BLL.Services
             foreach (var des in deviceFromDb.DeviceDesignTemplate)
             {
                 _database.DeviceDesignTemplate.Delete(des.Id);
-
             }
 
             deviceFromDb.DeviceDesignTemplate = GetDesignsFromDeviceDto(deviceDto);
@@ -71,6 +72,8 @@ namespace ProductionManagementSystem.BLL.Services
             
             _database.Devices.Update(deviceFromDb);
             _database.Save();
+            
+            _log.CreateLog(new LogDTO($"Был изменён прибор: {deviceDto}"){ComponentId = deviceFromDb.Id});
         }
 
         public IEnumerable<DeviceDTO> GetDevices()
@@ -118,6 +121,8 @@ namespace ProductionManagementSystem.BLL.Services
             
             _database.Devices.Delete((int) id);
             _database.Save();
+            
+            _log.CreateLog(new LogDTO($"Был удалён прибор: {device}"));
         }
 
         private bool CheckInTask(Device device, out string errorMessage)
