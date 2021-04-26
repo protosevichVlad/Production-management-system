@@ -106,38 +106,7 @@
 <br>
 <hr/>
 <h3>Логи</h3>
-<div class="table-responsive">
-    <table class="table table-sm">
-        <thead>
-        <tr>
-            <th>
-                Дата и время
-            </th>
-            <th>
-                Сообщение
-            </th>
-            <th>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var log in ViewBag.Logs)
-        {
-            <tr>
-                <td>
-                    @log.DateTime
-                </td>
-                <td>
-                    @log.Message
-                </td>
-                <td>
-                    <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Details" asp-route-id="@log.Id">Подробности</a>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</div>
+<partial name="Partail/_LogsPartail" model="@ViewBag.Logs"/>
 <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
