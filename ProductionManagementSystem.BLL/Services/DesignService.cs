@@ -109,6 +109,11 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new NotImplementedException();
             }
 
+            if (quantity == 0)
+            {
+                return;
+            }
+
             var design = _database.Designs.Get((int) id);
             design.Quantity += quantity;
             _database.Save();

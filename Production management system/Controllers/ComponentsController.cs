@@ -414,7 +414,7 @@ namespace ProductionManagementSystem.Controllers
                 _componentService.AddComponent(components.ComponentId[index], components.Quantity[index]);
             }
             
-            return View(components);
+            return RedirectToAction(nameof(AddMultiple));
         }
         
         public IActionResult ReceiveMultiple(int? deviceId, string typeName)
@@ -480,10 +480,10 @@ namespace ProductionManagementSystem.Controllers
             LogService.UserName = User.Identity?.Name;
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                _componentService.AddComponent(components.ComponentId[index], components.Quantity[index]);
+                _componentService.AddComponent(components.ComponentId[index], -components.Quantity[index]);
             }
             
-            return View(components);
+            return RedirectToAction(nameof(ReceiveMultiple));
         }
     }
 }

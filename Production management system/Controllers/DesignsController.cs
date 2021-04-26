@@ -10,6 +10,7 @@ using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
+using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.Models;
 using ProductionManagementSystem.WEB.Models;
 
@@ -19,16 +20,20 @@ namespace ProductionManagementSystem.Controllers
     public class DesignsController : Controller
     {
         private readonly IDesignService _designService;
-        private IMapper _mapperToViewModel;
-        private IMapper _mapperFromViewModel;
+        private readonly IDeviceService _deviceService;
+        private IMapper _mapper;
         
         
-        public DesignsController(IDesignService service)
+        public DesignsController(IDesignService service, IDeviceService deviceService)
         {
+            _deviceService = deviceService;
             _designService = service;
-            _mapperToViewModel = new MapperConfiguration(cfg => cfg.CreateMap<DesignDTO, DesignViewModel>())
-                .CreateMapper();
-            _mapperFromViewModel = new MapperConfiguration(cfg => cfg.CreateMap<DesignViewModel, DesignDTO>())
+            _mapper = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<DesignDTO, DesignViewModel>();
+                cfg.CreateMap<DesignViewModel, DesignDTO>();
+                cfg.CreateMap<DesignDTO, Design>();
+            })
                 .CreateMapper();
         }
 
@@ -89,7 +94,7 @@ namespace ProductionManagementSystem.Controllers
             }
 
             designs = designs.Skip((page - 1) * pageSize).Take(pageSize);
-            var designsViewModule = _mapperToViewModel.Map<IEnumerable<DesignDTO>, IEnumerable<DesignViewModel>>(designs);
+            var designsViewModule = _mapper.Map<IEnumerable<DesignDTO>, IEnumerable<DesignViewModel>>(designs);
             ViewBag.AllDesigns = _designService.GetDesigns().Select(d => d.Name).Distinct();
             return View(designsViewModule);
         }
@@ -100,7 +105,7 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 var design = _designService.GetDesign(id);
-                var designViewModel = _mapperToViewModel.Map<DesignDTO, DesignViewModel>(design);
+                var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
                 return View(designViewModel);
             }
             catch (Exception e)
@@ -127,7 +132,7 @@ namespace ProductionManagementSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var design = _mapperFromViewModel.Map<DesignViewModel, DesignDTO>(designViewModel);
+                var design = _mapper.Map<DesignViewModel, DesignDTO>(designViewModel);
                 LogService.UserName = User.Identity?.Name;
                 _designService.CreateDesign(design);
                 return RedirectToAction(nameof(Index));
@@ -141,7 +146,7 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 var design = _designService.GetDesign(id);
-                var designViewModel = _mapperToViewModel.Map<DesignDTO, DesignViewModel>(design);
+                var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
                 
                 ViewBag.AllTypes = _designService.GetTypes();
                 return View(designViewModel);
@@ -163,7 +168,7 @@ namespace ProductionManagementSystem.Controllers
             {
                 try
                 {
-                    var design = _mapperFromViewModel.Map<DesignViewModel, DesignDTO>(designViewModel);
+                    var design = _mapper.Map<DesignViewModel, DesignDTO>(designViewModel);
                     LogService.UserName = User.Identity?.Name;
                     _designService.UpdateDesign(design);
                     return RedirectToAction(nameof(Index));
@@ -182,7 +187,7 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 var design = _designService.GetDesign(id);
-                var designViewModel = _mapperToViewModel.Map<DesignDTO, DesignViewModel>(design);
+                var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
                 return View(designViewModel);
             }
             catch (Exception e)
@@ -207,7 +212,7 @@ namespace ProductionManagementSystem.Controllers
                 ViewBag.ErrorMessage = e.Message;
                 ViewBag.ErrorHeader = e.Header;
                 return View(
-                    _mapperToViewModel.Map<DesignDTO, DesignViewModel>(_designService.GetDesign(id)));
+                    _mapper.Map<DesignDTO, DesignViewModel>(_designService.GetDesign(id)));
             }
             catch (Exception e)
             {
@@ -232,7 +237,7 @@ namespace ProductionManagementSystem.Controllers
         public IActionResult Add(int? id)
         {
             var design = _designService.GetDesign(id);
-            var designViewModel = _mapperToViewModel.Map<DesignDTO, DesignViewModel>(design);
+            var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
             return View(designViewModel);
         }
         
@@ -258,7 +263,7 @@ namespace ProductionManagementSystem.Controllers
         {
 
             var design = _designService.GetDesign(id);
-            var designViewModel = _mapperToViewModel.Map<DesignDTO, DesignViewModel>(design);
+            var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
             return View(designViewModel);
         }
         [HttpPost]
@@ -275,6 +280,144 @@ namespace ProductionManagementSystem.Controllers
                 Console.WriteLine(e);
                 throw;
             }
+        }
+        
+        public IActionResult AddMultiple(int? deviceId, string typeName)
+        {
+            var selectListDevice = new SelectList(_deviceService.GetDevices(), "Id", "Name");
+            var selectListTypes = new SelectList(_designService.GetTypes());
+
+            var components = new ComponentsForDevice();
+            List<Design> componentsInDevice = new List<Design>();
+            if (deviceId != null)
+            {
+                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
+                if (device != null)
+                {
+                    device.Selected = true;
+                }
+                
+                componentsInDevice.AddRange(_deviceService.GetDesignTemplates((int) deviceId).Select(c => c.Design).ToArray());
+            }
+            else
+            {
+                componentsInDevice.AddRange(_mapper.Map<IEnumerable<DesignDTO>, IEnumerable<Design>>(_designService.GetDesigns()));
+            }
+
+            if (typeName != null)
+            {
+                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
+                if (type != null)
+                {
+                    type.Selected = true;
+                }
+                
+                componentsInDevice = componentsInDevice.Where(c => c.Type == typeName).ToList();
+            }
+
+            ViewBag.TypeNames = selectListTypes;
+            ViewBag.Devices = selectListDevice;
+
+            var length = componentsInDevice.Count;
+            components.ComponentId = new int[length];
+            components.ComponentName = new string[length];
+            components.QuantityInStock = new int[length];
+            for (var index = 0; index < length; index++)
+            {
+                var componentInDevice = componentsInDevice[index];
+                components.ComponentName[index] = componentInDevice.ToString();
+                components.ComponentId[index] = componentInDevice.Id;
+                components.QuantityInStock[index] = componentInDevice.Quantity;
+            }
+
+            return View(components);
+        }
+        
+        [HttpPost]
+        public IActionResult AddMultiple(ComponentsForDevice components)
+        {
+            if (components == null)
+            {
+                throw new Exception("Device not found.");
+            }
+
+            LogService.UserName = User.Identity?.Name;
+            for (var index = 0; index < components.ComponentId.Length; index++)
+            {
+                _designService.AddDesign(components.ComponentId[index], components.Quantity[index]);
+            }
+            
+            return RedirectToAction(nameof(AddMultiple));
+        }
+        
+        [HttpGet]
+        public IActionResult ReceiveMultiple(int? deviceId, string typeName)
+        {
+            var selectListDevice = new SelectList(_deviceService.GetDevices(), "Id", "Name");
+            var selectListTypes = new SelectList(_designService.GetTypes());
+
+            var components = new ComponentsForDevice();
+            List<Design> componentsInDevice = new List<Design>();
+            if (deviceId != null)
+            {
+                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
+                if (device != null)
+                {
+                    device.Selected = true;
+                }
+                
+                componentsInDevice.AddRange(_deviceService.GetDesignTemplates((int) deviceId).Select(c => c.Design).ToArray());
+            }
+            else
+            {
+                componentsInDevice.AddRange(_mapper.Map<IEnumerable<DesignDTO>, IEnumerable<Design>>(_designService.GetDesigns()));
+            }
+
+
+            if (typeName != null)
+            {
+                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
+                if (type != null)
+                {
+                    type.Selected = true;
+                }
+                
+                componentsInDevice = componentsInDevice.Where(c => c.Type == typeName).ToList();
+            }
+
+            var length = componentsInDevice.Count;
+            components.ComponentId = new int[length];
+            components.ComponentName = new string[length];
+            components.Quantity = new int[length];
+            components.QuantityInStock = new int[length];
+            for (var index = 0; index < length; index++)
+            {
+                var componentInDevice = componentsInDevice[index];
+                components.ComponentName[index] = componentInDevice.ToString();
+                components.ComponentId[index] = componentInDevice.Id;
+                components.QuantityInStock[index] = componentInDevice.Quantity;
+            }
+
+            ViewBag.TypeNames = selectListTypes;
+            ViewBag.Devices = selectListDevice;
+            return View(components);
+        }
+        
+        [HttpPost]
+        public IActionResult ReceiveMultiple(ComponentsForDevice components)
+        {
+            if (components == null)
+            {
+                throw new Exception("Device not found.");
+            }
+
+            LogService.UserName = User.Identity?.Name;
+            for (var index = 0; index < components.ComponentId.Length; index++)
+            {
+                _designService.AddDesign(components.ComponentId[index], -components.Quantity[index]);
+            }
+            
+            return RedirectToAction(nameof(ReceiveMultiple));
         }
     }
 }
