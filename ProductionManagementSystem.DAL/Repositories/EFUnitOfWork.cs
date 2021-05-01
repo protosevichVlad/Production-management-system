@@ -17,7 +17,7 @@ namespace ProductionManagementSystem.DAL.Repositories
         private DeviceComponentsTemplateRepository _deviceComponentsTemplateRepository;
         private DeviceDesignTemplateRepository _deviceDesignTemplateRepository;
         private ObtainedDesignRepository _obtainedDesignRepository;
-        private ObtainedСomponentRepository _obtainedСomponentRepository;
+        private ObtainedСomponentRepository _obtainedComponentRepository;
 
         public EFUnitOfWork(string connectionString)
         {
@@ -105,9 +105,9 @@ namespace ProductionManagementSystem.DAL.Repositories
         {
             get
             {
-                if (_obtainedСomponentRepository == null)
-                    _obtainedСomponentRepository = new ObtainedСomponentRepository(_db);
-                return _obtainedСomponentRepository;
+                if (_obtainedComponentRepository == null)
+                    _obtainedComponentRepository = new ObtainedСomponentRepository(_db);
+                return _obtainedComponentRepository;
             }
         }
 

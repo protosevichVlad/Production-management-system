@@ -28,6 +28,7 @@ namespace ProductionManagementSystem.Controllers
             return View(_userManager.Users.ToList());
         } 
         
+        [AllowAnonymous]
         public async Task<string> SetRoles()
         {
             string adminEmail = "admin";
@@ -62,7 +63,7 @@ namespace ProductionManagementSystem.Controllers
             }
             if (await _roleManager.FindByNameAsync(adminEmail) == null)
             {
-                var admin = new ProductionManagementSystemUser() { Email = adminEmail, UserName = adminEmail };
+                var admin = new ProductionManagementSystemUser() { Email = adminEmail, UserName = adminEmail, EmailConfirmed = true };
                 IdentityResult result = await _userManager.CreateAsync(admin, password);
                 if (result.Succeeded)
                 {
