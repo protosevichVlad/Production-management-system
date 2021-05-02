@@ -28,6 +28,7 @@ namespace ProductionManagementSystem.Controllers
             return View();
         }
 
+        [HttpPost]
         public async Task<string> Reset()
         {
             _databaseService.ResetDatabase();
