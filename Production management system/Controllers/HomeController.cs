@@ -28,12 +28,23 @@ namespace ProductionManagementSystem.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<string> Reset()
+        [HttpGet]
+        public IActionResult Reset()
         {
-            _databaseService.ResetDatabase();
-            await new UsersController(_userManager, _roleManager).SetRoles();
-            return "complite";
+            return View();
+        }
+        
+        [HttpPost]
+        public async Task<string> Reset(string password)
+        {
+            if (password == "123Pass123")
+            {
+                _databaseService.ResetDatabase();
+                await new UsersController(_userManager, _roleManager).SetRoles();
+                return "ok";
+            }
+
+            return "failed";
         }
         
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
