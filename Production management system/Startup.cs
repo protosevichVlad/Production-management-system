@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,8 +30,10 @@ namespace ProductionManagementSystem
             services.AddControllersWithViews();
 
             services.AddDbContext<ApplicationContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")) 
+                // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")) 
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 24)))
             );
+            
 
             services.AddIdentity<ProductionManagementSystemUser, IdentityRole>(options =>
                 {
