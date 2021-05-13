@@ -17,7 +17,7 @@ namespace ProductionManagementSystem.BLL.Interfaces
         void Transfer(int taskId, bool full, int to, string message);
         IEnumerable<DeviceDesignTemplate> GetDeviceDesignTemplateFromTask(int taskId);
         IEnumerable<DeviceComponentsTemplate> GetDeviceComponentsTemplatesFromTask(int taskId);
-        IEnumerable<ObtainedComponent> GetObtainedСomponents(int taskId);
+        IEnumerable<ObtainedComponent> GetObtainedComponents(int taskId);
         IEnumerable<ObtainedDesign> GetObtainedDesigns(int taskId);
         IEnumerable<LogDTO> GetLogs(int? taskId);
         string GetTaskStatusName(StatusEnum item);

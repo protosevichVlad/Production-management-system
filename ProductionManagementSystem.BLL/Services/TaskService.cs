@@ -163,7 +163,7 @@ namespace ProductionManagementSystem.BLL.Services
             return _deviceService.GetComponentsTemplates((int) deviceId);
         }
 
-        public IEnumerable<ObtainedComponent> GetObtainedСomponents(int taskId)
+        public IEnumerable<ObtainedComponent> GetObtainedComponents(int taskId)
         {
             return _database.ObtainedСomponents.Find(c => c.Task.Id == taskId);
         }
@@ -208,7 +208,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public void ReceiveComponent(int taskId, int[] componentIds, int[] componentObt)
         {
-            var obtainedComp = GetObtainedСomponents(taskId);
+            var obtainedComp = GetObtainedComponents(taskId);
             for (int i = 0; i < componentObt.Length; i++)
             {
                 var obtComp = obtainedComp.FirstOrDefault(c => c.Id == componentIds[i]);

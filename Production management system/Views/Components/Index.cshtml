@@ -44,10 +44,10 @@
         <thead>
         <tr>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["TypeSortParm"]">@Html.DisplayNameFor(model => model.Type)</a>
+                <a asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["TypeSortParm"]">@Html.DisplayNameFor(model => model.Type)</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.Name)</a>
+                <a asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.Name)</a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Nominal)
@@ -56,7 +56,7 @@
                 @Html.DisplayNameFor(model => model.Corpus)
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]">@Html.DisplayNameFor(model => model.Quantity)</a>
+                <a asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["QuantitySortParm"]">@Html.DisplayNameFor(model => model.Quantity)</a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Explanation)
@@ -97,20 +97,5 @@
         }
         </tbody>
     </table>
-    <nav>
-        <ul class="pagination justify-content-end">
-            <li class="page-item @(ViewBag.Page == 1 ? "disabled": "")">
-                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page - 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]" tabindex="-1">Предыдущая</a>
-            </li>
-            @for (int numberPage = 1; numberPage <= ViewBag.MaxPage; numberPage++)
-            {
-                <li class="page-item @(numberPage == ViewBag.Page ? "active":"")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@numberPage" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]">@numberPage</a>
-                </li>
-            }
-            <li class="page-item @(ViewBag.Page == ViewBag.MaxPage ? "disabled": "")">
-                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page + 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]">Cледующая</a>
-            </li>
-        </ul>
-    </nav>
+    <partial name="Partail/_Pagination" />
 </div>

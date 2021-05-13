@@ -37,6 +37,7 @@
     <div class="table-responsive-xl">
         <h4>Общее количество монтажа:
             <a class="btn btn-light btn-sm" asp-action="ReceiveComponent" asp-route-taskId="@Model.Id">Получить</a>
+            <a class="btn btn-light btn-sm" asp-controller="Components" asp-action="AddMultiple" asp-route-deviceId="@Model.Device.Id">Добавить монтаж на склад</a>
         </h4>
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">
@@ -45,7 +46,6 @@
                 <th>В задаче</th>
                 <th>На складе</th>
                 <th>Получено</th>
-                <th></th>
             </tr>
             </thead>
             @foreach (var comp in ViewBag.ComponentTemplate)
@@ -64,9 +64,6 @@
                     <td>@comp.Quantity</td>
                     <td>@comp.Component.Quantity</td>
                     <td>@obtainedComp.Obtained</td>
-                    <td>
-                        <a class="btn btn-light btn-sm" asp-controller="Components" asp-action="Add" asp-route-id="@comp.Component.Id" asp-route-taskId="@Model.Id">Добавить</a>
-                    </td>
                 </tr>
             }
         </table>
@@ -74,6 +71,7 @@
     <div class="table-responsive-xl">
         <h4>Общее количество конструктива:
             <a class="btn btn-light btn-sm" asp-action="ReceiveDesign" asp-route-taskId="@Model.Id">Получить</a>
+            @* <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="AddForDevice" asp-route-taskId="@Model.Device.Id">Добавить конструктив на склад</a> *@
         </h4>
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">
@@ -82,7 +80,6 @@
                 <th>В задаче</th>
                 <th>На складе</th>
                 <th>Получено</th>
-                <th></th>
             </tr>
             </thead>
             @foreach (var des in ViewBag.DesignTemplate)
@@ -101,9 +98,6 @@
                     <td>@des.Quantity</td>
                     <td>@des.Design.Quantity</td>
                     <td>@obtainedDes.Obtained</td>
-                    <td>
-                        <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="Add" asp-route-id="@des.Design.Id" asp-route-taskId="@Model.Id">Добавить</a>
-                    </td>
                 </tr>
             }
         </table>
@@ -112,38 +106,7 @@
 <br>
 <hr/>
 <h3>Логи</h3>
-<div class="table-responsive">
-    <table class="table table-sm">
-        <thead>
-        <tr>
-            <th>
-                Дата и время
-            </th>
-            <th>
-                Сообщение
-            </th>
-            <th>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var log in ViewBag.Logs)
-        {
-            <tr>
-                <td>
-                    @log.DateTime
-                </td>
-                <td>
-                    @log.Message
-                </td>
-                <td>
-                    <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Details" asp-route-id="@log.Id">Подробности</a>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</div>
+<partial name="Partail/_LogsPartail" model="@ViewBag.Logs"/>
 <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
+using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.Models;
 using ProductionManagementSystem.WEB.Models;
 
@@ -75,6 +76,7 @@ namespace ProductionManagementSystem.Controllers
         public IActionResult Create(DeviceViewModel deviceViewModel)
         {
             DeviceDTO device = _mapperFromViewModel.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
+            LogService.UserName = User.Identity?.Name;
             _deviceService.CreateDevice(device);
             return RedirectToAction(nameof(Index));
         }
@@ -103,6 +105,7 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 DeviceDTO device = _mapperFromViewModel.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
+                LogService.UserName = User.Identity?.Name;
                 _deviceService.UpdateDevice(device);
                 return RedirectToAction(nameof(Details), new {id = device.Id});
             }
@@ -160,6 +163,7 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
+                LogService.UserName = User.Identity?.Name;
                 _deviceService.DeleteDevice(id);
                 return RedirectToAction(nameof(Index));
             }

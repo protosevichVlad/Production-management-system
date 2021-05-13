@@ -26,14 +26,13 @@ namespace ProductionManagementSystem.Controllers
         private RoleManager<IdentityRole> _roleManager;
         private readonly ITaskService _taskService;
         private readonly IDeviceService _deviceService;
-        private IMapper _mapperToViewModel;
-        private IMapper _mapperFromViewModel;
+        private IMapper _mapper;
 
         public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _taskService = taskService;
             _deviceService = deviceService;
-            _mapperToViewModel = new MapperConfiguration(cfg =>
+            _mapper = new MapperConfiguration(cfg =>
                 {
                     cfg.CreateMap<TaskDTO, TaskViewModel>()
                         .ForMember(
@@ -42,11 +41,10 @@ namespace ProductionManagementSystem.Controllers
                                 src => _taskService.GetTaskStatusName(src.Status)
                                 )
                             );
+                    cfg.CreateMap<TaskViewModel, TaskDTO>();
                     cfg.CreateMap<DeviceDTO, DeviceViewModel>();
                     cfg.CreateMap<LogDTO, LogViewModel>();
                 })
-                .CreateMapper();
-            _mapperFromViewModel = new MapperConfiguration(cfg => cfg.CreateMap<TaskViewModel, TaskDTO>())
                 .CreateMapper();
             _userManager = userManager;
             _roleManager = roleManager;
@@ -64,7 +62,7 @@ namespace ProductionManagementSystem.Controllers
             var roles = await _userManager.GetRolesAsync(user);
             var tasksDto = _taskService.GetTasks(roles).ToList();
             var tasksViewModel =
-                _mapperToViewModel.Map<IEnumerable<TaskDTO>, IEnumerable<TaskViewModel>>(tasksDto).ToList();
+                _mapper.Map<IEnumerable<TaskDTO>, IEnumerable<TaskViewModel>>(tasksDto).ToList();
             
             SortingTasks(tasksViewModel, sortOrder);
             
@@ -83,7 +81,7 @@ namespace ProductionManagementSystem.Controllers
         [HttpPost]
         public IActionResult Create(TaskViewModel taskViewModel)
         {
-            var taskDto = _mapperFromViewModel.Map<TaskViewModel, TaskDTO>(taskViewModel);
+            var taskDto = _mapper.Map<TaskViewModel, TaskDTO>(taskViewModel);
             _taskService.CreateTask(taskDto);
             return RedirectToAction(nameof(Index));
         }
@@ -93,11 +91,11 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 var taskDto = _taskService.GetTask(id);
-                var taskViewModel = _mapperToViewModel.Map<TaskDTO, TaskViewModel>(taskDto);
+                var taskViewModel = _mapper.Map<TaskDTO, TaskViewModel>(taskDto);
                 ViewBag.States = new SelectList(GetStates(taskDto), "Id", "Name");
                 ViewBag.ComponentTemplate = _deviceService.GetComponentsTemplates(taskDto.DeviceId);
                 ViewBag.DesignTemplate = _deviceService.GetDesignTemplates(taskDto.DeviceId);
-                ViewBag.Logs = _taskService.GetLogs(id);
+                ViewBag.Logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(_taskService.GetLogs(id));
                 return View(taskViewModel);
             }
             catch (PageNotFoundException e)
@@ -111,7 +109,7 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 var taskDto = _taskService.GetTask(id);
-                var taskViewModel = _mapperToViewModel.Map<TaskDTO, TaskViewModel>(taskDto);
+                var taskViewModel = _mapper.Map<TaskDTO, TaskViewModel>(taskDto);
                 return View(taskViewModel);
             }
             catch (PageNotFoundException e)
@@ -139,7 +137,7 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 var taskDto = _taskService.GetTask(id);
-                var taskViewModel = _mapperToViewModel.Map<TaskDTO, TaskViewModel>(taskDto);
+                var taskViewModel = _mapper.Map<TaskDTO, TaskViewModel>(taskDto);
                 ViewBag.Devices = new SelectList(_deviceService.GetDevices(), "Id", "Name");
                 return View(taskViewModel);
             }
@@ -152,7 +150,7 @@ namespace ProductionManagementSystem.Controllers
         [HttpPost]
         public IActionResult Edit(TaskViewModel taskModel)
         {
-            var taskDto = _mapperFromViewModel.Map<TaskViewModel, TaskDTO>(taskModel);
+            var taskDto = _mapper.Map<TaskViewModel, TaskDTO>(taskModel);
             _taskService.EditTask(taskDto);
             return RedirectToAction(nameof(Details), new {id = taskModel.Id});
         }
@@ -170,7 +168,7 @@ namespace ProductionManagementSystem.Controllers
         {
             ViewBag.TaskId = taskId;
             ViewBag.Components = _taskService.GetDeviceComponentsTemplatesFromTask(taskId);
-            ViewBag.ObtainedComponents = _taskService.GetObtainedСomponents(taskId);
+            ViewBag.ObtainedComponents = _taskService.GetObtainedComponents(taskId);
             return View();
         }
 

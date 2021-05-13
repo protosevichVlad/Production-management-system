@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.Interfaces;
+using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.Controllers
@@ -10,10 +13,14 @@ namespace ProductionManagementSystem.Controllers
     public class HomeController : Controller
     {
         private IDatabaseService _databaseService;
+        private UserManager<ProductionManagementSystemUser> _userManager;
+        private RoleManager<IdentityRole> _roleManager;
         
-        public HomeController(IDatabaseService databaseService)
+        public HomeController(IDatabaseService databaseService, UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _databaseService = databaseService;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public IActionResult Index()
@@ -21,10 +28,23 @@ namespace ProductionManagementSystem.Controllers
             return View();
         }
 
-        public string Reset()
+        [HttpGet]
+        public IActionResult Reset()
         {
-            _databaseService.ResetDatabase();
-            return "complite";
+            return View();
+        }
+        
+        [HttpPost]
+        public async Task<string> Reset(string password)
+        {
+            if (password == "123Pass123")
+            {
+                _databaseService.ResetDatabase();
+                await new UsersController(_userManager, _roleManager).SetRoles();
+                return "ok";
+            }
+
+            return "failed";
         }
         
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

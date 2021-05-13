@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ProductionManagementSystem.WEB.Models.LogViewModel>;
+
+<div class="table-responsive">
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th style="width: 165px">
+                @Html.DisplayNameFor(model => model.DateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserLogin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Message)
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td>
+                    @log.DateTime
+                </td>
+                <td>
+                    @log.UserLogin
+                </td>
+                <td>
+                    @log.Message
+                </td>
+                <td class="border-0">
+                    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@log.Id">Подробности</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -33,7 +33,7 @@ namespace ProductionManagementSystem.BLL.Services
             _database.Designs.Create(design);
             _database.Save();
             
-            _log.CreateLog(new LogDTO($"Был создан конструктив {design}"){ComponentId = design.Id});
+            _log.CreateLog(new LogDTO($"Был создан конструктив {design}"){DesignId = design.Id});
         }
 
         public void UpdateDesign(DesignDTO designDto)
@@ -49,7 +49,7 @@ namespace ProductionManagementSystem.BLL.Services
             _database.Designs.Update(design);
             _database.Save();
             
-            _log.CreateLog(new LogDTO($"Был изменён конструктив {design}"){ComponentId = design.Id});
+            _log.CreateLog(new LogDTO($"Был изменён конструктив {design}"){DesignId = design.Id});
         }
 
         public IEnumerable<DesignDTO> GetDesigns()
@@ -109,17 +109,22 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new NotImplementedException();
             }
 
+            if (quantity == 0)
+            {
+                return;
+            }
+
             var design = _database.Designs.Get((int) id);
             design.Quantity += quantity;
             _database.Save();
             
             if (quantity < 0)
             {
-                _log.CreateLog(new LogDTO($"Было получено {-quantity}ед. конструктива {design}"){ComponentId = design.Id});
+                _log.CreateLog(new LogDTO($"Было получено {-quantity}ед. конструктива {design}"){DesignId = design.Id});
             }
             else
             {
-                _log.CreateLog(new LogDTO($"Было добавлено {quantity}ед. конструктива {design}"){ComponentId = design.Id});
+                _log.CreateLog(new LogDTO($"Было добавлено {quantity}ед. конструктива {design}"){DesignId = design.Id});
             }
         }
 
