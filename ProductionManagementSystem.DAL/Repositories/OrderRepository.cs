@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
@@ -17,20 +19,20 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db = context;
         }
 
-        public IEnumerable<Order> GetAll()
+        public async Task<IEnumerable<Order>> GetAllAsync()
         {
-            return _db.Orders
+            return await _db.Orders
                 .Include(o => o.Tasks)
                 .ThenInclude(t => t.Device)
-                .ToArray() ?? Array.Empty<Order>();
+                .ToListAsync();
         }
 
-        public Order Get(int id)
+        public async Task<Order> GetAsync(int id)
         {
-            return _db.Orders
+            return await _db.Orders
                 .Include(o => o.Tasks)
                 .ThenInclude(t => t.Device)
-                .FirstOrDefault(o => o.Id == id);
+                .FirstOrDefaultAsync(o => o.Id == id);
         }
 
         public IEnumerable<Order> Find(Func<Order, bool> predicate)
@@ -41,9 +43,9 @@ namespace ProductionManagementSystem.DAL.Repositories
                 .Where(predicate).ToList();
         }
 
-        public void Create(Order item)
+        public async Task CreateAsync(Order item)
         {
-            _db.Orders.Add(item);
+            await _db.Orders.AddAsync(item);
         }
 
         public void Update(Order item)
@@ -51,9 +53,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db.Entry(item).State = EntityState.Modified;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            var item = _db.Orders.Find(id);
+            var item = await _db.Orders.FindAsync(id);
             if (item != null)
                 _db.Orders.Remove(item);
         }

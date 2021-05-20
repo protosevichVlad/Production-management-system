@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -41,9 +42,9 @@ namespace ProductionManagementSystem.Controllers
                 .CreateMapper();
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var ordersViewModel = _mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(_orderService.GetOrders());
+            var ordersViewModel = _mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(await _orderService.GetOrdersAsync());
             return View(ordersViewModel);
         }
         
@@ -54,23 +55,23 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(OrderViewModel orderModel)
+        public async Task<IActionResult> Create(OrderViewModel orderModel)
         {
             if (ModelState.IsValid)
             {
                 var orderDto = _mapper.Map<OrderViewModel, OrderDTO>(orderModel);
-                _orderService.CreateOrder(orderDto); 
+                await _orderService.CreateOrderAsync(orderDto); 
                 return RedirectToAction(nameof(Index));
             }
 
             return View(orderModel);
         }
 
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             try
             {
-                var orderViewModel = _mapper.Map<OrderDTO, OrderViewModel>(_orderService.GetOrder(id));
+                var orderViewModel = _mapper.Map<OrderDTO, OrderViewModel>(await _orderService.GetOrderAsync(id));
                 return View(orderViewModel);
             }
             catch (PageNotFoundException)
@@ -79,11 +80,11 @@ namespace ProductionManagementSystem.Controllers
             }
         }
 
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             try
             {
-                var orderViewModel = _mapper.Map<OrderDTO, OrderViewModel>(_orderService.GetOrder(id));
+                var orderViewModel = _mapper.Map<OrderDTO, OrderViewModel>(await _orderService.GetOrderAsync(id));
                 return View(orderViewModel);
             }
             catch (PageNotFoundException)
@@ -94,11 +95,11 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpPost]
         [ActionName("Delete")]
-        public IActionResult DeleteConfirm(int? Id)
+        public async Task<IActionResult> DeleteConfirm(int? Id)
         {
             try
             {
-                _orderService.DeleteOrder(Id);
+                await _orderService.DeleteOrderAsync(Id);
                 return RedirectToAction(nameof(Index));
             }
             catch (PageNotFoundException)

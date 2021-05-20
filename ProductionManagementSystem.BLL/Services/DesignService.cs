@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
@@ -27,18 +29,18 @@ namespace ProductionManagementSystem.BLL.Services
                 .CreateMapper();
         }
         
-        public void CreateDesign(DesignDTO designDto)
+        public async Task CreateDesignAsync(DesignDTO designDto)
         {
             var design = _mapperFromDTO.Map<DesignDTO, Design>(designDto);
-            _database.Designs.Create(design);
-            _database.Save();
+            await _database.Designs.CreateAsync(design);
+            await _database.SaveAsync();
             
-            _log.CreateLog(new LogDTO($"Был создан конструктив {design}"){DesignId = design.Id});
+            await _log.CreateLogAsync(new LogDTO($"Был создан конструктив {design}"){DesignId = design.Id});
         }
 
-        public void UpdateDesign(DesignDTO designDto)
+        public async Task UpdateDesignAsync(DesignDTO designDto)
         {
-            var design = _database.Designs.Get(designDto.Id);
+            var design = await _database.Designs.GetAsync(designDto.Id);
 
             design.Name = designDto.Name;
             design.Quantity = designDto.Quantity;
@@ -47,62 +49,64 @@ namespace ProductionManagementSystem.BLL.Services
             design.ShortDescription = designDto.ShortDescription;
             
             _database.Designs.Update(design);
-            _database.Save();
+            await _database.SaveAsync();
             
-            _log.CreateLog(new LogDTO($"Был изменён конструктив {design}"){DesignId = design.Id});
+            await _log.CreateLogAsync(new LogDTO($"Был изменён конструктив {design}"){DesignId = design.Id});
         }
 
-        public IEnumerable<DesignDTO> GetDesigns()
+        public async Task<IEnumerable<DesignDTO>> GetDesignsAsync()
         {
-            return _mapperToDTO.Map<IEnumerable<Design>, IEnumerable<DesignDTO>>(_database.Designs.GetAll());
+            return _mapperToDTO.Map<IEnumerable<Design>, IEnumerable<DesignDTO>>(await _database.Designs.GetAllAsync());
         }
 
-        public DesignDTO GetDesign(int? id)
-        {
-            if (id == null)
-            {
-                throw new NotImplementedException();
-            }
-
-            return _mapperToDTO.Map<Design, DesignDTO>(_database.Designs.Get((int) id));
-        }
-
-        public void DeleteDesign(int? id)
+        public async Task<DesignDTO> GetDesignAsync(int? id)
         {
             if (id == null)
             {
                 throw new NotImplementedException();
             }
 
-            var design = _database.Designs.Get((int) id);
-            if (!CheckInDevices(design, out string errorMessage))
+            return _mapperToDTO.Map<Design, DesignDTO>(await _database.Designs.GetAsync((int) id));
+        }
+
+        public async Task DeleteDesignAsync(int? id)
+        {
+            if (id == null)
+            {
+                throw new NotImplementedException();
+            }
+
+            var design = await _database.Designs.GetAsync((int) id);
+            var checkInDevices = (await CheckInDevicesAsync(design));
+            string errorMessage = checkInDevices.Item2;
+            if (!checkInDevices.Item1)
             {
                 throw new IntersectionOfEntitiesException("Ошибка. Невозможно удаление конструктива.", errorMessage);
             }
             
-            _database.Designs.Delete((int) id);
-            _database.Save();
+            await _database.Designs.DeleteAsync((int) id);
+            await _database.SaveAsync();
             
-            var designLogs = _database.Logs.GetAll().Where(l => l.DeviceId == design.Id);
+            var designLogs = (await _database.Logs.GetAllAsync()).Where(l => l.DeviceId == design.Id);
             foreach (var log in designLogs)
             {
                 log.DesignId = null;
                 _database.Logs.Update(log);
             }
             
-            _database.Save();
+            await _database.SaveAsync();
             
-            _log.CreateLog(new LogDTO($"Был удалён конструктив: {design}"));
+            await _log.CreateLogAsync(new LogDTO($"Был удалён конструктив: {design}"));
         }
 
-        public IEnumerable<string> GetTypes()
+        public async Task<IEnumerable<string>> GetTypesAsync()
         {
-            var designs = _database.Designs.GetAll();
+            var designs = await _database.Designs.GetAllAsync();
             IEnumerable<string> types = designs.OrderBy(d => d.Type).Select(d => d.Type).Distinct();
             return types;
         }
 
-        public void AddDesign(int? id, int quantity)
+        public async Task AddDesignAsync(int? id, int quantity)
         {
             if (id == null)
             {
@@ -114,17 +118,17 @@ namespace ProductionManagementSystem.BLL.Services
                 return;
             }
 
-            var design = _database.Designs.Get((int) id);
+            var design = await _database.Designs.GetAsync((int) id);
             design.Quantity += quantity;
-            _database.Save();
+            await _database.SaveAsync();
             
             if (quantity < 0)
             {
-                _log.CreateLog(new LogDTO($"Было получено {-quantity}ед. конструктива {design}"){DesignId = design.Id});
+                await _log.CreateLogAsync(new LogDTO($"Было получено {-quantity}ед. конструктива {design}"){DesignId = design.Id});
             }
             else
             {
-                _log.CreateLog(new LogDTO($"Было добавлено {quantity}ед. конструктива {design}"){DesignId = design.Id});
+                await _log.CreateLogAsync(new LogDTO($"Было добавлено {quantity}ед. конструктива {design}"){DesignId = design.Id});
             }
         }
 
@@ -133,26 +137,27 @@ namespace ProductionManagementSystem.BLL.Services
             _database.Dispose();
         }
         
-        private bool CheckInDevices(Design design , out string errorMessage)
+        private async Task<Tuple<bool, string>> CheckInDevicesAsync(Design design)
         {
-            var designInDevice = _database.DeviceDesignTemplate.GetAll()
+            string errorMessage = "";
+            var designInDevice = (await _database.DeviceDesignTemplate.GetAllAsync())
                 .FirstOrDefault(d => design.Id == d.DesignId);
             if (designInDevice != null)
             {
-                var device = _database.Devices.GetAll().FirstOrDefault(d => d.Id == designInDevice.DeviceId);
+                var device = (await _database.Devices.GetAllAsync()).FirstOrDefault(d => d.Id == designInDevice.DeviceId);
                 errorMessage = $"<i class='bg-light'>{design.ToString()}</i> используется в <i class='bg-light'>{device.ToString()}</i>.<br />" +
                                $"Для удаления <i class='bg-light'>{design.ToString()}</i>, удалите <i class='bg-light'>{device.ToString()}</i>.<br />";
-                return false;
+                return new Tuple<bool, string>(false, errorMessage);
             }
 
             errorMessage = "";
-            return true;
+            return new Tuple<bool, string>(true, errorMessage);
         }
         
                 
-        private bool DesignExists(int id)
+        private async Task<bool> DesignExistsAsync(int id)
         {
-            return _database.Designs.GetAll().Any(e => e.Id == id);
+            return (await _database.Designs.GetAllAsync()).Any(e => e.Id == id);
         }
     }
 }

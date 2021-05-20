@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
@@ -27,18 +29,18 @@ namespace ProductionManagementSystem.BLL.Services
                 .CreateMapper();
         }
         
-        public void CreateComponent(ComponentDTO componentDto)
+        public async Task CreateComponentAsync(ComponentDTO componentDto)
         {
             var component = _mapperFromDTO.Map<ComponentDTO, Component>(componentDto);
-            _database.Components.Create(component);
-            _database.Save();
+            await _database.Components.CreateAsync(component);
+            await _database.SaveAsync();
             
-            _log.CreateLog(new LogDTO($"Был создан новый монтаж: {component}"){ComponentId = component.Id});
+            await _log.CreateLogAsync(new LogDTO($"Был создан новый монтаж: {component}"){ComponentId = component.Id});
         }
 
-        public void UpdateComponent(ComponentDTO componentDto)
+        public async Task UpdateComponentAsync(ComponentDTO componentDto)
         {
-            var component = _database.Components.Get(componentDto.Id);
+            var component = await _database.Components.GetAsync(componentDto.Id);
 
             component.Corpus = componentDto.Corpus;
             component.Explanation = componentDto.Explanation;
@@ -49,62 +51,64 @@ namespace ProductionManagementSystem.BLL.Services
             component.Type = componentDto.Type;
 
             _database.Components.Update(component);
-            _database.Save();
+            await _database.SaveAsync();
             
-            _log.CreateLog(new LogDTO($"Был изменён монтаж: {component}"){ComponentId = component.Id});
+            await _log.CreateLogAsync(new LogDTO($"Был изменён монтаж: {component}"){ComponentId = component.Id});
         }
 
-        public IEnumerable<ComponentDTO> GetComponents()
+        public async Task<IEnumerable<ComponentDTO>> GetComponentsAsync()
         {
-            return _mapperToDTO.Map<IEnumerable<Component>, IEnumerable<ComponentDTO>>(_database.Components.GetAll());
+            return _mapperToDTO.Map<IEnumerable<Component>, IEnumerable<ComponentDTO>>(await _database.Components.GetAllAsync());
         }
 
-        public ComponentDTO GetComponent(int? id)
+        public async Task<ComponentDTO> GetComponentAsync(int? id)
         {
             if (id == null)
             {
                 throw new PageNotFoundException();
             }
             
-            return _mapperToDTO.Map<Component, ComponentDTO>(_database.Components.Get((int) id));
+            return _mapperToDTO.Map<Component, ComponentDTO>(await _database.Components.GetAsync((int) id));
         }
 
-        public void DeleteComponent(int? id)
+        public async Task DeleteComponentAsync(int? id)
         {
             if (id == null)
             {
                 throw new PageNotFoundException();
             }
 
-            var component = _database.Components.Get((int) id);
-            if (!CheckInDevices(component, out string errorMessage))
+            var component = await _database.Components.GetAsync((int) id);
+            var checkInDevices = (await CheckInDevicesAsync(component));
+            string errorMessage = checkInDevices.Item2;
+            if (!checkInDevices.Item1)
             {
                 throw new IntersectionOfEntitiesException("Ошибка. Невозможно удаление монтажа.", errorMessage);
             }
             
-            _database.Components.Delete((int) id);
-            _database.Save();
+            await _database.Components.DeleteAsync((int) id);
+            await _database.SaveAsync();
 
-            var componetLogs = _database.Logs.GetAll().Where(l => l.ComponentId == component.Id);
+            var componetLogs = (await _database.Logs.GetAllAsync()).Where(l => l.ComponentId == component.Id);
             foreach (var log in componetLogs)
             {
                 log.ComponentId = null;
                 _database.Logs.Update(log);
             }
             
-            _database.Save();
+            await _database.SaveAsync();
             
-            _log.CreateLog(new LogDTO($"Был удалён монтаж: {component}"));
+            await _log.CreateLogAsync(new LogDTO($"Был удалён монтаж: {component}"));
         }
 
-        public IEnumerable<string> GetTypes()
+        public async Task<IEnumerable<string>> GetTypesAsync()
         {
-            var components = _database.Components.GetAll();
+            var components = await _database.Components.GetAllAsync();
             IEnumerable<string> types = components.OrderBy(c => c.Type).Select(c => c.Type).Distinct();
             return types;
         }
 
-        public void AddComponent(int? id, int quantity)
+        public async Task AddComponentAsync(int? id, int quantity)
         {
             if (id == null)
             {
@@ -116,17 +120,17 @@ namespace ProductionManagementSystem.BLL.Services
                 return;
             }
 
-            var component = _database.Components.Get((int) id);
+            var component = await _database.Components.GetAsync((int) id);
             component.Quantity += quantity;
-            _database.Save();
+            await _database.SaveAsync();
 
             if (quantity < 0)
             {
-                _log.CreateLog(new LogDTO($"Было получено {-quantity}ед. монтажа {component}"){ComponentId = component.Id});
+                await _log.CreateLogAsync(new LogDTO($"Было получено {-quantity}ед. монтажа {component}"){ComponentId = component.Id});
             }
             else
             {
-                _log.CreateLog(new LogDTO($"Было добавлено {quantity}ед. монтажа {component}"){ComponentId = component.Id});
+                await _log.CreateLogAsync(new LogDTO($"Было добавлено {quantity}ед. монтажа {component}"){ComponentId = component.Id});
             }
         }
 
@@ -141,25 +145,25 @@ namespace ProductionManagementSystem.BLL.Services
         /// <param name="component"></param>
         /// <param name="errorMessage"></param>
         /// <returns>Return true, if component not using in devices.</returns>
-        private bool CheckInDevices(Component component , out string errorMessage)
+        private async Task<Tuple<bool, string>> CheckInDevicesAsync(Component component)
         {
-            var componentInDevice = _database.DeviceComponentsTemplate.GetAll()
+            string errorMessage = "";
+            var componentInDevice = (await _database.DeviceComponentsTemplate.GetAllAsync())
                 .FirstOrDefault(c => component.Id == c.ComponentId);
             if (componentInDevice != null)
             {
-                var device = _database.Devices.GetAll().FirstOrDefault(d => d.Id == componentInDevice.DeviceId);
+                var device = (await _database.Devices.GetAllAsync()).FirstOrDefault(d => d.Id == componentInDevice.DeviceId);
                 errorMessage = $"<i class='bg-light'>{component.ToString()}</i> используется в <i class='bg-light'>{device.ToString()}</i>.<br />" +
                                $"Для удаления <i class='bg-light'>{component.ToString()}</i>, удалите <i class='bg-light'>{device.ToString()}</i>.<br />";
-                return false;
+                return new Tuple<bool, string>(false, errorMessage);
             }
             
-            errorMessage = "";
-            return true;
+            return new Tuple<bool, string>(true, errorMessage);
         }
         
-        private bool ComponentExists(int id)
+        private async Task<bool> ComponentExistsAsync(int id)
         {
-            return _database.Components.GetAll().Any(e => e.Id == id);
+            return (await _database.Components.GetAllAsync()).Any(e => e.Id == id);
         }
     }
 }

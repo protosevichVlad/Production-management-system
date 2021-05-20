@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,9 +29,9 @@ namespace ProductionManagementSystem.Controllers
             }).CreateMapper();
         }
 
-        public IActionResult Index(string userName, int? deviceId, int? componentId, int? designId, int? taskId, int? orderId)
+        public async Task<IActionResult> Index(string userName, int? deviceId, int? componentId, int? designId, int? taskId, int? orderId)
         {
-            var logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(_logService.GetLogs());
+            var logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(await _logService.GetLogsAsync());
 
             if (userName != null)
             {
@@ -65,11 +66,11 @@ namespace ProductionManagementSystem.Controllers
             return View(logs);
         }
         
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             try
             {
-                return View(_mapper.Map<LogDTO, LogViewModel>(_logService.GetLog(id)));
+                return View(_mapper.Map<LogDTO, LogViewModel>(await _logService.GetLogAsync(id)));
             }
             catch (PageNotFoundException)
             {

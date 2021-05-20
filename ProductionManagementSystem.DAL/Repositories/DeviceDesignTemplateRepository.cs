@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
@@ -17,14 +19,14 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db = context;
         }
 
-        public IEnumerable<DeviceDesignTemplate> GetAll()
+        public async Task<IEnumerable<DeviceDesignTemplate>> GetAllAsync()
         {
-            return _db.DeviceDesignTemplates;
+            return await _db.DeviceDesignTemplates.ToListAsync();
         }
 
-        public DeviceDesignTemplate Get(int id)
+        public async Task<DeviceDesignTemplate> GetAsync(int id)
         {
-            return _db.DeviceDesignTemplates.Find(id);
+            return await _db.DeviceDesignTemplates.FindAsync(id);
         }
 
         public IEnumerable<DeviceDesignTemplate> Find(Func<DeviceDesignTemplate, bool> predicate)
@@ -32,9 +34,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             return _db.DeviceDesignTemplates.Where(predicate).ToList();
         }
 
-        public void Create(DeviceDesignTemplate item)
+        public async Task CreateAsync(DeviceDesignTemplate item)
         {
-            _db.DeviceDesignTemplates.Add(item);
+            await _db.DeviceDesignTemplates.AddAsync(item);
         }
 
         public void Update(DeviceDesignTemplate item)
@@ -42,9 +44,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db.Entry(item).State = EntityState.Modified;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            var item = _db.DeviceDesignTemplates.Find(id);
+            var item = await _db.DeviceDesignTemplates.FindAsync(id);
             if (item != null)
                 _db.DeviceDesignTemplates.Remove(item);
         }

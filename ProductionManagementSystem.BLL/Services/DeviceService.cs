@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
@@ -27,22 +29,24 @@ namespace ProductionManagementSystem.BLL.Services
                 .CreateMapper();
         }
         
-        public void CreateDevice(DeviceDTO deviceDto)
+        public async Task CreateDeviceAsync(DeviceDTO deviceDto)
         {
             var device = _mapperFromDto.Map<DeviceDTO, Device>(deviceDto);
             device.DeviceDesignTemplate = GetDesignsFromDeviceDto(deviceDto);
             device.DeviceComponentsTemplate = GetComponentsFromDeviceDto(deviceDto);
             
-            _database.Devices.Create(device);
-            _database.Save();
+            await _database.Devices.CreateAsync(device);
+            await _database.SaveAsync();
             
-            _log.CreateLog(new LogDTO($"Был создан новый прибор: {device}"){DeviceId = device.Id});
+            await _log.CreateLogAsync(new LogDTO($"Был создан новый прибор: {device}"){DeviceId = device.Id});
         }
 
-        public void UpdateDevice(DeviceDTO deviceDto)
+        public async Task UpdateDeviceAsync(DeviceDTO deviceDto)
         { 
-            var deviceFromDb = _database.Devices.Get(deviceDto.Id);
-            if (!CheckInTask(deviceFromDb, out string errorMessage))
+            var deviceFromDb = await _database.Devices.GetAsync(deviceDto.Id);
+            var checkInTask = (await CheckInTaskAsync(deviceFromDb));
+            string errorMessage = checkInTask.Item2;
+            if (!checkInTask.Item1)
             {
                 throw new IntersectionOfEntitiesException("Ошибка. Невозможно изменение прибора.", errorMessage);
             }
@@ -59,26 +63,26 @@ namespace ProductionManagementSystem.BLL.Services
             
             foreach (var comp in deviceFromDb.DeviceComponentsTemplate)
             {
-                _database.DeviceComponentsTemplate.Delete(comp.Id);
+                await _database.DeviceComponentsTemplate.DeleteAsync(comp.Id);
             }
 
             foreach (var des in deviceFromDb.DeviceDesignTemplate)
             {
-                _database.DeviceDesignTemplate.Delete(des.Id);
+                await _database.DeviceDesignTemplate.DeleteAsync(des.Id);
             }
 
             deviceFromDb.DeviceDesignTemplate = GetDesignsFromDeviceDto(deviceDto);
             deviceFromDb.DeviceComponentsTemplate = GetComponentsFromDeviceDto(deviceDto);
             
             _database.Devices.Update(deviceFromDb);
-            _database.Save();
+            await _database.SaveAsync();
             
-            _log.CreateLog(new LogDTO($"Был изменён прибор: {deviceDto}"){ComponentId = deviceFromDb.Id});
+            await _log.CreateLogAsync(new LogDTO($"Был изменён прибор: {deviceDto}"){ComponentId = deviceFromDb.Id});
         }
 
-        public IEnumerable<DeviceDTO> GetDevices()
+        public async Task<IEnumerable<DeviceDTO>> GetDevicesAsync()
         {
-            var devices = _database.Devices.GetAll();
+            var devices = await _database.Devices.GetAllAsync();
             if (devices == null)
             {
                 return new List<DeviceDTO>(0);
@@ -87,62 +91,65 @@ namespace ProductionManagementSystem.BLL.Services
             return _mapperToDto.Map<IEnumerable<Device>, IEnumerable<DeviceDTO>>(devices);
         }
 
-        public DeviceDTO GetDevice(int? id)
+        public async Task<DeviceDTO> GetDeviceAsync(int? id)
         {
             if (id == null)
             {
                 throw new NotImplementedException();
             }
             
-            var device = _database.Devices.Get((int) id);
+            var device = await _database.Devices.GetAsync((int) id);
             if (device == null)
             {
                 throw new NotImplementedException();   
             }
 
             var deviceDto = _mapperToDto.Map<Device, DeviceDTO>(device);
-            SetNameQuantityAndDescriptionForComponent(deviceDto, device);
-            SetNameQuantityAndDescriptionForDesign(deviceDto, device);
+            await SetNameQuantityAndDescriptionForComponentAsync(deviceDto, device);
+            await SetNameQuantityAndDescriptionForDesignAsync(deviceDto, device);
             return deviceDto;
         }
 
-        public void DeleteDevice(int? id)
+        public async Task DeleteDeviceAsync(int? id)
         {
             if (id == null)
             {
                 throw new NotImplementedException();
             }
             
-            var device = _database.Devices.Get((int) id);
-            if (!CheckInTask(device, out string errorMessage))
+            var device = await _database.Devices.GetAsync((int) id);
+            var checkInTask = (await CheckInTaskAsync(device));
+            string errorMessage = checkInTask.Item2;
+            if (!checkInTask.Item1)
             {
                 throw new IntersectionOfEntitiesException("Ошибка. Невозможно удаление прибора.", errorMessage);
             }
             
-            _database.Devices.Delete((int) id);
-            _database.Save();
+            await _database.Devices.DeleteAsync((int) id);
+            await _database.SaveAsync();
             
-            _log.CreateLog(new LogDTO($"Был удалён прибор: {device}"));
+            await _log.CreateLogAsync(new LogDTO($"Был удалён прибор: {device}"));
         }
 
-        private bool CheckInTask(Device device, out string errorMessage)
+        private async Task<Tuple<bool, string>> CheckInTaskAsync(Device device)
         {
-            var task = _database.Tasks.GetAll()
+            string errorMessage = "";
+            var task = (await _database.Tasks.GetAllAsync())
                 .FirstOrDefault(t => device.Id == t.DeviceId);
             if (task != null)
             {
                 errorMessage = $"<i class='bg-light'>{device.ToString()}</i> используется в <i class='bg-light'>задаче №{task.Id}</i>.<br />";
                                //$"Для удаления <i class='bg-light'>{device.ToString()}</i>, удалите <i class='bg-light'>задачу №{task.Id}</i>.<br />"
-                return false;
+                return new Tuple<bool, string>(false, errorMessage);
             }
             
             errorMessage = "";
-            return true;
+            return new Tuple<bool, string>(true, errorMessage);
         }
 
-        public IEnumerable<string> GetNames()
+        public async Task<IEnumerable<string>> GetNamesAsync()
         {
-            var devices = _database.Devices.GetAll();
+            var devices = await _database.Devices.GetAllAsync();
             if (devices == null)
             {
                 return Array.Empty<string>();
@@ -151,46 +158,46 @@ namespace ProductionManagementSystem.BLL.Services
             return devices.Select(d => d.ToString());
         }
 
-        public IEnumerable<DeviceComponentsTemplate> GetComponentsTemplates(int deviceId)
+        public async Task<IEnumerable<DeviceComponentsTemplate>> GetComponentsTemplatesAsync(int deviceId)
         {
-            var device = _database.Devices.Get(deviceId);
+            var device = await _database.Devices.GetAsync(deviceId);
             return device.DeviceComponentsTemplate;
         }
 
-        public IEnumerable<DeviceDesignTemplate> GetDesignTemplates(int deviceId)
+        public async Task<IEnumerable<DeviceDesignTemplate>> GetDesignTemplatesAsync(int deviceId)
         {
-            var device = _database.Devices.Get(deviceId);
+            var device = await _database.Devices.GetAsync(deviceId);
             return device.DeviceDesignTemplate;
         }
         
-        public void ReceiveDevice(int? id)
+        public async Task ReceiveDeviceAsync(int? id)
         {
-            AddDevice(id, -1);
+            await AddDeviceAsync(id, -1);
         }
         
-        public void AddDevice(int? id)
+        public async Task AddDeviceAsync(int? id)
         {
-            AddDevice(id, 1);
+            await AddDeviceAsync(id, 1);
         }
         
-        private void AddDevice(int? id, int quantity)
+        private async Task AddDeviceAsync(int? id, int quantity)
         {
             if (id == null)
             {
                 throw new PageNotFoundException();
             }
 
-            var device = _database.Devices.Get((int) id);
+            var device = await _database.Devices.GetAsync((int) id);
             device.Quantity += quantity;
-            _database.Save();
+            await _database.SaveAsync();
 
             if (quantity < 0)
             {
-                _log.CreateLog(new LogDTO($"Был получен прибор {device} со склада {-quantity}шт."){DeviceId = device.Id});
+                await _log.CreateLogAsync(new LogDTO($"Был получен прибор {device} со склада {-quantity}шт."){DeviceId = device.Id});
             }
             else
             {
-                _log.CreateLog(new LogDTO($"Был добавлен прибор {device} на склад {quantity}шт."){DeviceId = device.Id});
+                await _log.CreateLogAsync(new LogDTO($"Был добавлен прибор {device} на склад {quantity}шт."){DeviceId = device.Id});
             }
         }
 
@@ -233,7 +240,7 @@ namespace ProductionManagementSystem.BLL.Services
             return result;
         }
 
-        private void SetNameQuantityAndDescriptionForComponent(DeviceDTO deviceDto, Device device)
+        private async Task SetNameQuantityAndDescriptionForComponentAsync(DeviceDTO deviceDto, Device device)
         {
             var componentService = new ComponentService(_database);
             var ids = new List<int>();
@@ -243,7 +250,7 @@ namespace ProductionManagementSystem.BLL.Services
             for (int i = 0; i < device.DeviceComponentsTemplate.Count; i++)
             {
                 ids.Add(device.DeviceComponentsTemplate[i].ComponentId);
-                names.Add(componentService.GetComponent(ids[^1]).ToString());
+                names.Add((await componentService.GetComponentAsync(ids[^1])).ToString());
                 quantity.Add(device.DeviceComponentsTemplate[i].Quantity);
                 descriptions.Add(device.DeviceComponentsTemplate[i].Description);
             }
@@ -254,7 +261,7 @@ namespace ProductionManagementSystem.BLL.Services
             deviceDto.ComponentDescriptions = descriptions.ToArray();
         }
         
-        private void SetNameQuantityAndDescriptionForDesign(DeviceDTO deviceDto, Device device)
+        private async Task SetNameQuantityAndDescriptionForDesignAsync(DeviceDTO deviceDto, Device device)
         {
             var designService = new DesignService(_database);
             var ids = new List<int>();
@@ -264,7 +271,7 @@ namespace ProductionManagementSystem.BLL.Services
             for (int i = 0; i < device.DeviceDesignTemplate.Count; i++)
             {
                 ids.Add(device.DeviceDesignTemplate[i].DesignId);
-                names.Add(designService.GetDesign(ids[^1]).ToString());
+                names.Add((await designService.GetDesignAsync(ids[^1])).ToString());
                 quantity.Add(device.DeviceDesignTemplate[i].Quantity);
                 descriptions.Add(device.DeviceDesignTemplate[i].Description);
             }

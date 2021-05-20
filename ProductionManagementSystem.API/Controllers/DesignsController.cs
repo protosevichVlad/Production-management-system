@@ -32,7 +32,7 @@ namespace ProductionManagementSystem.API.Controllers
         [HttpGet]
         public async Task<IEnumerable<Design>> Get()
         {
-            return _mapper.Map<IEnumerable<DesignDTO>, IEnumerable<Design>>(_designService.GetDesigns());
+            return _mapper.Map<IEnumerable<DesignDTO>, IEnumerable<Design>>(await _designService.GetDesignsAsync());
         }
         
         // GET api/designs/gettypes
@@ -40,7 +40,7 @@ namespace ProductionManagementSystem.API.Controllers
         [Route("gettypes")]
         public async Task<IEnumerable<string>> GetTypes()
         {
-            return _designService.GetTypes();
+            return await _designService.GetTypesAsync();
         }
         
         // GET api/designs/add/5?quantity=10
@@ -52,7 +52,7 @@ namespace ProductionManagementSystem.API.Controllers
                 return BadRequest();
             }
             
-            _designService.AddDesign(id, (int)quantity);
+            await _designService.AddDesignAsync(id, (int)quantity);
             return Ok();
         }
         
@@ -65,14 +65,14 @@ namespace ProductionManagementSystem.API.Controllers
                 return BadRequest();
             }
             
-            _designService.AddDesign(id, (int)-quantity);
+            await _designService.AddDesignAsync(id, (int)-quantity);
             return Ok();
         }
         
         [HttpGet("{id}")]
         public async Task<ActionResult<Design>> Get(int id)
         {
-            return _mapper.Map<DesignDTO, Design>(_designService.GetDesign(id));
+            return _mapper.Map<DesignDTO, Design>(await _designService.GetDesignAsync(id));
         }
         
         // POST api/designs
@@ -84,7 +84,7 @@ namespace ProductionManagementSystem.API.Controllers
                 return BadRequest();
             }
  
-            _designService.CreateDesign(_mapper.Map<Design, DesignDTO>(design));
+            await _designService.CreateDesignAsync(_mapper.Map<Design, DesignDTO>(design));
             return Ok(design);
         }
         
@@ -97,7 +97,7 @@ namespace ProductionManagementSystem.API.Controllers
                 return BadRequest();
             }
             
-            _designService.UpdateDesign(_mapper.Map<Design, DesignDTO>(design));
+            await _designService.UpdateDesignAsync(_mapper.Map<Design, DesignDTO>(design));
             return Ok(design);
         }
         
@@ -105,8 +105,8 @@ namespace ProductionManagementSystem.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Design>> Delete(int id)
         {
-            var design = _mapper.Map<DesignDTO, Design>(_designService.GetDesign(id));
-            _designService.DeleteDesign(design.Id);
+            var design = _mapper.Map<DesignDTO, Design>(await _designService.GetDesignAsync(id));
+            await _designService.DeleteDesignAsync(design.Id);
             return Ok(design);
         }
     }

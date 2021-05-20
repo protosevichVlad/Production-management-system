@@ -34,12 +34,12 @@ namespace ProductionManagementSystem.Controllers
                 .CreateMapper();
         }
 
-        public IActionResult Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder)
         {
             ViewData["NumSortParm"] = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
             ViewData["NameSortParm"] = sortOrder == "Name" ? "name_desc" : "Name";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
-            var devices = _deviceService.GetDevices();
+            var devices = await _deviceService.GetDevicesAsync();
 
             switch (sortOrder)
             {
@@ -73,23 +73,23 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(DeviceViewModel deviceViewModel)
+        public async Task<IActionResult> Create(DeviceViewModel deviceViewModel)
         {
             DeviceDTO device = _mapperFromViewModel.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
             LogService.UserName = User.Identity?.Name;
-            _deviceService.CreateDevice(device);
+            await _deviceService.CreateDeviceAsync(device);
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                var device = _deviceService.GetDevice(id);
+                var device = await _deviceService.GetDeviceAsync(id);
                 var deviceViewModel = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(device);
-                ViewBag.Components = _componentService.GetComponents();
-                ViewBag.Designs = _designService.GetDesigns();
+                ViewBag.Components = await _componentService.GetComponentsAsync();
+                ViewBag.Designs = await _designService.GetDesignsAsync();
                 return View(deviceViewModel);
             }
             catch (Exception e)
@@ -100,13 +100,13 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(DeviceViewModel deviceViewModel)
+        public async Task<IActionResult> Edit(DeviceViewModel deviceViewModel)
         {
             try
             {
                 DeviceDTO device = _mapperFromViewModel.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
                 LogService.UserName = User.Identity?.Name;
-                _deviceService.UpdateDevice(device);
+                await _deviceService.UpdateDeviceAsync(device);
                 return RedirectToAction(nameof(Details), new {id = device.Id});
             }
             catch (IntersectionOfEntitiesException e)
@@ -124,11 +124,11 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
             try
             {
-                var device = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(_deviceService.GetDevice(id));
+                var device = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id));
                 ViewBag.ErrorMessage = TempData["ErrorMessage"];
                 ViewBag.ErrorHeader = TempData["ErrorHeader"];
                 TempData["ErrorMessage"] = null;
@@ -142,11 +142,11 @@ namespace ProductionManagementSystem.Controllers
             }
         }
 
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             try
             {
-                var device = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(_deviceService.GetDevice(id));
+                var device = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id));
                 return View(device);
             }
             catch (Exception e)
@@ -159,19 +159,19 @@ namespace ProductionManagementSystem.Controllers
         // POST: Designs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
             try
             {
                 LogService.UserName = User.Identity?.Name;
-                _deviceService.DeleteDevice(id);
+                await _deviceService.DeleteDeviceAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (IntersectionOfEntitiesException e)
             {
                 ViewBag.ErrorMessage = e.Message;
                 ViewBag.ErrorHeader = e.Header;
-                return View(_mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(_deviceService.GetDevice(id)));
+                return View(_mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id)));
             }
             catch (Exception e)
             {
@@ -181,9 +181,9 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetAllDevices()
+        public async Task<JsonResult> GetAllDevices()
         {
-            var devices = _deviceService.GetDevices();
+            var devices = await _deviceService.GetDevicesAsync();
             return Json(devices);
         }
     }

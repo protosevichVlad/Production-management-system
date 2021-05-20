@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using AutoMapper;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
@@ -10,6 +11,7 @@ using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
 using ProductionManagementSystem.Models;
+using Task = ProductionManagementSystem.DAL.Entities.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
@@ -37,43 +39,43 @@ namespace ProductionManagementSystem.BLL.Services
                 .CreateMapper();
         }
 
-        public void CreateTask(TaskDTO taskDto)
+        public async System.Threading.Tasks.Task CreateTaskAsync(TaskDTO taskDto)
         {
             var task = _mapper.Map<TaskDTO, Task>(taskDto);
             task.Status = StatusEnum.Equipment;
             task.EndTime = new DateTime();
             task.StartTime = DateTime.Now;
 
-            var device = _deviceService.GetDevice(task.DeviceId);
+            var device = await _deviceService.GetDeviceAsync(task.DeviceId);
             task.ObtainedComponents = GetStartObtainedComponent(device, task);
             task.ObtainedDesigns = GetStartObtainedDesign(device, task);
 
-            _database.Tasks.Create(task);
-            _database.Save();
+            await _database.Tasks.CreateAsync(task);
+            await _database.SaveAsync();
         }
 
-        public void UpdateTask(TaskDTO taskDto)
+        public async System.Threading.Tasks.Task UpdateTaskAsync(TaskDTO taskDto)
         {
             var task = _mapper.Map<TaskDTO, Task>(taskDto);
             
             _database.Tasks.Update(task);
-            _database.Save();
+            await _database.SaveAsync();
         }
         
-        public void EditTask(TaskDTO taskDto)
+        public async System.Threading.Tasks.Task EditTaskAsync(TaskDTO taskDto)
         {
-            var oldTask = _database.Tasks.Get(taskDto.Id);
+            var oldTask = await _database.Tasks.GetAsync(taskDto.Id);
             oldTask.Description = taskDto.Description;
             oldTask.Deadline = taskDto.Deadline;
-            _database.Save();
+            await _database.SaveAsync();
         }
 
-        public IEnumerable<TaskDTO> GetTasks()
+        public async Task<IEnumerable<TaskDTO>> GetTasksAsync()
         {
-            return _mapper.Map<IEnumerable<Task>, IEnumerable<TaskDTO>>(_database.Tasks.GetAll());
+            return _mapper.Map<IEnumerable<Task>, IEnumerable<TaskDTO>>(await _database.Tasks.GetAllAsync());
         }
 
-        public IEnumerable<TaskDTO> GetTasks(IEnumerable<string> roles)
+        public async Task<IEnumerable<TaskDTO>> GetTasksAsync(IEnumerable<string> roles)
         {
             if (roles == null)
             {
@@ -81,34 +83,34 @@ namespace ProductionManagementSystem.BLL.Services
             }
 
             StatusEnum accessLevel = ToStatus(roles);
-            return _mapper.Map<IEnumerable<Task>, IEnumerable<TaskDTO>>(_database.Tasks.GetAll().Where(task => (task.Status & accessLevel) == task.Status));
+            return _mapper.Map<IEnumerable<Task>, IEnumerable<TaskDTO>>((await _database.Tasks.GetAllAsync()).Where(task => (task.Status & accessLevel) == task.Status));
         }
 
-        public TaskDTO GetTask(int? id)
+        public async Task<TaskDTO> GetTaskAsync(int? id)
         {
             if (id == null)
             {
                 throw new PageNotFoundException();
             }
 
-            var task = _database.Tasks.Get((int) id) ?? throw new PageNotFoundException();
+            var task = await _database.Tasks.GetAsync((int) id) ?? throw new PageNotFoundException();
             var taskDto = _mapper.Map<Task, TaskDTO>(task) ?? throw new PageNotFoundException();
 
             return taskDto;
         }
 
-        public void Transfer(int taskId, bool full, int to, string message)
+        public async System.Threading.Tasks.Task TransferAsync(int taskId, bool full, int to, string message)
         {
-            var task = _database.Tasks.Get(taskId);
+            var task = await _database.Tasks.GetAsync(taskId);
             var logString = $"{LogService.UserName} изменил статус задачи №{taskId} с {GetTaskStatusName(task.Status)} ";
             if (task.Status == StatusEnum.Warehouse)
             {
-                _deviceService.ReceiveDevice(task.DeviceId);
+                await _deviceService.ReceiveDeviceAsync(task.DeviceId);
             }
             
             if ((StatusEnum) to == StatusEnum.Warehouse)
             {
-                _deviceService.AddDevice(task.DeviceId);
+                await _deviceService.AddDeviceAsync(task.DeviceId);
             }
             
             if (full)
@@ -120,26 +122,26 @@ namespace ProductionManagementSystem.BLL.Services
                 task.Status |= (StatusEnum) to;
             }
             
-            _database.Save();
+            await _database.SaveAsync();
 
             logString += $"на {GetTaskStatusName(task.Status)} с сообщением: {message}";
-            _logService.CreateLog(new LogDTO(logString) {TaskId = task.Id, OrderId = task.OrderId});
+            await _logService.CreateLogAsync(new LogDTO(logString) {TaskId = task.Id, OrderId = task.OrderId});
         }
 
-        public void DeleteTask(int? id)
+        public async System.Threading.Tasks.Task DeleteTaskAsync(int? id)
         {
             if (id == null)
             {
                 throw new PageNotFoundException();
             }
 
-            _database.Tasks.Delete((int) id);
-            _database.Save();
+            await _database.Tasks.DeleteAsync((int) id);
+            await _database.SaveAsync();
         }
         
-        public IEnumerable<DeviceDesignTemplate> GetDeviceDesignTemplateFromTask(int taskId)
+        public async Task<IEnumerable<DeviceDesignTemplate>> GetDeviceDesignTemplateFromTaskAsync(int taskId)
         {
-            var deviceId = GetTasks()
+            var deviceId = (await GetTasksAsync())
                 .FirstOrDefault(t => t.Id == taskId)?.DeviceId;
 
             if (deviceId == null)
@@ -147,12 +149,12 @@ namespace ProductionManagementSystem.BLL.Services
                 return new List<DeviceDesignTemplate>();
             }
             
-            return _deviceService.GetDesignTemplates((int) deviceId);
+            return await _deviceService.GetDesignTemplatesAsync((int) deviceId);
         }
 
-        public IEnumerable<DeviceComponentsTemplate> GetDeviceComponentsTemplatesFromTask(int taskId)
+        public async Task<IEnumerable<DeviceComponentsTemplate>> GetDeviceComponentsTemplatesFromTaskAsync(int taskId)
         {
-            var deviceId = GetTasks()
+            var deviceId = (await GetTasksAsync())
                 .FirstOrDefault(t => t.Id == taskId)?.DeviceId;
 
             if (deviceId == null)
@@ -160,7 +162,7 @@ namespace ProductionManagementSystem.BLL.Services
                 return new List<DeviceComponentsTemplate>();
             }
             
-            return _deviceService.GetComponentsTemplates((int) deviceId);
+            return await _deviceService.GetComponentsTemplatesAsync((int) deviceId);
         }
 
         public IEnumerable<ObtainedComponent> GetObtainedComponents(int taskId)
@@ -206,7 +208,7 @@ namespace ProductionManagementSystem.BLL.Services
             return String.Join(", ", result);
         }
 
-        public void ReceiveComponent(int taskId, int[] componentIds, int[] componentObt)
+        public async System.Threading.Tasks.Task ReceiveComponentAsync(int taskId, int[] componentIds, int[] componentObt)
         {
             var obtainedComp = GetObtainedComponents(taskId);
             for (int i = 0; i < componentObt.Length; i++)
@@ -220,10 +222,10 @@ namespace ProductionManagementSystem.BLL.Services
                 }
             }
             
-            _database.Save();
+            await _database.SaveAsync();
         }
 
-        public void ReceiveDesign(int taskId, int[] designIds, int[] designObt)
+        public async System.Threading.Tasks.Task ReceiveDesignAsync(int taskId, int[] designIds, int[] designObt)
         {
             var obtainedDes = GetObtainedDesigns(taskId);
             for (int i = 0; i < designObt.Length; i++)
@@ -237,7 +239,7 @@ namespace ProductionManagementSystem.BLL.Services
                 }
             }
             
-            _database.Save();
+            await _database.SaveAsync();
         }
 
         public void Dispose()

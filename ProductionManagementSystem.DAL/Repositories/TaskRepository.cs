@@ -17,25 +17,26 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db = context;
         }
 
-        public IEnumerable<Task> GetAll()
+        public async System.Threading.Tasks.Task<IEnumerable<Task>> GetAllAsync()
         {
-            return _db.Tasks
-                .Include(t => t.Device)
-                .Include(t => t.ObtainedDesigns)
-                .ThenInclude(t => t.Design)
-                .Include(t => t.ObtainedComponents)
-                .ThenInclude(t => t.Component);
-        }
-
-        public Task Get(int id)
-        {
-            return _db.Tasks
+            return await _db.Tasks
                 .Include(t => t.Device)
                 .Include(t => t.ObtainedDesigns)
                 .ThenInclude(t => t.Design)
                 .Include(t => t.ObtainedComponents)
                 .ThenInclude(t => t.Component)
-                .FirstOrDefault(t => t.Id == id);
+                .ToListAsync();
+        }
+
+        public async System.Threading.Tasks.Task<Task> GetAsync(int id)
+        {
+            return await _db.Tasks
+                .Include(t => t.Device)
+                .Include(t => t.ObtainedDesigns)
+                .ThenInclude(t => t.Design)
+                .Include(t => t.ObtainedComponents)
+                .ThenInclude(t => t.Component)
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public IEnumerable<Task> Find(Func<Task, bool> predicate)
@@ -49,9 +50,9 @@ namespace ProductionManagementSystem.DAL.Repositories
                 .Where(predicate).ToList();
         }
 
-        public void Create(Task item)
+        public async System.Threading.Tasks.Task CreateAsync(Task item)
         {
-            _db.Tasks.Add(item);
+            await _db.Tasks.AddAsync(item);
         }
 
         public void Update(Task item)
@@ -60,9 +61,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db.Tasks.Update(item);
         }
 
-        public void Delete(int id)
+        public async System.Threading.Tasks.Task DeleteAsync(int id)
         {
-            var item = _db.Tasks.Find(id);
+            var item = await _db.Tasks.FindAsync(id);
             if (item != null)
                 _db.Tasks.Remove(item);
         }

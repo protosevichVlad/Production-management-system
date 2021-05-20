@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
@@ -17,14 +19,14 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db = context;
         }
 
-        public IEnumerable<Design> GetAll()
+        public async Task<IEnumerable<Design>> GetAllAsync()
         {
-            return _db.Designs;
+            return await _db.Designs.ToListAsync();
         }
 
-        public Design Get(int id)
+        public async Task<Design> GetAsync(int id)
         {
-            return _db.Designs.Find(id);
+            return await _db.Designs.FindAsync(id);
         }
 
         public IEnumerable<Design> Find(Func<Design, bool> predicate)
@@ -32,9 +34,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             return _db.Designs.Where(predicate).ToList();
         }
 
-        public void Create(Design item)
+        public async Task CreateAsync(Design item)
         {
-            _db.Designs.Add(item);
+            await _db.Designs.AddAsync(item);
         }
 
         public void Update(Design item)
@@ -42,9 +44,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db.Entry(item).State = EntityState.Modified;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            var item = _db.Designs.Find(id);
+            var item = await _db.Designs.FindAsync(id);
             if (item != null)
                 _db.Designs.Remove(item);
         }

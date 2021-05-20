@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
@@ -17,14 +19,14 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db = context;
         }
 
-        public IEnumerable<Component> GetAll()
+        public async Task<IEnumerable<Component>> GetAllAsync()
         {
-            return _db.Components;
+            return await _db.Components.ToListAsync();
         }
 
-        public Component Get(int id)
+        public async Task<Component> GetAsync(int id)
         {
-            return _db.Components.FirstOrDefault(c => c.Id == id);
+            return await _db.Components.FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public IEnumerable<Component> Find(Func<Component, bool> predicate)
@@ -32,9 +34,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             return _db.Components.Where(predicate).ToList();
         }
 
-        public void Create(Component item)
+        public async Task CreateAsync(Component item)
         {
-            _db.Components.Add(item);
+            await _db.Components.AddAsync(item);
         }
 
         public void Update(Component item)
@@ -42,9 +44,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db.Entry(item).State = EntityState.Modified;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            Component component = _db.Components.Find(id);
+            Component component = await _db.Components.FindAsync(id);
             if (component != null)
                 _db.Components.Remove(component);
         }

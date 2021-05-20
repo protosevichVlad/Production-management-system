@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ProductionManagementSystem.BLL.DTO;
 
 namespace ProductionManagementSystem.BLL.Interfaces
 {
     public interface IDesignService
     {
-        void CreateDesign(DesignDTO designDto);
-        void UpdateDesign(DesignDTO designDto);
-        IEnumerable<DesignDTO> GetDesigns();
-        DesignDTO GetDesign(int? id);
-        void DeleteDesign(int? id);
-        IEnumerable<string> GetTypes();
-        void AddDesign(int? id, int quantity);
+        Task CreateDesignAsync(DesignDTO designDto);
+        Task UpdateDesignAsync(DesignDTO designDto);
+        Task<IEnumerable<DesignDTO>> GetDesignsAsync();
+        Task<DesignDTO> GetDesignAsync(int? id);
+        Task DeleteDesignAsync(int? id);
+        Task<IEnumerable<string>> GetTypesAsync();
+        Task AddDesignAsync(int? id, int quantity);
         
         void Dispose();
     }

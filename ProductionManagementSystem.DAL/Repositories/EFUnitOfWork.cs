@@ -121,9 +121,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             }
         }
         
-        public void Save()
+        public async System.Threading.Tasks.Task SaveAsync()
         {
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
 
         private bool _disposed;

@@ -60,7 +60,7 @@ namespace ProductionManagementSystem.Controllers
 
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             var roles = await _userManager.GetRolesAsync(user);
-            var tasksDto = _taskService.GetTasks(roles).ToList();
+            var tasksDto = (await _taskService.GetTasksAsync(roles)).ToList();
             var tasksViewModel =
                 _mapper.Map<IEnumerable<TaskDTO>, IEnumerable<TaskViewModel>>(tasksDto).ToList();
             
@@ -72,29 +72,29 @@ namespace ProductionManagementSystem.Controllers
             return View(tasksViewModel);
         }
         
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Devices = new SelectList(_deviceService.GetDevices(), "Id", "Name");
+            ViewBag.Devices = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
             return View();
         }
         
         [HttpPost]
-        public IActionResult Create(TaskViewModel taskViewModel)
+        public async Task<IActionResult> Create(TaskViewModel taskViewModel)
         {
             var taskDto = _mapper.Map<TaskViewModel, TaskDTO>(taskViewModel);
-            _taskService.CreateTask(taskDto);
+            await _taskService.CreateTaskAsync(taskDto);
             return RedirectToAction(nameof(Index));
         }
         
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             try
             {
-                var taskDto = _taskService.GetTask(id);
+                var taskDto = await _taskService.GetTaskAsync(id);
                 var taskViewModel = _mapper.Map<TaskDTO, TaskViewModel>(taskDto);
                 ViewBag.States = new SelectList(GetStates(taskDto), "Id", "Name");
-                ViewBag.ComponentTemplate = _deviceService.GetComponentsTemplates(taskDto.DeviceId);
-                ViewBag.DesignTemplate = _deviceService.GetDesignTemplates(taskDto.DeviceId);
+                ViewBag.ComponentTemplate = await _deviceService.GetComponentsTemplatesAsync(taskDto.DeviceId);
+                ViewBag.DesignTemplate = await _deviceService.GetDesignTemplatesAsync(taskDto.DeviceId);
                 ViewBag.Logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(_taskService.GetLogs(id));
                 return View(taskViewModel);
             }
@@ -104,11 +104,11 @@ namespace ProductionManagementSystem.Controllers
             }
         }
         
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             try
             {
-                var taskDto = _taskService.GetTask(id);
+                var taskDto = await _taskService.GetTaskAsync(id);
                 var taskViewModel = _mapper.Map<TaskDTO, TaskViewModel>(taskDto);
                 return View(taskViewModel);
             }
@@ -119,11 +119,11 @@ namespace ProductionManagementSystem.Controllers
         }
         
         [HttpPost]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             try
             {
-                _taskService.DeleteTask(Id);
+                await _taskService.DeleteTaskAsync(Id);
                 return RedirectToAction(nameof(Index));
             }
             catch (PageNotFoundException e)
@@ -132,13 +132,13 @@ namespace ProductionManagementSystem.Controllers
             }
         }
         
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             try
             {
-                var taskDto = _taskService.GetTask(id);
+                var taskDto = await _taskService.GetTaskAsync(id);
                 var taskViewModel = _mapper.Map<TaskDTO, TaskViewModel>(taskDto);
-                ViewBag.Devices = new SelectList(_deviceService.GetDevices(), "Id", "Name");
+                ViewBag.Devices = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
                 return View(taskViewModel);
             }
             catch (PageNotFoundException e)
@@ -148,50 +148,50 @@ namespace ProductionManagementSystem.Controllers
         }
         
         [HttpPost]
-        public IActionResult Edit(TaskViewModel taskModel)
+        public async Task<IActionResult> Edit(TaskViewModel taskModel)
         {
             var taskDto = _mapper.Map<TaskViewModel, TaskDTO>(taskModel);
-            _taskService.EditTask(taskDto);
+            await _taskService.EditTaskAsync(taskDto);
             return RedirectToAction(nameof(Details), new {id = taskModel.Id});
         }
         
         [HttpPost]
-        public IActionResult Transfer(int taskId, string full, int to, string message)
+        public async Task<IActionResult> Transfer(int taskId, string full, int to, string message)
         {
             LogService.UserName = User.Identity?.Name;
-            _taskService.Transfer(taskId, full == "true", to, message);
+            await _taskService.TransferAsync(taskId, full == "true", to, message);
             return RedirectToAction(nameof(Details), new {id = taskId});
         }
 
         [HttpGet]
-        public IActionResult ReceiveComponent(int taskId)
+        public async Task<IActionResult> ReceiveComponent(int taskId)
         {
             ViewBag.TaskId = taskId;
-            ViewBag.Components = _taskService.GetDeviceComponentsTemplatesFromTask(taskId);
+            ViewBag.Components = await _taskService.GetDeviceComponentsTemplatesFromTaskAsync(taskId);
             ViewBag.ObtainedComponents = _taskService.GetObtainedComponents(taskId);
             return View();
         }
 
         [HttpPost]
-        public IActionResult ReceiveComponent(int TaskId, int[] ComponentIds, int[] ComponentObt)
+        public async Task<IActionResult> ReceiveComponent(int TaskId, int[] ComponentIds, int[] ComponentObt)
         {
-            _taskService.ReceiveComponent(TaskId, ComponentIds, ComponentObt);
+            await _taskService.ReceiveComponentAsync(TaskId, ComponentIds, ComponentObt);
             return RedirectToAction(nameof(Details), new {id = TaskId});
         }
         
         [HttpGet]
-        public IActionResult ReceiveDesign(int taskId)
+        public async Task<IActionResult> ReceiveDesign(int taskId)
         {
             ViewBag.TaskId = taskId;
-            ViewBag.Designs = _taskService.GetDeviceDesignTemplateFromTask(taskId);
+            ViewBag.Designs = await _taskService.GetDeviceDesignTemplateFromTaskAsync(taskId);
             ViewBag.ObtainedDesigns = _taskService.GetObtainedDesigns(taskId);
             return View();
         }
 
         [HttpPost]
-        public IActionResult ReceiveDesign(int TaskId, int[] DesignIds, int[] DesignObt)
+        public async Task<IActionResult> ReceiveDesign(int TaskId, int[] DesignIds, int[] DesignObt)
         {
-            _taskService.ReceiveDesign(TaskId, DesignIds, DesignObt);
+            await _taskService.ReceiveDesignAsync(TaskId, DesignIds, DesignObt);
             return RedirectToAction(nameof(Details), new {id = TaskId});
         }
         

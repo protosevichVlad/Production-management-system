@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
+using Task = ProductionManagementSystem.DAL.Entities.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
@@ -38,7 +40,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         }
         
-        public void CreateOrder(OrderDTO orderDto)
+        public async System.Threading.Tasks.Task CreateOrderAsync(OrderDTO orderDto)
         {
             var order = _mapper.Map<OrderDTO, Order>(orderDto);
 
@@ -49,14 +51,14 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 for (int j = 0; j < orderDto.DeviceQuantity[i]; j++)
                 {
-                    new TaskService(_database).CreateTask(new TaskDTO()
+                    await new TaskService(_database).CreateTaskAsync(new TaskDTO()
                     {
                         Deadline = orderDto.Deadline,
                         Description = orderDto.DeviceDescriptions[i],
                         DeviceId = orderDto.DeviceIds[i],
                     });
 
-                    var task = _database.Tasks.GetAll().LastOrDefault();
+                    var task = (await _database.Tasks.GetAllAsync()).LastOrDefault();
                     if (task != null)
                     {
                         order.Tasks.Add(task);
@@ -64,20 +66,20 @@ namespace ProductionManagementSystem.BLL.Services
                 }
             }
             
-            _database.Orders.Create(order);
-            _database.Save();
+            await _database.Orders.CreateAsync(order);
+            await _database.SaveAsync();
         }
 
-        public void UpdateOrder(OrderDTO orderDto)
+        public async System.Threading.Tasks.Task UpdateOrderAsync(OrderDTO orderDto)
         {
             var order = _mapper.Map<OrderDTO, Order>(orderDto);
             _database.Orders.Update(order);
-            _database.Save();
+            await _database.SaveAsync();
         }
 
-        public IEnumerable<OrderDTO> GetOrders()
+        public async Task<IEnumerable<OrderDTO>> GetOrdersAsync()
         {
-            var orders = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(_database.Orders.GetAll());
+            var orders = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(await _database.Orders.GetAllAsync());
             foreach (var order in orders)
             {
                 order.Status = _taskService.GetTaskStatusName(order.Tasks.Min(t => t.Status));
@@ -86,39 +88,39 @@ namespace ProductionManagementSystem.BLL.Services
             return orders;
         }
 
-        public IEnumerable<TaskDTO> GetTasksFromOrder(int orderId)
+        public async Task<IEnumerable<TaskDTO>> GetTasksFromOrderAsync(int orderId)
         {
-            var tasks = GetOrder(orderId).Tasks;
+            var tasks = (await GetOrderAsync(orderId)).Tasks;
             return tasks;
         }
 
-        public OrderDTO GetOrder(int? id)
+        public async Task<OrderDTO> GetOrderAsync(int? id)
         {
             if (id == null)
             {
                 throw new PageNotFoundException();
             }
             
-            return _mapper.Map<Order, OrderDTO>(_database.Orders.Get((int) id));
+            return _mapper.Map<Order, OrderDTO>(await _database.Orders.GetAsync((int) id));
         }
 
-        public void DeleteOrder(int? id)
+        public async System.Threading.Tasks.Task DeleteOrderAsync(int? id)
         {
             if (id == null)
             {
                 throw new PageNotFoundException();
             }
 
-            var order = GetOrder(id);
+            var order = await GetOrderAsync(id);
 
             foreach (var task in order.Tasks)
             {
-                _database.Tasks.Delete(task.Id);
-                _database.Save();
+                await _database.Tasks.DeleteAsync(task.Id);
+                await _database.SaveAsync();
             }
             
-            _database.Orders.Delete((int) id);
-            _database.Save();
+            await _database.Orders.DeleteAsync((int) id);
+            await _database.SaveAsync();
         }
 
         public void Dispose()

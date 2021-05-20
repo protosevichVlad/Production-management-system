@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
@@ -27,27 +29,27 @@ namespace ProductionManagementSystem.BLL.Services
         }
         
 
-        public void CreateLog(LogDTO logDto)
+        public async Task CreateLogAsync(LogDTO logDto)
         {
             var log = _mapper.Map<LogDTO, Log>(logDto);
             log.UserLogin = UserName;
-            _database.Logs.Create(log);
-            _database.Save();
+            await _database.Logs.CreateAsync(log);
+            await _database.SaveAsync();
         }
 
-        public IEnumerable<LogDTO> GetLogs()
+        public async Task<IEnumerable<LogDTO>> GetLogsAsync()
         {
-            return _mapper.Map<IEnumerable<Log>, IEnumerable<LogDTO>>(_database.Logs.GetAll().Reverse());
+            return _mapper.Map<IEnumerable<Log>, IEnumerable<LogDTO>>((await _database.Logs.GetAllAsync()).Reverse());
         }
 
-        public LogDTO GetLog(int? id)
+        public async Task<LogDTO> GetLogAsync(int? id)
         {
             if (id == null)
             {
                 throw new PageNotFoundException();
             }
             
-            var log = _mapper.Map<Log, LogDTO>(_database.Logs.Get((int) id));
+            var log = _mapper.Map<Log, LogDTO>(await _database.Logs.GetAsync((int) id));
             if (log == null)
             {
                 throw new PageNotFoundException();

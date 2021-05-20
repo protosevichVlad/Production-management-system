@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +47,7 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="page">Current page.</param>
         /// <returns>A page with all components sorted by parameter <paramref name="sortOrder"/> and satisfying <paramref name="searchString"/></returns>
         [HttpGet]
-        public IActionResult Index(string sortOrder, string searchString, int page=1, int pageSize = 50)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, int page=1, int pageSize = 50)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
@@ -54,7 +55,7 @@ namespace ProductionManagementSystem.Controllers
             ViewData["sortOrder"] = sortOrder;
             ViewData["CurrentFilter"] = searchString;
 
-            var components = _componentService.GetComponents();
+            var components = await _componentService.GetComponentsAsync();
             
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -110,16 +111,16 @@ namespace ProductionManagementSystem.Controllers
                 _mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<ComponentViewModel>>(components);
             
             ViewBag.Page = page;
-            ViewBag.AllComponents = _componentService.GetComponents().Select(c => c.Name).Distinct();
+            ViewBag.AllComponents = (await _componentService.GetComponentsAsync()).Select(c => c.Name).Distinct();
             return View(componentsViewModel);
         }
 
         // GET: Components/Details/5
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             try
             {
-                var component = _componentService.GetComponent(id);
+                var component = await _componentService.GetComponentAsync(id);
                 var componentViewModel =
                     _mapper.Map<ComponentDTO, ComponentViewModel>(component);
                 return View(componentViewModel);
@@ -131,10 +132,10 @@ namespace ProductionManagementSystem.Controllers
         }
 
         // GET: Components/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             ViewBag.AllTypes = GetAllTypes();
-            ViewBag.AllComponents = _componentService.GetComponents().Select(c => c.Name).Distinct();
+            ViewBag.AllComponents = (await _componentService.GetComponentsAsync()).Select(c => c.Name).Distinct();
             return View();
         }
 
@@ -143,25 +144,25 @@ namespace ProductionManagementSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] ComponentViewModel componentViewModel)
+        public async Task<IActionResult> Create([Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] ComponentViewModel componentViewModel)
         {
             if (ModelState.IsValid)
             {
                 var component =
                     _mapper.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
                 LogService.UserName = User.Identity?.Name;
-                _componentService.CreateComponent(component);
+                await _componentService.CreateComponentAsync(component);
                 return RedirectToAction(nameof(Index));
             }
             return View(componentViewModel);
         }
 
         // GET: Components/Edit/5
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             try
             {
-                var component = _componentService.GetComponent(id);
+                var component = await _componentService.GetComponentAsync(id);
                 var componentViewModel =
                     _mapper.Map<ComponentDTO, ComponentViewModel>(component);
                 ViewBag.AllTypes = GetAllTypes();
@@ -178,7 +179,7 @@ namespace ProductionManagementSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] ComponentViewModel componentViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] ComponentViewModel componentViewModel)
         {
             if (id != componentViewModel.Id)
             {
@@ -192,7 +193,7 @@ namespace ProductionManagementSystem.Controllers
                     var component =
                         _mapper.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
                     LogService.UserName = User.Identity?.Name;
-                    _componentService.UpdateComponent(component);
+                    await _componentService.UpdateComponentAsync(component);
                 }
                 catch (Exception exception)
                 {
@@ -204,11 +205,11 @@ namespace ProductionManagementSystem.Controllers
         }
 
         // GET: Components/Delete/5
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             try
             {
-                var component = _componentService.GetComponent(id);
+                var component = await _componentService.GetComponentAsync(id);
                 var componentViewModel =
                     _mapper.Map<ComponentDTO, ComponentViewModel>(component);
                 return View(componentViewModel);
@@ -224,12 +225,12 @@ namespace ProductionManagementSystem.Controllers
         // POST: Components/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
                 LogService.UserName = User.Identity?.Name;
-                _componentService.DeleteComponent(id);
+                await _componentService.DeleteComponentAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (IntersectionOfEntitiesException e)
@@ -237,7 +238,7 @@ namespace ProductionManagementSystem.Controllers
                 ViewBag.ErrorMessage = e.Message;
                 ViewBag.ErrorHeader = e.Header;
                 return View(
-                    _mapper.Map<ComponentDTO, ComponentViewModel>(_componentService.GetComponent(id)));
+                    _mapper.Map<ComponentDTO, ComponentViewModel>(await _componentService.GetComponentAsync(id)));
             }
             catch (Exception e)
             {
@@ -251,9 +252,9 @@ namespace ProductionManagementSystem.Controllers
         /// </summary>
         /// <returns>JSON. Array of all components</returns>
         [HttpGet]
-        public JsonResult GetAllComponents()
+        public async Task<JsonResult> GetAllComponents()
         {
-            IEnumerable<ComponentDTO> components = _componentService.GetComponents();
+            IEnumerable<ComponentDTO> components = await _componentService.GetComponentsAsync();
             foreach (var comp in components)
             {
                 comp.Name = comp.ToString();
@@ -267,9 +268,9 @@ namespace ProductionManagementSystem.Controllers
         /// </summary>
         /// <returns>JSON. Array of all types of components</returns>
         [NonAction]
-        private IEnumerable<string> GetAllTypes()
+        private async Task<IEnumerable<string>> GetAllTypes()
         {
-            return _componentService.GetTypes();
+            return await _componentService.GetTypesAsync();
         }
         
         /// <summary>
@@ -279,9 +280,9 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="taskId">Task ID for quick return</param>
         /// <returns>Page with form</returns>
         [HttpGet]
-        public IActionResult Add(int id, int? taskId)
+        public async Task<IActionResult> Add(int id, int? taskId)
         {
-            var component = _componentService.GetComponent(id);
+            var component = await _componentService.GetComponentAsync(id);
             var componentViewModel =
                 _mapper.Map<ComponentDTO, ComponentViewModel>(component);
             ViewBag.TaskId = taskId;
@@ -297,12 +298,12 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="taskId">Task ID for quick return</param>
         /// <returns>Page /Components or the page with the task from which this page was called</returns>
         [HttpPost]
-        public IActionResult Add(int componentId, int quantity)
+        public async Task<IActionResult> Add(int componentId, int quantity)
         {
             try
             {
                 LogService.UserName = User.Identity?.Name;
-                _componentService.AddComponent(componentId, quantity);
+                await _componentService.AddComponentAsync(componentId, quantity);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception e)
@@ -318,9 +319,9 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="id">Id of the component to receive.</param>
         /// <returns>Page with form</returns>
         [HttpGet]
-        public IActionResult Receive(int id)
+        public async Task<IActionResult> Receive(int id)
         {
-            var component = _componentService.GetComponent(id);
+            var component = await _componentService.GetComponentAsync(id);
             var componentViewModel =
                 _mapper.Map<ComponentDTO, ComponentViewModel>(component);
             return View(componentViewModel);
@@ -333,12 +334,12 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="quantity">Quantity to receive</param>
         /// <returns>Page /Components</returns>
         [HttpPost]
-        public IActionResult Receive(int componentId, int quantity)
+        public async Task<IActionResult> Receive(int componentId, int quantity)
         {
             try
             {
                 LogService.UserName = User.Identity?.Name;
-                _componentService.AddComponent(componentId, -quantity);
+                await _componentService.AddComponentAsync(componentId, -quantity);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception e)
@@ -348,10 +349,10 @@ namespace ProductionManagementSystem.Controllers
             }
         }
 
-        public IActionResult AddMultiple(int? deviceId, string typeName)
+        public async Task<IActionResult> AddMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(_deviceService.GetDevices(), "Id", "Name");
-            var selectListTypes = new SelectList(_componentService.GetTypes());
+            var selectListDevice = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
+            var selectListTypes = new SelectList(await _componentService.GetTypesAsync());
 
             var components = new ComponentsForDevice();
             List<Component> componentsInDevice = new List<Component>();
@@ -363,11 +364,11 @@ namespace ProductionManagementSystem.Controllers
                     device.Selected = true;
                 }
                 
-                componentsInDevice.AddRange(_deviceService.GetComponentsTemplates((int) deviceId).Select(c => c.Component).ToArray());
+                componentsInDevice.AddRange((await _deviceService.GetComponentsTemplatesAsync((int) deviceId)).Select(c => c.Component).ToArray());
             }
             else
             {
-                componentsInDevice.AddRange(_mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<Component>>(_componentService.GetComponents()));
+                componentsInDevice.AddRange(_mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<Component>>(await _componentService.GetComponentsAsync()));
             }
 
 
@@ -401,7 +402,7 @@ namespace ProductionManagementSystem.Controllers
         }
         
         [HttpPost]
-        public IActionResult AddMultiple(ComponentsForDevice components)
+        public async Task<IActionResult> AddMultiple(ComponentsForDevice components)
         {
             if (components == null)
             {
@@ -411,16 +412,16 @@ namespace ProductionManagementSystem.Controllers
             LogService.UserName = User.Identity?.Name;
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                _componentService.AddComponent(components.ComponentId[index], components.Quantity[index]);
+                await _componentService.AddComponentAsync(components.ComponentId[index], components.Quantity[index]);
             }
             
             return RedirectToAction(nameof(AddMultiple));
         }
         
-        public IActionResult ReceiveMultiple(int? deviceId, string typeName)
+        public async Task<IActionResult> ReceiveMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(_deviceService.GetDevices(), "Id", "Name");
-            var selectListTypes = new SelectList(_componentService.GetTypes());
+            var selectListDevice = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
+            var selectListTypes = new SelectList(await _componentService.GetTypesAsync());
 
             var components = new ComponentsForDevice();
             List<Component> componentsInDevice = new List<Component>();
@@ -432,11 +433,11 @@ namespace ProductionManagementSystem.Controllers
                     device.Selected = true;
                 }
                 
-                componentsInDevice.AddRange(_deviceService.GetComponentsTemplates((int) deviceId).Select(c => c.Component).ToArray());
+                componentsInDevice.AddRange((await _deviceService.GetComponentsTemplatesAsync((int) deviceId)).Select(c => c.Component).ToArray());
             }
             else
             {
-                componentsInDevice.AddRange(_mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<Component>>(_componentService.GetComponents()));
+                componentsInDevice.AddRange(_mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<Component>>(await _componentService.GetComponentsAsync()));
             }
 
 
@@ -470,7 +471,7 @@ namespace ProductionManagementSystem.Controllers
         }
         
         [HttpPost]
-        public IActionResult ReceiveMultiple(ComponentsForDevice components)
+        public async Task<IActionResult> ReceiveMultiple(ComponentsForDevice components)
         {
             if (components == null)
             {
@@ -480,7 +481,7 @@ namespace ProductionManagementSystem.Controllers
             LogService.UserName = User.Identity?.Name;
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                _componentService.AddComponent(components.ComponentId[index], -components.Quantity[index]);
+                await _componentService.AddComponentAsync(components.ComponentId[index], -components.Quantity[index]);
             }
             
             return RedirectToAction(nameof(ReceiveMultiple));

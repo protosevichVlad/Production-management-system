@@ -1,7 +1,4 @@
 ﻿@model ProductionManagementSystem.WEB.Models.TaskViewModel
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
     ViewData["Title"] = "Задача №" + Model.Id;
 }
@@ -71,7 +68,7 @@
     <div class="table-responsive-xl">
         <h4>Общее количество конструктива:
             <a class="btn btn-light btn-sm" asp-action="ReceiveDesign" asp-route-taskId="@Model.Id">Получить</a>
-            @* <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="AddForDevice" asp-route-taskId="@Model.Device.Id">Добавить конструктив на склад</a> *@
+            <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="AddMultiple" asp-route-taskId="@Model.Device.Id">Добавить конструктив на склад</a>
         </h4>
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">

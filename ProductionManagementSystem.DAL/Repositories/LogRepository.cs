@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
@@ -17,14 +19,14 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db = context;
         }
 
-        public IEnumerable<Log> GetAll()
+        public async Task<IEnumerable<Log>> GetAllAsync()
         {
-            return _db.Logs;
+            return await _db.Logs.ToListAsync();
         }
 
-        public Log Get(int id)
+        public async Task<Log> GetAsync(int id)
         {
-            return _db.Logs.Find(id);
+            return await _db.Logs.FindAsync(id);
         }
 
         public IEnumerable<Log> Find(Func<Log, bool> predicate)
@@ -32,9 +34,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             return _db.Logs.Where(predicate).ToList();
         }
 
-        public void Create(Log item)
+        public async Task CreateAsync(Log item)
         {
-            _db.Logs.Add(item);
+            await _db.Logs.AddAsync(item);
         }
 
         public void Update(Log item)
@@ -42,9 +44,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db.Entry(item).State = EntityState.Modified;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            var item = _db.Logs.Find(id);
+            var item = await _db.Logs.FindAsync(id);
             if (item != null)
                 _db.Logs.Remove(item);
         }

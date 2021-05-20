@@ -20,6 +20,6 @@ namespace ProductionManagementSystem.DAL.Interfaces
         
         void ResetDatabase();
         
-        void Save();
+        System.Threading.Tasks.Task SaveAsync();
     }
 }

@@ -39,13 +39,13 @@ namespace ProductionManagementSystem.Controllers
 
         // GET: Designs
         [HttpGet]
-        public IActionResult Index(string sortOrder, string searchString, int page=1, int pageSize = 50)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, int page=1, int pageSize = 50)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
             ViewData["CurrentFilter"] = searchString;
-            var designs = _designService.GetDesigns();
+            var designs = await _designService.GetDesignsAsync();
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -95,16 +95,16 @@ namespace ProductionManagementSystem.Controllers
 
             designs = designs.Skip((page - 1) * pageSize).Take(pageSize);
             var designsViewModule = _mapper.Map<IEnumerable<DesignDTO>, IEnumerable<DesignViewModel>>(designs);
-            ViewBag.AllDesigns = _designService.GetDesigns().Select(d => d.Name).Distinct();
+            ViewBag.AllDesigns = (await _designService.GetDesignsAsync()).Select(d => d.Name).Distinct();
             return View(designsViewModule);
         }
 
         // GET: Designs/Details/5
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             try
             {
-                var design = _designService.GetDesign(id);
+                var design = await _designService.GetDesignAsync(id);
                 var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
                 return View(designViewModel);
             }
@@ -116,10 +116,10 @@ namespace ProductionManagementSystem.Controllers
         }
 
         // GET: Designs/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.AllTypes = _designService.GetTypes();
-            ViewBag.AllDesigns = _designService.GetDesigns().Select(d => d.Name).Distinct();
+            ViewBag.AllTypes = await _designService.GetTypesAsync();
+            ViewBag.AllDesigns = (await _designService.GetDesignsAsync()).Select(d => d.Name).Distinct();
             return View();
         }
         
@@ -128,27 +128,27 @@ namespace ProductionManagementSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Type,Name,Quantity,ShortDescription,Description")] DesignViewModel designViewModel)
+        public async Task<IActionResult> Create([Bind("Id,Type,Name,Quantity,ShortDescription,Description")] DesignViewModel designViewModel)
         {
             if (ModelState.IsValid)
             {
                 var design = _mapper.Map<DesignViewModel, DesignDTO>(designViewModel);
                 LogService.UserName = User.Identity?.Name;
-                _designService.CreateDesign(design);
+                await _designService.CreateDesignAsync(design);
                 return RedirectToAction(nameof(Index));
             }
             return View(designViewModel);
         }
 
         // GET: Designs/Edit/5
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             try
             {
-                var design = _designService.GetDesign(id);
+                var design = await _designService.GetDesignAsync(id);
                 var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
                 
-                ViewBag.AllTypes = _designService.GetTypes();
+                ViewBag.AllTypes = _designService.GetTypesAsync();
                 return View(designViewModel);
             }
             catch (Exception e)
@@ -162,7 +162,7 @@ namespace ProductionManagementSystem.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public IActionResult Edit(int id, [Bind("Id,Type,Name,Quantity,ShortDescription,Description")] DesignViewModel designViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Name,Quantity,ShortDescription,Description")] DesignViewModel designViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -170,7 +170,7 @@ namespace ProductionManagementSystem.Controllers
                 {
                     var design = _mapper.Map<DesignViewModel, DesignDTO>(designViewModel);
                     LogService.UserName = User.Identity?.Name;
-                    _designService.UpdateDesign(design);
+                    await _designService.UpdateDesignAsync(design);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception e)
@@ -182,11 +182,11 @@ namespace ProductionManagementSystem.Controllers
         }
 
         // GET: Designs/Delete/5
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             try
             {
-                var design = _designService.GetDesign(id);
+                var design = await _designService.GetDesignAsync(id);
                 var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
                 return View(designViewModel);
             }
@@ -199,12 +199,12 @@ namespace ProductionManagementSystem.Controllers
 
         // POST: Designs/Delete/5
         [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
                 LogService.UserName = User.Identity?.Name;
-                _designService.DeleteDesign(id);
+                await _designService.DeleteDesignAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (IntersectionOfEntitiesException e)
@@ -212,7 +212,7 @@ namespace ProductionManagementSystem.Controllers
                 ViewBag.ErrorMessage = e.Message;
                 ViewBag.ErrorHeader = e.Header;
                 return View(
-                    _mapper.Map<DesignDTO, DesignViewModel>(_designService.GetDesign(id)));
+                    _mapper.Map<DesignDTO, DesignViewModel>(await _designService.GetDesignAsync(id)));
             }
             catch (Exception e)
             {
@@ -222,9 +222,9 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetAllDesigns()
+        public async Task<JsonResult> GetAllDesigns()
         {
-            IEnumerable<DesignDTO> designs = _designService.GetDesigns();
+            IEnumerable<DesignDTO> designs = await _designService.GetDesignsAsync();
                 
             foreach (var des in designs)
             {
@@ -234,21 +234,21 @@ namespace ProductionManagementSystem.Controllers
         }
         
         [HttpGet]
-        public IActionResult Add(int? id)
+        public async Task<IActionResult> Add(int? id)
         {
-            var design = _designService.GetDesign(id);
+            var design = await _designService.GetDesignAsync(id);
             var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
             return View(designViewModel);
         }
         
         [HttpPost]
-        public IActionResult Add(int designId, int quantity)
+        public async Task<IActionResult> Add(int designId, int quantity)
         {
 
             try
             {
                 LogService.UserName = User.Identity?.Name;
-                _designService.AddDesign(designId, quantity);
+                await _designService.AddDesignAsync(designId, quantity);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception e)
@@ -259,20 +259,20 @@ namespace ProductionManagementSystem.Controllers
         }
         
         [HttpGet]
-        public IActionResult Receive(int id)
+        public async Task<IActionResult> Receive(int id)
         {
 
-            var design = _designService.GetDesign(id);
+            var design = await _designService.GetDesignAsync(id);
             var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
             return View(designViewModel);
         }
         [HttpPost]
-        public IActionResult Receive(int designId, int quantity)
+        public async Task<IActionResult> Receive(int designId, int quantity)
         {
 
             try
             {
-                _designService.AddDesign(designId, -quantity);
+                await _designService.AddDesignAsync(designId, -quantity);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception e)
@@ -282,10 +282,10 @@ namespace ProductionManagementSystem.Controllers
             }
         }
         
-        public IActionResult AddMultiple(int? deviceId, string typeName)
+        public async Task<IActionResult> AddMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(_deviceService.GetDevices(), "Id", "Name");
-            var selectListTypes = new SelectList(_designService.GetTypes());
+            var selectListDevice = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
+            var selectListTypes = new SelectList(await _designService.GetTypesAsync());
 
             var components = new ComponentsForDevice();
             List<Design> componentsInDevice = new List<Design>();
@@ -297,11 +297,11 @@ namespace ProductionManagementSystem.Controllers
                     device.Selected = true;
                 }
                 
-                componentsInDevice.AddRange(_deviceService.GetDesignTemplates((int) deviceId).Select(c => c.Design).ToArray());
+                componentsInDevice.AddRange((await _deviceService.GetDesignTemplatesAsync((int) deviceId)).Select(c => c.Design).ToArray());
             }
             else
             {
-                componentsInDevice.AddRange(_mapper.Map<IEnumerable<DesignDTO>, IEnumerable<Design>>(_designService.GetDesigns()));
+                componentsInDevice.AddRange(_mapper.Map<IEnumerable<DesignDTO>, IEnumerable<Design>>(await _designService.GetDesignsAsync()));
             }
 
             if (typeName != null)
@@ -334,7 +334,7 @@ namespace ProductionManagementSystem.Controllers
         }
         
         [HttpPost]
-        public IActionResult AddMultiple(ComponentsForDevice components)
+        public async Task<IActionResult> AddMultiple(ComponentsForDevice components)
         {
             if (components == null)
             {
@@ -344,17 +344,17 @@ namespace ProductionManagementSystem.Controllers
             LogService.UserName = User.Identity?.Name;
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                _designService.AddDesign(components.ComponentId[index], components.Quantity[index]);
+                await _designService.AddDesignAsync(components.ComponentId[index], components.Quantity[index]);
             }
             
             return RedirectToAction(nameof(AddMultiple));
         }
         
         [HttpGet]
-        public IActionResult ReceiveMultiple(int? deviceId, string typeName)
+        public async Task<IActionResult> ReceiveMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(_deviceService.GetDevices(), "Id", "Name");
-            var selectListTypes = new SelectList(_designService.GetTypes());
+            var selectListDevice = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
+            var selectListTypes = new SelectList(await _designService.GetTypesAsync());
 
             var components = new ComponentsForDevice();
             List<Design> componentsInDevice = new List<Design>();
@@ -366,11 +366,11 @@ namespace ProductionManagementSystem.Controllers
                     device.Selected = true;
                 }
                 
-                componentsInDevice.AddRange(_deviceService.GetDesignTemplates((int) deviceId).Select(c => c.Design).ToArray());
+                componentsInDevice.AddRange((await _deviceService.GetDesignTemplatesAsync((int) deviceId)).Select(c => c.Design).ToArray());
             }
             else
             {
-                componentsInDevice.AddRange(_mapper.Map<IEnumerable<DesignDTO>, IEnumerable<Design>>(_designService.GetDesigns()));
+                componentsInDevice.AddRange(_mapper.Map<IEnumerable<DesignDTO>, IEnumerable<Design>>(await _designService.GetDesignsAsync()));
             }
 
 
@@ -404,7 +404,7 @@ namespace ProductionManagementSystem.Controllers
         }
         
         [HttpPost]
-        public IActionResult ReceiveMultiple(ComponentsForDevice components)
+        public async Task<IActionResult> ReceiveMultiple(ComponentsForDevice components)
         {
             if (components == null)
             {
@@ -414,7 +414,7 @@ namespace ProductionManagementSystem.Controllers
             LogService.UserName = User.Identity?.Name;
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                _designService.AddDesign(components.ComponentId[index], -components.Quantity[index]);
+                await _designService.AddDesignAsync(components.ComponentId[index], -components.Quantity[index]);
             }
             
             return RedirectToAction(nameof(ReceiveMultiple));

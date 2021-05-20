@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
@@ -17,14 +19,14 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db = context;
         }
 
-        public IEnumerable<DeviceComponentsTemplate> GetAll()
+        public async Task<IEnumerable<DeviceComponentsTemplate>> GetAllAsync()
         {
-            return _db.DeviceComponentsTemplates;
+            return await _db.DeviceComponentsTemplates.ToListAsync();
         }
 
-        public DeviceComponentsTemplate Get(int id)
+        public async Task<DeviceComponentsTemplate> GetAsync(int id)
         {
-            return _db.DeviceComponentsTemplates.Find(id);
+            return await _db.DeviceComponentsTemplates.FindAsync(id);
         }
 
         public IEnumerable<DeviceComponentsTemplate> Find(Func<DeviceComponentsTemplate, bool> predicate)
@@ -32,9 +34,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             return _db.DeviceComponentsTemplates.Where(predicate).ToList();
         }
 
-        public void Create(DeviceComponentsTemplate item)
+        public async Task CreateAsync(DeviceComponentsTemplate item)
         {
-            _db.DeviceComponentsTemplates.Add(item);
+            await _db.DeviceComponentsTemplates.AddAsync(item);
         }
 
         public void Update(DeviceComponentsTemplate item)
@@ -42,9 +44,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db.Entry(item).State = EntityState.Modified;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            var item = _db.DeviceComponentsTemplates.Find(id);
+            var item = await _db.DeviceComponentsTemplates.FindAsync(id);
             if (item != null)
                 _db.DeviceComponentsTemplates.Remove(item);
         }
