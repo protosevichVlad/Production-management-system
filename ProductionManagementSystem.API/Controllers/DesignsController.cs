@@ -13,13 +13,11 @@ namespace ProductionManagementSystem.API.Controllers
     public class DesignsController : Controller
     {
         private readonly IDesignService _designService;
-        private readonly IDeviceService _deviceService;
         private IMapper _mapper;
         
         
-        public DesignsController(IDesignService service, IDeviceService deviceService)
+        public DesignsController(IDesignService service)
         {
-            _deviceService = deviceService;
             _designService = service;
             _mapper = new MapperConfiguration(cfg =>
                 {
