@@ -19,7 +19,7 @@ namespace ProductionManagementSystem.DAL.Entities
         public int? OrderId { get; set; }
         public Order Order { get; set; }
 
-        public List<ObtainedDesign> ObtainedDesigns { get; set; }
-        public List<ObtainedComponent> ObtainedComponents { get; set; }
+        public IEnumerable<ObtainedDesign> ObtainedDesigns { get; set; }
+        public IEnumerable<ObtainedComponent> ObtainedComponents { get; set; }
     }
 }
