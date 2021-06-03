@@ -12,11 +12,9 @@ namespace ProductionManagementSystem.API.Models
         public string Status { get; set; }
         public string Description { get; set; }
         
-        public Device Device { get; set; }
         public int DeviceId { get; set; }
 
         public int? OrderId { get; set; }
-        public Order Order { get; set; }
 
         public List<ObtainedDesign> ObtainedDesigns { get; set; }
         public List<ObtainedComponent> ObtainedComponents { get; set; }
