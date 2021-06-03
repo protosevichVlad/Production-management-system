@@ -57,7 +57,7 @@
                         @: class="table-success"
                     } 
                 >
-                    <td>@comp.Component.ToString()</td>
+                    <td><a asp-controller="Components" asp-action="Details" asp-route-id="@comp.Component.Id">@comp.Component.ToString()</a></td>
                     <td>@comp.Quantity</td>
                     <td>@comp.Component.Quantity</td>
                     <td>@obtainedComp.Obtained</td>
@@ -91,7 +91,7 @@
                         @: class="table-success"
                     } 
                 >
-                    <td>@des.Design.ToString()</td>
+                    <td><a asp-controller="Designs" asp-action="Details" asp-route-id="@des.Design.Id">@des.Design.ToString()</a></td>
                     <td>@des.Quantity</td>
                     <td>@des.Design.Quantity</td>
                     <td>@obtainedDes.Obtained</td>

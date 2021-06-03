@@ -11,7 +11,7 @@ namespace ProductionManagementSystem.WEB.Models
         [Display(Name = "Конструктивная единица")]
         public string Type { get; set; }
         
-        [Display(Name = "Наименовие")]
+        [Display(Name = "Наименование")]
         [Required]
         public string Name { get; set; }
 
