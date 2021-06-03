@@ -55,7 +55,7 @@ namespace ProductionManagementSystem.API.Controllers
         }
         
         // GET api/designs/receive/5?quantity=10
-        [HttpPost("add/{id}")]
+        [HttpPost("receive/{id}")]
         public async Task<ActionResult> ReceiveDesigns(int id, int? quantity)
         {
             if (quantity == null)
