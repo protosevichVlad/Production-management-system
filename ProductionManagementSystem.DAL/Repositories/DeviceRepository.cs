@@ -54,7 +54,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public void Update(Device item)
         {
-            _db.Entry(item).State = EntityState.Modified;
+            _db.Devices.Update(item);
         }
 
         public async Task DeleteAsync(int id)

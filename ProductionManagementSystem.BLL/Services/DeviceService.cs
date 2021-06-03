@@ -51,7 +51,6 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new IntersectionOfEntitiesException("Ошибка. Невозможно изменение прибора.", errorMessage);
             }
 
-
             if (deviceFromDb == null)
             {
                 throw new NotImplementedException();
@@ -139,7 +138,6 @@ namespace ProductionManagementSystem.BLL.Services
             if (task != null)
             {
                 errorMessage = $"<i class='bg-light'>{device.ToString()}</i> используется в <i class='bg-light'>задаче №{task.Id}</i>.<br />";
-                               //$"Для удаления <i class='bg-light'>{device.ToString()}</i>, удалите <i class='bg-light'>задачу №{task.Id}</i>.<br />"
                 return new Tuple<bool, string>(false, errorMessage);
             }
             
@@ -247,18 +245,21 @@ namespace ProductionManagementSystem.BLL.Services
             var names = new List<string>();
             var quantity = new List<int>();
             var descriptions = new List<string>();
+            var templateId = new List<int>();
             for (int i = 0; i < device.DeviceComponentsTemplate.Count; i++)
             {
                 ids.Add(device.DeviceComponentsTemplate[i].ComponentId);
                 names.Add((await componentService.GetComponentAsync(ids[^1])).ToString());
                 quantity.Add(device.DeviceComponentsTemplate[i].Quantity);
                 descriptions.Add(device.DeviceComponentsTemplate[i].Description);
+                templateId.Add(device.DeviceComponentsTemplate[i].Id);
             }
 
             deviceDto.ComponentIds = ids.ToArray();
             deviceDto.ComponentNames = names.ToArray();
             deviceDto.ComponentQuantity = quantity.ToArray();
             deviceDto.ComponentDescriptions = descriptions.ToArray();
+            deviceDto.ComponentTemplateId = templateId.ToArray();
         }
         
         private async Task SetNameQuantityAndDescriptionForDesignAsync(DeviceDTO deviceDto, Device device)
@@ -268,18 +269,22 @@ namespace ProductionManagementSystem.BLL.Services
             var names = new List<string>();
             var quantity = new List<int>();
             var descriptions = new List<string>();
+            var templateId = new List<int>();
             for (int i = 0; i < device.DeviceDesignTemplate.Count; i++)
             {
                 ids.Add(device.DeviceDesignTemplate[i].DesignId);
                 names.Add((await designService.GetDesignAsync(ids[^1])).ToString());
                 quantity.Add(device.DeviceDesignTemplate[i].Quantity);
                 descriptions.Add(device.DeviceDesignTemplate[i].Description);
+                templateId.Add(device.DeviceDesignTemplate[i].Id);
+
             }
 
             deviceDto.DesignIds = ids.ToArray();
             deviceDto.DesignNames = names.ToArray();
             deviceDto.DesignQuantity = quantity.ToArray();
             deviceDto.DesignDescriptions = descriptions.ToArray();
+            deviceDto.DesignTemplateId = templateId.ToArray();
         }
     }
 }
