@@ -16,7 +16,7 @@ namespace ProductionManagementSystem.BLL.DTO
         public int DeviceId { get; set; }
         public DeviceDTO Device { get; set; }
         public int? OrderId { get; set; }
-        public List<ObtainedDesign> ObtainedDesigns { get; set; }
-        public List<ObtainedComponent> ObtainedComponents { get; set; }
+        public List<ObtainedDesignDTO> ObtainedDesigns { get; set; }
+        public List<ObtainedComponentDTO> ObtainedComponents { get; set; }
     }
 }

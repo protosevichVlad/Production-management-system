@@ -35,6 +35,14 @@ namespace ProductionManagementSystem.BLL.Services
                     cfg.CreateMap<TaskDTO, Task>();
                     cfg.CreateMap<DeviceDTO, Device>();
                     cfg.CreateMap<Log, LogDTO>();
+                    cfg.CreateMap<ObtainedDesign, ObtainedDesignDTO>();
+                    cfg.CreateMap<ObtainedDesignDTO, ObtainedDesign>();
+                    cfg.CreateMap<ObtainedComponent, ObtainedComponentDTO>();
+                    cfg.CreateMap<ObtainedComponentDTO, ObtainedComponent>();
+                    cfg.CreateMap<ComponentDTO, Component>();
+                    cfg.CreateMap<Component, ComponentDTO>();
+                    cfg.CreateMap<DesignDTO, Design>();
+                    cfg.CreateMap<Design, DesignDTO>();
                 })
                 .CreateMapper();
         }
@@ -47,8 +55,8 @@ namespace ProductionManagementSystem.BLL.Services
             task.StartTime = DateTime.Now;
 
             var device = await _deviceService.GetDeviceAsync(task.DeviceId);
-            task.ObtainedComponents = GetStartObtainedComponent(device, task);
-            task.ObtainedDesigns = GetStartObtainedDesign(device, task);
+            task.ObtainedComponents = _mapper.Map<IEnumerable<ObtainedComponentDTO>, IEnumerable<ObtainedComponent>>(GetStartObtainedComponent(device, task));
+            task.ObtainedDesigns = _mapper.Map<IEnumerable<ObtainedDesignDTO>, IEnumerable<ObtainedDesign>>(GetStartObtainedDesign(device, task));
 
             await _database.Tasks.CreateAsync(task);
             await _database.SaveAsync();
@@ -165,14 +173,14 @@ namespace ProductionManagementSystem.BLL.Services
             return await _deviceService.GetComponentsTemplatesAsync((int) deviceId);
         }
 
-        public IEnumerable<ObtainedComponent> GetObtainedComponents(int taskId)
+        public IEnumerable<ObtainedComponentDTO> GetObtainedComponents(int taskId)
         {
-            return _database.ObtainedСomponents.Find(c => c.Task.Id == taskId);
+            return _mapper.Map<IEnumerable<ObtainedComponent>, IEnumerable<ObtainedComponentDTO>>(_database.ObtainedСomponents.Find(c => c.Task.Id == taskId));
         }
 
-        public IEnumerable<ObtainedDesign> GetObtainedDesigns(int taskId)
+        public IEnumerable<ObtainedDesignDTO> GetObtainedDesigns(int taskId)
         {
-            return _database.ObtainedDesigns.Find(c => c.Task.Id == taskId);
+            return _mapper.Map<IEnumerable<ObtainedDesign>, IEnumerable<ObtainedDesignDTO>>(_database.ObtainedDesigns.Find(c => c.Task.Id == taskId));
         }
 
         public IEnumerable<LogDTO> GetLogs(int? taskId)
@@ -218,7 +226,7 @@ namespace ProductionManagementSystem.BLL.Services
                 {
                     obtComp.Obtained += componentObt[i];
                     obtComp.Component.Quantity -= componentObt[i];
-                    _database.ObtainedСomponents.Update(obtComp);
+                    _database.ObtainedСomponents.Update(_mapper.Map<ObtainedComponentDTO, ObtainedComponent>(obtComp));
                 }
             }
             
@@ -235,7 +243,7 @@ namespace ProductionManagementSystem.BLL.Services
                 {
                     obtDes.Obtained += designObt[i];
                     obtDes.Design.Quantity -= designObt[i];
-                    _database.ObtainedDesigns.Update(obtDes);
+                    _database.ObtainedDesigns.Update(_mapper.Map<ObtainedDesignDTO, ObtainedDesign>(obtDes));
                 }
             }
             
@@ -247,32 +255,32 @@ namespace ProductionManagementSystem.BLL.Services
             _database.Dispose();
         }
 
-        private List<ObtainedDesign> GetStartObtainedDesign(DeviceDTO device, Task task)
+        private IEnumerable<ObtainedDesignDTO> GetStartObtainedDesign(DeviceDTO device, Task task)
         {
-            List<ObtainedDesign> result = new List<ObtainedDesign>();
+            List<ObtainedDesignDTO> result = new List<ObtainedDesignDTO>();
             foreach (var designId in device.DesignIds)
             {
-                result.Add(new ObtainedDesign()
+                result.Add(new ObtainedDesignDTO()
                 {
                     DesignId = designId,
                     Obtained = 0,
-                    Task = task
+                    Task = _mapper.Map<Task, TaskDTO>(task),
                 });
             }
 
             return result;
         }
         
-        private List<ObtainedComponent> GetStartObtainedComponent(DeviceDTO device, Task task)
+        private IEnumerable<ObtainedComponentDTO> GetStartObtainedComponent(DeviceDTO device, Task task)
         {
-            List<ObtainedComponent> result = new List<ObtainedComponent>();
+            List<ObtainedComponentDTO> result = new List<ObtainedComponentDTO>();
             foreach (var componentId in device.ComponentIds)
             {
-                result.Add(new ObtainedComponent()
+                result.Add(new ObtainedComponentDTO()
                 {
                     ComponentId = componentId,
                     Obtained = 0,
-                    Task = task
+                    Task = _mapper.Map<Task, TaskDTO>(task),
                 });
             }
 

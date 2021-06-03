@@ -19,8 +19,8 @@ namespace ProductionManagementSystem.BLL.Interfaces
         Task TransferAsync(int taskId, bool full, int to, string message);
         Task<IEnumerable<DeviceDesignTemplate>> GetDeviceDesignTemplateFromTaskAsync(int taskId);
         Task<IEnumerable<DeviceComponentsTemplate>> GetDeviceComponentsTemplatesFromTaskAsync(int taskId);
-        IEnumerable<ObtainedComponent> GetObtainedComponents(int taskId);
-        IEnumerable<ObtainedDesign> GetObtainedDesigns(int taskId);
+        IEnumerable<ObtainedComponentDTO> GetObtainedComponents(int taskId);
+        IEnumerable<ObtainedDesignDTO> GetObtainedDesigns(int taskId);
         IEnumerable<LogDTO> GetLogs(int? taskId);
         string GetTaskStatusName(StatusEnum item);
         Task ReceiveComponentAsync(int taskId, int[] componentIds, int[] componentObt);
