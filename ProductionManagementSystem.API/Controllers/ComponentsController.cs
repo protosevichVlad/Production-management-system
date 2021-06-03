@@ -59,7 +59,7 @@ namespace ProductionManagementSystem.API.Controllers
         }
         
         // GET api/components/receive/5?quantity=10
-        [HttpPost("add/{id}")]
+        [HttpPost("receive/{id}")]
         public async Task<ActionResult> ReceiveComponents(int id, int? quantity)
         {
             if (quantity == null)
