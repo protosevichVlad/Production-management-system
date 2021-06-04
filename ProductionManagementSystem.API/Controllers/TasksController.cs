@@ -83,5 +83,20 @@ namespace ProductionManagementSystem.API.Controllers
             await _taskService.DeleteTaskAsync(task.Id);
             return Ok(task);
         }
+        
+        [HttpPost("{taskId}/receiveComponent/{componentId}")]
+        public async Task<IActionResult> ReceiveComponent(int taskId, int componentId, int quantity)
+        {
+            await _taskService.ReceiveComponentAsync(taskId, componentId, quantity);
+            return Ok();
+        }
+                
+        
+        [HttpPost("{taskId}/receiveDesign/{designId}")]
+        public async Task<IActionResult> ReceiveDesign(int taskId, int designId, int quantity)
+        {
+            await _taskService.ReceiveDesignAsync(taskId, designId, quantity);
+            return Ok();
+        }
     }
 }
