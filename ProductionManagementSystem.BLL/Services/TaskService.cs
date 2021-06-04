@@ -216,12 +216,12 @@ namespace ProductionManagementSystem.BLL.Services
             return String.Join(", ", result);
         }
 
-        public async System.Threading.Tasks.Task ReceiveComponentAsync(int taskId, int[] componentIds, int[] componentObt)
+        public async System.Threading.Tasks.Task ReceiveComponentsAsync(int taskId, int[] componentIds, int[] componentObt)
         {
             var obtainedComp = GetObtainedComponents(taskId);
             for (int i = 0; i < componentObt.Length; i++)
             {
-                var obtComp = obtainedComp.FirstOrDefault(c => c.Id == componentIds[i]);
+                var obtComp = obtainedComp.FirstOrDefault(c => c.ComponentId == componentIds[i]);
                 if (obtComp != null)
                 {
                     obtComp.Obtained += componentObt[i];
@@ -233,18 +233,46 @@ namespace ProductionManagementSystem.BLL.Services
             await _database.SaveAsync();
         }
 
-        public async System.Threading.Tasks.Task ReceiveDesignAsync(int taskId, int[] designIds, int[] designObt)
+        public async System.Threading.Tasks.Task ReceiveDesignsAsync(int taskId, int[] designIds, int[] designObt)
         {
             var obtainedDes = GetObtainedDesigns(taskId);
             for (int i = 0; i < designObt.Length; i++)
             {
-                var obtDes = obtainedDes.FirstOrDefault(c => c.Id == designIds[i]);
+                var obtDes = obtainedDes.FirstOrDefault(c => c.DesignId == designIds[i]);
                 if (obtDes != null)
                 {
                     obtDes.Obtained += designObt[i];
                     obtDes.Design.Quantity -= designObt[i];
                     _database.ObtainedDesigns.Update(_mapper.Map<ObtainedDesignDTO, ObtainedDesign>(obtDes));
                 }
+            }
+            
+            await _database.SaveAsync();
+        }
+        
+        public async System.Threading.Tasks.Task ReceiveComponentAsync(int taskId, int componentId, int componentObt)
+        {
+            var obtainedComp = GetObtainedComponents(taskId);
+            var obtComp = obtainedComp.FirstOrDefault(c => c.ComponentId == componentId);
+            if (obtComp != null)
+            {
+                obtComp.Obtained += componentObt;
+                obtComp.Component.Quantity -= componentObt;
+                _database.ObtainedСomponents.Update(_mapper.Map<ObtainedComponentDTO, ObtainedComponent>(obtComp));
+            }
+
+            await _database.SaveAsync();
+        }
+        
+        public async System.Threading.Tasks.Task ReceiveDesignAsync(int taskId, int designId, int designObt)
+        {
+            var obtainedDes = GetObtainedDesigns(taskId);
+            var obtDes = obtainedDes.FirstOrDefault(c => c.DesignId == designId);
+            if (obtDes != null)
+            {
+                obtDes.Obtained += designObt;
+                obtDes.Design.Quantity -= designObt;
+                _database.ObtainedDesigns.Update(_mapper.Map<ObtainedDesignDTO, ObtainedDesign>(obtDes));
             }
             
             await _database.SaveAsync();

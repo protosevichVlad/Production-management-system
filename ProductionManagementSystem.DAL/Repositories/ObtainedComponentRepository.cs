@@ -38,6 +38,7 @@ namespace ProductionManagementSystem.DAL.Repositories
         public IEnumerable<ObtainedComponent> Find(Func<ObtainedComponent, bool> predicate)
         {
             return _db.ObtainedСomponents
+                .AsNoTracking()
                 .Include(c => c.Task)
                 .Include(c => c.Component)
                 .Where(predicate).ToList();
@@ -50,7 +51,13 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public void Update(ObtainedComponent item)
         {
-            _db.Entry(item).State = EntityState.Modified;
+            var obtComp = _db.ObtainedСomponents.FirstOrDefault(obtainedComponent => obtainedComponent.Id == item.Id);
+            if (obtComp != null)
+            {
+                obtComp.Obtained = item.Obtained;
+                _db.SaveChanges(); 
+            }
+            // _db.ObtainedСomponents.Update(item);
         }
 
         public async Task DeleteAsync(int id)

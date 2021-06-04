@@ -23,8 +23,10 @@ namespace ProductionManagementSystem.BLL.Interfaces
         IEnumerable<ObtainedDesignDTO> GetObtainedDesigns(int taskId);
         IEnumerable<LogDTO> GetLogs(int? taskId);
         string GetTaskStatusName(StatusEnum item);
-        Task ReceiveComponentAsync(int taskId, int[] componentIds, int[] componentObt);
-        Task ReceiveDesignAsync(int taskId, int[] designIds, int[] designObt);
+        Task ReceiveComponentsAsync(int taskId, int[] componentIds, int[] componentObt);
+        Task ReceiveDesignsAsync(int taskId, int[] designIds, int[] designObt);
+        Task ReceiveComponentAsync(int taskId, int componentId, int componentObt);
+        Task ReceiveDesignAsync(int taskId, int designId, int designObt);
         
         void Dispose();
     }

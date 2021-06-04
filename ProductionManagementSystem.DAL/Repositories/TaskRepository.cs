@@ -57,7 +57,6 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public void Update(Task item)
         {
-            // _db.Entry(item).State = EntityState.Modified;
             _db.Tasks.Update(item);
         }
 

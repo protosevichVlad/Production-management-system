@@ -22,6 +22,7 @@ namespace ProductionManagementSystem.DAL.Repositories
         public async Task<IEnumerable<ObtainedDesign>> GetAllAsync()
         {
             return await _db.ObtainedDesigns
+                .AsNoTracking()
                 .Include(c => c.Task)
                 .Include(c => c.Design)
                 .ToListAsync();
@@ -30,6 +31,7 @@ namespace ProductionManagementSystem.DAL.Repositories
         public async Task<ObtainedDesign> GetAsync(int id)
         {
             return await _db.ObtainedDesigns
+                .AsNoTracking()
                 .Include(c => c.Task)
                 .Include(c => c.Design)
                 .FirstOrDefaultAsync(d => d.Id == id);
@@ -40,7 +42,8 @@ namespace ProductionManagementSystem.DAL.Repositories
             return _db.ObtainedDesigns
                 .Include(c => c.Task)
                 .Include(c => c.Design)
-                .Where(predicate).ToList();
+                .Where(predicate)
+                .ToList();
         }
 
         public async Task CreateAsync(ObtainedDesign item)
@@ -50,7 +53,12 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public void Update(ObtainedDesign item)
         {
-            _db.Entry(item).State = EntityState.Modified;
+            var obtDes = _db.ObtainedDesigns.FirstOrDefault(obtainedDesign => obtainedDesign.Id == item.Id);
+            if (obtDes != null)
+            {
+                obtDes.Obtained = item.Obtained;
+                _db.SaveChanges(); 
+            }
         }
 
         public async Task DeleteAsync(int id)

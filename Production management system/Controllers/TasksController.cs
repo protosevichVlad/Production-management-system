@@ -175,7 +175,7 @@ namespace ProductionManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> ReceiveComponent(int TaskId, int[] ComponentIds, int[] ComponentObt)
         {
-            await _taskService.ReceiveComponentAsync(TaskId, ComponentIds, ComponentObt);
+            await _taskService.ReceiveComponentsAsync(TaskId, ComponentIds, ComponentObt);
             return RedirectToAction(nameof(Details), new {id = TaskId});
         }
         
@@ -191,7 +191,7 @@ namespace ProductionManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> ReceiveDesign(int TaskId, int[] DesignIds, int[] DesignObt)
         {
-            await _taskService.ReceiveDesignAsync(TaskId, DesignIds, DesignObt);
+            await _taskService.ReceiveDesignsAsync(TaskId, DesignIds, DesignObt);
             return RedirectToAction(nameof(Details), new {id = TaskId});
         }
         
