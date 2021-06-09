@@ -39,15 +39,15 @@
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">
             <tr>
-                <th>Наименование</th>
-                <th>В задаче</th>
-                <th>На складе</th>
-                <th>Получено</th>
+                <th width="70%">Наименование</th>
+                <th width="10%">В задаче</th>
+                <th width="10%">На складе</th>
+                <th width="10%">Получено</th>
             </tr>
             </thead>
             @foreach (var comp in ViewBag.ComponentTemplate)
             {
-                var obtainedComp = Model.ObtainedComponents.FirstOrDefault(d => comp.Component.Id == d.Component.Id);
+                var obtainedComp = Model.ObtainedComponents.FirstOrDefault(d => comp.Component.Id == d.ComponentId);
                 <tr @if (obtainedComp.Obtained + comp.Component.Quantity < comp.Quantity) 
                     { 
                         @: class="table-danger"
@@ -73,15 +73,15 @@
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">
             <tr>
-                <th>Наименование</th>
-                <th>В задаче</th>
-                <th>На складе</th>
-                <th>Получено</th>
+                <th width="70%">Наименование</th>
+                <th width="10%">В задаче</th>
+                <th width="10%">На складе</th>
+                <th width="10%">Получено</th>
             </tr>
             </thead>
             @foreach (var des in ViewBag.DesignTemplate)
             {
-                var obtainedDes = Model.ObtainedDesigns.FirstOrDefault(d => des.Design.Id == d.Design.Id);
+                var obtainedDes = Model.ObtainedDesigns.FirstOrDefault(d => des.Design.Id == d.DesignId);
                 <tr @if (obtainedDes.Obtained + des.Design.Quantity < des.Quantity) 
                     { 
                         @: class="table-danger"

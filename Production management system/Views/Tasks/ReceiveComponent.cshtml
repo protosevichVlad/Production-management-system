@@ -27,7 +27,7 @@
                 <td>@obtainedComp.Obtained</td>
                 <td><input type="number" name="ComponentObt" autocomplete="off" required min="-@obtainedComp.Obtained" max="@comp.Component.Quantity" value="0"></td>
             </tr>
-            <input type="number" name="ComponentIds" hidden value="@comp.Id"/>
+            <input type="number" name="ComponentIds" hidden value="@comp.Component.Id"/>
         }
     </table>
     <button class="btn btn-light">Получить</button>

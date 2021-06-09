@@ -12,6 +12,10 @@
     </div>
     <div class="col d-flex justify-content-md-end">
         <button class="btn btn-link float-right" type="button" onclick="window.print()">Распечатать(Сохранить)</button>
+        <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@Model.Id">Подробности</a>
+        <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+        <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Index" asp-route-deviceId="@Model.Id">Логи</a>
+        <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
     </div>
 </div>
 <div class="alert alert-info" role="alert">
@@ -84,10 +88,4 @@
             </table>
         </div>
     </div>
-</div>
-<div>
-    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@Model.Id">Подробности</a>
-    <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
-    <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
-    <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Index" asp-route-deviceId="@Model.Id">Логи</a>
 </div>
