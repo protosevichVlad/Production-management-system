@@ -38,6 +38,10 @@ namespace ProductionManagementSystem.Controllers
                     cfg.CreateMap<OrderViewModel, OrderDTO>();
                     cfg.CreateMap<TaskViewModel, TaskDTO>();
                     cfg.CreateMap<DeviceViewModel, DeviceDTO>();
+                    cfg.CreateMap<ObtainedDesign, ObtainedDesignDTO>();
+                    cfg.CreateMap<ObtainedDesignDTO, ObtainedDesign>();
+                    cfg.CreateMap<ObtainedComponent, ObtainedComponentDTO>();
+                    cfg.CreateMap<ObtainedComponentDTO, ObtainedComponent>();
                 })
                 .CreateMapper();
         }

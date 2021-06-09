@@ -249,7 +249,7 @@ namespace ProductionManagementSystem.Controllers
             {
                 LogService.UserName = User.Identity?.Name;
                 await _designService.AddDesignAsync(designId, quantity);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = designId });
             }
             catch (Exception e)
             {
@@ -273,7 +273,7 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 await _designService.AddDesignAsync(designId, -quantity);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = designId });
             }
             catch (Exception e)
             {

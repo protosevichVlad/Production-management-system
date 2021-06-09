@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Reflection;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,8 +12,10 @@ using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.WEB.Models;
 using Microsoft.AspNetCore.Identity;
-using ProductionManagementSystem.DAL.Entities;
 using System.Threading.Tasks;
+using ProductionManagementSystem.DAL.Entities;
+using ObtainedComponent = ProductionManagementSystem.WEB.Models.ObtainedComponent;
+using ObtainedDesign = ProductionManagementSystem.WEB.Models.ObtainedDesign;
 
 namespace ProductionManagementSystem.Controllers
 {
@@ -44,6 +44,10 @@ namespace ProductionManagementSystem.Controllers
                     cfg.CreateMap<TaskViewModel, TaskDTO>();
                     cfg.CreateMap<DeviceDTO, DeviceViewModel>();
                     cfg.CreateMap<LogDTO, LogViewModel>();
+                    cfg.CreateMap<ObtainedDesign, ObtainedDesignDTO>();
+                    cfg.CreateMap<ObtainedDesignDTO, ObtainedDesign>();
+                    cfg.CreateMap<ObtainedComponent, ObtainedComponentDTO>();
+                    cfg.CreateMap<ObtainedComponentDTO, ObtainedComponent>();
                 })
                 .CreateMapper();
             _userManager = userManager;

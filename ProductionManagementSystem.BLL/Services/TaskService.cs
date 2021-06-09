@@ -19,6 +19,8 @@ namespace ProductionManagementSystem.BLL.Services
     {
         private IUnitOfWork _database { get; }
         private IDeviceService _deviceService;
+        private IComponentService _componentService;
+        private IDesignService _designService;
         private ILogService _logService;
         private IMapper _mapper;
 
@@ -26,13 +28,15 @@ namespace ProductionManagementSystem.BLL.Services
         {
             _database = uow;
             _deviceService = new DeviceService(uow);
+            _componentService = new ComponentService(uow);
+            _designService = new DesignService(uow);
             _logService = new LogService(uow);
             
             _mapper = new MapperConfiguration(cfg =>
                 {
                     cfg.CreateMap<Task, TaskDTO>();
-                    cfg.CreateMap<Device, DeviceDTO>();
                     cfg.CreateMap<TaskDTO, Task>();
+                    cfg.CreateMap<Device, DeviceDTO>();
                     cfg.CreateMap<DeviceDTO, Device>();
                     cfg.CreateMap<Log, LogDTO>();
                     cfg.CreateMap<ObtainedDesign, ObtainedDesignDTO>();
@@ -225,7 +229,7 @@ namespace ProductionManagementSystem.BLL.Services
                 if (obtComp != null)
                 {
                     obtComp.Obtained += componentObt[i];
-                    obtComp.Component.Quantity -= componentObt[i];
+                    await _componentService.AddComponentAsync(componentIds[i], componentObt[i]);
                     _database.ObtainedСomponents.Update(_mapper.Map<ObtainedComponentDTO, ObtainedComponent>(obtComp));
                 }
             }
@@ -242,7 +246,7 @@ namespace ProductionManagementSystem.BLL.Services
                 if (obtDes != null)
                 {
                     obtDes.Obtained += designObt[i];
-                    obtDes.Design.Quantity -= designObt[i];
+                    await _designService.AddDesignAsync(designIds[i], -designObt[i]);
                     _database.ObtainedDesigns.Update(_mapper.Map<ObtainedDesignDTO, ObtainedDesign>(obtDes));
                 }
             }
@@ -257,7 +261,7 @@ namespace ProductionManagementSystem.BLL.Services
             if (obtComp != null)
             {
                 obtComp.Obtained += componentObt;
-                obtComp.Component.Quantity -= componentObt;
+                await _componentService.AddComponentAsync(componentId, -componentObt);
                 _database.ObtainedСomponents.Update(_mapper.Map<ObtainedComponentDTO, ObtainedComponent>(obtComp));
             }
 
@@ -271,7 +275,7 @@ namespace ProductionManagementSystem.BLL.Services
             if (obtDes != null)
             {
                 obtDes.Obtained += designObt;
-                obtDes.Design.Quantity -= designObt;
+                await _designService.AddDesignAsync(designId, -designObt);
                 _database.ObtainedDesigns.Update(_mapper.Map<ObtainedDesignDTO, ObtainedDesign>(obtDes));
             }
             

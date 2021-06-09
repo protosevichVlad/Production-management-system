@@ -304,7 +304,7 @@ namespace ProductionManagementSystem.Controllers
             {
                 LogService.UserName = User.Identity?.Name;
                 await _componentService.AddComponentAsync(componentId, quantity);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new {id = componentId});
             }
             catch (Exception e)
             {
@@ -340,7 +340,7 @@ namespace ProductionManagementSystem.Controllers
             {
                 LogService.UserName = User.Identity?.Name;
                 await _componentService.AddComponentAsync(componentId, -quantity);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new {id = componentId});
             }
             catch (Exception e)
             {
