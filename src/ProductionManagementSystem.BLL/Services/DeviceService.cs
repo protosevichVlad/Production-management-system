@@ -43,17 +43,12 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task UpdateDeviceAsync(DeviceDTO deviceDto)
         { 
-            var deviceFromDb = await _database.Devices.GetAsync(deviceDto.Id);
+            var deviceFromDb = await _database.Devices.GetAsync(deviceDto.Id) ?? throw new NotImplementedException();
             var checkInTask = (await CheckInTaskAsync(deviceFromDb));
             string errorMessage = checkInTask.Item2;
             if (!checkInTask.Item1)
             {
                 throw new IntersectionOfEntitiesException("Ошибка. Невозможно изменение прибора.", errorMessage);
-            }
-
-            if (deviceFromDb == null)
-            {
-                throw new NotImplementedException();
             }
 
             deviceFromDb.Name = deviceDto.Name;
@@ -116,7 +111,7 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new NotImplementedException();
             }
             
-            var device = await _database.Devices.GetAsync((int) id);
+            var device = await _database.Devices.GetAsync((int) id) ?? throw new NotImplementedException();
             var checkInTask = (await CheckInTaskAsync(device));
             string errorMessage = checkInTask.Item2;
             if (!checkInTask.Item1)
@@ -207,6 +202,11 @@ namespace ProductionManagementSystem.BLL.Services
         private List<DeviceComponentsTemplate> GetComponentsFromDeviceDto(DeviceDTO deviceDto)
         {
             var result = new List<DeviceComponentsTemplate>();
+            if (deviceDto.ComponentIds == null)
+            {
+                return result;
+            }
+            
             for (int i = 0; i < deviceDto.ComponentIds.Length; i++)
             {
                 result.Add(new DeviceComponentsTemplate
@@ -224,6 +224,11 @@ namespace ProductionManagementSystem.BLL.Services
         private List<DeviceDesignTemplate> GetDesignsFromDeviceDto(DeviceDTO deviceDto)
         {
             var result = new List<DeviceDesignTemplate>();
+            if (deviceDto.DesignIds == null)
+            {
+                return result;
+            }
+            
             for (int i = 0; i < deviceDto.DesignIds.Length; i++)
             {
                 result.Add(new DeviceDesignTemplate
