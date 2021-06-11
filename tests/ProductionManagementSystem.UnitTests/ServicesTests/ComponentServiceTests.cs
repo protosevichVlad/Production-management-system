@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using ProductionManagementSystem.BLL.DTO;
+using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Repositories;
@@ -230,6 +232,27 @@ namespace ProductionManagementSystem.UnitTests.ServicesTests
             // Assert
             Assert.NotNull(component);
             Assert.AreEqual(5, component.Quantity);
+        }
+        
+        [Test]
+        public async Task DeleteUsedComponentThrowIntersectionOfEntitiesExceptionTest()
+        {
+            // Arrange
+            var context = GetDbContext();
+            context.Components.Add(new Component {Id = 1, Type = "t1", Name = "name", Quantity = 10});
+            context.Devices.Add(new Device
+            {
+                Id = 1, Name = "123",
+                DeviceComponentsTemplate = new List<DeviceComponentsTemplate>
+                    {new DeviceComponentsTemplate {ComponentId = 1, DeviceId = 1, Quantity = 1}}
+            });
+            await context.SaveChangesAsync();
+            
+            // Act
+            var componentService = new ComponentService(new EFUnitOfWork(context));
+            
+            // Assert
+            Assert.ThrowsAsync<IntersectionOfEntitiesException>(async () => await componentService.DeleteComponentAsync(1));
         }
     }
 }
