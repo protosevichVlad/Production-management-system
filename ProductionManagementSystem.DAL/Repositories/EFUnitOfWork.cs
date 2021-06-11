@@ -23,7 +23,11 @@ namespace ProductionManagementSystem.DAL.Repositories
         {
             _db = new ApplicationContextFactory().CreateDbContext(new []{connectionString});
         }
-
+        
+        public EFUnitOfWork(ApplicationContext applicationContext)
+        {
+            _db = applicationContext;
+        }
 
         public IRepository<Device> Devices
         {
