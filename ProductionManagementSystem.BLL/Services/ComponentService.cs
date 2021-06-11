@@ -68,7 +68,7 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new PageNotFoundException();
             }
             
-            return _mapperToDTO.Map<Component, ComponentDTO>(await _database.Components.GetAsync((int) id));
+            return _mapperToDTO.Map<Component, ComponentDTO>(await _database.Components.GetAsync((int) id)) ?? throw new NotImplementedException();
         }
 
         public async Task DeleteComponentAsync(int? id)
@@ -79,6 +79,11 @@ namespace ProductionManagementSystem.BLL.Services
             }
 
             var component = await _database.Components.GetAsync((int) id);
+            if (component == null)
+            {
+                throw new NotImplementedException();
+            }
+            
             var checkInDevices = (await CheckInDevicesAsync(component));
             string errorMessage = checkInDevices.Item2;
             if (!checkInDevices.Item1)
@@ -132,6 +137,11 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 await _log.CreateLogAsync(new LogDTO($"Было добавлено {quantity}ед. монтажа {component}"){ComponentId = component.Id});
             }
+        }
+
+        public async Task ReceiveComponentAsync(int? id, int quantity)
+        {
+            await this.AddComponentAsync(id, -quantity);
         }
 
         public void Dispose()

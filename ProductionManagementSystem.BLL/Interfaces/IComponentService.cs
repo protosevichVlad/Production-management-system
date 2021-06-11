@@ -13,6 +13,7 @@ namespace ProductionManagementSystem.BLL.Interfaces
         Task DeleteComponentAsync(int? id);
         Task<IEnumerable<string>> GetTypesAsync();
         Task AddComponentAsync(int? id, int quantity);
+        Task ReceiveComponentAsync(int? id, int quantity);
     
         void Dispose();
     }

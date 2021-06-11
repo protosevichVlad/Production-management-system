@@ -131,6 +131,11 @@ namespace ProductionManagementSystem.BLL.Services
                 await _log.CreateLogAsync(new LogDTO($"Было добавлено {quantity}ед. конструктива {design}"){DesignId = design.Id});
             }
         }
+        
+        public async Task ReceiveDesignAsync(int? id, int quantity)
+        {
+            await this.AddDesignAsync(id, -quantity);
+        }
 
         public void Dispose()
         {
