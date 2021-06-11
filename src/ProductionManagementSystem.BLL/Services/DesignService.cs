@@ -66,7 +66,7 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new NotImplementedException();
             }
 
-            return _mapperToDTO.Map<Design, DesignDTO>(await _database.Designs.GetAsync((int) id));
+            return _mapperToDTO.Map<Design, DesignDTO>(await _database.Designs.GetAsync((int) id)) ?? throw new NotImplementedException();
         }
 
         public async Task DeleteDesignAsync(int? id)
@@ -76,7 +76,7 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new NotImplementedException();
             }
 
-            var design = await _database.Designs.GetAsync((int) id);
+            var design = await _database.Designs.GetAsync((int) id) ?? throw new NotImplementedException();
             var checkInDevices = (await CheckInDevicesAsync(design));
             string errorMessage = checkInDevices.Item2;
             if (!checkInDevices.Item1)
