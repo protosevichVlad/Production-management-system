@@ -155,7 +155,7 @@ namespace ProductionManagementSystem.Controllers
         public async Task<IActionResult> Edit(TaskViewModel taskModel)
         {
             var taskDto = _mapper.Map<TaskViewModel, TaskDTO>(taskModel);
-            await _taskService.EditTaskAsync(taskDto);
+            await _taskService.UpdateTaskAsync(taskDto);
             return RedirectToAction(nameof(Details), new {id = taskModel.Id});
         }
         

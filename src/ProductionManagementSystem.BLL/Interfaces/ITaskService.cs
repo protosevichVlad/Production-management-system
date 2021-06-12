@@ -11,7 +11,6 @@ namespace ProductionManagementSystem.BLL.Interfaces
     {
         Task CreateTaskAsync(TaskDTO taskDto);
         Task UpdateTaskAsync(TaskDTO taskDto);
-        Task EditTaskAsync(TaskDTO taskDto);
         Task<IEnumerable<TaskDTO>> GetTasksAsync();
         Task<IEnumerable<TaskDTO>> GetTasksAsync(IEnumerable<string> roles);
         Task<TaskDTO> GetTaskAsync(int? id);

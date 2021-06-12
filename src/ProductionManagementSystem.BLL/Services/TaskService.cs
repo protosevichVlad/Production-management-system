@@ -68,14 +68,6 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async System.Threading.Tasks.Task UpdateTaskAsync(TaskDTO taskDto)
         {
-            var task = _mapper.Map<TaskDTO, Task>(taskDto);
-            
-            _database.Tasks.Update(task);
-            await _database.SaveAsync();
-        }
-        
-        public async System.Threading.Tasks.Task EditTaskAsync(TaskDTO taskDto)
-        {
             var oldTask = await _database.Tasks.GetAsync(taskDto.Id);
             oldTask.Description = taskDto.Description;
             oldTask.Deadline = taskDto.Deadline;
