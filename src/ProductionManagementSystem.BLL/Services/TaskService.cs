@@ -17,12 +17,12 @@ namespace ProductionManagementSystem.BLL.Services
 {
     public class TaskService : ITaskService
     {
-        private IUnitOfWork _database { get; }
-        private IDeviceService _deviceService;
-        private IComponentService _componentService;
-        private IDesignService _designService;
-        private ILogService _logService;
-        private IMapper _mapper;
+        private readonly IUnitOfWork _database;
+        private readonly IDeviceService _deviceService;
+        private readonly IComponentService _componentService;
+        private readonly IDesignService _designService;
+        private readonly ILogService _logService;
+        private readonly IMapper _mapper;
 
         public TaskService(IUnitOfWork uow)
         {
@@ -214,7 +214,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async System.Threading.Tasks.Task ReceiveComponentsAsync(int taskId, int[] componentIds, int[] componentObt)
         {
-            var obtainedComp = GetObtainedComponents(taskId);
+            var obtainedComp = GetObtainedComponents(taskId).ToList();
             for (int i = 0; i < componentObt.Length; i++)
             {
                 var obtComp = obtainedComp.FirstOrDefault(c => c.ComponentId == componentIds[i]);
@@ -231,7 +231,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async System.Threading.Tasks.Task ReceiveDesignsAsync(int taskId, int[] designIds, int[] designObt)
         {
-            var obtainedDes = GetObtainedDesigns(taskId);
+            var obtainedDes = GetObtainedDesigns(taskId).ToList();
             for (int i = 0; i < designObt.Length; i++)
             {
                 var obtDes = obtainedDes.FirstOrDefault(c => c.DesignId == designIds[i]);

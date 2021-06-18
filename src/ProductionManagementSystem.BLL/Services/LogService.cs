@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -14,8 +13,8 @@ namespace ProductionManagementSystem.BLL.Services
 {
     public class LogService : ILogService
     {
-        private IUnitOfWork _database { get; set; }
-        private IMapper _mapper;
+        private readonly IUnitOfWork _database;
+        private readonly IMapper _mapper;
         public static string UserName;
 
         public LogService(IUnitOfWork uow)

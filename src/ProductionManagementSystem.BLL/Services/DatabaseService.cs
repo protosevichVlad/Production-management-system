@@ -6,7 +6,7 @@ namespace ProductionManagementSystem.BLL.Services
 {
     public class DatabaseService : IDatabaseService
     {
-        private IUnitOfWork _database { get; set; }
+        private readonly IUnitOfWork _database;
 
         public DatabaseService(IUnitOfWork uow)
         {

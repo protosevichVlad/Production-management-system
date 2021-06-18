@@ -14,24 +14,24 @@ namespace ProductionManagementSystem.BLL.Services
 {
     public class DesignService : IDesignService
     {
-        private IUnitOfWork _database { get; }
-        private ILogService _log;
-        private IMapper _mapperToDTO;
-        private IMapper _mapperFromDTO;
+        private readonly IUnitOfWork _database;
+        private readonly ILogService _log;
+        private readonly IMapper _mapper;
         
         public DesignService(IUnitOfWork uow)
         {
             _database = uow;
             _log = new LogService(uow);
-            _mapperToDTO = new MapperConfiguration(cfg => cfg.CreateMap<Design, DesignDTO>())
-                .CreateMapper();
-            _mapperFromDTO = new MapperConfiguration(cfg => cfg.CreateMap<DesignDTO, Design>())
-                .CreateMapper();
+            _mapper = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<DesignDTO, Design>();
+                cfg.CreateMap<Design, DesignDTO>();
+            }).CreateMapper();
         }
         
         public async Task CreateDesignAsync(DesignDTO designDto)
         {
-            var design = _mapperFromDTO.Map<DesignDTO, Design>(designDto);
+            var design = _mapper.Map<DesignDTO, Design>(designDto);
             await _database.Designs.CreateAsync(design);
             await _database.SaveAsync();
             
@@ -56,7 +56,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task<IEnumerable<DesignDTO>> GetDesignsAsync()
         {
-            return _mapperToDTO.Map<IEnumerable<Design>, IEnumerable<DesignDTO>>(await _database.Designs.GetAllAsync());
+            return _mapper.Map<IEnumerable<Design>, IEnumerable<DesignDTO>>(await _database.Designs.GetAllAsync());
         }
 
         public async Task<DesignDTO> GetDesignAsync(int? id)
@@ -66,7 +66,7 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new NotImplementedException();
             }
 
-            return _mapperToDTO.Map<Design, DesignDTO>(await _database.Designs.GetAsync((int) id)) ?? throw new NotImplementedException();
+            return _mapper.Map<Design, DesignDTO>(await _database.Designs.GetAsync((int) id)) ?? throw new NotImplementedException();
         }
 
         public async Task DeleteDesignAsync(int? id)
@@ -102,7 +102,7 @@ namespace ProductionManagementSystem.BLL.Services
         public async Task<IEnumerable<string>> GetTypesAsync()
         {
             var designs = await _database.Designs.GetAllAsync();
-            IEnumerable<string> types = designs.OrderBy(d => d.Type).Select(d => d.Type).Distinct();
+            IEnumerable<string> types = designs.Select(d => d.Type).Distinct().OrderBy(d => d);
             return types;
         }
 
@@ -144,18 +144,18 @@ namespace ProductionManagementSystem.BLL.Services
         
         private async Task<Tuple<bool, string>> CheckInDevicesAsync(Design design)
         {
-            string errorMessage = "";
+            string errorMessage;
             var designInDevice = (await _database.DeviceDesignTemplate.GetAllAsync())
                 .FirstOrDefault(d => design.Id == d.DesignId);
             if (designInDevice != null)
             {
                 var device = (await _database.Devices.GetAllAsync()).FirstOrDefault(d => d.Id == designInDevice.DeviceId);
-                errorMessage = $"<i class='bg-light'>{design.ToString()}</i> используется в <i class='bg-light'>{device.ToString()}</i>.<br />" +
-                               $"Для удаления <i class='bg-light'>{design.ToString()}</i>, удалите <i class='bg-light'>{device.ToString()}</i>.<br />";
+                errorMessage = $"<i class='bg-light'>{design}</i> используется в <i class='bg-light'>{device}</i>.<br />" +
+                               $"Для удаления <i class='bg-light'>{design}</i>, удалите <i class='bg-light'>{device}</i>.<br />";
                 return new Tuple<bool, string>(false, errorMessage);
             }
 
-            errorMessage = "";
+            errorMessage = String.Empty;
             return new Tuple<bool, string>(true, errorMessage);
         }
         

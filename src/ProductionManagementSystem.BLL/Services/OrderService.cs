@@ -14,9 +14,9 @@ namespace ProductionManagementSystem.BLL.Services
 {
     public class OrderService : IOrderService
     {
-        private IUnitOfWork _database { get; }
-        private ITaskService _taskService; 
-        private IMapper _mapper;
+        private readonly IUnitOfWork _database;
+        private readonly ITaskService _taskService; 
+        private readonly IMapper _mapper;
         
         public OrderService(IUnitOfWork uow)
         {
@@ -79,7 +79,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task<IEnumerable<OrderDTO>> GetOrdersAsync()
         {
-            var orders = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(await _database.Orders.GetAllAsync());
+            var orders = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(await _database.Orders.GetAllAsync()).ToList();
             foreach (var order in orders)
             {
                 order.Status = _taskService.GetTaskStatusName(order.Tasks.Min(t => t.Status));

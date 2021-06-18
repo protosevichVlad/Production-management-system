@@ -12,12 +12,12 @@ using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
-    public class DeviceService : IDeviceService 
+    public class DeviceService : IDeviceService
     {
-        private IUnitOfWork _database { get; }
-        private IMapper _mapperToDto;
-        private IMapper _mapperFromDto;
-        private ILogService _log;
+        private readonly IUnitOfWork _database;
+        private readonly IMapper _mapperToDto;
+        private readonly IMapper _mapperFromDto;
+        private readonly ILogService _log;
         
         public DeviceService(IUnitOfWork uow)
         {
@@ -127,7 +127,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         private async Task<Tuple<bool, string>> CheckInTaskAsync(Device device)
         {
-            string errorMessage = "";
+            string errorMessage;
             var task = (await _database.Tasks.GetAllAsync())
                 .FirstOrDefault(t => device.Id == t.DeviceId);
             if (task != null)
@@ -136,7 +136,7 @@ namespace ProductionManagementSystem.BLL.Services
                 return new Tuple<bool, string>(false, errorMessage);
             }
             
-            errorMessage = "";
+            errorMessage = String.Empty;
             return new Tuple<bool, string>(true, errorMessage);
         }
 

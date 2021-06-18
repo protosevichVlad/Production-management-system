@@ -14,24 +14,25 @@ namespace ProductionManagementSystem.BLL.Services
 {
     public class ComponentService : IComponentService
     {
-        private IUnitOfWork _database { get; set; }
-        private ILogService _log;
-        private IMapper _mapperToDTO;
-        private IMapper _mapperFromDTO;
+        private readonly IUnitOfWork _database;
+        private readonly ILogService _log;
+        private readonly IMapper _mapper;
         
         public ComponentService(IUnitOfWork uow)
         {
             _database = uow;
             _log = new LogService(uow);
-            _mapperToDTO = new MapperConfiguration(cfg => cfg.CreateMap<Component, ComponentDTO>())
-                .CreateMapper();
-            _mapperFromDTO = new MapperConfiguration(cfg => cfg.CreateMap<ComponentDTO, Component>())
+            _mapper = new MapperConfiguration(cfg =>
+                {
+                    cfg.CreateMap<Component, ComponentDTO>();
+                    cfg.CreateMap<ComponentDTO, Component>();
+                })
                 .CreateMapper();
         }
         
         public async Task CreateComponentAsync(ComponentDTO componentDto)
         {
-            var component = _mapperFromDTO.Map<ComponentDTO, Component>(componentDto);
+            var component = _mapper.Map<ComponentDTO, Component>(componentDto);
             await _database.Components.CreateAsync(component);
             await _database.SaveAsync();
             
@@ -58,7 +59,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task<IEnumerable<ComponentDTO>> GetComponentsAsync()
         {
-            return _mapperToDTO.Map<IEnumerable<Component>, IEnumerable<ComponentDTO>>(await _database.Components.GetAllAsync());
+            return _mapper.Map<IEnumerable<Component>, IEnumerable<ComponentDTO>>(await _database.Components.GetAllAsync());
         }
 
         public async Task<ComponentDTO> GetComponentAsync(int? id)
@@ -68,7 +69,7 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new PageNotFoundException();
             }
             
-            return _mapperToDTO.Map<Component, ComponentDTO>(await _database.Components.GetAsync((int) id)) ?? throw new NotImplementedException();
+            return _mapper.Map<Component, ComponentDTO>(await _database.Components.GetAsync((int) id)) ?? throw new NotImplementedException();
         }
 
         public async Task DeleteComponentAsync(int? id)
@@ -78,12 +79,7 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new PageNotFoundException();
             }
 
-            var component = await _database.Components.GetAsync((int) id);
-            if (component == null)
-            {
-                throw new NotImplementedException();
-            }
-            
+            var component = await _database.Components.GetAsync((int) id) ?? throw new NotImplementedException();
             var checkInDevices = (await CheckInDevicesAsync(component));
             string errorMessage = checkInDevices.Item2;
             if (!checkInDevices.Item1)
@@ -94,8 +90,8 @@ namespace ProductionManagementSystem.BLL.Services
             await _database.Components.DeleteAsync((int) id);
             await _database.SaveAsync();
 
-            var componetLogs = (await _database.Logs.GetAllAsync()).Where(l => l.ComponentId == component.Id);
-            foreach (var log in componetLogs)
+            var componentLogs = (await _database.Logs.GetAllAsync()).Where(l => l.ComponentId == component.Id);
+            foreach (var log in componentLogs)
             {
                 log.ComponentId = null;
                 _database.Logs.Update(log);
@@ -153,21 +149,21 @@ namespace ProductionManagementSystem.BLL.Services
         /// 
         /// </summary>
         /// <param name="component"></param>
-        /// <param name="errorMessage"></param>
         /// <returns>Return true, if component not using in devices.</returns>
         private async Task<Tuple<bool, string>> CheckInDevicesAsync(Component component)
         {
-            string errorMessage = "";
+            string errorMessage;
             var componentInDevice = (await _database.DeviceComponentsTemplate.GetAllAsync())
                 .FirstOrDefault(c => component.Id == c.ComponentId);
             if (componentInDevice != null)
             {
                 var device = (await _database.Devices.GetAllAsync()).FirstOrDefault(d => d.Id == componentInDevice.DeviceId);
-                errorMessage = $"<i class='bg-light'>{component.ToString()}</i> используется в <i class='bg-light'>{device.ToString()}</i>.<br />" +
-                               $"Для удаления <i class='bg-light'>{component.ToString()}</i>, удалите <i class='bg-light'>{device.ToString()}</i>.<br />";
+                errorMessage = $"<i class='bg-light'>{component}</i> используется в <i class='bg-light'>{device}</i>.<br />" +
+                               $"Для удаления <i class='bg-light'>{component}</i>, удалите <i class='bg-light'>{device}</i>.<br />";
                 return new Tuple<bool, string>(false, errorMessage);
             }
-            
+
+            errorMessage = String.Empty;
             return new Tuple<bool, string>(true, errorMessage);
         }
         

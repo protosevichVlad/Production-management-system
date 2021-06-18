@@ -6,7 +6,7 @@ namespace ProductionManagementSystem.BLL.Infrastructure
 {
     public class ServiceModule : NinjectModule
     {
-        private string _connectionString;
+        private readonly string _connectionString;
         public ServiceModule(string connection)
         {
             _connectionString = connection;
