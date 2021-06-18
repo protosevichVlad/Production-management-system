@@ -221,7 +221,7 @@ namespace ProductionManagementSystem.BLL.Services
                 if (obtComp != null)
                 {
                     obtComp.Obtained += componentObt[i];
-                    await _componentService.AddComponentAsync(componentIds[i], componentObt[i]);
+                    await _componentService.ReceiveComponentAsync(componentIds[i], componentObt[i]);
                     _database.ObtainedСomponents.Update(_mapper.Map<ObtainedComponentDTO, ObtainedComponent>(obtComp));
                 }
             }
@@ -238,7 +238,7 @@ namespace ProductionManagementSystem.BLL.Services
                 if (obtDes != null)
                 {
                     obtDes.Obtained += designObt[i];
-                    await _designService.AddDesignAsync(designIds[i], -designObt[i]);
+                    await _designService.ReceiveDesignAsync(designIds[i], designObt[i]);
                     _database.ObtainedDesigns.Update(_mapper.Map<ObtainedDesignDTO, ObtainedDesign>(obtDes));
                 }
             }
