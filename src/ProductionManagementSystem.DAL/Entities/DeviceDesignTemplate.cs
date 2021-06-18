@@ -1,6 +1,6 @@
 ﻿namespace ProductionManagementSystem.DAL.Entities
 {
-public class DeviceDesignTemplate
+    public class DeviceDesignTemplate
     {
         public int Id { get; set; }
         public int Quantity { get; set; }

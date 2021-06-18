@@ -12,7 +12,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 {
     public class ObtainedDesignRepository : IRepository<ObtainedDesign>
     {
-        private ApplicationContext _db;
+        private readonly ApplicationContext _db;
 
         public ObtainedDesignRepository(ApplicationContext context)
         {
@@ -54,11 +54,9 @@ namespace ProductionManagementSystem.DAL.Repositories
         public void Update(ObtainedDesign item)
         {
             var obtDes = _db.ObtainedDesigns.FirstOrDefault(obtainedDesign => obtainedDesign.Id == item.Id);
-            if (obtDes != null)
-            {
-                obtDes.Obtained = item.Obtained;
-                _db.SaveChanges(); 
-            }
+            if (obtDes == null) return;
+            obtDes.Obtained = item.Obtained;
+            _db.SaveChanges();
         }
 
         public async Task DeleteAsync(int id)

@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using ProductionManagementSystem.DAL.Entities;
-using ProductionManagementSystem.Models;
 using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.Areas.Identity.Pages.Account

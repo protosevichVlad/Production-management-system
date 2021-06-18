@@ -9,7 +9,7 @@ using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.Models;
+using ProductionManagementSystem.DAL.Enums;
 using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.Controllers

@@ -15,7 +15,7 @@ namespace ProductionManagementSystem.DAL.EF
         
         public DbSet<Design> Designs { get; set; }
         public DbSet<Task> Tasks { get; set; }
-        public DbSet<ObtainedComponent> ObtainedСomponents { get; set; }
+        public DbSet<ObtainedComponent> ObtainedComponents { get; set; }
         public DbSet<ObtainedDesign> ObtainedDesigns { get; set; }
         
         public DbSet<Log> Logs { get; set; }

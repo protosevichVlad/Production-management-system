@@ -9,8 +9,8 @@ using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
+using ProductionManagementSystem.DAL.Enums;
 using ProductionManagementSystem.DAL.Interfaces;
-using ProductionManagementSystem.Models;
 using Task = ProductionManagementSystem.DAL.Entities.Task;
 
 namespace ProductionManagementSystem.BLL.Services
@@ -171,7 +171,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public IEnumerable<ObtainedComponentDTO> GetObtainedComponents(int taskId)
         {
-            return _mapper.Map<IEnumerable<ObtainedComponent>, IEnumerable<ObtainedComponentDTO>>(_database.ObtainedСomponents.Find(c => c.Task.Id == taskId));
+            return _mapper.Map<IEnumerable<ObtainedComponent>, IEnumerable<ObtainedComponentDTO>>(_database.ObtainedComponents.Find(c => c.Task.Id == taskId));
         }
 
         public IEnumerable<ObtainedDesignDTO> GetObtainedDesigns(int taskId)
@@ -222,7 +222,7 @@ namespace ProductionManagementSystem.BLL.Services
                 {
                     obtComp.Obtained += componentObt[i];
                     await _componentService.ReceiveComponentAsync(componentIds[i], componentObt[i]);
-                    _database.ObtainedСomponents.Update(_mapper.Map<ObtainedComponentDTO, ObtainedComponent>(obtComp));
+                    _database.ObtainedComponents.Update(_mapper.Map<ObtainedComponentDTO, ObtainedComponent>(obtComp));
                 }
             }
             
@@ -254,7 +254,7 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 obtComp.Obtained += componentObt;
                 await _componentService.AddComponentAsync(componentId, -componentObt);
-                _database.ObtainedСomponents.Update(_mapper.Map<ObtainedComponentDTO, ObtainedComponent>(obtComp));
+                _database.ObtainedComponents.Update(_mapper.Map<ObtainedComponentDTO, ObtainedComponent>(obtComp));
             }
 
             await _database.SaveAsync();

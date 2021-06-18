@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-namespace ProductionManagementSystem.DAL.Entities
+﻿namespace ProductionManagementSystem.DAL.Entities
 {
     public class Design
     {

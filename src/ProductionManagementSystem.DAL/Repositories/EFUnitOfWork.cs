@@ -7,7 +7,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 {
     public class EFUnitOfWork : IUnitOfWork
     {
-        private ApplicationContext _db;
+        private readonly ApplicationContext _db;
         private ComponentRepository _componentRepository;
         private DesignRepository _designRepository;
         private DeviceRepository _deviceRepository;
@@ -17,7 +17,7 @@ namespace ProductionManagementSystem.DAL.Repositories
         private DeviceComponentsTemplateRepository _deviceComponentsTemplateRepository;
         private DeviceDesignTemplateRepository _deviceDesignTemplateRepository;
         private ObtainedDesignRepository _obtainedDesignRepository;
-        private ObtainedСomponentRepository _obtainedComponentRepository;
+        private ObtainedComponentRepository _obtainedComponentRepository;
 
         public EFUnitOfWork(string connectionString)
         {
@@ -31,98 +31,57 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public IRepository<Device> Devices
         {
-            get
-            {
-                if (_deviceRepository == null)
-                    _deviceRepository = new DeviceRepository(_db);
-                return _deviceRepository;    
-            }
+            get { return _deviceRepository ??= new DeviceRepository(_db); }
         }
 
         public IRepository<Design> Designs {
-            get
-            {
-                if (_designRepository == null)
-                    _designRepository = new DesignRepository(_db);
-                return _designRepository;
-            }
+            get { return _designRepository ??= new DesignRepository(_db); }
         }
         
         public IRepository<Component> Components {
-            get
-            {
-                if (_componentRepository == null)
-                    _componentRepository = new ComponentRepository(_db);
-                return _componentRepository;
-            }
+            get { return _componentRepository ??= new ComponentRepository(_db); }
         }
 
         public IRepository<Order> Orders
         {
-            get
-            {
-                if (_orderRepository == null)
-                    _orderRepository = new OrderRepository(_db);
-                return _orderRepository;
-            }
+            get { return _orderRepository ??= new OrderRepository(_db); }
         }
 
         public IRepository<Task> Tasks
         {
-            get
-            {
-                if (_taskRepository == null)
-                    _taskRepository = new TaskRepository(_db);
-                return _taskRepository;
-            }
+            get { return _taskRepository ??= new TaskRepository(_db); }
         }
         
         public IRepository<Log> Logs
         {
-            get
-            {
-                if (_logRepository == null)
-                    _logRepository = new LogRepository(_db);
-                return _logRepository;
-            }
+            get { return _logRepository ??= new LogRepository(_db); }
         }
         
         public IRepository<DeviceComponentsTemplate> DeviceComponentsTemplate {
             get
             {
-                if (_deviceComponentsTemplateRepository == null)
-                    _deviceComponentsTemplateRepository = new DeviceComponentsTemplateRepository(_db);
-                return _deviceComponentsTemplateRepository;
+                return _deviceComponentsTemplateRepository ??= new DeviceComponentsTemplateRepository(_db);
             }
         }
         
         public IRepository<DeviceDesignTemplate> DeviceDesignTemplate {
             get
             {
-                if (_deviceDesignTemplateRepository == null)
-                    _deviceDesignTemplateRepository = new DeviceDesignTemplateRepository(_db);
-                return _deviceDesignTemplateRepository;
+                return _deviceDesignTemplateRepository ??= new DeviceDesignTemplateRepository(_db);
             }
         }
 
-        public IRepository<ObtainedComponent> ObtainedСomponents
+        public IRepository<ObtainedComponent> ObtainedComponents
         {
             get
             {
-                if (_obtainedComponentRepository == null)
-                    _obtainedComponentRepository = new ObtainedСomponentRepository(_db);
-                return _obtainedComponentRepository;
+                return _obtainedComponentRepository ??= new ObtainedComponentRepository(_db);
             }
         }
 
         public IRepository<ObtainedDesign> ObtainedDesigns
         {
-            get
-            {
-                if (_obtainedDesignRepository == null)
-                    _obtainedDesignRepository = new ObtainedDesignRepository(_db);
-                return _obtainedDesignRepository;
-            }
+            get { return _obtainedDesignRepository ??= new ObtainedDesignRepository(_db); }
         }
         
         public async System.Threading.Tasks.Task SaveAsync()

@@ -11,7 +11,7 @@ using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.DAL.Entities;
-using ProductionManagementSystem.Models;
+using ProductionManagementSystem.DAL.Enums;
 using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.Controllers

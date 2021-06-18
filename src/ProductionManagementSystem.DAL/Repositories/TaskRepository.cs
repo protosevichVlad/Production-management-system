@@ -10,7 +10,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 {
     public class TaskRepository : IRepository<Task>
     {
-        private ApplicationContext _db;
+        private readonly ApplicationContext _db;
 
         public TaskRepository(ApplicationContext context)
         {

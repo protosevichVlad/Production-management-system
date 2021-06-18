@@ -1,4 +1,4 @@
-﻿namespace ProductionManagementSystem.Models
+﻿namespace ProductionManagementSystem.DAL.Enums
 {
     public static class RoleEnum
     {

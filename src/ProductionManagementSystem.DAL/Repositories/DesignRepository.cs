@@ -12,7 +12,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 {
     public class DesignRepository : IRepository<Design>
     {
-        private ApplicationContext _db;
+        private readonly ApplicationContext _db;
 
         public DesignRepository(ApplicationContext context)
         {

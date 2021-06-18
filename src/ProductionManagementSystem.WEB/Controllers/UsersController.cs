@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.DAL.Entities;
-using ProductionManagementSystem.Models;
+using ProductionManagementSystem.DAL.Enums;
 using ProductionManagementSystem.WEB.Models.UserViewModels;
 
 namespace ProductionManagementSystem.Controllers

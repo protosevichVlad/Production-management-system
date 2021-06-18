@@ -10,18 +10,18 @@ using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
-    public class ObtainedСomponentRepository : IRepository<ObtainedComponent>
+    public class ObtainedComponentRepository : IRepository<ObtainedComponent>
     {
-        private ApplicationContext _db;
+        private readonly ApplicationContext _db;
 
-        public ObtainedСomponentRepository(ApplicationContext context)
+        public ObtainedComponentRepository(ApplicationContext context)
         {
             _db = context;
         }
 
         public async Task<IEnumerable<ObtainedComponent>> GetAllAsync()
         {
-            return await _db.ObtainedСomponents
+            return await _db.ObtainedComponents
                 .Include(c => c.Task)
                 .Include(c => c.Component)
                 .ToListAsync();
@@ -29,7 +29,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public async Task<ObtainedComponent> GetAsync(int id)
         {
-            return await _db.ObtainedСomponents
+            return await _db.ObtainedComponents
                 .Include(c => c.Task)
                 .Include(c => c.Component)
                 .FirstOrDefaultAsync(c => c.Id == id);
@@ -37,7 +37,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public IEnumerable<ObtainedComponent> Find(Func<ObtainedComponent, bool> predicate)
         {
-            return _db.ObtainedСomponents
+            return _db.ObtainedComponents
                 .AsNoTracking()
                 .Include(c => c.Task)
                 .Include(c => c.Component)
@@ -46,25 +46,24 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public async Task CreateAsync(ObtainedComponent item)
         {
-            await _db.ObtainedСomponents.AddAsync(item);
+            await _db.ObtainedComponents.AddAsync(item);
         }
 
         public void Update(ObtainedComponent item)
         {
-            var obtComp = _db.ObtainedСomponents.FirstOrDefault(obtainedComponent => obtainedComponent.Id == item.Id);
+            var obtComp = _db.ObtainedComponents.FirstOrDefault(obtainedComponent => obtainedComponent.Id == item.Id);
             if (obtComp != null)
             {
                 obtComp.Obtained = item.Obtained;
                 _db.SaveChanges(); 
             }
-            // _db.ObtainedСomponents.Update(item);
         }
 
         public async Task DeleteAsync(int id)
         {
-            var item = await _db.ObtainedСomponents.FindAsync(id);
+            var item = await _db.ObtainedComponents.FindAsync(id);
             if (item != null)
-                _db.ObtainedСomponents.Remove(item);
+                _db.ObtainedComponents.Remove(item);
         }
     }
 }

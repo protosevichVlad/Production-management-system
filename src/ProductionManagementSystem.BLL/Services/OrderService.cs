@@ -7,6 +7,7 @@ using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Entities;
+using ProductionManagementSystem.DAL.Enums;
 using ProductionManagementSystem.DAL.Interfaces;
 using Task = ProductionManagementSystem.DAL.Entities.Task;
 
@@ -28,7 +29,7 @@ namespace ProductionManagementSystem.BLL.Services
                     .ForMember(
                             order => order.Status,
                             opt => opt.MapFrom(
-                                src => _taskService.GetTaskStatusName(Models.StatusEnum.Assembly)
+                                src => _taskService.GetTaskStatusName(StatusEnum.Assembly)
                                 )
                             );
                 cfg.CreateMap<OrderDTO, Order>();

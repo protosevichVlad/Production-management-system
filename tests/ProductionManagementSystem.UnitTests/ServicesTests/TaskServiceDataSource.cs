@@ -1,4 +1,4 @@
-﻿using ProductionManagementSystem.Models;
+﻿using ProductionManagementSystem.DAL.Enums;
 
 namespace ProductionManagementSystem.UnitTests.ServicesTests
 {

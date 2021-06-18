@@ -12,7 +12,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 {
     public class LogRepository : IRepository<Log>
     {
-        private ApplicationContext _db;
+        private readonly ApplicationContext _db;
 
         public LogRepository(ApplicationContext context)
         {

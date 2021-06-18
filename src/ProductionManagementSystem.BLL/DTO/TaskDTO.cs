@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ProductionManagementSystem.DAL.Entities;
-using ProductionManagementSystem.Models;
+using ProductionManagementSystem.DAL.Enums;
 
 namespace ProductionManagementSystem.BLL.DTO
 {

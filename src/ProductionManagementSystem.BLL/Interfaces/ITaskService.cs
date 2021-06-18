@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.DAL.Entities;
-using ProductionManagementSystem.Models;
+using ProductionManagementSystem.DAL.Enums;
 using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Interfaces

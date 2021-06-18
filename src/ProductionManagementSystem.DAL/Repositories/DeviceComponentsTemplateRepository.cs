@@ -12,7 +12,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 {
     public class DeviceComponentsTemplateRepository : IRepository<DeviceComponentsTemplate>
     {
-        private ApplicationContext _db;
+        private readonly ApplicationContext _db;
 
         public DeviceComponentsTemplateRepository(ApplicationContext context)
         {

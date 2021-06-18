@@ -8,8 +8,8 @@ using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Entities;
+using ProductionManagementSystem.DAL.Enums;
 using ProductionManagementSystem.DAL.Repositories;
-using ProductionManagementSystem.Models;
 using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.UnitTests.ServicesTests
@@ -31,13 +31,13 @@ namespace ProductionManagementSystem.UnitTests.ServicesTests
             };
             
             var countTasksBefore = context.Tasks.Count();
-            var countObtainedComponentsBefore = context.ObtainedСomponents.Count();
+            var countObtainedComponentsBefore = context.ObtainedComponents.Count();
             var countObtainedDesignsBefore = context.ObtainedDesigns.Count();
             
             await taskService.CreateTaskAsync(taskDto);
             
             var countTasksAfter = context.Tasks.Count();
-            var countObtainedComponentsAfter = context.ObtainedСomponents.Count();
+            var countObtainedComponentsAfter = context.ObtainedComponents.Count();
             var countObtainedDesignsAfter = context.ObtainedDesigns.Count();
 
             // Assert
@@ -63,13 +63,13 @@ namespace ProductionManagementSystem.UnitTests.ServicesTests
             };
             
             var countTasksBefore = context.Tasks.Count();
-            var countObtainedComponentsBefore = context.ObtainedСomponents.Count();
+            var countObtainedComponentsBefore = context.ObtainedComponents.Count();
             var countObtainedDesignsBefore = context.ObtainedDesigns.Count();
             
             await taskService.UpdateTaskAsync(taskDto);
             
             var countTasksAfter = context.Tasks.Count();
-            var countObtainedComponentsAfter = context.ObtainedСomponents.Count();
+            var countObtainedComponentsAfter = context.ObtainedComponents.Count();
             var countObtainedDesignsAfter = context.ObtainedDesigns.Count();
 
             // Assert
@@ -135,13 +135,13 @@ namespace ProductionManagementSystem.UnitTests.ServicesTests
             var taskService = new TaskService(new EFUnitOfWork(context));
             
             var countTasksBefore = context.Tasks.Count();
-            var countObtainedComponentsBefore = context.ObtainedСomponents.Count();
+            var countObtainedComponentsBefore = context.ObtainedComponents.Count();
             var countObtainedDesignsBefore = context.ObtainedDesigns.Count();
             
             await taskService.DeleteTaskAsync(3); // deviceId 2
             
             var countTasksAfter = context.Tasks.Count();
-            var countObtainedComponentsAfter = context.ObtainedСomponents.Count();
+            var countObtainedComponentsAfter = context.ObtainedComponents.Count();
             var countObtainedDesignsAfter = context.ObtainedDesigns.Count();
 
             // Assert
@@ -247,8 +247,8 @@ namespace ProductionManagementSystem.UnitTests.ServicesTests
             // Assert
             Assert.AreEqual(9, (await context.Components.FirstOrDefaultAsync(c => c.Id == 1)).Quantity);
             Assert.AreEqual(18, (await context.Components.FirstOrDefaultAsync(c => c.Id == 2)).Quantity);
-            Assert.AreEqual(1, (await context.ObtainedСomponents.FirstOrDefaultAsync(o => o.ComponentId == 1)).Obtained);
-            Assert.AreEqual(2, (await context.ObtainedСomponents.FirstOrDefaultAsync(o => o.ComponentId == 2)).Obtained);
+            Assert.AreEqual(1, (await context.ObtainedComponents.FirstOrDefaultAsync(o => o.ComponentId == 1)).Obtained);
+            Assert.AreEqual(2, (await context.ObtainedComponents.FirstOrDefaultAsync(o => o.ComponentId == 2)).Obtained);
         }
         
         [Test]
@@ -263,7 +263,7 @@ namespace ProductionManagementSystem.UnitTests.ServicesTests
 
             // Assert
             Assert.AreEqual(9, (await context.Components.FirstOrDefaultAsync(c => c.Id == 1)).Quantity);
-            Assert.AreEqual(1, (await context.ObtainedСomponents.FirstOrDefaultAsync(o => o.ComponentId == 1)).Obtained);
+            Assert.AreEqual(1, (await context.ObtainedComponents.FirstOrDefaultAsync(o => o.ComponentId == 1)).Obtained);
         }
         
         [Test]

@@ -12,7 +12,7 @@ namespace ProductionManagementSystem.DAL.Repositories
 {
     public class OrderRepository : IRepository<Order>
     {
-        private ApplicationContext _db;
+        private readonly ApplicationContext _db;
 
         public OrderRepository(ApplicationContext context)
         {

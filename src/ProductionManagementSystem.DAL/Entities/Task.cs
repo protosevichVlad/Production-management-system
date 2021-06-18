@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ProductionManagementSystem.Models;
+using ProductionManagementSystem.DAL.Enums;
 
 namespace ProductionManagementSystem.DAL.Entities
 {

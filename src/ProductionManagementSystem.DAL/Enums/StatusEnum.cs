@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ProductionManagementSystem.Models
+namespace ProductionManagementSystem.DAL.Enums
 {
     [Flags]
     public enum StatusEnum

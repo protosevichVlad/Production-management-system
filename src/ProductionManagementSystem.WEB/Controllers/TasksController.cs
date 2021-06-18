@@ -4,7 +4,6 @@ using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductionManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
@@ -14,6 +13,7 @@ using ProductionManagementSystem.WEB.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using ProductionManagementSystem.DAL.Entities;
+using ProductionManagementSystem.DAL.Enums;
 using ObtainedComponent = ProductionManagementSystem.WEB.Models.ObtainedComponent;
 using ObtainedDesign = ProductionManagementSystem.WEB.Models.ObtainedDesign;
 
