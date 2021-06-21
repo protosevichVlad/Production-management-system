@@ -1,0 +1,55 @@
+﻿@model ProductionManagementSystem.WEB.Models.DesignViewModel;
+
+@{
+    ViewBag.Title = "Добавить " + Model.Name;
+}
+<h4>Добавить конструктив</h4>
+<div class="alert alert-info" role="alert">
+    Здесь вы можете добавить @Model.Name на склад
+</div>
+<hr />
+<dl class="row">
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.Type)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Type)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.Name)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Name)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.Quantity)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Quantity)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.ShortDescription)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.ShortDescription)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.Description)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Description)
+    </dd>
+    <div class="col-md-4">
+        <form action="" method="post">
+            <input hidden id="taskId" name="taskId" value="@ViewBag.TaskId">
+            <input hidden id="designId" name="designId" value="@Model.Id">
+            <div class="form-group">
+                <label for="quantity" class="control-label">Добавить</label>
+                <input name="quantity" id="quantity" class="form-control" type="number" autocomplete="off" value="0" min="0" required/>
+            </div>
+            <button class="btn btn-primary" onclick="">Добавить</button>
+            <a hidden href="/Orders/CreateDesign?taskId=@(ViewBag.TaskId)&designId=@(Model.Id)">Заказать</a>
+        </form>
+    </div>
+</dl>
+
