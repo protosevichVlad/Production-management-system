@@ -59,6 +59,9 @@ namespace ProductionManagementSystem.Controllers
             ViewData["StartDateSortParm"] = sortOrder == "StartDate" ? "startdate_desc" : "StartDate";
             ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
             ViewData["OrderIdSortParm"] = sortOrder == "OrderId" ? "orderid_desc" : "OrderId";
+            ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
+            ViewData["CurrentFilter"] = searchString;
+
 
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             var roles = await _userManager.GetRolesAsync(user);
@@ -66,10 +69,8 @@ namespace ProductionManagementSystem.Controllers
             var tasksViewModel =
                 _mapper.Map<IEnumerable<TaskDTO>, IEnumerable<TaskViewModel>>(tasksDto).ToList();
             
-            SortingTasks(tasksViewModel, sortOrder);
+            tasksViewModel = SortingTasks(tasksViewModel, sortOrder).ToList();
             
-
-            ViewData["CurrentFilter"] = searchString;
             
             return View(tasksViewModel);
         }
@@ -196,8 +197,8 @@ namespace ProductionManagementSystem.Controllers
             await _taskService.ReceiveDesignsAsync(taskId, designIds, designObt);
             return RedirectToAction(nameof(Details), new {id = taskId});
         }
-        
-        public static void SortingTasks(IEnumerable<TaskViewModel> tasks, string sortOrder)
+
+        private static IEnumerable<TaskViewModel> SortingTasks(IEnumerable<TaskViewModel> tasks, string sortOrder)
         {
             switch (sortOrder)
             {
@@ -228,10 +229,18 @@ namespace ProductionManagementSystem.Controllers
                 case "orderid_desc":
                     tasks = tasks.OrderByDescending(t => t.OrderId);
                     break;
+                case "Deadline":
+                    tasks = tasks.OrderBy(t => t.Deadline);
+                    break;
+                case "deadline_desc":
+                    tasks = tasks.OrderByDescending(t => t.Deadline);
+                    break;
                 default:
                     tasks = tasks.OrderBy(t => t.Id);
                     break;
             }
+
+            return tasks;
         }
 
         private IEnumerable<dynamic> GetStates(TaskDTO task)
