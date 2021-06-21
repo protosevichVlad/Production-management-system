@@ -3,7 +3,7 @@
 }
 <a class="btn btn-light" asp-action="Details" asp-route-id="@ViewBag.TaskId">Перейти к задаче</a>
 <form action="" method="post">
-    <input hidden value="@ViewBag.TaskId" name="TaskId">
+    <input hidden value="@ViewBag.TaskId" name="taskId">
     <table class="table">
         <thead>
         <tr>
@@ -17,6 +17,11 @@
         @foreach (var des in ViewBag.Designs)
         {
             var obtainedDes = ((IEnumerable<dynamic>) ViewBag.ObtainedDesigns).FirstOrDefault(d => des.Design.Id == d.Design.Id);
+            if (obtainedDes == null)
+            {
+                continue;
+            }
+            
             <tr @if (des.Quantity <= obtainedDes.Obtained) 
                 { 
                     @:class="table-success" 
@@ -25,10 +30,10 @@
                 <td>@des.Quantity</td>
                 <td>@des.Design.Quantity</td>
                 <td>@obtainedDes.Obtained</td>
-                <td><input type="number" name="DesignObt" autocomplete="off" required min="-@obtainedDes.Obtained" max="@des.Design.Quantity" value="0"></td>
+                <td><input type="number" name="designObt" autocomplete="off" required min="-@obtainedDes.Obtained" max="@des.Design.Quantity" value="0"></td>
             </tr>
-            <input type="number" name="DesignIds" hidden value="@des.Design.Id"/>
+            <input type="number" name="designIds" hidden value="@des.Design.Id"/>
         }
     </table>
-    <button class="btn">Получить</button>
+    <button class="btn btn-primary">Получить</button>
 </form>
