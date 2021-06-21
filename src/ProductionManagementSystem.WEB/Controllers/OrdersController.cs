@@ -16,14 +16,12 @@ namespace ProductionManagementSystem.Controllers
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
-        private readonly ITaskService _taskService;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
         
         
         public OrdersController(IOrderService orderService, ITaskService taskService)
         {
             _orderService = orderService;
-            _taskService = taskService;
             _mapper = new MapperConfiguration(cfg =>
                 {
                     cfg.CreateMap<OrderDTO, OrderViewModel>();
@@ -31,7 +29,7 @@ namespace ProductionManagementSystem.Controllers
                         .ForMember(
                         task => task.Status, 
                         opt => opt.MapFrom(
-                            src => _taskService.GetTaskStatusName(src.Status)
+                            src => taskService.GetTaskStatusName(src.Status)
                         )
                     );
                     cfg.CreateMap<DeviceDTO, DeviceViewModel>();
@@ -99,11 +97,11 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpPost]
         [ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirm(int? Id)
+        public async Task<IActionResult> DeleteConfirm(int? id)
         {
             try
             {
-                await _orderService.DeleteOrderAsync(Id);
+                await _orderService.DeleteOrderAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (PageNotFoundException)

@@ -21,7 +21,7 @@ namespace ProductionManagementSystem.Controllers
     {
         private readonly IComponentService _componentService;
         private readonly IDeviceService _deviceService;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
 
         public ComponentsController(IComponentService service, IDeviceService deviceService)
         {
@@ -45,6 +45,7 @@ namespace ProductionManagementSystem.Controllers
         /// <param name="sortOrder">Used for sorting.</param>
         /// <param name="searchString">Used for searching.</param>
         /// <param name="page">Current page.</param>
+        /// <param name="pageSize"></param>
         /// <returns>A page with all components sorted by parameter <paramref name="sortOrder"/> and satisfying <paramref name="searchString"/></returns>
         [HttpGet]
         public async Task<IActionResult> Index(string sortOrder, string searchString, int page=1, int pageSize = 50)
@@ -64,7 +65,7 @@ namespace ProductionManagementSystem.Controllers
                                                     || (c.Explanation?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
                                                     || (c.Nominal?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
                                                     || (c.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
-                                                    || (c.Manufacturer?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false));
+                                                    || (c.Manufacturer?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
             }
 
             ViewBag.PageSize = pageSize;
@@ -77,8 +78,9 @@ namespace ProductionManagementSystem.Controllers
             }
 
             ViewBag.PageSizes = pageSizes;
-            ViewBag.MaxPage = components.Count() / pageSize + (components.Count() % pageSize == 0 ? 0: 1);
-            ViewBag.CountComponents = components.Count();
+            var componentsDto = components.ToList();
+            ViewBag.MaxPage = componentsDto.Count() / pageSize + (componentsDto.Count() % pageSize == 0 ? 0: 1);
+            ViewBag.CountComponents = componentsDto.Count();
             if (page > ViewBag.MaxPage)
             {
                 page = 1;
@@ -87,22 +89,22 @@ namespace ProductionManagementSystem.Controllers
             switch (sortOrder)  
             {
                 case "name_desc":
-                    components = components.OrderByDescending(d => d.Name);
+                    components = componentsDto.OrderByDescending(d => d.Name);
                     break;
                 case "Type":
-                    components = components.OrderBy(d => d.Type);
+                    components = componentsDto.OrderBy(d => d.Type);
                     break;
                 case "type_desc":
-                    components = components.OrderByDescending(d => d.Type);
+                    components = componentsDto.OrderByDescending(d => d.Type);
                     break;
                 case "Quantity":
-                    components = components.OrderBy(d => d.Quantity);
+                    components = componentsDto.OrderBy(d => d.Quantity);
                     break;
                 case "quantity_desc":
-                    components = components.OrderByDescending(d => d.Quantity);
+                    components = componentsDto.OrderByDescending(d => d.Quantity);
                     break;
                 default:
-                    components = components.OrderBy(d => d.Name);
+                    components = componentsDto.OrderBy(d => d.Name);
                     break;
             }
 
@@ -125,16 +127,16 @@ namespace ProductionManagementSystem.Controllers
                     _mapper.Map<ComponentDTO, ComponentViewModel>(component);
                 return View(componentViewModel);
             }
-            catch (PageNotFoundException e)
+            catch (PageNotFoundException)
             {
-                throw new Exception("Страница не найдена.");;
+                throw new Exception("Страница не найдена.");
             }
         }
 
         // GET: Components/Create
         public async Task<IActionResult> Create()
         {
-            ViewBag.AllTypes = GetAllTypes();
+            ViewBag.AllTypes = await _componentService.GetTypesAsync();
             ViewBag.AllComponents = (await _componentService.GetComponentsAsync()).Select(c => c.Name).Distinct();
             return View();
         }
@@ -165,10 +167,10 @@ namespace ProductionManagementSystem.Controllers
                 var component = await _componentService.GetComponentAsync(id);
                 var componentViewModel =
                     _mapper.Map<ComponentDTO, ComponentViewModel>(component);
-                ViewBag.AllTypes = GetAllTypes();
+                ViewBag.AllTypes = await _componentService.GetTypesAsync();
                 return View(componentViewModel);
             }
-            catch (PageNotFoundException e)
+            catch (PageNotFoundException)
             {
                 throw new Exception("Страница не найдена.");
             }
@@ -183,24 +185,18 @@ namespace ProductionManagementSystem.Controllers
         {
             if (id != componentViewModel.Id)
             {
-                throw new Exception("Страница не найдена.");;
+                throw new Exception("Страница не найдена.");
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    var component =
-                        _mapper.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
-                    LogService.UserName = User.Identity?.Name;
-                    await _componentService.UpdateComponentAsync(component);
-                }
-                catch (Exception exception)
-                {
-                    throw;
-                }
-                return RedirectToAction(nameof(Edit), new {id = componentViewModel.Id});
+                var component =
+                    _mapper.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
+                LogService.UserName = User.Identity?.Name;
+                await _componentService.UpdateComponentAsync(component);
+                return RedirectToAction(nameof(Details), new {id = componentViewModel.Id});
             }
+            
             return View(componentViewModel);
         }
 
@@ -239,10 +235,6 @@ namespace ProductionManagementSystem.Controllers
                 ViewBag.ErrorHeader = e.Header;
                 return View(
                     _mapper.Map<ComponentDTO, ComponentViewModel>(await _componentService.GetComponentAsync(id)));
-            }
-            catch (Exception e)
-            {
-                throw;
             }
         }
         
@@ -295,7 +287,6 @@ namespace ProductionManagementSystem.Controllers
         /// </summary>
         /// <param name="componentId">Id of the component to add.</param>
         /// <param name="quantity">Quantity to add</param>
-        /// <param name="taskId">Task ID for quick return</param>
         /// <returns>Page /Components or the page with the task from which this page was called</returns>
         [HttpPost]
         public async Task<IActionResult> Add(int componentId, int quantity)

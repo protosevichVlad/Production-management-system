@@ -21,7 +21,7 @@ namespace ProductionManagementSystem.Controllers
     {
         private readonly IDesignService _designService;
         private readonly IDeviceService _deviceService;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
         
         
         public DesignsController(IDesignService service, IDeviceService deviceService)
@@ -63,8 +63,9 @@ namespace ProductionManagementSystem.Controllers
             }
 
             ViewBag.PageSizes = pageSizes;
-            ViewBag.MaxPage = designs.Count() / pageSize + (designs.Count() % pageSize == 0 ? 0: 1);
-            ViewBag.CountComponents = designs.Count();
+            var designsDto = designs.ToList();
+            ViewBag.MaxPage = designsDto.Count() / pageSize + (designsDto.Count() % pageSize == 0 ? 0: 1);
+            ViewBag.CountComponents = designsDto.Count();
             ViewBag.Page = page;
             if (page > ViewBag.MaxPage)
             {
@@ -74,22 +75,22 @@ namespace ProductionManagementSystem.Controllers
             switch (sortOrder)
             {
                 case "name_desc":
-                    designs = designs.OrderByDescending(d => d.Name);
+                    designs = designsDto.OrderByDescending(d => d.Name);
                     break;
                 case "Type":
-                    designs = designs.OrderBy(d => d.Type);
+                    designs = designsDto.OrderBy(d => d.Type);
                     break;
                 case "type_desc":
-                    designs = designs.OrderByDescending(d => d.Type);
+                    designs = designsDto.OrderByDescending(d => d.Type);
                     break;
                 case "Quantity":
-                    designs = designs.OrderBy(d => d.Quantity);
+                    designs = designsDto.OrderBy(d => d.Quantity);
                     break;
                 case "quantity_desc":
-                    designs = designs.OrderByDescending(d => d.Quantity);
+                    designs = designsDto.OrderByDescending(d => d.Quantity);
                     break;
                 default:
-                    designs = designs.OrderBy(d => d.Name);
+                    designs = designsDto.OrderBy(d => d.Name);
                     break;
             }
 
@@ -143,19 +144,11 @@ namespace ProductionManagementSystem.Controllers
         // GET: Designs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            try
-            {
-                var design = await _designService.GetDesignAsync(id);
-                var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
-                
-                ViewBag.AllTypes = _designService.GetTypesAsync();
-                return View(designViewModel);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var design = await _designService.GetDesignAsync(id);
+            var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
+            
+            ViewBag.AllTypes = await _designService.GetTypesAsync();
+            return View(designViewModel);
         }
 
         // POST: Designs/Edit/5
@@ -171,10 +164,11 @@ namespace ProductionManagementSystem.Controllers
                     var design = _mapper.Map<DesignViewModel, DesignDTO>(designViewModel);
                     LogService.UserName = User.Identity?.Name;
                     await _designService.UpdateDesignAsync(design);
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Details), new {id = designViewModel.Id});
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     throw;
                 }
             }
@@ -225,11 +219,11 @@ namespace ProductionManagementSystem.Controllers
         public async Task<JsonResult> GetAllDesigns()
         {
             IEnumerable<DesignDTO> designs = await _designService.GetDesignsAsync();
-                
             foreach (var des in designs)
             {
                 des.Name = des.ToString();
             }
+            
             return Json(designs);
         }
         

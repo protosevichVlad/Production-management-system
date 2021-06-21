@@ -16,8 +16,8 @@ namespace ProductionManagementSystem.Controllers
     [Authorize(Roles = RoleEnum.Admin)]
     public class LogsController : Controller
     {
-        private ILogService _logService;
-        private IMapper _mapper;
+        private readonly ILogService _logService;
+        private readonly IMapper _mapper;
 
         public LogsController(ILogService service)
         {

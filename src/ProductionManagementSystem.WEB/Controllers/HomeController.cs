@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +10,9 @@ namespace ProductionManagementSystem.Controllers
 {
     public class HomeController : Controller
     {
-        private IDatabaseService _databaseService;
-        private UserManager<ProductionManagementSystemUser> _userManager;
-        private RoleManager<IdentityRole> _roleManager;
+        private readonly IDatabaseService _databaseService;
+        private readonly UserManager<ProductionManagementSystemUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         
         public HomeController(IDatabaseService databaseService, UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -28,25 +26,6 @@ namespace ProductionManagementSystem.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult Reset()
-        {
-            return View();
-        }
-        
-        [HttpPost]
-        public async Task<string> Reset(string password)
-        {
-            if (password == "123Pass123")
-            {
-                _databaseService.ResetDatabase();
-                await new UsersController(_userManager, _roleManager).SetRoles();
-                return "ok";
-            }
-
-            return "failed";
-        }
-        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

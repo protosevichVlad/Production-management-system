@@ -22,13 +22,12 @@ namespace ProductionManagementSystem.Controllers
     [Authorize]
     public class TasksController : Controller
     {
-        private UserManager<ProductionManagementSystemUser> _userManager;
-        private RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ProductionManagementSystemUser> _userManager;
         private readonly ITaskService _taskService;
         private readonly IDeviceService _deviceService;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
 
-        public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
+        public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<ProductionManagementSystemUser> userManager)
         {
             _taskService = taskService;
             _deviceService = deviceService;
@@ -51,7 +50,6 @@ namespace ProductionManagementSystem.Controllers
                 })
                 .CreateMapper();
             _userManager = userManager;
-            _roleManager = roleManager;
         }
 
         public async Task<IActionResult> Index(string sortOrder, string searchString)
@@ -102,7 +100,7 @@ namespace ProductionManagementSystem.Controllers
                 ViewBag.Logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(_taskService.GetLogs(id));
                 return View(taskViewModel);
             }
-            catch (PageNotFoundException e)
+            catch (PageNotFoundException)
             {
                 throw new Exception("Страница не найдена.");
             }
@@ -116,21 +114,21 @@ namespace ProductionManagementSystem.Controllers
                 var taskViewModel = _mapper.Map<TaskDTO, TaskViewModel>(taskDto);
                 return View(taskViewModel);
             }
-            catch (PageNotFoundException e)
+            catch (PageNotFoundException)
             {
                 throw new Exception("Страница не найдена.");
             }
         }
         
         [HttpPost]
-        public async Task<IActionResult> Delete(int Id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                await _taskService.DeleteTaskAsync(Id);
+                await _taskService.DeleteTaskAsync(id);
                 return RedirectToAction(nameof(Index));
             }
-            catch (PageNotFoundException e)
+            catch (PageNotFoundException)
             {
                 throw new Exception("Страница не найдена.");
             }
@@ -145,7 +143,7 @@ namespace ProductionManagementSystem.Controllers
                 ViewBag.Devices = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
                 return View(taskViewModel);
             }
-            catch (PageNotFoundException e)
+            catch (PageNotFoundException)
             {
                 throw new Exception("Страница не найдена.");
             }
@@ -177,10 +175,10 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReceiveComponent(int TaskId, int[] ComponentIds, int[] ComponentObt)
+        public async Task<IActionResult> ReceiveComponent(int taskId, int[] componentIds, int[] componentObt)
         {
-            await _taskService.ReceiveComponentsAsync(TaskId, ComponentIds, ComponentObt);
-            return RedirectToAction(nameof(Details), new {id = TaskId});
+            await _taskService.ReceiveComponentsAsync(taskId, componentIds, componentObt);
+            return RedirectToAction(nameof(Details), new {id = taskId});
         }
         
         [HttpGet]
@@ -193,10 +191,10 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReceiveDesign(int TaskId, int[] DesignIds, int[] DesignObt)
+        public async Task<IActionResult> ReceiveDesign(int taskId, int[] designIds, int[] designObt)
         {
-            await _taskService.ReceiveDesignsAsync(TaskId, DesignIds, DesignObt);
-            return RedirectToAction(nameof(Details), new {id = TaskId});
+            await _taskService.ReceiveDesignsAsync(taskId, designIds, designObt);
+            return RedirectToAction(nameof(Details), new {id = taskId});
         }
         
         public static void SortingTasks(IEnumerable<TaskViewModel> tasks, string sortOrder)

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Enums;
 using ProductionManagementSystem.WEB.Models.UserViewModels;
@@ -14,8 +15,8 @@ namespace ProductionManagementSystem.Controllers
     [Authorize(Roles=RoleEnum.Admin)]
     public class UsersController : Controller
     {
-        private UserManager<ProductionManagementSystemUser> _userManager;
-        private RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ProductionManagementSystemUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public UsersController(UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -25,55 +26,9 @@ namespace ProductionManagementSystem.Controllers
 
         public async Task<IActionResult> Index()
         {            
-            return View(_userManager.Users.ToList());
+            return View(await _userManager.Users.ToListAsync());
         } 
         
-        [AllowAnonymous]
-        public async Task<string> SetRoles()
-        {
-            string adminEmail = "admin";
-            string password = "123456";
-            if (await _roleManager.FindByNameAsync(RoleEnum.Admin) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Admin));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.OrderPicker) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.OrderPicker));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.Assembler) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Assembler));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.Tuner) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Tuner));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.Collector) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Collector));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.Validating) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Validating));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.Shipper) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Shipper));
-            }
-            if (await _roleManager.FindByNameAsync(adminEmail) == null)
-            {
-                var admin = new ProductionManagementSystemUser() { Email = adminEmail, UserName = adminEmail, EmailConfirmed = true };
-                IdentityResult result = await _userManager.CreateAsync(admin, password);
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRolesAsync(admin, new[] { RoleEnum.Admin, RoleEnum.Assembler, RoleEnum.Collector, RoleEnum.OrderPicker, RoleEnum.Shipper, RoleEnum.Tuner, RoleEnum.Validating });
-                }
-            }
-
-            return "Ok";
-        }
-
         public async Task<ActionResult> Delete(string userName)
         {
             if (userName == "admin")
@@ -92,7 +47,7 @@ namespace ProductionManagementSystem.Controllers
             var user = await _userManager.FindByNameAsync(userName);
             if (user != null)
             {
-                IdentityResult result = await _userManager.DeleteAsync(user);
+                await _userManager.DeleteAsync(user);
             }
             return RedirectToAction(nameof(Index));
         }

@@ -20,17 +20,18 @@ namespace ProductionManagementSystem.Controllers
         private readonly IDeviceService _deviceService;
         private readonly IComponentService _componentService;
         private readonly IDesignService _designService;
-        private IMapper _mapperToViewModel;
-        private IMapper _mapperFromViewModel;
+        private readonly IMapper _mapper;
 
         public DevicesController(IDeviceService deviceService, IComponentService componentService, IDesignService designService)
         {
             _deviceService = deviceService;
             _componentService = componentService;
             _designService = designService;
-            _mapperToViewModel = new MapperConfiguration(cfg => cfg.CreateMap<DeviceDTO, DeviceViewModel>())
-                .CreateMapper();
-            _mapperFromViewModel = new MapperConfiguration(cfg => cfg.CreateMap<DeviceViewModel, DeviceDTO>())
+            _mapper = new MapperConfiguration(cfg =>
+                {
+                    cfg.CreateMap<DeviceViewModel, DeviceDTO>();
+                    cfg.CreateMap<DeviceDTO, DeviceViewModel>();
+                })
                 .CreateMapper();
         }
 
@@ -63,7 +64,7 @@ namespace ProductionManagementSystem.Controllers
                     break;
             }
             
-            return View(_mapperToViewModel.Map<IEnumerable<DeviceDTO>, IEnumerable<DeviceViewModel>>(devices));
+            return View(_mapper.Map<IEnumerable<DeviceDTO>, IEnumerable<DeviceViewModel>>(devices));
         }
 
         [HttpGet]
@@ -75,7 +76,7 @@ namespace ProductionManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(DeviceViewModel deviceViewModel)
         {
-            DeviceDTO device = _mapperFromViewModel.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
+            DeviceDTO device = _mapper.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
             LogService.UserName = User.Identity?.Name;
             await _deviceService.CreateDeviceAsync(device);
             return RedirectToAction(nameof(Index));
@@ -87,7 +88,7 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 var device = await _deviceService.GetDeviceAsync(id);
-                var deviceViewModel = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(device);
+                var deviceViewModel = _mapper.Map<DeviceDTO, DeviceViewModel>(device);
                 ViewBag.Components = await _componentService.GetComponentsAsync();
                 ViewBag.Designs = await _designService.GetDesignsAsync();
                 return View(deviceViewModel);
@@ -104,7 +105,7 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
-                DeviceDTO device = _mapperFromViewModel.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
+                DeviceDTO device = _mapper.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
                 LogService.UserName = User.Identity?.Name;
                 await _deviceService.UpdateDeviceAsync(device);
                 return RedirectToAction(nameof(Details), new {id = device.Id});
@@ -128,7 +129,7 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
-                var device = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id));
+                var device = _mapper.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id));
                 ViewBag.ErrorMessage = TempData["ErrorMessage"];
                 ViewBag.ErrorHeader = TempData["ErrorHeader"];
                 TempData["ErrorMessage"] = null;
@@ -146,7 +147,7 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
-                var device = _mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id));
+                var device = _mapper.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id));
                 return View(device);
             }
             catch (Exception e)
@@ -171,7 +172,7 @@ namespace ProductionManagementSystem.Controllers
             {
                 ViewBag.ErrorMessage = e.Message;
                 ViewBag.ErrorHeader = e.Header;
-                return View(_mapperToViewModel.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id)));
+                return View(_mapper.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id)));
             }
             catch (Exception e)
             {
