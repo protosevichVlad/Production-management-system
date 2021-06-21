@@ -37,6 +37,15 @@ namespace ProductionManagementSystem.BLL.Services
                 cfg.CreateMap<TaskDTO, Task>();
                 cfg.CreateMap<Device, DeviceDTO>();
                 cfg.CreateMap<DeviceDTO, Device>();
+                cfg.CreateMap<Log, LogDTO>();
+                cfg.CreateMap<ObtainedDesign, ObtainedDesignDTO>();
+                cfg.CreateMap<ObtainedDesignDTO, ObtainedDesign>();
+                cfg.CreateMap<ObtainedComponent, ObtainedComponentDTO>();
+                cfg.CreateMap<ObtainedComponentDTO, ObtainedComponent>();
+                cfg.CreateMap<ComponentDTO, Component>();
+                cfg.CreateMap<Component, ComponentDTO>();
+                cfg.CreateMap<DesignDTO, Design>();
+                cfg.CreateMap<Design, DesignDTO>();
             }).CreateMapper();
 
         }
