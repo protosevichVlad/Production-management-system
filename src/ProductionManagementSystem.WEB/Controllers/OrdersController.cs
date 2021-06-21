@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -69,11 +70,20 @@ namespace ProductionManagementSystem.Controllers
             return View(orderModel);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string sortOrder)
         {
             try
             {
+                ViewData["NumSortParm"] = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
+                ViewData["DeviceSortParm"] = sortOrder == "Device" ? "device_desc" : "Device";
+                ViewData["StartDateSortParm"] = sortOrder == "StartDate" ? "startdate_desc" : "StartDate";
+                ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
+                ViewData["OrderIdSortParm"] = sortOrder == "OrderId" ? "orderid_desc" : "OrderId";
+                ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
+                
                 var orderViewModel = _mapper.Map<OrderDTO, OrderViewModel>(await _orderService.GetOrderAsync(id));
+
+                orderViewModel.Tasks = SortingTasks(orderViewModel.Tasks, sortOrder).ToList();
                 return View(orderViewModel);
             }
             catch (PageNotFoundException)
@@ -108,6 +118,51 @@ namespace ProductionManagementSystem.Controllers
             {
                 throw new Exception("Страница не найдена.");
             }       
+        }
+        
+        private static IEnumerable<TaskViewModel> SortingTasks(IEnumerable<TaskViewModel> tasks, string sortOrder)
+        {
+            switch (sortOrder)
+            {
+                case "num_desc":
+                    tasks = tasks.OrderByDescending(t => t.Id);
+                    break;
+                case "Device":
+                    tasks = tasks.OrderBy(t => t.Device.Name);
+                    break;
+                case "device_desc":
+                    tasks = tasks.OrderByDescending(t => t.Device.Name);
+                    break;
+                case "StartDate":
+                    tasks = tasks.OrderBy(t => t.StartTime);
+                    break;
+                case "startdate_desc":
+                    tasks = tasks.OrderByDescending(t => t.StartTime);
+                    break;
+                case "Status":
+                    tasks = tasks.OrderBy(t => t.Status);
+                    break;
+                case "status_desc":
+                    tasks = tasks.OrderByDescending(t => t.Status);
+                    break;
+                case "OrderId":
+                    tasks = tasks.OrderBy(t => t.OrderId);
+                    break;
+                case "orderid_desc":
+                    tasks = tasks.OrderByDescending(t => t.OrderId);
+                    break;
+                case "Deadline":
+                    tasks = tasks.OrderBy(t => t.Deadline);
+                    break;
+                case "deadline_desc":
+                    tasks = tasks.OrderByDescending(t => t.Deadline);
+                    break;
+                default:
+                    tasks = tasks.OrderBy(t => t.Id);
+                    break;
+            }
+
+            return tasks;
         }
     }
 }
