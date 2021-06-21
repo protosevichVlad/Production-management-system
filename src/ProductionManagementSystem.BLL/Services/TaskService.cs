@@ -128,7 +128,8 @@ namespace ProductionManagementSystem.BLL.Services
             
             await _database.SaveAsync();
 
-            logString += $"на {GetTaskStatusName(task.Status)} с сообщением: {message}";
+            logString += $"на {GetTaskStatusName(task.Status)}" + 
+                         (String.IsNullOrWhiteSpace(message) ? $" с сообщением: {message}": String.Empty);
             await _logService.CreateLogAsync(new LogDTO(logString) {TaskId = task.Id, OrderId = task.OrderId});
         }
 
