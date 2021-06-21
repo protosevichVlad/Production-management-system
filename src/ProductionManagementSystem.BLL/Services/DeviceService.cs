@@ -71,7 +71,7 @@ namespace ProductionManagementSystem.BLL.Services
             _database.Devices.Update(deviceFromDb);
             await _database.SaveAsync();
             
-            await _log.CreateLogAsync(new LogDTO($"Был изменён прибор: {deviceDto}"){ComponentId = deviceFromDb.Id});
+            await _log.CreateLogAsync(new LogDTO($"Был изменён прибор: {deviceDto}"){DeviceId = deviceFromDb.Id});
         }
 
         public async Task<IEnumerable<DeviceDTO>> GetDevicesAsync()
