@@ -45,9 +45,16 @@ namespace ProductionManagementSystem.Controllers
                 .CreateMapper();
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
+            ViewData["NumSortParm"] = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
+            ViewData["NameSortParm"] = sortOrder == "Name" ? "name_desc" : "Name";
+            ViewData["StartDateSortParm"] = sortOrder == "StartDate" ? "startdate_desc" : "StartDate";
+            ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
+            ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
+            
             var ordersViewModel = _mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(await _orderService.GetOrdersAsync());
+            ordersViewModel = SortingOrders(ordersViewModel, sortOrder);
             return View(ordersViewModel);
         }
         
@@ -78,7 +85,6 @@ namespace ProductionManagementSystem.Controllers
                 ViewData["DeviceSortParm"] = sortOrder == "Device" ? "device_desc" : "Device";
                 ViewData["StartDateSortParm"] = sortOrder == "StartDate" ? "startdate_desc" : "StartDate";
                 ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
-                ViewData["OrderIdSortParm"] = sortOrder == "OrderId" ? "orderid_desc" : "OrderId";
                 ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
                 
                 var orderViewModel = _mapper.Map<OrderDTO, OrderViewModel>(await _orderService.GetOrderAsync(id));
@@ -120,49 +126,88 @@ namespace ProductionManagementSystem.Controllers
             }       
         }
         
-        private static IEnumerable<TaskViewModel> SortingTasks(IEnumerable<TaskViewModel> tasks, string sortOrder)
+        private static IEnumerable<TaskViewModel> SortingTasks(IEnumerable<TaskViewModel> items, string sortOrder)
         {
             switch (sortOrder)
             {
                 case "num_desc":
-                    tasks = tasks.OrderByDescending(t => t.Id);
+                    items = items.OrderByDescending(t => t.Id);
                     break;
                 case "Device":
-                    tasks = tasks.OrderBy(t => t.Device.Name);
+                    items = items.OrderBy(t => t.Device.Name);
                     break;
                 case "device_desc":
-                    tasks = tasks.OrderByDescending(t => t.Device.Name);
+                    items = items.OrderByDescending(t => t.Device.Name);
                     break;
                 case "StartDate":
-                    tasks = tasks.OrderBy(t => t.StartTime);
+                    items = items.OrderBy(t => t.StartTime);
                     break;
                 case "startdate_desc":
-                    tasks = tasks.OrderByDescending(t => t.StartTime);
+                    items = items.OrderByDescending(t => t.StartTime);
                     break;
                 case "Status":
-                    tasks = tasks.OrderBy(t => t.Status);
+                    items = items.OrderBy(t => t.Status);
                     break;
                 case "status_desc":
-                    tasks = tasks.OrderByDescending(t => t.Status);
+                    items = items.OrderByDescending(t => t.Status);
                     break;
                 case "OrderId":
-                    tasks = tasks.OrderBy(t => t.OrderId);
+                    items = items.OrderBy(t => t.OrderId);
                     break;
                 case "orderid_desc":
-                    tasks = tasks.OrderByDescending(t => t.OrderId);
+                    items = items.OrderByDescending(t => t.OrderId);
                     break;
                 case "Deadline":
-                    tasks = tasks.OrderBy(t => t.Deadline);
+                    items = items.OrderBy(t => t.Deadline);
                     break;
                 case "deadline_desc":
-                    tasks = tasks.OrderByDescending(t => t.Deadline);
+                    items = items.OrderByDescending(t => t.Deadline);
                     break;
                 default:
-                    tasks = tasks.OrderBy(t => t.Id);
+                    items = items.OrderBy(t => t.Id);
                     break;
             }
 
-            return tasks;
+            return items;
+        }
+        
+        private static IEnumerable<OrderViewModel> SortingOrders(IEnumerable<OrderViewModel> items, string sortOrder)
+        {
+            switch (sortOrder)
+            {
+                case "num_desc":
+                    items = items.OrderByDescending(t => t.Id);
+                    break;
+                case "StartDate":
+                    items = items.OrderBy(t => t.DateStart);
+                    break;
+                case "startdate_desc":
+                    items = items.OrderByDescending(t => t.DateStart);
+                    break;
+                case "Name":
+                    items = items.OrderBy(t => t.Customer);
+                    break;
+                case "name_desc":
+                    items = items.OrderByDescending(t => t.Customer);
+                    break;
+                case "Status":
+                    items = items.OrderBy(t => t.Status);
+                    break;
+                case "status_desc":
+                    items = items.OrderByDescending(t => t.Status);
+                    break;
+                case "Deadline":
+                    items = items.OrderBy(t => t.Deadline);
+                    break;
+                case "deadline_desc":
+                    items = items.OrderByDescending(t => t.Deadline);
+                    break;
+                default:
+                    items = items.OrderBy(t => t.Id);
+                    break;
+            }
+
+            return items;
         }
     }
 }
