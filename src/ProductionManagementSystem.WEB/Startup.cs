@@ -55,7 +55,7 @@ namespace ProductionManagementSystem
             });
 
             var uow = new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection"));
-            
+            uow.InitDb();
             services.AddScoped<IComponentService>(_ => new ComponentService(uow));
             services.AddScoped<IDesignService>(_ => new DesignService(uow));
             services.AddScoped<IDeviceService>(_ => new DeviceService(uow));
@@ -99,7 +99,6 @@ namespace ProductionManagementSystem
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
-
         }
     }
 }
