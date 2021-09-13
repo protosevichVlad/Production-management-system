@@ -18,6 +18,8 @@ namespace ProductionManagementSystem.DAL.Repositories
         private DeviceDesignTemplateRepository _deviceDesignTemplateRepository;
         private ObtainedDesignRepository _obtainedDesignRepository;
         private ObtainedСomponentRepository _obtainedComponentRepository;
+        private ComponentsSupplyRequestRepository _componentsSupplyRequestRepository;
+        private DesignsSupplyRequestRepository _designsSupplyRequestRepository;
 
         public EFUnitOfWork(string connectionString)
         {
@@ -120,7 +122,27 @@ namespace ProductionManagementSystem.DAL.Repositories
                 return _obtainedDesignRepository;
             }
         }
-        
+
+        public IRepository<ComponentsSupplyRequest> ComponentSupplyRequests 
+        {  
+            get
+            {
+                if (_componentsSupplyRequestRepository == null)
+                    _componentsSupplyRequestRepository = new ComponentsSupplyRequestRepository(_db);
+                return _componentsSupplyRequestRepository;
+            } 
+        }
+
+        public IRepository<DesignsSupplyRequest> DesignsSupplyRequests
+        {
+            get
+            {
+                if (_designsSupplyRequestRepository == null)
+                    _designsSupplyRequestRepository = new DesignsSupplyRequestRepository(_db);
+                return _designsSupplyRequestRepository;
+            } 
+        }
+
         public async System.Threading.Tasks.Task SaveAsync()
         {
             await _db.SaveChangesAsync();
