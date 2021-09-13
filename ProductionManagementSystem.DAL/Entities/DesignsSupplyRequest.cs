@@ -10,7 +10,6 @@ namespace ProductionManagementSystem.DAL.Entities
         public Order Order { get; set; }
         public int DesignId { get; set; }
         public Design Design { get; set; }
-        public int ProductionManagementSystemUserId { get; set; }
         public ProductionManagementSystemUser User { get; set; }
         public DateTime DateAdded { get; set; }
         public DateTime DesiredDate { get; set; }
