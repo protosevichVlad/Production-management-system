@@ -14,7 +14,7 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    OrderId = table.Column<int>(type: "int", nullable: true),
+                    TaskId = table.Column<int>(type: "int", nullable: true),
                     ComponentId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: true),
                     DateAdded = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -39,9 +39,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ComponentsSupplyRequests_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
+                        name: "FK_ComponentsSupplyRequests_Tasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "Tasks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -52,7 +52,7 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    OrderId = table.Column<int>(type: "int", nullable: true),
+                    TaskId = table.Column<int>(type: "int", nullable: true),
                     DesignId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: true),
                     DateAdded = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -77,9 +77,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DesignsSupplyRequests_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
+                        name: "FK_DesignsSupplyRequests_Tasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "Tasks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -90,9 +90,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                 column: "ComponentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ComponentsSupplyRequests_OrderId",
+                name: "IX_ComponentsSupplyRequests_TaskId",
                 table: "ComponentsSupplyRequests",
-                column: "OrderId");
+                column: "TaskId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ComponentsSupplyRequests_UserId",
@@ -105,9 +105,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                 column: "DesignId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DesignsSupplyRequests_OrderId",
+                name: "IX_DesignsSupplyRequests_TaskId",
                 table: "DesignsSupplyRequests",
-                column: "OrderId");
+                column: "TaskId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DesignsSupplyRequests_UserId",

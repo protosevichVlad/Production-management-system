@@ -6,8 +6,8 @@ namespace ProductionManagementSystem.DAL.Entities
     public class ComponentsSupplyRequest
     {
         public int Id { get; set; }
-        public int? OrderId { get; set; }
-        public Order Order { get; set; }
+        public int? TaskId { get; set; }
+        public Task Task { get; set; }
         public int ComponentId { get; set; }
         public Component Component { get; set; }
         public ProductionManagementSystemUser User { get; set; }

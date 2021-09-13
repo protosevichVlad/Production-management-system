@@ -195,13 +195,13 @@ namespace ProductionManagementSystem.DAL.Migrations
                     b.Property<DateTime>("DesiredDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<int>("StatusSupply")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TaskId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -211,7 +211,7 @@ namespace ProductionManagementSystem.DAL.Migrations
 
                     b.HasIndex("ComponentId");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("TaskId");
 
                     b.HasIndex("UserId");
 
@@ -262,13 +262,13 @@ namespace ProductionManagementSystem.DAL.Migrations
                     b.Property<DateTime>("DesiredDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<int>("StatusSupply")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TaskId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -278,7 +278,7 @@ namespace ProductionManagementSystem.DAL.Migrations
 
                     b.HasIndex("DesignId");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("TaskId");
 
                     b.HasIndex("UserId");
 
@@ -624,9 +624,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProductionManagementSystem.DAL.Entities.Order", "Order")
+                    b.HasOne("ProductionManagementSystem.DAL.Entities.Task", "Task")
                         .WithMany()
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("TaskId");
 
                     b.HasOne("ProductionManagementSystem.DAL.Entities.ProductionManagementSystemUser", "User")
                         .WithMany()
@@ -634,7 +634,7 @@ namespace ProductionManagementSystem.DAL.Migrations
 
                     b.Navigation("Component");
 
-                    b.Navigation("Order");
+                    b.Navigation("Task");
 
                     b.Navigation("User");
                 });
@@ -647,9 +647,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProductionManagementSystem.DAL.Entities.Order", "Order")
+                    b.HasOne("ProductionManagementSystem.DAL.Entities.Task", "Task")
                         .WithMany()
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("TaskId");
 
                     b.HasOne("ProductionManagementSystem.DAL.Entities.ProductionManagementSystemUser", "User")
                         .WithMany()
@@ -657,7 +657,7 @@ namespace ProductionManagementSystem.DAL.Migrations
 
                     b.Navigation("Design");
 
-                    b.Navigation("Order");
+                    b.Navigation("Task");
 
                     b.Navigation("User");
                 });
