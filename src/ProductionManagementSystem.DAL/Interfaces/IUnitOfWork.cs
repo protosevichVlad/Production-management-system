@@ -15,11 +15,12 @@ namespace ProductionManagementSystem.DAL.Interfaces
         IRepository<DeviceComponentsTemplate> DeviceComponentsTemplate { get; }
         IRepository<DeviceDesignTemplate> DeviceDesignTemplate { get; }
         
-        IRepository<ObtainedComponent> ObtainedComponents { get; }
+        IRepository<ObtainedComponent> ObtainedСomponents { get; }
         IRepository<ObtainedDesign> ObtainedDesigns { get; }
 
-        void InitDb();
-        
+        IRepository<ComponentsSupplyRequest> ComponentSupplyRequests { get; }
+        IRepository<DesignsSupplyRequest> DesignsSupplyRequests { get; }
+
         void ResetDatabase();
         
         System.Threading.Tasks.Task SaveAsync();
