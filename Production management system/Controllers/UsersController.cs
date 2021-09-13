@@ -28,52 +28,6 @@ namespace ProductionManagementSystem.Controllers
             return View(_userManager.Users.ToList());
         } 
         
-        [AllowAnonymous]
-        public async Task<string> SetRoles()
-        {
-            string adminEmail = "admin";
-            string password = "123456";
-            if (await _roleManager.FindByNameAsync(RoleEnum.Admin) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Admin));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.OrderPicker) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.OrderPicker));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.Assembler) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Assembler));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.Tuner) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Tuner));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.Collector) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Collector));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.Validating) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Validating));
-            }
-            if (await _roleManager.FindByNameAsync(RoleEnum.Shipper) == null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(RoleEnum.Shipper));
-            }
-            if (await _roleManager.FindByNameAsync(adminEmail) == null)
-            {
-                var admin = new ProductionManagementSystemUser() { Email = adminEmail, UserName = adminEmail, EmailConfirmed = true };
-                IdentityResult result = await _userManager.CreateAsync(admin, password);
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRolesAsync(admin, new[] { RoleEnum.Admin, RoleEnum.Assembler, RoleEnum.Collector, RoleEnum.OrderPicker, RoleEnum.Shipper, RoleEnum.Tuner, RoleEnum.Validating });
-                }
-            }
-
-            return "Ok";
-        }
-
         public async Task<ActionResult> Delete(string userName)
         {
             if (userName == "admin")
