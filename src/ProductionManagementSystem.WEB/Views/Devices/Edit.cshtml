@@ -1,0 +1,159 @@
+﻿@model ProductionManagementSystem.WEB.Models.DeviceViewModel;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Изменение прибора";
+}
+<h4>Редактировать прибор</h4>
+<div class="alert alert-info" role="alert">
+    Здесь вы можете изменить информацию о @Model.Name.
+</div>
+<hr/>
+<form method="post" action="">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="Name" class="control-label">Наименование:</label>
+                <input id="Name" name="Name" class="form-control" autocomplete="off" required value="@Model.Name"/>
+            </div>
+            <div class="form-group">
+                <label for="Quantity" class="control-label">Количество на складе:</label>
+                <input id="Quantity" name="Quantity" class="form-control" type="number" required value="@Model.Quantity" autocomplete="off" min="0"/>
+            </div>
+            <div class="form-group">
+                <label for="Description" class="control-label">Описание:</label>
+                <textarea id="Description" name="Description" class="form-control" autocomplete="off">@Model.Description</textarea>
+            </div>
+        </div>
+    </div>
+    <input type="number" name="Id" value="@Model.Id" hidden><br>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h3>
+                    Монтаж
+                </h3>
+            </div>
+        </div>
+        <div class="row table-responsive">
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th>№</th>
+                    <th class="td-with-name">Наименование</th>
+                    <th>Количество</th>
+                    <th class="td-with-description">Примечание</th>
+                    <th class="border-0"></th>
+                </tr>
+                </thead>
+                @for (int i = 0; i < Model.ComponentNames.Length; i++)
+                {
+                    <tr id="comTr@(i + 1)">
+                        <td class="ComponentIds">
+                            @(i + 1)
+                        </td>
+                        <td class="td-with-name">
+                            <select class="ComponentSelect align-top width-100 form-select js-example-basic-single" name="ComponentIds">
+                                @foreach (var c in ViewBag.Components)
+                                {
+                                    @if (c.Id == Model.ComponentIds[i])
+                                    {
+                                        <option value="@c.Id" selected>@c.ToString()</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@c.Id">@c.ToString()</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input class="ComponentInput align-top form-control" name="ComponentQuantity" type="number" value="@Model.ComponentQuantity[i]" required autocomplete="off" min="0"/>
+                        </td>
+                        <td class="td-with-description">
+                            <textarea class="align-top w-100 form-control" name="ComponentDescriptions">@Model.ComponentDescriptions[i]</textarea>
+                        </td>
+                        <td class="border-0">
+                            <button type="button" class="btn-close" aria-label="Close" onclick="removeComponent(@(i + 1))"></button>
+                        </td>
+                    </tr>
+                }
+                <tr id="comTr0"></tr>
+            </table>
+            <button type="button" onclick="createComponent()" class="btn btn-link" id="buttonCreateComponent">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                Добавить монтаж
+            </button>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h3>
+                    Конструктив
+                </h3>
+            </div>
+        </div>
+        <div class="row table-responsive">
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th>№</th>
+                    <th class="td-with-name">Наименование</th>
+                    <th>Количество</th>
+                    <th class="td-with-description">Примечание</th>
+                    <th class="border-0"></th>
+                </tr>
+                </thead>
+                @for (int i = 0; i < Model.DesignNames.Length; i++)
+                {
+                    <tr id="desTr@(i + 1)">
+                        <td class="DesignIds">
+                            @(i + 1)
+                        </td>
+                        <td class="td-with-name">
+                            <select class="DesignSelect align-top width-100 form-select js-example-basic-single" name="DesignIds">
+                                @foreach (var d in ViewBag.Designs)
+                                {
+                                    @if (Model.DesignIds[i] == d.Id)
+                                    {
+                                        <option value="@d.Id" selected>@d.ToString()</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@d.Id">@d.ToString()</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input class="DesignInput align-top form-control" name="DesignQuantity" type="number" required value="@Model.DesignQuantity[i]" autocomplete="off" min="0"/>
+                        </td>
+                        <td class="td-with-description">
+                            <textarea class="align-top w-100 form-control" name="DesignDescriptions">@Model.DesignDescriptions[i]</textarea>
+                        </td>
+                        <td class="border-0">
+                            <button type="button" class="btn-close" aria-label="Close" onclick="removeDesign(@(i + 1))"></button>
+                        </td>
+                    </tr>
+                }
+                <tr id="desTr0"></tr>
+            </table>
+            <button type="button" onclick="createDesign()" class="btn btn-link" id="buttonCreateDesign">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                Добавить конструктив
+            </button>
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Изменить</button>
+</form>
+
+<div>
+    <a asp-action="Index">Вернуться к списку приборов</a>
+</div>
+
+@section Scripts
+{
+    <script>
+        $('.js-example-basic-single').select2();
+    </script>
+}

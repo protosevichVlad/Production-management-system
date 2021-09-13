@@ -1,0 +1,86 @@
+﻿@model ProductionManagementSystem.WEB.Models.DeviceViewModel;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Добавление прибора";
+}
+<h4 xmlns="">Создать прибор</h4>
+<div class="alert alert-info" role="alert">
+    Здесь вы можете создать новый шаблон для прибора.
+</div>
+<hr />
+<form method="post" action="">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">Наименование:</label>
+                <input asp-for="Name" class="form-control" autocomplete="off" required/>
+            </div>
+            <div class="form-group">
+                <label asp-for="Quantity" class="control-label">Количество на складе:</label>
+                <input asp-for="Quantity" class="form-control" autocomplete="off" min="0" required  value="0"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Описание:</label>
+                <textarea asp-for="Description" class="form-control" autocomplete="off"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h3>
+                    Монтаж
+                </h3>
+            </div>
+        </div>
+        <div class="row table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th class="td-with-name">Наименование</th>
+                        <th>Количество</th>
+                        <th class="td-with-description">Примечание</th>
+                        <th class="border-0"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="comTr0"></tr>
+                </tbody>
+            </table>
+            <button type="button" onclick="createComponent()" class="btn btn-link" id="buttonCreateComponent">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                Добавить монтаж
+            </button>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h3>
+                    Конструктив
+                </h3>
+            </div>
+        </div>
+        <div class="row table-responsive">
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th>№</th>
+                    <th class="td-with-name">Наименование</th>
+                    <th>Количество</th>
+                    <th class="td-with-description">Примечание</th>
+                    <th class="border-0"></th>
+                </tr>
+                </thead>
+                <tr id="desTr0">
+                </tr>
+            </table>
+            <button type="button" onclick="createDesign()" class="btn btn-link" id="buttonCreateDesign">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                Добавить конструктив
+            </button>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Добавить</button>            
+</form>
