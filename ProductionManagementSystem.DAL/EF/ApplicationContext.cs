@@ -20,6 +20,9 @@ namespace ProductionManagementSystem.DAL.EF
         
         public DbSet<Log> Logs { get; set; }
         public DbSet<Order> Orders { get; set; }
+        
+        public DbSet<ComponentsSupplyRequest> ComponentsSupplyRequests { get; set; }
+        public DbSet<DesignsSupplyRequest> DesignsSupplyRequests { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
