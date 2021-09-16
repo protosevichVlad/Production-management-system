@@ -41,6 +41,14 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public void Update(ComponentsSupplyRequest item)
         {
+            var local = _db.Set<ComponentsSupplyRequest>()
+                .Local
+                .FirstOrDefault(entry => entry.Id.Equals(item.Id));
+            if (local != null)
+            {
+                _db.Entry(local).State = EntityState.Detached;
+            }
+            
             _db.Entry(item).State = EntityState.Modified;
         }
 

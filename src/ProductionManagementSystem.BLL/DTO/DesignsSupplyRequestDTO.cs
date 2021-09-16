@@ -7,8 +7,8 @@ namespace ProductionManagementSystem.BLL.DTO
     public class DesignsSupplyRequestDTO
     {
         public int Id { get; set; }
-        public int? OrderId { get; set; }
-        public OrderDTO Order { get; set; }
+        public int? TaskId { get; set; }
+        public Task Task { get; set; }
         public int DesignId { get; set; }
         public DesignDTO Design { get; set; }
         public UserDTO User { get; set; }
