@@ -13,9 +13,9 @@ namespace ProductionManagementSystem.BLL.Services
 {
     public class ComponentsSupplyRequestService : IComponentsSupplyRequestService
     {
-        private IUnitOfWork _database { get; set; }
+        private readonly IUnitOfWork _database;
         private ILogService _log;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
         
         public ComponentsSupplyRequestService(IUnitOfWork uow)
         {
@@ -52,6 +52,7 @@ namespace ProductionManagementSystem.BLL.Services
             await _database.ComponentSupplyRequests.CreateAsync(
                 _mapper.Map<ComponentsSupplyRequestDTO, ComponentsSupplyRequest>(componentsSupplyRequest)
                 );
+            await _database.SaveAsync();
         }
 
         public async Task UpdateComponentSupplyRequestAsync(ComponentsSupplyRequestDTO componentsSupplyRequest)
@@ -64,6 +65,7 @@ namespace ProductionManagementSystem.BLL.Services
             _database.ComponentSupplyRequests.Update(
                 _mapper.Map<ComponentsSupplyRequestDTO, ComponentsSupplyRequest>(componentsSupplyRequest)
             );
+            await _database.SaveAsync();
         }
 
         public async Task<IEnumerable<ComponentsSupplyRequestDTO>> GetComponentSupplyRequestsAsync()
@@ -93,6 +95,7 @@ namespace ProductionManagementSystem.BLL.Services
             }
 
             await _database.ComponentSupplyRequests.DeleteAsync((int) id);
+            await _database.SaveAsync();
         }
     }
 }
