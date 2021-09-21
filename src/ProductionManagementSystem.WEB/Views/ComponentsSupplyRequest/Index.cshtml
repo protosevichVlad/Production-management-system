@@ -1,0 +1,103 @@
+﻿@model ProductionManagementSystem.WEB.ViewModels.ComponentsSupplyRequestViewModels.IndexPageComponentsSupplyRequestViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Cписок</h2>
+<p>
+    <a>Создать новый</a>
+</p>
+<div class="row">
+    <div class="col">
+        <form asp-action="Index" method="get">
+            <p>
+                Поиск: <input name="CurrentFilter" list="datalistNameComponents"  autocomplete="off" value="@Model.CurrentFilter"/>
+                <datalist id="datalistNameComponents">
+                    @* @foreach (var name in ViewBag.AllComponents) *@
+                    @* { *@
+                    @*     <option value="@name"/> *@
+                    @* } *@
+                </datalist>
+                <input type="submit" value="Поиск" class="btn btn-primary"/>
+                @if (@ViewData["CurrentFilter"] != null)
+                {
+                    <text>|</text>
+                    <a asp-action="Index">Вернуться к полному списку</a>
+                }
+            </p>
+        </form>
+    </div>
+    <div class="col d-flex align-items-center justify-content-end">
+        @if (@ViewData["CurrentFilter"] == null)
+        {
+            <p class="d-flex">@Model.ComponentsSupplyRequests.Count()</p>
+        }
+        else
+        {
+            <p class="d-flex">Было найдено @Model.ComponentsSupplyRequests.Count()</p>
+        }
+    </div>
+</div>
+<div class="table-responsive-xl">
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Name of component
+            </th>
+            <th>
+                Task N
+            </th>
+            <th>
+                Date 1
+            </th>
+            <th>
+                Date 2
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Status
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.ComponentsSupplyRequests)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Component.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TaskId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateAdded)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DesiredDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StatusSupply)
+                </td>
+                <td class="td-with-buttons">
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    @* <partial name="Partail/_Pagination" /> *@
+</div>
