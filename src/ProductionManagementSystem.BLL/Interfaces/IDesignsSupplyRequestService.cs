@@ -7,8 +7,8 @@ namespace ProductionManagementSystem.BLL.Interfaces
 {
     public interface IDesignsSupplyRequestService : IDisposable
     {
-        Task CreateDesignSupplyRequestAsync(DesignsSupplyRequestDTO componentsSupplyRequest);
-        Task UpdateDesignSupplyRequestAsync(DesignsSupplyRequestDTO componentsSupplyRequest);
+        Task CreateDesignSupplyRequestAsync(DesignsSupplyRequestDTO designsSupplyRequest);
+        Task UpdateDesignSupplyRequestAsync(DesignsSupplyRequestDTO designsSupplyRequest);
         Task<IEnumerable<DesignsSupplyRequestDTO>> GetDesignSupplyRequestsAsync();
         Task<DesignsSupplyRequestDTO> GetDesignSupplyRequestAsync(int? id);
         Task DeleteDesignSupplyRequestAsync(int? id);
