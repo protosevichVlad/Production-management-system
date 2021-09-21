@@ -41,8 +41,6 @@ namespace ProductionManagementSystem.BLL.Services
                     cfg.CreateMap<ObtainedDesignDTO, ObtainedDesign>();
                     cfg.CreateMap<ObtainedComponent, ObtainedComponentDTO>();
                     cfg.CreateMap<ObtainedComponentDTO, ObtainedComponent>();
-                    cfg.CreateMap<ComponentDTO, Component>();
-                    cfg.CreateMap<Component, ComponentDTO>();
                     cfg.CreateMap<DesignDTO, Design>();
                     cfg.CreateMap<Design, DesignDTO>();
                 })
