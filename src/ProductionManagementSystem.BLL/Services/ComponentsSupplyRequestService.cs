@@ -27,12 +27,24 @@ namespace ProductionManagementSystem.BLL.Services
                     cfg.CreateMap<ComponentsSupplyRequest, ComponentsSupplyRequestDTO>();
                     cfg.CreateMap<ComponentDTO, Component>();
                     cfg.CreateMap<Component, ComponentDTO>();
-                    cfg.CreateMap<Task, TaskDTO>();
-                    cfg.CreateMap<TaskDTO, Task>();
+                    cfg.CreateMap<DAL.Entities.Task, TaskDTO>();
+                    cfg.CreateMap<TaskDTO, DAL.Entities.Task>();
                     cfg.CreateMap<StatusSupplyEnum, StatusSupplyEnumDTO>();
                     cfg.CreateMap<StatusSupplyEnumDTO, StatusSupplyEnum>();
                     cfg.CreateMap<ProductionManagementSystemUser, UserDTO>();
                     cfg.CreateMap<UserDTO, ProductionManagementSystemUser>();
+                    cfg.CreateMap<Device, DeviceDTO>();
+                    cfg.CreateMap<DeviceDTO, Device>();
+                    cfg.CreateMap<Log, LogDTO>();
+                    cfg.CreateMap<LogDTO, Log>();
+                    cfg.CreateMap<ObtainedDesign, ObtainedDesignDTO>();
+                    cfg.CreateMap<ObtainedDesignDTO, ObtainedDesign>();
+                    cfg.CreateMap<ObtainedComponent, ObtainedComponentDTO>();
+                    cfg.CreateMap<ObtainedComponentDTO, ObtainedComponent>();
+                    cfg.CreateMap<ComponentDTO, Component>();
+                    cfg.CreateMap<Component, ComponentDTO>();
+                    cfg.CreateMap<DesignDTO, Design>();
+                    cfg.CreateMap<Design, DesignDTO>();
                 })
                 .CreateMapper();
         }
