@@ -15,7 +15,7 @@ namespace ProductionManagementSystem.DAL.EF
             }
             else
             {
-                optionsBuilder.UseMySql("Server=192.168.0.111;Database=master;User=user1;Password=123Pass123;", new MySqlServerVersion(new Version(8, 0, 24)));
+                optionsBuilder.UseMySql("Server=localhost;Database=master;User=user1;Password=123Pass123;", new MySqlServerVersion(new Version(8, 0, 24)));
             }
 
             return new ApplicationContext(optionsBuilder.Options);
