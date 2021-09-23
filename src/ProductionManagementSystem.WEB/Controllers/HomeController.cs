@@ -12,24 +12,16 @@ namespace ProductionManagementSystem.Controllers
 {
     public class HomeController : Controller
     {
-        private IDatabaseService _databaseService;
         private UserManager<ProductionManagementSystemUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
         
-        public HomeController(IDatabaseService databaseService, UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
+        public HomeController(UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            _databaseService = databaseService;
             _userManager = userManager;
             _roleManager = roleManager;
         }
 
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult Reset()
         {
             return View();
         }

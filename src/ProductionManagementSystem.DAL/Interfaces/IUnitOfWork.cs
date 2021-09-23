@@ -21,8 +21,6 @@ namespace ProductionManagementSystem.DAL.Interfaces
         IRepository<ComponentsSupplyRequest> ComponentSupplyRequests { get; }
         IRepository<DesignsSupplyRequest> DesignsSupplyRequests { get; }
 
-        void ResetDatabase();
-        
         System.Threading.Tasks.Task SaveAsync();
     }
 }

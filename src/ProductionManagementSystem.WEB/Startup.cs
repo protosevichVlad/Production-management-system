@@ -55,13 +55,11 @@ namespace ProductionManagementSystem
             });
 
             var uow = new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection"));
-            uow.InitDb();
             services.AddScoped<IComponentService>(_ => new ComponentService(uow));
             services.AddScoped<IDesignService>(_ => new DesignService(uow));
             services.AddScoped<IDeviceService>(_ => new DeviceService(uow));
             services.AddScoped<ITaskService>(_ => new TaskService(uow));
             services.AddScoped<IOrderService>(_ => new OrderService(uow));
-            services.AddScoped<IDatabaseService>(_ => new DatabaseService(uow));
             services.AddScoped<ILogService>(_ => new LogService(uow));
             services.AddScoped<IComponentsSupplyRequestService>(_ => new ComponentsSupplyRequestService(uow));
             services.AddScoped<IDesignsSupplyRequestService>(_ => new DesignsSupplyRequestService(uow));
