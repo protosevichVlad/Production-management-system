@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Interfaces;
@@ -8,6 +10,7 @@ using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
+    [Authorize]
     public class ComponentsSupplyRequestController : Controller
     {
         private readonly IComponentsSupplyRequestService _componentsSupplyRequestService;
@@ -62,8 +65,19 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
-        public async Task<ViewResult> Create(ComponentsSupplyRequestViewModel viewModel)
+        public async Task<IActionResult> Create(ComponentsSupplyRequestViewModel viewModel)
         {
+            if (ModelState.IsValid)
+            {
+                viewModel.DateAdded = DateTime.Now;
+                // viewModel.User.UserName = User.Identity?.Name;
+                viewModel.StatusSupply = StatusSupplyEnum.NotAccepted;
+
+                await _componentsSupplyRequestService.CreateComponentSupplyRequestAsync(
+                    _mapper.Map<ComponentsSupplyRequestViewModel, ComponentsSupplyRequestDTO>(viewModel));
+                return RedirectToAction(nameof(Create));
+            }
+            
             return View(viewModel);
         }
     }
