@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.WEB.Models;
-using ProductionManagementSystem.WEB.ViewModels.ComponentsSupplyRequestViewModels;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
@@ -24,8 +23,8 @@ namespace ProductionManagementSystem.WEB.Controllers
             
             _mapper = new MapperConfiguration(cfg =>
                 {
-                    cfg.CreateMap<ComponentsSupplyRequestDTO, ComponentsSupplyRequest>();
-                    cfg.CreateMap<ComponentsSupplyRequest, ComponentsSupplyRequestDTO>();
+                    cfg.CreateMap<ComponentsSupplyRequestDTO, ComponentsSupplyRequestViewModel>();
+                    cfg.CreateMap<ComponentsSupplyRequestViewModel, ComponentsSupplyRequestDTO>();
                     cfg.CreateMap<TaskDTO, TaskViewModel>()
                         .ForMember(
                             task => task.Status, 
@@ -52,13 +51,19 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         public async Task<ViewResult> Index()
         {
-            var viewModel = new IndexPageComponentsSupplyRequestViewModel()
-            {
-                ComponentsSupplyRequests = _mapper.Map < IEnumerable<ComponentsSupplyRequestDTO>,
-                IEnumerable<ComponentsSupplyRequest>>(
-                    await _componentsSupplyRequestService.GetComponentSupplyRequestsAsync())
-            };
-            
+            return View(_mapper.Map < IEnumerable<ComponentsSupplyRequestDTO>,
+                IEnumerable<ComponentsSupplyRequestViewModel>>(
+                await _componentsSupplyRequestService.GetComponentSupplyRequestsAsync()));
+        }
+
+        public async Task<ViewResult> Create()
+        {
+            return View();
+        }
+        
+        [HttpPost]
+        public async Task<ViewResult> Create(ComponentsSupplyRequestViewModel viewModel)
+        {
             return View(viewModel);
         }
     }

@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.WEB.ViewModels.ComponentsSupplyRequestViewModels.IndexPageComponentsSupplyRequestViewModel
+﻿@model IEnumerable<ProductionManagementSystem.WEB.Models.ComponentsSupplyRequestViewModel>
 
 @{
     ViewBag.Title = "title";
@@ -7,13 +7,13 @@
 
 <h2>Cписок</h2>
 <p>
-    <a>Создать новый</a>
+    <a asp-action="Create">Создать новую заявку</a>
 </p>
 <div class="row">
     <div class="col">
         <form asp-action="Index" method="get">
             <p>
-                Поиск: <input name="CurrentFilter" list="datalistNameComponents"  autocomplete="off" value="@Model.CurrentFilter"/>
+                Поиск: <input name="CurrentFilter" list="datalistNameComponents"  autocomplete="off" value="@ViewData["CurrentFilter"]"/>
                 <datalist id="datalistNameComponents">
                     @* @foreach (var name in ViewBag.AllComponents) *@
                     @* { *@
@@ -32,11 +32,11 @@
     <div class="col d-flex align-items-center justify-content-end">
         @if (@ViewData["CurrentFilter"] == null)
         {
-            <p class="d-flex">@Model.ComponentsSupplyRequests.Count()</p>
+            <p class="d-flex">@Model.Count()</p>
         }
         else
         {
-            <p class="d-flex">Было найдено @Model.ComponentsSupplyRequests.Count()</p>
+            <p class="d-flex">Было найдено @Model.Count()</p>
         }
     </div>
 </div>
@@ -45,31 +45,31 @@
         <thead>
         <tr>
             <th>
-                Id
+                @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
-                Name of component
+                @Html.DisplayNameFor(model => model.Component.Name)
             </th>
             <th>
-                Task N
+                @Html.DisplayNameFor(model => model.TaskId)
             </th>
             <th>
-                Date 1
+                @Html.DisplayNameFor(model => model.DateAdded)
             </th>
             <th>
-                Date 2
+                @Html.DisplayNameFor(model => model.DesiredDate)
             </th>
             <th>
-                Quantity
+                @Html.DisplayNameFor(model => model.Quantity)
             </th>
             <th>
-                Status
+                @Html.DisplayNameFor(model => model.StatusSupply)
             </th>
             <th></th>
         </tr>
         </thead>
         <tbody>
-        @foreach (var item in Model.ComponentsSupplyRequests)
+        @foreach (var item in Model)
         {
             <tr>
                 <td>
