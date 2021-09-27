@@ -52,8 +52,11 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownComponents">
                                     <li><a class="dropdown-item" asp-controller="Components" asp-action="Index">Список</a></li>
+                                    <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" asp-controller="Components" asp-action="AddMultiple">Добавить несколько</a></li>
                                     <li><a class="dropdown-item" asp-controller="Components" asp-action="ReceiveMultiple">Получить несколько</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="ComponentsSupplyRequest" asp-action="Index">Заявки на снабжение</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
@@ -62,8 +65,10 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownComponents">
                                     <li><a class="dropdown-item" asp-controller="Designs" asp-action="Index">Список</a></li>
+                                    <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" asp-controller="Designs" asp-action="AddMultiple">Добавить несколько</a></li>
                                     <li><a class="dropdown-item" asp-controller="Designs" asp-action="ReceiveMultiple">Получить несколько</a></li>
+                                    <li><hr class="dropdown-divider"></li>
                                 </ul>
                             </li>
                         }
