@@ -21,7 +21,9 @@ namespace ProductionManagementSystem.DAL.Repositories
         
         public async Task<IEnumerable<ComponentsSupplyRequest>> GetAllAsync()
         {
-            return await _db.ComponentsSupplyRequests.ToListAsync();
+            return await _db.ComponentsSupplyRequests
+                .Include(c => c.Component)                
+                .ToListAsync();
         }
 
         public async Task<ComponentsSupplyRequest> GetAsync(int id)
