@@ -7,12 +7,12 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["Production management system/ProductionManagementSystem.WEB.csproj", "Production management system/"]
-COPY ["ProductionManagementSystem.BLL/ProductionManagementSystem.BLL.csproj", "ProductionManagementSystem.BLL/"]
-COPY ["ProductionManagementSystem.DAL/ProductionManagementSystem.DAL.csproj", "ProductionManagementSystem.DAL/"]
-RUN dotnet restore "Production management system/ProductionManagementSystem.WEB.csproj"
+COPY ["src/ProductionManagementSystem.WEB/ProductionManagementSystem.WEB.csproj", "src/ProductionManagementSystem.WEB/"]
+COPY ["src/ProductionManagementSystem.BLL/ProductionManagementSystem.BLL.csproj", "src/ProductionManagementSystem.BLL/"]
+COPY ["src/ProductionManagementSystem.DAL/ProductionManagementSystem.DAL.csproj", "src/ProductionManagementSystem.DAL/"]
+RUN dotnet restore "src/ProductionManagementSystem.WEB/ProductionManagementSystem.WEB.csproj"
 COPY . .
-WORKDIR "/src/Production management system"
+WORKDIR "/src/src/ProductionManagementSystem.WEB"
 RUN dotnet build "ProductionManagementSystem.WEB.csproj" -c Release -o /app/build
 
 FROM build AS publish
