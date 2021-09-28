@@ -94,6 +94,7 @@
                     @Html.DisplayFor(modelItem => item.StatusSupply)
                 </td>
                 <td class="td-with-buttons">
+                    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@item.Id">Подробности</a>
                 </td>
             </tr>
         }
