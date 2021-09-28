@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.WEB.Models;
+using ProductionManagementSystem.WEB.Models.Modals;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
@@ -70,6 +75,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             if (ModelState.IsValid)
             {
                 viewModel.DateAdded = DateTime.Now;
+                // TODO User object
                 // viewModel.User.UserName = User.Identity?.Name;
                 viewModel.StatusSupply = StatusSupplyEnum.NotAccepted;
 
@@ -79,6 +85,37 @@ namespace ProductionManagementSystem.WEB.Controllers
             }
             
             return View(viewModel);
+        }
+
+        public async Task<ViewResult> Details(int? id)
+        {
+            var viewModel = _mapper.Map<ComponentsSupplyRequestDTO, ComponentsSupplyRequestViewModel>(
+                await _componentsSupplyRequestService.GetComponentSupplyRequestAsync(id));
+
+            ViewBag.Modal = new ModalSupplyRequest
+            {
+                States = new SelectList(GetNameOfStatusSupply(), "Id", "Name"),
+                NameModal = "changeStatus",
+                SupplyRequestId = id.Value,
+            };
+            
+            return View(viewModel);
+        }
+
+        private IEnumerable<object> GetNameOfStatusSupply()
+        {
+            var result = new List<string>();
+            
+            foreach (var status in Enum.GetValues(typeof(StatusSupplyEnum)))
+            {
+                result.Add(status.GetType()
+                    .GetMember(status.ToString())
+                    .First()
+                    .GetCustomAttribute<DisplayAttribute>()
+                    ?.GetName());
+            }
+
+            return result;
         }
     }
 }
