@@ -82,7 +82,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
                 await _componentsSupplyRequestService.CreateComponentSupplyRequestAsync(
                     _mapper.Map<ComponentsSupplyRequestViewModel, ComponentsSupplyRequestDTO>(viewModel));
-                return RedirectToAction(nameof(Create));
+                return RedirectToAction(nameof(Index));
             }
             
             return View(viewModel);
@@ -106,6 +106,24 @@ namespace ProductionManagementSystem.WEB.Controllers
                 NameModal = "changeStatus",
                 SupplyRequestId = id.Value,
             };
+            
+            return View(viewModel);
+        }
+        
+        public async Task<ViewResult> Edit(int id)
+        {
+            return View(_mapper.Map<ComponentsSupplyRequestDTO, ComponentsSupplyRequestViewModel>(await _componentsSupplyRequestService.GetComponentSupplyRequestAsync(id)));
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> Edit(ComponentsSupplyRequestViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                await _componentsSupplyRequestService.UpdateComponentSupplyRequestAsync(
+                    _mapper.Map<ComponentsSupplyRequestViewModel, ComponentsSupplyRequestDTO>(viewModel));
+                return RedirectToAction(nameof(Details), new {id = viewModel.Id});
+            }
             
             return View(viewModel);
         }
