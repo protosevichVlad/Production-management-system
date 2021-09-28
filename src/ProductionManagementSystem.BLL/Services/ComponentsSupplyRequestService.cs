@@ -107,5 +107,14 @@ namespace ProductionManagementSystem.BLL.Services
             await _database.ComponentSupplyRequests.DeleteAsync((int) id);
             await _database.SaveAsync();
         }
+
+        public async Task ChangeStatusAsync(int id, int to, string message = "")
+        {
+            var componentSupplyRequest = await GetComponentSupplyRequestAsync(id);
+            componentSupplyRequest.StatusSupply = (StatusSupplyEnumDTO) to;
+            await UpdateComponentSupplyRequestAsync(componentSupplyRequest);
+
+            await _log.CreateLogAsync(new LogDTO(message));
+        }
     }
 }

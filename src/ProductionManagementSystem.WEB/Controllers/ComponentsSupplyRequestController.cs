@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Interfaces;
+using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.WEB.Models;
 using ProductionManagementSystem.WEB.Models.Modals;
 
@@ -85,6 +86,13 @@ namespace ProductionManagementSystem.WEB.Controllers
             }
             
             return View(viewModel);
+        }
+
+        public async Task<IActionResult> ChangeStatus(int supplyRequestId, int to, string message)
+        {
+            LogService.UserName = User.Identity?.Name;
+            await _componentsSupplyRequestService.ChangeStatusAsync(supplyRequestId, to, message);
+            return RedirectToAction(nameof(Details), new {id = supplyRequestId});
         }
 
         public async Task<ViewResult> Details(int? id)

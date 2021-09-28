@@ -14,5 +14,7 @@ namespace ProductionManagementSystem.BLL.Interfaces
         Task<IEnumerable<ComponentsSupplyRequestDTO>> GetComponentSupplyRequestsAsync();
         Task<ComponentsSupplyRequestDTO> GetComponentSupplyRequestAsync(int? id);
         Task DeleteComponentSupplyRequestAsync(int? id);
+        Task ChangeStatusAsync(int id, int to, string message = "");
+
     }
 }
