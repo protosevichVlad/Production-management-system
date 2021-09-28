@@ -28,7 +28,9 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public async Task<ComponentsSupplyRequest> GetAsync(int id)
         {
-            return await _db.ComponentsSupplyRequests.FirstOrDefaultAsync(c => c.Id == id);
+            return await _db.ComponentsSupplyRequests
+                .Include(c => c.Component)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public IEnumerable<ComponentsSupplyRequest> Find(Func<ComponentsSupplyRequest, bool> predicate)
