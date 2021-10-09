@@ -128,6 +128,20 @@ namespace ProductionManagementSystem.WEB.Controllers
             return View(viewModel);
         }
 
+        public async Task<ActionResult> Delete(int id)
+        {
+            return View(
+                _mapper.Map<ComponentsSupplyRequestDTO, ComponentsSupplyRequestViewModel>(
+                    await _componentsSupplyRequestService.GetComponentSupplyRequestAsync(id)));
+        }
+        
+        [HttpPost, ActionName("Delete")]
+        public async Task<ActionResult> DeleteConfirmed(int id)
+        {
+            await _componentsSupplyRequestService.DeleteComponentSupplyRequestAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
+
         private IEnumerable<object> GetNameOfStatusSupply()
         {
             var result = new List<string>();
