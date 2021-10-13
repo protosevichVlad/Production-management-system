@@ -11,6 +11,7 @@ namespace ProductionManagementSystem.WEB.Models
         [Display(Name = "Задача №")]
         public int? TaskId { get; set; }
         public TaskViewModel Task { get; set; }
+        [Display(Name = "Монтаж")]
         public int ComponentId { get; set; }
         public ComponentViewModel Component { get; set; }
         

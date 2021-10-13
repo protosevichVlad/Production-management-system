@@ -23,11 +23,13 @@ namespace ProductionManagementSystem.WEB.Controllers
         private readonly ILogService _logService;
         private readonly IMapper _mapper;
         private readonly ITaskService _taskService;
+        private readonly IComponentService _componentService;
 
-        public ComponentsSupplyRequestController(IComponentsSupplyRequestService componentsSupplyRequestService, ITaskService taskService, ILogService logService)
+        public ComponentsSupplyRequestController(IComponentsSupplyRequestService componentsSupplyRequestService, ITaskService taskService, ILogService logService, IComponentService componentService)
         {
             _componentsSupplyRequestService = componentsSupplyRequestService;
             _logService = logService;
+            _componentService = componentService;
             _taskService = taskService;
             
             _mapper = new MapperConfiguration(cfg =>
@@ -65,13 +67,27 @@ namespace ProductionManagementSystem.WEB.Controllers
                 await _componentsSupplyRequestService.GetComponentSupplyRequestsAsync()));
         }
 
-        public async Task<ViewResult> Create()
+        public async Task<ViewResult> Create(ComponentsSupplyRequestViewModel viewModel)
         {
-            return View();
+            if (viewModel != null && viewModel.TaskId.HasValue)
+            {
+                ViewBag.Components = (await _taskService.GetDeviceComponentsTemplatesFromTaskAsync(viewModel.TaskId.Value))
+                    .Select(c =>  new SelectListItem(
+                        _componentService.GetComponentAsync(c.ComponentId).Result.ToString(),
+                        c.ComponentId.ToString()
+                    )).AsEnumerable();
+            }
+            else
+            {
+                ViewBag.Components = (await _componentService.GetComponentsAsync())
+                    .Select(c => new SelectListItem(c.ToString(), c.Id.ToString())).AsEnumerable();
+            }
+            
+            return View(viewModel);
         }
         
-        [HttpPost]
-        public async Task<IActionResult> Create(ComponentsSupplyRequestViewModel viewModel)
+        [HttpPost("Create")]
+        public async Task<IActionResult> CreatePost(ComponentsSupplyRequestViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +101,7 @@ namespace ProductionManagementSystem.WEB.Controllers
                 return RedirectToAction(nameof(Index));
             }
             
-            return View(viewModel);
+            return View(nameof(Create), viewModel);
         }
 
         public async Task<IActionResult> ChangeStatus(int supplyRequestId, int to, string message)
