@@ -67,10 +67,16 @@ namespace ProductionManagementSystem.WEB.Controllers
                 await _componentsSupplyRequestService.GetComponentSupplyRequestsAsync()));
         }
 
-        public async Task<ViewResult> Create(ComponentsSupplyRequestViewModel viewModel)
+        public async Task<ViewResult> Create(int? taskId, int? componentId)
         {
-            if (viewModel != null && viewModel.TaskId.HasValue)
+            ComponentsSupplyRequestViewModel viewModel = new ComponentsSupplyRequestViewModel
             {
+                ComponentId = componentId ?? 0,
+                DesiredDate = DateTime.Now
+            };
+            if (taskId.HasValue)
+            {
+                viewModel.TaskId = taskId;
                 ViewBag.Components = (await _taskService.GetDeviceComponentsTemplatesFromTaskAsync(viewModel.TaskId.Value))
                     .Select(c =>  new SelectListItem(
                         _componentService.GetComponentAsync(c.ComponentId).Result.ToString(),
