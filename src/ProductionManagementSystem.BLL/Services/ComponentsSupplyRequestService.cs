@@ -13,6 +13,7 @@ namespace ProductionManagementSystem.BLL.Services
 {
     public class ComponentsSupplyRequestService : IComponentsSupplyRequestService
     {
+        private readonly IComponentService _componentService;
         private readonly IUnitOfWork _database;
         private ILogService _log;
         private readonly IMapper _mapper;
@@ -20,6 +21,7 @@ namespace ProductionManagementSystem.BLL.Services
         public ComponentsSupplyRequestService(IUnitOfWork uow)
         {
             _database = uow;
+            _componentService = new ComponentService(uow);
             _log = new LogService(uow);
             _mapper = new MapperConfiguration(cfg =>
                 {
@@ -112,6 +114,11 @@ namespace ProductionManagementSystem.BLL.Services
         {
             var componentSupplyRequest = await GetComponentSupplyRequestAsync(id);
             componentSupplyRequest.StatusSupply = (StatusSupplyEnumDTO) to;
+            if ((StatusSupplyEnumDTO) to == StatusSupplyEnumDTO.Ready)
+            {
+                await _componentService.AddComponentAsync(componentSupplyRequest.ComponentId,
+                    componentSupplyRequest.Quantity);
+            }
             await UpdateComponentSupplyRequestAsync(componentSupplyRequest);
 
             await _log.CreateLogAsync(new LogDTO(message));
