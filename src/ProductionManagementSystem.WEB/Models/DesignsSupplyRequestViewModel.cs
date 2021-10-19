@@ -22,6 +22,8 @@ namespace ProductionManagementSystem.WEB.Models
         public DateTime DateAdded { get; set; }
         
         [Display(Name = "Желаемая дата")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
         public DateTime DesiredDate { get; set; }
         
         [Display(Name = "Количество")]
