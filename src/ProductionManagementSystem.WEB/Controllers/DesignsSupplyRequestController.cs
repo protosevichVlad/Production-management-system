@@ -48,8 +48,8 @@ namespace ProductionManagementSystem.WEB.Controllers
                     cfg.CreateMap<LogDTO, LogViewModel>();
                     cfg.CreateMap<ObtainedDesign, ObtainedDesignDTO>();
                     cfg.CreateMap<ObtainedDesignDTO, ObtainedDesign>();
-                    cfg.CreateMap<ObtainedDesign, ObtainedDesignDTO>();
-                    cfg.CreateMap<ObtainedDesignDTO, ObtainedDesign>();
+                    cfg.CreateMap<ObtainedComponent, ObtainedComponentDTO>();
+                    cfg.CreateMap<ObtainedComponentDTO, ObtainedComponent>();
                     cfg.CreateMap<DesignViewModel, DesignDTO>();
                     cfg.CreateMap<DesignDTO, DesignViewModel>();
                     cfg.CreateMap<StatusSupplyEnum, StatusSupplyEnumDTO>();
