@@ -21,7 +21,9 @@ namespace ProductionManagementSystem.DAL.Repositories
         
         public async Task<IEnumerable<DesignsSupplyRequest>> GetAllAsync()
         {
-            return await _db.DesignsSupplyRequests.ToListAsync();
+            return await _db.DesignsSupplyRequests
+                .Include(d => d.Design)
+                .ToListAsync();
         }
 
         public async Task<DesignsSupplyRequest> GetAsync(int id)
