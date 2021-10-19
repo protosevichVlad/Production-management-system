@@ -1,45 +1,14 @@
 ﻿@model IEnumerable<ProductionManagementSystem.WEB.Models.ComponentsSupplyRequestViewModel>
 
 @{
-    ViewBag.Title = "title";
-    Layout = "_LayoutInDevelop";
+    ViewBag.Title = "Список заявок на снабжение монтажа";
+    Layout = "_Layout";
 }
 
 <h2>Cписок</h2>
 <p>
     <a asp-action="Create">Создать новую заявку</a>
 </p>
-<div class="row">
-    <div class="col">
-        <form asp-action="Index" method="get">
-            <p>
-                Поиск: <input name="CurrentFilter" list="datalistNameComponents"  autocomplete="off" value="@ViewData["CurrentFilter"]"/>
-                <datalist id="datalistNameComponents">
-                    @* @foreach (var name in ViewBag.AllComponents) *@
-                    @* { *@
-                    @*     <option value="@name"/> *@
-                    @* } *@
-                </datalist>
-                <input type="submit" value="Поиск" class="btn btn-primary"/>
-                @if (@ViewData["CurrentFilter"] != null)
-                {
-                    <text>|</text>
-                    <a asp-action="Index">Вернуться к полному списку</a>
-                }
-            </p>
-        </form>
-    </div>
-    <div class="col d-flex align-items-center justify-content-end">
-        @if (@ViewData["CurrentFilter"] == null)
-        {
-            <p class="d-flex">@Model.Count()</p>
-        }
-        else
-        {
-            <p class="d-flex">Было найдено @Model.Count()</p>
-        }
-    </div>
-</div>
 <div class="table-responsive-xl">
     <table class="table table-sm">
         <thead>

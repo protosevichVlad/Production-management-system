@@ -2,7 +2,7 @@
 @model ProductionManagementSystem.WEB.Models.ComponentsSupplyRequestViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Подробная информация о заявке на снабжение монтажа №" + @Model.Id;
     Layout = "~/Views/Shared/_LayoutInDevelop.cshtml";
 }
 
@@ -11,15 +11,16 @@
         <h4>Подробная информация</h4>
     </div>
     <div class="col d-flex justify-content-end">
-        <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
         <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
         @* <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Index" asp-route-taskId="@Model.Id">Логи</a> *@
         @if (Model.StatusSupply == StatusSupplyEnum.Ready)
         {
+            <a class="btn btn-light btn-sm disabled" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
             <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#@ViewBag.Modal.NameModal" disabled>Изменить статус</button>
         }
         else
         {
+            <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
             <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#@ViewBag.Modal.NameModal">Изменить статус</button>
         }
     </div>

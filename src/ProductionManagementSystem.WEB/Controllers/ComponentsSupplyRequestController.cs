@@ -64,7 +64,9 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             return View(_mapper.Map < IEnumerable<ComponentsSupplyRequestDTO>,
                 IEnumerable<ComponentsSupplyRequestViewModel>>(
-                await _componentsSupplyRequestService.GetComponentSupplyRequestsAsync()));
+                await _componentsSupplyRequestService.GetComponentSupplyRequestsAsync())
+                .OrderBy(c => c.StatusSupply)
+                .ThenBy(c => c.DesiredDate));
         }
 
         public async Task<ViewResult> Create(int? taskId, int? componentId)
