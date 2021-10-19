@@ -1,16 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
@@ -49,7 +43,6 @@ namespace ProductionManagementSystem.API
             services.AddScoped<IDeviceService>(_ => new DeviceService(uow));
             services.AddScoped<ITaskService>(_ => new TaskService(uow));
             services.AddScoped<IOrderService>(_ => new OrderService(uow));
-            services.AddScoped<IDatabaseService>(_ => new DatabaseService(uow));
             services.AddScoped<ILogService>(_ => new LogService(uow));
         }
 

@@ -16,7 +16,6 @@ async function createComponent() {
     undisableButton('#buttonCreateComponent');
 
     $('.js-example-basic-single').select2();
-
 }
 
 async function createDesign() {

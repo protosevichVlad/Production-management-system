@@ -55,14 +55,14 @@ namespace ProductionManagementSystem
             });
 
             var uow = new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection"));
-            uow.InitDb();
-            services.AddScoped<IComponentService>(_ => new ComponentService(uow));
-            services.AddScoped<IDesignService>(_ => new DesignService(uow));
-            services.AddScoped<IDeviceService>(_ => new DeviceService(uow));
-            services.AddScoped<ITaskService>(_ => new TaskService(uow));
-            services.AddScoped<IOrderService>(_ => new OrderService(uow));
-            services.AddScoped<IDatabaseService>(_ => new DatabaseService(uow));
-            services.AddScoped<ILogService>(_ => new LogService(uow));
+            services.AddSingleton<IComponentService>(_ => new ComponentService(uow));
+            services.AddSingleton<IDesignService>(_ => new DesignService(uow));
+            services.AddSingleton<IDeviceService>(_ => new DeviceService(uow));
+            services.AddSingleton<ITaskService>(_ => new TaskService(uow));
+            services.AddSingleton<IOrderService>(_ => new OrderService(uow));
+            services.AddSingleton<ILogService>(_ => new LogService(uow));
+            services.AddSingleton<IComponentsSupplyRequestService>(_ => new ComponentsSupplyRequestService(uow));
+            services.AddSingleton<IDesignsSupplyRequestService>(_ => new DesignsSupplyRequestService(uow));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

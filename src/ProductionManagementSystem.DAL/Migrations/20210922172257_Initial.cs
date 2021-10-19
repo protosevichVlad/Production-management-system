@@ -4,38 +4,55 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProductionManagementSystem.DAL.Migrations
 {
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
-                    Name = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NormalizedName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ConcurrencyStamp = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
-                    UserName = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NormalizedEmail = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     EmailConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    PasswordHash = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SecurityStamp = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ConcurrencyStamp = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PhoneNumber = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     PhoneNumberConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true),
@@ -45,7 +62,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Components",
@@ -53,18 +71,25 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Type = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Type = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    Nominal = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Corpus = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Explanation = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Manufacturer = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                    Nominal = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Corpus = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Explanation = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Manufacturer = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Components", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Designs",
@@ -72,16 +97,21 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Type = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Type = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    ShortDescription = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Description = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                    ShortDescription = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Designs", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Devices",
@@ -89,14 +119,17 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Devices", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Logs",
@@ -105,8 +138,10 @@ namespace ProductionManagementSystem.DAL.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     DateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UserLogin = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Message = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    UserLogin = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Message = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ComponentId = table.Column<int>(type: "int", nullable: true),
                     DesignId = table.Column<int>(type: "int", nullable: true),
                     DeviceId = table.Column<int>(type: "int", nullable: true),
@@ -116,7 +151,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Logs", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Orders",
@@ -126,13 +162,16 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Deadline = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     DateStart = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Customer = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Description = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                    Customer = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
@@ -140,9 +179,12 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    RoleId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
-                    ClaimType = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    ClaimValue = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                    RoleId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ClaimType = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ClaimValue = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -153,7 +195,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
@@ -161,9 +204,12 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
-                    ClaimType = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    ClaimValue = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ClaimType = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ClaimValue = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -174,16 +220,21 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
-                    ProviderKey = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    UserId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false)
+                    LoginProvider = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProviderKey = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProviderDisplayName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -194,14 +245,17 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
-                    RoleId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false)
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RoleId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -218,16 +272,21 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
-                    LoginProvider = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
-                    Name = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
-                    Value = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LoginProvider = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Value = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -238,7 +297,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "DeviceComponentsTemplates",
@@ -249,7 +309,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     ComponentId = table.Column<int>(type: "int", nullable: false),
                     DeviceId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -266,7 +327,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "DeviceDesignTemplates",
@@ -277,7 +339,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     DesignId = table.Column<int>(type: "int", nullable: false),
                     DeviceId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -294,7 +357,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Tasks",
@@ -306,7 +370,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                     EndTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Deadline = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     DeviceId = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -325,7 +390,90 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ComponentsSupplyRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    TaskId = table.Column<int>(type: "int", nullable: true),
+                    ComponentId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DateAdded = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DesiredDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    StatusSupply = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComponentsSupplyRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComponentsSupplyRequests_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ComponentsSupplyRequests_Components_ComponentId",
+                        column: x => x.ComponentId,
+                        principalTable: "Components",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComponentsSupplyRequests_Tasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "Tasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "DesignsSupplyRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    TaskId = table.Column<int>(type: "int", nullable: true),
+                    DesignId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DateAdded = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DesiredDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    StatusSupply = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DesignsSupplyRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DesignsSupplyRequests_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_DesignsSupplyRequests_Designs_DesignId",
+                        column: x => x.DesignId,
+                        principalTable: "Designs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DesignsSupplyRequests_Tasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "Tasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "ObtainedComponents",
@@ -352,7 +500,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalTable: "Tasks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "ObtainedDesigns",
@@ -379,7 +528,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalTable: "Tasks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -417,6 +567,36 @@ namespace ProductionManagementSystem.DAL.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComponentsSupplyRequests_ComponentId",
+                table: "ComponentsSupplyRequests",
+                column: "ComponentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComponentsSupplyRequests_TaskId",
+                table: "ComponentsSupplyRequests",
+                column: "TaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComponentsSupplyRequests_UserId",
+                table: "ComponentsSupplyRequests",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DesignsSupplyRequests_DesignId",
+                table: "DesignsSupplyRequests",
+                column: "DesignId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DesignsSupplyRequests_TaskId",
+                table: "DesignsSupplyRequests",
+                column: "TaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DesignsSupplyRequests_UserId",
+                table: "DesignsSupplyRequests",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceComponentsTemplates_ComponentId",
@@ -467,6 +647,22 @@ namespace ProductionManagementSystem.DAL.Migrations
                 name: "IX_Tasks_OrderId",
                 table: "Tasks",
                 column: "OrderId");
+            
+            migrationBuilder.Sql("insert into master.AspNetUsers (Id, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnd, LockoutEnabled, AccessFailedCount) values ('3bb76405-9a1a-4197-84a3-1edfe8cf3184', 'admin', 'ADMIN', 'admin', 'ADMIN', 1, 'AQAAAAEAACcQAAAAEOx7QIsGCilcXehbSpKTvxF53Pb3x5l2gdrfDxLohuAIY6GpMGjCsm845I3QGSMqTA==', '6WK3MUJCEGTPAAONR6QV7ZMS3XP4CM3S', '8af52af4-d9ef-43f7-bc98-15cdd7323e01', null, 0, 0, null, 1, 0);");
+            migrationBuilder.Sql("insert into master.AspNetRoles (Id, Name, NormalizedName, ConcurrencyStamp) values ('1427e8db-3af0-4c28-8969-402f8fbe915c', 'Поверитель', 'ПОВЕРИТЕЛЬ', 'd3226864-d42b-43bf-9258-c0dda46addce');");
+            migrationBuilder.Sql("insert into master.AspNetRoles (Id, Name, NormalizedName, ConcurrencyStamp) values ('329ad1b4-5560-4ffa-a3ac-737ba3acf954', 'Настройщик', 'НАСТРОЙЩИК', 'fc0167dd-7014-4343-92e5-354391d127ee');");
+            migrationBuilder.Sql("insert into master.AspNetRoles (Id, Name, NormalizedName, ConcurrencyStamp) values ('3e49b296-bd30-4aa6-a128-06839f9d0298', 'Сборщик', 'СБОРЩИК', 'b0a0d0b6-5858-4291-8849-83336e694efb');");
+            migrationBuilder.Sql("insert into master.AspNetRoles (Id, Name, NormalizedName, ConcurrencyStamp) values ('45cd3ab2-53c3-4b1e-8387-fedd42db051c', 'Снабженец', 'СНАБЖЕНЕЦ', '934808f8-ce8b-47bb-a38a-752aff6f90b1');");
+            migrationBuilder.Sql("insert into master.AspNetRoles (Id, Name, NormalizedName, ConcurrencyStamp) values ('5c323dcb-9199-43ac-8f4b-e1db565a9eb1', 'Администратор', 'АДМИНИСТРАТОР', 'ca8e4607-4e7d-4d6f-8e5e-f957d76e79d8');");
+            migrationBuilder.Sql("insert into master.AspNetRoles (Id, Name, NormalizedName, ConcurrencyStamp) values ('5d661724-88ef-43f1-9769-b78d2883c6ee', 'Монтажник', 'МОНТАЖНИК', '7f273d6c-fd5f-48d4-a3d2-4d7ce5ebb17a');");
+            migrationBuilder.Sql("insert into master.AspNetRoles (Id, Name, NormalizedName, ConcurrencyStamp) values ('b431c72b-6869-4d73-afe1-f2bb17f48267', 'Отгрузчик', 'ОТГРУЗЧИК', '1ee9ba96-49a6-46d6-8aca-ca8ff4f6f311');");
+            migrationBuilder.Sql("insert into master.AspNetUserRoles (UserId, RoleId) values ('3bb76405-9a1a-4197-84a3-1edfe8cf3184', '1427e8db-3af0-4c28-8969-402f8fbe915c');");
+            migrationBuilder.Sql("insert into master.AspNetUserRoles (UserId, RoleId) values ('3bb76405-9a1a-4197-84a3-1edfe8cf3184', '329ad1b4-5560-4ffa-a3ac-737ba3acf954');");
+            migrationBuilder.Sql("insert into master.AspNetUserRoles (UserId, RoleId) values ('3bb76405-9a1a-4197-84a3-1edfe8cf3184', '3e49b296-bd30-4aa6-a128-06839f9d0298');");
+            migrationBuilder.Sql("insert into master.AspNetUserRoles (UserId, RoleId) values ('3bb76405-9a1a-4197-84a3-1edfe8cf3184', '45cd3ab2-53c3-4b1e-8387-fedd42db051c');");
+            migrationBuilder.Sql("insert into master.AspNetUserRoles (UserId, RoleId) values ('3bb76405-9a1a-4197-84a3-1edfe8cf3184', '5c323dcb-9199-43ac-8f4b-e1db565a9eb1');");
+            migrationBuilder.Sql("insert into master.AspNetUserRoles (UserId, RoleId) values ('3bb76405-9a1a-4197-84a3-1edfe8cf3184', '5d661724-88ef-43f1-9769-b78d2883c6ee');");
+            migrationBuilder.Sql("insert into master.AspNetUserRoles (UserId, RoleId) values ('3bb76405-9a1a-4197-84a3-1edfe8cf3184', 'b431c72b-6869-4d73-afe1-f2bb17f48267');");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -485,6 +681,12 @@ namespace ProductionManagementSystem.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "ComponentsSupplyRequests");
+
+            migrationBuilder.DropTable(
+                name: "DesignsSupplyRequests");
 
             migrationBuilder.DropTable(
                 name: "DeviceComponentsTemplates");

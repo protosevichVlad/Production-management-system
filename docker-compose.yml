@@ -5,7 +5,7 @@ services:
     image: protosevich2001/production-management-system
     build:
       context: .
-      dockerfile: Production management system/Dockerfile
+      dockerfile: src/ProductionManagementSystem.WEB/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
@@ -18,22 +18,22 @@ services:
       - "32824:443"
     restart: always
 
-  production-management-system-api:
-    image: production-management-system-api
-    build:
-      context: .
-      dockerfile: ProductionManagementSystem.API/Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=123PassWord123
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
-    volumes:
-      - C:\https:/https
-    ports:
-      - "32827:80"
-      - "32826:443"
-    restart: always
+#  production-management-system-api:
+#    image: production-management-system-api
+#    build:
+#      context: .
+#      dockerfile: ProductionManagementSystem.API/Dockerfile
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#      - ASPNETCORE_URLS=https://+:443;http://+:80
+#      - ASPNETCORE_Kestrel__Certificates__Default__Password=123PassWord123
+#      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+#    volumes:
+#      - C:\https:/https
+#    ports:
+#      - "32827:80"
+#      - "32826:443"
+#    restart: always
 
 
   db:

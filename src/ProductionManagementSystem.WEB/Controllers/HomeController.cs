@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +12,11 @@ namespace ProductionManagementSystem.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IDatabaseService _databaseService;
-        private readonly UserManager<ProductionManagementSystemUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private UserManager<ProductionManagementSystemUser> _userManager;
+        private RoleManager<IdentityRole> _roleManager;
         
-        public HomeController(IDatabaseService databaseService, UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
+        public HomeController(UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            _databaseService = databaseService;
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -25,7 +25,7 @@ namespace ProductionManagementSystem.Controllers
         {
             return View();
         }
-
+        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

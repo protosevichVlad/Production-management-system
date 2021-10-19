@@ -18,10 +18,9 @@ namespace ProductionManagementSystem.DAL.Interfaces
         IRepository<ObtainedComponent> ObtainedComponents { get; }
         IRepository<ObtainedDesign> ObtainedDesigns { get; }
 
-        void InitDb();
-        
-        void ResetDatabase();
-        
+        IRepository<ComponentsSupplyRequest> ComponentSupplyRequests { get; }
+        IRepository<DesignsSupplyRequest> DesignsSupplyRequests { get; }
+
         System.Threading.Tasks.Task SaveAsync();
     }
 }

@@ -1,4 +1,5 @@
-﻿@model ProductionManagementSystem.WEB.Models.TaskViewModel
+﻿@using ProductionManagementSystem.DAL.Enums
+@model ProductionManagementSystem.WEB.Models.TaskViewModel
 @{
     ViewData["Title"] = "Задача №" + Model.Id;
 }
@@ -33,15 +34,18 @@
     <div class="table-responsive-xl">
         <h4>Общее количество монтажа:
             <a class="btn btn-light btn-sm" asp-action="ReceiveComponent" asp-route-taskId="@Model.Id">Получить</a>
-            <a class="btn btn-light btn-sm" asp-controller="Components" asp-action="AddMultiple" asp-route-deviceId="@Model.Device.Id">Добавить монтаж на склад</a>
         </h4>
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">
             <tr>
-                <th width="70%">Наименование</th>
+                <th width="50%">Наименование</th>
                 <th width="10%">В задаче</th>
                 <th width="10%">На складе</th>
                 <th width="10%">Получено</th>
+                @if (User.IsInRole(RoleEnum.OrderPicker))
+                {
+                    <th width="20%"></th>
+                }
             </tr>
             </thead>
             @foreach (var comp in ViewBag.ComponentTemplate)
@@ -60,6 +64,12 @@
                     <td>@comp.Quantity</td>
                     <td>@comp.Component.Quantity</td>
                     <td>@obtainedComp.Obtained</td>
+                    @if (User.IsInRole(RoleEnum.OrderPicker))
+                    {
+                        <td>
+                            <a class="btn btn-light btn-sm" asp-controller="ComponentsSupplyRequest" asp-action="Create" asp-route-componentId="@comp.Component.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
+                        </td>
+                    }
                 </tr>
             }
         </table>
@@ -72,10 +82,14 @@
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">
             <tr>
-                <th width="70%">Наименование</th>
+                <th width="50%">Наименование</th>
                 <th width="10%">В задаче</th>
                 <th width="10%">На складе</th>
                 <th width="10%">Получено</th>
+                @if (User.IsInRole(RoleEnum.OrderPicker))
+                {
+                    <th width="20%"></th>
+                }
             </tr>
             </thead>
             @foreach (var des in ViewBag.DesignTemplate)
@@ -94,6 +108,12 @@
                     <td>@des.Quantity</td>
                     <td>@des.Design.Quantity</td>
                     <td>@obtainedDes.Obtained</td>
+                    @if (User.IsInRole(RoleEnum.OrderPicker))
+                    {
+                        <td>
+                            <a class="btn btn-light btn-sm" asp-controller="DesignsSupplyRequest" asp-action="Create" asp-route-designId="@des.Design.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
+                        </td>
+                    }
                 </tr>
             }
         </table>
