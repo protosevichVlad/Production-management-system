@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductionManagementSystem.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductionManagementSystem.API", "src\ProductionManagementSystem.API\ProductionManagementSystem.API.csproj", "{7BE42C7A-69CB-4491-A0AF-DD07D778AB05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductionManagementSystem.Models", "src\ProductionManagementSystem.Models\ProductionManagementSystem.Models.csproj", "{AB0F4079-7B1F-416D-9880-F5FC55740701}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{7BE42C7A-69CB-4491-A0AF-DD07D778AB05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BE42C7A-69CB-4491-A0AF-DD07D778AB05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BE42C7A-69CB-4491-A0AF-DD07D778AB05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB0F4079-7B1F-416D-9880-F5FC55740701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB0F4079-7B1F-416D-9880-F5FC55740701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB0F4079-7B1F-416D-9880-F5FC55740701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB0F4079-7B1F-416D-9880-F5FC55740701}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,5 +69,6 @@ Global
 		{A74D46B9-1BE7-4D5E-91EC-99E011D98D1E} = {435A101B-7E38-43EF-B39E-FD792097B499}
 		{B20D045C-2499-4417-8F3F-0B917BB3F215} = {435A101B-7E38-43EF-B39E-FD792097B499}
 		{7BE42C7A-69CB-4491-A0AF-DD07D778AB05} = {435A101B-7E38-43EF-B39E-FD792097B499}
+		{AB0F4079-7B1F-416D-9880-F5FC55740701} = {435A101B-7E38-43EF-B39E-FD792097B499}
 	EndGlobalSection
 EndGlobal
