@@ -25,4 +25,8 @@
       <Folder Include="Migrations" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ProductionManagementSystem.Models\ProductionManagementSystem.Models.csproj" />
+    </ItemGroup>
+
 </Project>
