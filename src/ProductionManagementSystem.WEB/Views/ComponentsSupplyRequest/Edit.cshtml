@@ -21,7 +21,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="TaskId" class="control-label"></label>
-                <input asp-for="TaskId" class="form-control" autocomplete="off" disabled>
+                <input asp-for="TaskId" class="form-control" autocomplete="off" readonly>
                 <span asp-validation-for="TaskId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -36,7 +36,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Quantity" class="control-label"></label>
-                <input asp-for="Quantity" class="form-control" autocomplete="off" />
+                <input asp-for="Quantity" class="form-control" autocomplete="off" min="0"/>
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
             <div class="form-group">
