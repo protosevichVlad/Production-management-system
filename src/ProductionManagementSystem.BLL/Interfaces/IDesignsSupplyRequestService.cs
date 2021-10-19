@@ -12,5 +12,6 @@ namespace ProductionManagementSystem.BLL.Interfaces
         Task<IEnumerable<DesignsSupplyRequestDTO>> GetDesignSupplyRequestsAsync();
         Task<DesignsSupplyRequestDTO> GetDesignSupplyRequestAsync(int? id);
         Task DeleteDesignSupplyRequestAsync(int? id);
+        Task ChangeStatusAsync(int supplyRequestId, int to, string message);
     }
 }

@@ -14,12 +14,14 @@ namespace ProductionManagementSystem.BLL.Services
     public class DesignsSupplyRequestService : IDesignsSupplyRequestService
     {
         private readonly IUnitOfWork _database;
+        private readonly IDesignService _designService;
         private ILogService _log;
         private readonly IMapper _mapper;
     
         public DesignsSupplyRequestService(IUnitOfWork uow)
         {
             _database = uow;
+            _designService = new DesignService(uow);
             _log = new LogService(uow);
             _mapper = new MapperConfiguration(cfg =>
                 {
@@ -101,6 +103,20 @@ namespace ProductionManagementSystem.BLL.Services
 
             await _database.DesignsSupplyRequests.DeleteAsync(id.Value);
             await _database.SaveAsync();
+        }
+
+        public async Task ChangeStatusAsync(int supplyRequestId, int to, string message)
+        {
+            var designSupplyRequest = await GetDesignSupplyRequestAsync(supplyRequestId);
+            designSupplyRequest.StatusSupply = (StatusSupplyEnumDTO) to;
+            if ((StatusSupplyEnumDTO) to == StatusSupplyEnumDTO.Ready)
+            {
+                await _designService.AddDesignAsync(designSupplyRequest.DesignId,
+                    designSupplyRequest.Quantity);
+            }
+            await UpdateDesignSupplyRequestAsync(designSupplyRequest);
+
+            await _log.CreateLogAsync(new LogDTO(message));
         }
     }
 }
