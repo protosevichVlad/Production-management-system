@@ -663,7 +663,6 @@ namespace ProductionManagementSystem.DAL.Migrations
             migrationBuilder.Sql("insert into master.AspNetUserRoles (UserId, RoleId) values ('3bb76405-9a1a-4197-84a3-1edfe8cf3184', '5c323dcb-9199-43ac-8f4b-e1db565a9eb1');");
             migrationBuilder.Sql("insert into master.AspNetUserRoles (UserId, RoleId) values ('3bb76405-9a1a-4197-84a3-1edfe8cf3184', '5d661724-88ef-43f1-9769-b78d2883c6ee');");
             migrationBuilder.Sql("insert into master.AspNetUserRoles (UserId, RoleId) values ('3bb76405-9a1a-4197-84a3-1edfe8cf3184', 'b431c72b-6869-4d73-afe1-f2bb17f48267');");
-            
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -59,7 +59,6 @@ namespace ProductionManagementSystem.WEB.Controllers
                 }).CreateMapper();
         }
 
-
         public async Task<ViewResult> Index()
         {
             return View(_mapper.Map < IEnumerable<DesignsSupplyRequestDTO>,
