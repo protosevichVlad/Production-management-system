@@ -5,7 +5,7 @@ using ProductionManagementSystem.Models.Tasks;
 
 namespace ProductionManagementSystem.Models.SupplyRequests
 {
-    public abstract class SupplyRequest<TComponent> where TComponent : ComponentBase 
+    public abstract class SupplyRequest 
     {
         public int Id { get; set; }
         public int Quantity { get; set; }
@@ -20,11 +20,9 @@ namespace ProductionManagementSystem.Models.SupplyRequests
         public int? TaskId { get; set; }
         
         [NotMapped]
-        public TComponent Component { get; set; }
-        public int ComponentId { get; set; }
-        
-        [NotMapped]
         public Users.User User { get; set; }
         public string UserId { get; set; }
+        
+        public int ComponentId { get; set; }
     }
 }

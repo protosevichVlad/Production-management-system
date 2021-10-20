@@ -1,9 +1,11 @@
-﻿using ProductionManagementSystem.Models.Components;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using ProductionManagementSystem.Models.Components;
 
 namespace ProductionManagementSystem.Models.SupplyRequests
 {
-    public class MontageSupplyRequest : SupplyRequest<Montage>
+    public class MontageSupplyRequest : SupplyRequest
     {
-        
+        [NotMapped]
+        public Montage Montage { get; set; }
     }
 }
