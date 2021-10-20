@@ -1,29 +1,39 @@
 ﻿using System;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
-using ProductionManagementSystem.DAL.Interfaces;
-using ProductionManagementSystem.DAL.Entities;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
+    public interface IUnitOfWork
+    {
+        IMontageRepository MontageRepository { get; }
+        IDesignRepository DesignRepository { get; }
+        IDeviceRepository DeviceRepository { get; }
+        IMontageInDeviceRepository MontageInDeviceRepository { get; }
+        IDesignInDeviceRepository DesignInDeviceRepository { get; }
+        ITaskRepository TaskRepository { get; }
+        IObtainedDesignRepository ObtainedDesignRepository { get; }
+        IObtainedMontageRepository ObtainedMontageRepository { get; }
+        IOrderRepository OrderRepository { get; }
+        IDesignsSupplyRequestRepository DesignsSupplyRequestRepository { get; }
+        IMontageSupplyRequestRepository MontageSupplyRequestRepository { get; }
+        ILogRepository LogRepository { get; }
+    }
+    
     public class EFUnitOfWork : IUnitOfWork
     {
         private readonly ApplicationContext _db;
-        private ComponentRepository _componentRepository;
-        private DesignRepository _designRepository;
-        private DeviceRepository _deviceRepository;
-        private LogRepository _logRepository;
-        private OrderRepository _orderRepository;
-        private TaskRepository _taskRepository;
-        private DeviceComponentsTemplateRepository _deviceComponentsTemplateRepository;
-        private DeviceDesignTemplateRepository _deviceDesignTemplateRepository;
-        private ObtainedDesignRepository _obtainedDesignRepository;
-        private ObtainedComponentRepository _obtainedComponentRepository;
-        private ComponentsSupplyRequestRepository _componentsSupplyRequestRepository;
-        private DesignsSupplyRequestRepository _designsSupplyRequestRepository;
+        private IMontageRepository _montageRepository;
+        private IDesignRepository _designRepository;
+        private IDeviceRepository _deviceRepository;
+        private ILogRepository _logRepository;
+        private IOrderRepository _orderRepository;
+        private ITaskRepository _taskRepository;
+        private IMontageInDeviceRepository _montageInDeviceRepository;
+        private IDesignInDeviceRepository _designInDeviceRepository;
+        private IObtainedDesignRepository _obtainedDesignRepository;
+        private IObtainedMontageRepository _obtainedMontageRepository;
+        private IMontageSupplyRequestRepository _montageSupplyRequestRepository;
+        private IDesignsSupplyRequestRepository _designsSupplyRequestRepository;
 
         public EFUnitOfWork(string connectionString)
         {
@@ -35,75 +45,29 @@ namespace ProductionManagementSystem.DAL.Repositories
             _db = applicationContext;
         }
 
-        public IRepository<Device> Devices
-        {
-            get { return _deviceRepository ??= new DeviceRepository(_db); }
-        }
+        public IMontageRepository MontageRepository => _montageRepository ??= new MontageRepository(_db);
+        public IDesignRepository DesignRepository => _designRepository ??= new DesignRepository(_db);
+        public IDeviceRepository DeviceRepository => _deviceRepository ??= new DeviceRepository(_db);
+        public IMontageInDeviceRepository MontageInDeviceRepository =>
+            _montageInDeviceRepository ??= new MontageInDeviceRepository(_db);
+        public IDesignInDeviceRepository DesignInDeviceRepository =>
+            _designInDeviceRepository ?? new DesignInDeviceRepository(_db);
+        public ITaskRepository TaskRepository => _taskRepository ??= new TaskRepository(_db);
+        public IObtainedDesignRepository ObtainedDesignRepository =>
+            _obtainedDesignRepository ??= new ObtainedDesignRepository(_db);
 
-        public IRepository<Design> Designs {
-            get { return _designRepository ??= new DesignRepository(_db); }
-        }
-        
-        public IRepository<Component> Components {
-            get { return _componentRepository ??= new ComponentRepository(_db); }
-        }
+        public IObtainedMontageRepository ObtainedMontageRepository =>
+            _obtainedMontageRepository ??= new ObtainedMontageRepository(_db);
 
-        public IRepository<Order> Orders
-        {
-            get { return _orderRepository ??= new OrderRepository(_db); }
-        }
+        public IOrderRepository OrderRepository => _orderRepository ?? new OrderRepository(_db);
 
-        public IRepository<Task> Tasks
-        {
-            get { return _taskRepository ??= new TaskRepository(_db); }
-        }
-        
-        public IRepository<Log> Logs
-        {
-            get { return _logRepository ??= new LogRepository(_db); }
-        }
-        
-        public IRepository<DeviceComponentsTemplate> DeviceComponentsTemplate {
-            get
-            {
-                return _deviceComponentsTemplateRepository ??= new DeviceComponentsTemplateRepository(_db);
-            }
-        }
-        
-        public IRepository<DeviceDesignTemplate> DeviceDesignTemplate {
-            get
-            {
-                return _deviceDesignTemplateRepository ??= new DeviceDesignTemplateRepository(_db);
-            }
-        }
+        public IDesignsSupplyRequestRepository DesignsSupplyRequestRepository =>
+            _designsSupplyRequestRepository ??= new DesignsSupplyRequestRepository(_db);
 
-        public IRepository<ObtainedComponent> ObtainedComponents
-        {
-            get
-            {
-                return _obtainedComponentRepository ??= new ObtainedComponentRepository(_db);
-            }
-        }
+        public IMontageSupplyRequestRepository MontageSupplyRequestRepository =>
+            _montageSupplyRequestRepository ??= new MontageSupplyRequestRepository(_db);
 
-        public IRepository<ObtainedDesign> ObtainedDesigns
-        {
-            get { return _obtainedDesignRepository ??= new ObtainedDesignRepository(_db); }
-        }
-
-        public IRepository<ComponentsSupplyRequest> ComponentSupplyRequests
-        {
-            get { return _componentsSupplyRequestRepository ??= new ComponentsSupplyRequestRepository(_db); }
-        }
-        
-        public IRepository<DesignsSupplyRequest> DesignsSupplyRequests
-        {
-            get { return _designsSupplyRequestRepository ??= new DesignsSupplyRequestRepository(_db); }
-        }
-
-        public async System.Threading.Tasks.Task SaveAsync()
-        {
-            await _db.SaveChangesAsync();
-        }
+        public ILogRepository LogRepository => _logRepository ??= new LogRepository(_db);
         
         private bool _disposed;
 
