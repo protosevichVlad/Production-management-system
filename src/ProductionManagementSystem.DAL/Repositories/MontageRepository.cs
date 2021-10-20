@@ -4,12 +4,12 @@ using ProductionManagementSystem.Models.Components;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
-    public interface IMontageRepository : IComponentBaseRepository<Montage>
+    public interface IMontageRepository : IRepository<Montage>
     {
         
     }
 
-    public class MontageRepository : ComponentBaseRepository<Montage>, IMontageRepository
+    public class MontageRepository : Repository<Montage>, IMontageRepository
     {
         public MontageRepository(ApplicationContext db) : base(db)
         {

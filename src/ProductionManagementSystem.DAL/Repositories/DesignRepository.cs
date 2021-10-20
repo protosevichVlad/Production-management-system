@@ -3,11 +3,11 @@ using ProductionManagementSystem.Models.Components;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
-    public interface IDesignRepository : IComponentBaseRepository<Design>
+    public interface IDesignRepository : IRepository<Design>
     {
         
     }
-    public class DesignRepository : ComponentBaseRepository<Design>, IDesignRepository
+    public class DesignRepository : Repository<Design>, IDesignRepository
     {
         public DesignRepository(ApplicationContext db) : base(db)
         {
