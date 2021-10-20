@@ -7,7 +7,7 @@ using ProductionManagementSystem.DAL.EF;
 
 namespace ProductionManagementSystem.DAL.Repositories
 {
-    interface IRepository<TItem>
+    public interface IRepository<TItem>
     {
         public IEnumerable<TItem> GetAll();
         public Task<TItem> GetByIdAsync(int id);
