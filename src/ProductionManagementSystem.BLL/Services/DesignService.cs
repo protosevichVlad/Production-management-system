@@ -98,7 +98,7 @@ namespace ProductionManagementSystem.BLL.Services
                 
         private async Task<bool> DesignExistsAsync(int id)
         {
-            return _db.DesignRepository.GetAll().Any(e => e.Id == id);
+            return GetAll().Any(e => e.Id == id);
         }
     }
 }
