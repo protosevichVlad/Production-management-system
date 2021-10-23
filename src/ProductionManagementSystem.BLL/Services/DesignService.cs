@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models.Components;
 using ProductionManagementSystem.Models.Logs;

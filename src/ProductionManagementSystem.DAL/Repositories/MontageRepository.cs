@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using ProductionManagementSystem.DAL.EF;
+﻿using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.Models.Components;
 
 namespace ProductionManagementSystem.DAL.Repositories

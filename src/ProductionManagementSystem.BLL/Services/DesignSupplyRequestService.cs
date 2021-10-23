@@ -1,6 +1,4 @@
 ﻿using System.Threading.Tasks;
-using ProductionManagementSystem.BLL.DTO;
-using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models.Logs;
 using ProductionManagementSystem.Models.SupplyRequests;
