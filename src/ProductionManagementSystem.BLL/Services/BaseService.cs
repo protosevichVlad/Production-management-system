@@ -21,6 +21,7 @@ namespace ProductionManagementSystem.BLL.Services
         public void Create(TItem item);
         public void Update(TItem item);
         public void Delete(TItem item);
+        public Task DeleteAsync(TItem item);
     }
     
     public class BaseService<TItem> : IBaseService<TItem>
@@ -74,6 +75,7 @@ namespace ProductionManagementSystem.BLL.Services
         {
             _currentRepository.Update(item);
             _db.Save();
+            //TODO: await _log.CreateLogAsync(new LogDTO($"Был изменён конструктив {design}"){DesignId = design.Id});
         }
 
         public virtual void Delete(TItem item)
@@ -81,6 +83,15 @@ namespace ProductionManagementSystem.BLL.Services
             _currentRepository.Delete(item);
             _db.Save();
         }
+
+        public virtual async Task DeleteAsync(TItem item)
+        {
+            _currentRepository.Delete(item);
+            await _db.SaveAsync();
+            
+            // TODO: await _log.CreateLogAsync(new LogDTO($"Был удалён конструктив: {design}"));
+        }
+
 
         private async void CreateLogAsync(TItem item)
         {
