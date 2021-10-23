@@ -24,6 +24,8 @@ namespace ProductionManagementSystem.Models.Logs
         public int? DeviceId { get; set; }
         public int? TaskId { get; set; }
         public int? OrderId { get; set; }
+        public int? MontageSupplyRequestId { get; set; }
+        public int? DesignSupplyRequestId { get; set; }
         
         public Log()
         {
