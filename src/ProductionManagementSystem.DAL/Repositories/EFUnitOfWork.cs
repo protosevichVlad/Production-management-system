@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using ProductionManagementSystem.DAL.EF;
 
 namespace ProductionManagementSystem.DAL.Repositories
@@ -21,6 +22,7 @@ namespace ProductionManagementSystem.DAL.Repositories
         ILogRepository LogRepository { get; }
 
         void Save();
+        Task SaveAsync();
     }
     
     public class EFUnitOfWork : IUnitOfWork
@@ -127,6 +129,11 @@ namespace ProductionManagementSystem.DAL.Repositories
         public void Save()
         {
             _db.SaveChanges();
+        }
+        
+        public async Task SaveAsync()
+        {
+            await _db.SaveChangesAsync();
         }
     }
 }
