@@ -13,58 +13,62 @@ namespace ProductionManagementSystem.BLL.Services
         public IEnumerable<TItem> Find(Func<TItem, bool> predicate);
         public Task CreateAsync(TItem item);
         public void Create(TItem item);
-        public Task UpdateAsync(TItem item);
         public void Update(TItem item);
         public void Delete(TItem item);
     }
     
     public class BaseService<TItem> : IBaseService<TItem>
     {
-        protected IRepository<TItem> _baseRepository;
+        protected IUnitOfWork _db;
+        protected IRepository<TItem> _currentRepository;
+
+        public BaseService(IUnitOfWork db)
+        {
+            _db = db;
+            _currentRepository = _db.GetRepository<TItem>() ?? throw new NullReferenceException(nameof(_currentRepository));
+        }
 
         public virtual IEnumerable<TItem> GetAll()
         {
-            return _baseRepository.GetAll();
+            return _currentRepository.GetAll();
         }
 
         public virtual async Task<TItem> GetByIdAsync(int id)
         {
-            return await _baseRepository.GetByIdAsync(id);
+            return await _currentRepository.GetByIdAsync(id);
         }
 
         public virtual TItem GetById(int id)
         {
-            return _baseRepository.GetById(id);
+            return _currentRepository.GetById(id);
         }
 
         public virtual IEnumerable<TItem> Find(Func<TItem, bool> predicate)
         {
-            return _baseRepository.Find(predicate);
+            return _currentRepository.Find(predicate);
         }
 
         public virtual async Task CreateAsync(TItem item)
         {
-            await _baseRepository.CreateAsync(item);
+            await _currentRepository.CreateAsync(item);
         }
 
         public virtual void Create(TItem item)
         {
-            _baseRepository.Create(item);
-        }
-
-        public virtual async Task UpdateAsync(TItem item)
-        {
-            await _baseRepository.UpdateAsync(item);
+            _currentRepository.Create(item);
+            _db.Save();
         }
 
         public virtual void Update(TItem item)
         {
-            _baseRepository.Update(item);
+            _currentRepository.Update(item);
+            _db.Save();
         }
 
         public virtual void Delete(TItem item)
         {
-            _baseRepository.Delete(item);
+            _currentRepository.Delete(item);
+            _db.Save();
         }
     }
 }
