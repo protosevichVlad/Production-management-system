@@ -2,6 +2,7 @@
 using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Repositories;
+using ProductionManagementSystem.Models.Logs;
 using ProductionManagementSystem.Models.SupplyRequests;
 
 namespace ProductionManagementSystem.BLL.Services
@@ -38,7 +39,7 @@ namespace ProductionManagementSystem.BLL.Services
             }
             
             Update(designSupplyRequest);
-            await _log.CreateLogAsync(new LogDTO(message));
+            await _log.CreateAsync(new Log() {Message = message});
         }
     }
 }

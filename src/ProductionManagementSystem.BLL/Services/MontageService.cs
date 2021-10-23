@@ -9,6 +9,7 @@ using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models.Components;
+using ProductionManagementSystem.Models.Logs;
 using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Services
@@ -61,11 +62,11 @@ namespace ProductionManagementSystem.BLL.Services
 
             if (quantity < 0)
             {
-                await _log.CreateLogAsync(new LogDTO($"Было получено {-quantity}ед. монтажа {montage}"){ComponentId = montage.Id});
+                await _log.CreateAsync(new Log() {Message = $"Было получено {-quantity}ед. монтажа {montage}", MontageId = montage.Id});
             }
             else
             {
-                await _log.CreateLogAsync(new LogDTO($"Было добавлено {quantity}ед. монтажа {montage}"){ComponentId = montage.Id});
+                await _log.CreateAsync(new Log() {Message = $"Было добавлено {quantity}ед. монтажа {montage}", MontageId = montage.Id});
             }
         }
 
