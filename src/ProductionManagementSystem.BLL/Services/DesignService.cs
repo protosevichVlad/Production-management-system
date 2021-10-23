@@ -14,7 +14,8 @@ namespace ProductionManagementSystem.BLL.Services
     public interface IDesignService : IBaseService<Design>
     {
         Task<IEnumerable<string>> GetTypesAsync();
-        Task IncreaseQuantityOfDesignAsync(int? id, int quantity);
+        Task IncreaseQuantityOfDesignAsync(int id, int quantity);
+        Task DecreaseQuantityOfDesignAsync(int id, int quantity);
     }
 
     public class DesignService : BaseService<Design>, IDesignService
@@ -45,19 +46,14 @@ namespace ProductionManagementSystem.BLL.Services
             return types;
         }
 
-        public async Task IncreaseQuantityOfDesignAsync(int? id, int quantity)
+        public async Task IncreaseQuantityOfDesignAsync(int id, int quantity)
         {
-            if (!id.HasValue)
-            {
-                throw new NotImplementedException();
-            }
-
             if (quantity == 0)
             {
                 return;
             }
 
-            var design = await GetByIdAsync(id.Value);
+            var design = await GetByIdAsync(id);
             design.Quantity += quantity;
             Update(design);
             
@@ -71,7 +67,7 @@ namespace ProductionManagementSystem.BLL.Services
             }
         }
         
-        public async Task DecreaseQuantityOfDesignAsync(int? id, int quantity)
+        public async Task DecreaseQuantityOfDesignAsync(int id, int quantity)
         {
             await this.IncreaseQuantityOfDesignAsync(id, -quantity);
         }
