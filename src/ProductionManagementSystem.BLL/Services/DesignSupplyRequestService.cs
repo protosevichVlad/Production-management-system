@@ -36,7 +36,7 @@ namespace ProductionManagementSystem.BLL.Services
                     designSupplyRequest.Quantity);
             }
             
-            Update(designSupplyRequest);
+            await UpdateAsync(designSupplyRequest);
             await _log.CreateAsync(new Log() {Message = message});
         }
     }

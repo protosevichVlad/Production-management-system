@@ -14,12 +14,9 @@ namespace ProductionManagementSystem.BLL.Services
     {
         public IEnumerable<TItem> GetAll();
         public Task<TItem> GetByIdAsync(int id);
-        public TItem GetById(int id);
         public IEnumerable<TItem> Find(Func<TItem, bool> predicate);
         public Task CreateAsync(TItem item);
-        public void Create(TItem item);
-        public void Update(TItem item);
-        public void Delete(TItem item);
+        public Task UpdateAsync(TItem item);
         public Task DeleteAsync(TItem item);
     }
     
@@ -44,11 +41,6 @@ namespace ProductionManagementSystem.BLL.Services
             return await _currentRepository.GetByIdAsync(id);
         }
 
-        public virtual TItem GetById(int id)
-        {
-            return _currentRepository.GetById(id);
-        }
-
         public virtual IEnumerable<TItem> Find(Func<TItem, bool> predicate)
         {
             return _currentRepository.Find(predicate);
@@ -62,18 +54,10 @@ namespace ProductionManagementSystem.BLL.Services
             await _db.SaveAsync();
         }
 
-        public virtual void Create(TItem item)
-        {
-            _currentRepository.Create(item);
-            CreateLogAsync(item);
-            
-            _db.Save();
-        }
-
-        public virtual void Update(TItem item)
+        public virtual async Task UpdateAsync(TItem item)
         {
             _currentRepository.Update(item);
-            _db.Save();
+            await _db.SaveAsync();
             //TODO: await _log.CreateLogAsync(new LogDTO($"Был изменён конструктив {design}"){DesignId = design.Id});
         }
 

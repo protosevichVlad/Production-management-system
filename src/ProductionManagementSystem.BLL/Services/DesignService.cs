@@ -54,7 +54,7 @@ namespace ProductionManagementSystem.BLL.Services
 
             var design = await GetByIdAsync(id);
             design.Quantity += quantity;
-            Update(design);
+            await UpdateAsync(design);
             
             if (quantity < 0)
             {

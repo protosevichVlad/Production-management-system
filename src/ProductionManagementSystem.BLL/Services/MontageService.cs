@@ -55,7 +55,7 @@ namespace ProductionManagementSystem.BLL.Services
 
             var montage = await GetByIdAsync(id);
             montage.Quantity += quantity;
-            Update(montage);
+            await UpdateAsync(montage);
 
             if (quantity < 0)
             {

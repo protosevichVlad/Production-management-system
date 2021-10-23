@@ -36,7 +36,7 @@ namespace ProductionManagementSystem.BLL.Services
                     montageSupplyRequest.Quantity);
             }
             
-            Update(montageSupplyRequest);
+            await UpdateAsync(montageSupplyRequest);
             await _log.CreateAsync(new Log() {Message = message});
         }
     }
