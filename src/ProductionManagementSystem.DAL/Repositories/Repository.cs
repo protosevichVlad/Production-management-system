@@ -15,9 +15,10 @@ namespace ProductionManagementSystem.DAL.Repositories
         public IEnumerable<TItem> Find(Func<TItem, bool> predicate);
         public Task CreateAsync(TItem item);
         public void Create(TItem item);
-        public Task UpdateAsync(TItem item);
         public void Update(TItem item);
         public void Delete(TItem item);
+        public void Save();
+        public Task SaveAsync();
     }
     
     public class Repository<TItem> : IRepository<TItem> 
@@ -55,30 +56,31 @@ namespace ProductionManagementSystem.DAL.Repositories
         public async Task CreateAsync(TItem item)
         {
             await _dbSet.AddAsync(item);
-            await _db.SaveChangesAsync();
         }
 
         public void Create(TItem item)
         {
             _dbSet.Add(item);
-            _db.SaveChanges();
-        }
-
-        public async Task UpdateAsync(TItem item)
-        {
-            _db.Entry<TItem>(item).State = EntityState.Modified;
-            await _db.SaveChangesAsync();
         }
 
         public void Update(TItem item)
         {
             _db.Entry<TItem>(item).State = EntityState.Modified;
-            _db.SaveChanges();
         }
 
         public void Delete(TItem item)
         {
             _dbSet.Remove(item);
+        }
+
+        public void Save()
+        {
+            _db.SaveChanges();
+        }
+
+        public async Task SaveAsync()
+        {
+            await _db.SaveChangesAsync();
         }
     }
 }
