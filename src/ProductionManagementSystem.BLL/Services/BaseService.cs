@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using ProductionManagementSystem.DAL.Repositories;
+using ProductionManagementSystem.Models.Components;
+using ProductionManagementSystem.Models.Devices;
+using ProductionManagementSystem.Models.Logs;
+using ProductionManagementSystem.Models.Orders;
+using ProductionManagementSystem.Models.SupplyRequests;
 
 namespace ProductionManagementSystem.BLL.Services
 {
@@ -51,11 +57,16 @@ namespace ProductionManagementSystem.BLL.Services
         public virtual async Task CreateAsync(TItem item)
         {
             await _currentRepository.CreateAsync(item);
+            CreateLogAsync(item);
+            
+            await _db.SaveAsync();
         }
 
         public virtual void Create(TItem item)
         {
             _currentRepository.Create(item);
+            CreateLogAsync(item);
+            
             _db.Save();
         }
 
@@ -69,6 +80,31 @@ namespace ProductionManagementSystem.BLL.Services
         {
             _currentRepository.Delete(item);
             _db.Save();
+        }
+
+        private async void CreateLogAsync(TItem item)
+        {
+            if (item is Montage montage)
+                await _db.LogRepository.CreateAsync(new Log()
+                    { Message = "Был создан монтаж " + montage.ToString(), MontageId = montage.Id });
+            if (item is Design design)
+                await _db.LogRepository.CreateAsync(new Log()
+                    { Message = "Был создан конструктив " + design.ToString(), DesignId = design.Id });
+            if (item is Device device)
+                await _db.LogRepository.CreateAsync(new Log()
+                    { Message = "Был создан прибор " + device.ToString(), DesignId = device.Id });
+            if (item is Task task)
+                await _db.LogRepository.CreateAsync(new Log()
+                    { Message = "Была создана задача " + task.ToString(), TaskId = task.Id });
+            if (item is Order order)
+                await _db.LogRepository.CreateAsync(new Log()
+                    { Message = "Был создан заказ " + order.ToString(), OrderId = order.Id });
+            if (item is MontageSupplyRequest montageSupplyRequest)
+                await _db.LogRepository.CreateAsync(new Log()
+                    { Message = "Была создана заявка на снабжения монтажа " + montageSupplyRequest.ToString(), MontageSupplyRequestId = montageSupplyRequest.Id });
+            if (item is DesignSupplyRequest designSupplyRequest)
+                await _db.LogRepository.CreateAsync(new Log()
+                    { Message = "Была создана заявка на снабжения конструктива " + designSupplyRequest.ToString(), DesignSupplyRequestId = designSupplyRequest.Id });
         }
     }
 }
