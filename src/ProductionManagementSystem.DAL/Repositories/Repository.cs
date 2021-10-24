@@ -24,7 +24,7 @@ namespace ProductionManagementSystem.DAL.Repositories
         protected readonly ApplicationContext _db;
         protected readonly DbSet<TItem> _dbSet;
 
-        public Repository(ApplicationContext db)
+        protected Repository(ApplicationContext db)
         {
             _db = db;
             _dbSet = db.Set<TItem>();

@@ -19,4 +19,16 @@
       <ProjectReference Include="..\..\src\ProductionManagementSystem.DAL\ProductionManagementSystem.DAL.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="ServicesTests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="ServicesTests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="ServicesTests\**" />
+    </ItemGroup>
+
 </Project>
