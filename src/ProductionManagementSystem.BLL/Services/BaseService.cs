@@ -10,7 +10,7 @@ using ProductionManagementSystem.Models.SupplyRequests;
 
 namespace ProductionManagementSystem.BLL.Services
 {
-    public interface IBaseService<TItem>
+    public interface IBaseService<TItem> : IDisposable
     {
         public IEnumerable<TItem> GetAll();
         public Task<TItem> GetByIdAsync(int id);
@@ -61,12 +61,6 @@ namespace ProductionManagementSystem.BLL.Services
             //TODO: await _log.CreateLogAsync(new LogDTO($"Был изменён конструктив {design}"){DesignId = design.Id});
         }
 
-        public virtual void Delete(TItem item)
-        {
-            _currentRepository.Delete(item);
-            _db.Save();
-        }
-
         public virtual async Task DeleteAsync(TItem item)
         {
             _currentRepository.Delete(item);
@@ -75,6 +69,10 @@ namespace ProductionManagementSystem.BLL.Services
             // TODO: await _log.CreateLogAsync(new LogDTO($"Был удалён конструктив: {design}"));
         }
 
+        public void Dispose()
+        {
+            _db.Dispose();
+        }
 
         private async void CreateLogAsync(TItem item)
         {
