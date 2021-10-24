@@ -19,15 +19,10 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public override async Task CreateAsync(Device device)
         {
-            foreach (var design in device.Designs)
-            {
-                await _db.DesignInDevices.AddAsync(design);
-            }
-            
-            foreach (var montage in device.Montage)
-            {
-                await _db.MontageInDevices.AddAsync(montage);
-            }
+            if (device.Designs != null)
+                await _db.DesignInDevices.AddRangeAsync(device.Designs);
+            if (device.Montage != null)
+                await _db.MontageInDevices.AddRangeAsync(device.Montage);
             
             await base.CreateAsync(device);
         }
@@ -35,6 +30,8 @@ namespace ProductionManagementSystem.DAL.Repositories
         public override IEnumerable<Device> GetAll()
         {
             var devices = base.GetAll();
+            if (devices == null)
+                return null;
             foreach (var device in devices)
             {
                 device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id);
@@ -47,6 +44,9 @@ namespace ProductionManagementSystem.DAL.Repositories
         public override async Task<Device> GetByIdAsync(int id)
         {
             var device = await base.GetByIdAsync(id);
+            if (device == null)
+                return null;
+            
             device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id);
             device.Montage = _db.MontageInDevices.Where(m => m.DeviceId == device.Id);
             return device;
@@ -54,14 +54,17 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public override void Update(Device device)
         {
-            foreach (var design in device.Designs)
+            _db.MontageInDevices.RemoveRange(_db.MontageInDevices.Where(d => d.DeviceId == device.Id));
+            _db.DesignInDevices.RemoveRange(_db.DesignInDevices.Where(d => d.DeviceId == device.Id));
+
+            if (device.Designs != null)
             {
-                _db.DesignInDevices.Update(design);
+                _db.DesignInDevices.AddRange(device.Designs);
             }
-            
-            foreach (var montage in device.Montage)
+
+            if (device.Montage != null)
             {
-                _db.MontageInDevices.Update(montage);
+                _db.MontageInDevices.AddRange(device.Montage);
             }
             
             base.Update(device);
@@ -69,8 +72,8 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public override void Delete(Device device)
         {
-            _db.DesignInDevices.RemoveRange(device.Designs);
-            _db.MontageInDevices.RemoveRange(device.Montage);
+            _db.MontageInDevices.RemoveRange(_db.MontageInDevices.Where(d => d.DeviceId == device.Id));
+            _db.DesignInDevices.RemoveRange(_db.DesignInDevices.Where(d => d.DeviceId == device.Id));
             
             base.Delete(device);
         }
@@ -78,6 +81,9 @@ namespace ProductionManagementSystem.DAL.Repositories
         public override IEnumerable<Device> Find(Func<Device, bool> predicate)
         {
             var devices = base.Find(predicate);
+            if (devices == null)
+                return null;
+            
             foreach (var device in devices)
             {
                 device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id);
