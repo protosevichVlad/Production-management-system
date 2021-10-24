@@ -11,13 +11,10 @@ namespace ProductionManagementSystem.DAL.Repositories
     {
         public IEnumerable<TItem> GetAll();
         public Task<TItem> GetByIdAsync(int id);
-        public TItem GetById(int id);
         public IEnumerable<TItem> Find(Func<TItem, bool> predicate);
         public Task CreateAsync(TItem item);
-        public void Create(TItem item);
         public void Update(TItem item);
         public void Delete(TItem item);
-        public void Save();
         public Task SaveAsync();
     }
     
@@ -33,52 +30,37 @@ namespace ProductionManagementSystem.DAL.Repositories
             _dbSet = db.Set<TItem>();
         }
 
-        public IEnumerable<TItem> GetAll()
+        public virtual IEnumerable<TItem> GetAll()
         {
             return _dbSet;
         }
 
-        public async Task<TItem> GetByIdAsync(int id)
+        public virtual async Task<TItem> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        public TItem GetById(int id)
-        {
-            return _dbSet.Find(id);
-        }
-
-        public IEnumerable<TItem> Find(Func<TItem, bool> predicate)
+        public virtual IEnumerable<TItem> Find(Func<TItem, bool> predicate)
         {
             return _dbSet.Where(predicate);
         }
 
-        public async Task CreateAsync(TItem item)
+        public virtual async Task CreateAsync(TItem item)
         {
             await _dbSet.AddAsync(item);
         }
 
-        public void Create(TItem item)
-        {
-            _dbSet.Add(item);
-        }
-
-        public void Update(TItem item)
+        public virtual void Update(TItem item)
         {
             _db.Entry<TItem>(item).State = EntityState.Modified;
         }
 
-        public void Delete(TItem item)
+        public virtual void Delete(TItem item)
         {
             _dbSet.Remove(item);
         }
 
-        public void Save()
-        {
-            _db.SaveChanges();
-        }
-
-        public async Task SaveAsync()
+        public virtual async Task SaveAsync()
         {
             await _db.SaveChangesAsync();
         }
