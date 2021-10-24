@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProductionManagementSystem.Models.Tasks
 {
+    [Flags]
     public enum TaskStatusEnum
     {
         [Display(Name="Комплектация")]
