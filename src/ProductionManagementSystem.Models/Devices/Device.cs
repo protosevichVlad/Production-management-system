@@ -1,4 +1,8 @@
-﻿namespace ProductionManagementSystem.Models.Devices
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ProductionManagementSystem.Models.Devices
 {
     public class Device
     {
@@ -6,6 +10,11 @@
         public string Name { get; set; }
         public int Quantity { get; set; }
         public string Description { get; set; }
+        
+        [NotMapped]
+        public IEnumerable<DesignInDevice> Designs { get; set; }
+        [NotMapped]
+        public IEnumerable<MontageInDevice> Montage { get; set; }
         
         public override string ToString()
         {
