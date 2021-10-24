@@ -56,13 +56,6 @@ namespace ProductionManagementSystem.DAL.Repositories
             base.Delete(item);
         }
 
-        public override void Update(Task item)
-        {
-            _db.ObtainedDesigns.UpdateRange(item.ObtainedDesigns);
-            _db.ObtainedMontages.UpdateRange(item.ObtainedMontages);
-            base.Update(item);
-        }
-
         public override async System.Threading.Tasks.Task CreateAsync(Task item)
         {
             await _db.ObtainedDesigns.AddRangeAsync(item.ObtainedDesigns);
