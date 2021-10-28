@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductionManagementSystem.WEB.Models.LogViewModel>;
+﻿@model IEnumerable<ProductionManagementSystem.Models.Logs.Log>;
 
 <div class="table-responsive">
     <table class="table table-sm">
@@ -8,7 +8,7 @@
                 @Html.DisplayNameFor(model => model.DateTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserLogin)
+                @Html.DisplayNameFor(model => model.User.UserName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Message)
@@ -24,7 +24,7 @@
                     @log.DateTime
                 </td>
                 <td>
-                    @log.UserLogin
+                    @log.User.UserName
                 </td>
                 <td>
                     @log.Message

@@ -2,40 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Interfaces;
-using ProductionManagementSystem.DAL.Enums;
+using ProductionManagementSystem.BLL.Services;
+using ProductionManagementSystem.Models.Logs;
+using ProductionManagementSystem.Models.Users;
 using ProductionManagementSystem.WEB.Models;
 
-namespace ProductionManagementSystem.Controllers
+namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize(Roles = RoleEnum.Admin)]
     public class LogsController : Controller
     {
         private readonly ILogService _logService;
-        private readonly IMapper _mapper;
 
         public LogsController(ILogService service)
         {
             _logService = service;
-            _mapper = new MapperConfiguration(cnf =>
-            {
-                cnf.CreateMap<LogDTO, LogViewModel>();
-                cnf.CreateMap<LogViewModel, LogDTO>();
-            }).CreateMapper();
         }
 
         public async Task<IActionResult> Index(string userName, int? deviceId, int? componentId, int? designId, int? taskId, int? orderId)
         {
-            var logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(await _logService.GetLogsAsync());
+            IEnumerable<Log> logs = _logService.GetAll().ToList();
 
             if (userName != null)
             {
-                logs = logs.Where(l => l.UserLogin == userName);
+                logs = logs.Where(l => l.User.UserName == userName);
             }
             
             if (deviceId != null)
@@ -45,7 +38,7 @@ namespace ProductionManagementSystem.Controllers
             
             if (componentId != null)
             {
-                logs = logs.Where(l => l.ComponentId == componentId);
+                logs = logs.Where(l => l.MontageId == componentId);
             }
             
             if (designId != null)
@@ -66,11 +59,11 @@ namespace ProductionManagementSystem.Controllers
             return View(logs);
         }
         
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             try
             {
-                return View(_mapper.Map<LogDTO, LogViewModel>(await _logService.GetLogAsync(id)));
+                return View(await _logService.GetByIdAsync(id));
             }
             catch (PageNotFoundException)
             {
