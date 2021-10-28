@@ -8,6 +8,7 @@ namespace ProductionManagementSystem.BLL.Services
     public interface IMontageSupplyRequestService : IBaseService<MontageSupplyRequest>
     {
         Task ChangeStatusAsync(int id, int to, string message);
+        Task DeleteByIdAsync(int id);
     }
 
     public class MontageSupplyRequestService : BaseService<MontageSupplyRequest>, IMontageSupplyRequestService
@@ -38,6 +39,11 @@ namespace ProductionManagementSystem.BLL.Services
             
             await UpdateAsync(montageSupplyRequest);
             await _log.CreateAsync(new Log() {Message = message});
+        }
+
+        public async Task DeleteByIdAsync(int id)
+        {
+            await this.DeleteAsync(new MontageSupplyRequest() {Id = id});
         }
     }
 }

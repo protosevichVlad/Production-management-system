@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.WEB.Models.ComponentsSupplyRequestViewModel
+﻿@model ProductionManagementSystem.Models.SupplyRequests.MontageSupplyRequest
 
 @{
     ViewBag.Title = "Изменить заявку на заказ монтажа №" + @Model.Id;
@@ -30,9 +30,9 @@
                 <span asp-validation-for="DesiredDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Component" class="control-label"></label>
-                <input asp-for="Component" class="form-control" autocomplete="off" disabled/>
-                <span asp-validation-for="Component" class="text-danger"></span>
+                <label asp-for="Montage" class="control-label"></label>
+                <input asp-for="Montage" class="form-control" autocomplete="off" disabled/>
+                <span asp-validation-for="Montage" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Quantity" class="control-label"></label>

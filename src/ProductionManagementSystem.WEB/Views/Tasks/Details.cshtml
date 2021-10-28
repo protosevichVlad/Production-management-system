@@ -67,7 +67,7 @@
                     @if (User.IsInRole(RoleEnum.OrderPicker))
                     {
                         <td>
-                            <a class="btn btn-light btn-sm" asp-controller="ComponentsSupplyRequest" asp-action="Create" asp-route-componentId="@comp.Component.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
+                            <a class="btn btn-light btn-sm" asp-controller="MontagesSupplyRequest" asp-action="Create" asp-route-componentId="@comp.Component.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
                         </td>
                     }
                 </tr>

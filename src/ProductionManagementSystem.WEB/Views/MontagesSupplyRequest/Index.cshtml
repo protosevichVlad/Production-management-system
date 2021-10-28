@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductionManagementSystem.WEB.Models.ComponentsSupplyRequestViewModel>
+﻿@model IEnumerable<ProductionManagementSystem.Models.SupplyRequests.MontageSupplyRequest>
 
 @{
     ViewBag.Title = "Список заявок на снабжение монтажа";
@@ -17,7 +17,7 @@
                 @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Component.Name)
+                @Html.DisplayNameFor(model => model.Montage.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.TaskId)
@@ -45,7 +45,7 @@
                     @Html.DisplayFor(modelItem => item.Id)
                 </td>
                 <td>
-                    @item.Component.ToString()
+                    @item.Montage.ToString()
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.TaskId)

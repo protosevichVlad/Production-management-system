@@ -1,5 +1,6 @@
 ﻿@using ProductionManagementSystem.WEB.Models
-@model ProductionManagementSystem.WEB.Models.ComponentsSupplyRequestViewModel
+@using ProductionManagementSystem.Models.SupplyRequests
+@model ProductionManagementSystem.Models.SupplyRequests.MontageSupplyRequest
 
 @{
     ViewData["Title"] = "Подробная информация о заявке на снабжение монтажа №" + @Model.Id;
@@ -13,7 +14,7 @@
     <div class="col d-flex justify-content-end">
         <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
         @* <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Index" asp-route-taskId="@Model.Id">Логи</a> *@
-        @if (Model.StatusSupply == StatusSupplyEnum.Ready)
+        @if (Model.StatusSupply == SupplyStatusEnum.Ready)
         {
             <a class="btn btn-light btn-sm disabled" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
             <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#@ViewBag.Modal.NameModal" disabled>Изменить статус</button>
@@ -44,10 +45,10 @@
             @Html.DisplayFor(model => model.TaskId)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Component.Name)
+            @Html.DisplayNameFor(model => model.Montage.Name)
         </dt>
         <dd class = "col-sm-10">
-            @Model.Component.ToString()
+            @Model.Montage.ToString()
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DateAdded)
