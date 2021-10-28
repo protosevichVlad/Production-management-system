@@ -401,7 +401,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                await _montageService.IncreaseQuantityOfMontageAsync(components.ComponentId[index], -components.Quantity[index]);
+                await _montageService.DecreaseQuantityOfDesignAsync(components.ComponentId[index], components.Quantity[index]);
             }
             
             return RedirectToAction(nameof(ReceiveMultiple));
