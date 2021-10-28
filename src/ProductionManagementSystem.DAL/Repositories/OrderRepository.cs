@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
@@ -17,11 +18,24 @@ namespace ProductionManagementSystem.DAL.Repositories
         {
         }
 
+        public override IEnumerable<Order> GetAll()
+        {
+            var orders = base.GetAll().ToList();
+            foreach (var order in orders)
+            {
+                order.Tasks = _db.Tasks.Where(t => t.OrderId == order.Id).ToList();
+            }
+            
+            return orders;
+        }
+
         public override async Task<Order> GetByIdAsync(int id)
         {
             var order = await base.GetByIdAsync(id);
+            if (order == null)
+                return null;
+            
             order.Tasks = await _db.Tasks.Where(t => t.OrderId == id).ToListAsync();
-
             return order;
         }
     }
