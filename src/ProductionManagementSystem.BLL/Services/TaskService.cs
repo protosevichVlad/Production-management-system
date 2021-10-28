@@ -22,6 +22,7 @@ namespace ProductionManagementSystem.BLL.Services
         Task ReceiveDesignsAsync(int taskId, int[] designIds, int[] designObt);
         Task ReceiveComponentAsync(int taskId, int componentId, int componentObt);
         Task ReceiveDesignAsync(int taskId, int designId, int designObt);
+        Task DeleteByIdAsync(int id);
     }
     public class TaskService : BaseService<Models.Tasks.Task>, ITaskService
     {
@@ -170,6 +171,12 @@ namespace ProductionManagementSystem.BLL.Services
                 _db.ObtainedDesignRepository.Update(obtDes);
             }
         }
+
+        public async Task DeleteByIdAsync(int id)
+        {
+            await this.DeleteAsync(new Models.Tasks.Task() {Id = id});
+        }
+
 
         private TaskStatusEnum ToStatus(IEnumerable<string> roles)
         {

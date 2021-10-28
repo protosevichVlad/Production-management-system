@@ -1,54 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.WEB.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
-using ProductionManagementSystem.DAL.Entities;
-using ProductionManagementSystem.DAL.Enums;
-using ObtainedComponent = ProductionManagementSystem.WEB.Models.ObtainedComponent;
-using ObtainedDesign = ProductionManagementSystem.WEB.Models.ObtainedDesign;
+using ProductionManagementSystem.Models.Tasks;
+using ProductionManagementSystem.Models.Users;
+using Task = ProductionManagementSystem.Models.Tasks.Task;
 
 namespace ProductionManagementSystem.Controllers
 {
     [Authorize]
     public class TasksController : Controller
     {
-        private readonly UserManager<ProductionManagementSystemUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly ITaskService _taskService;
         private readonly IDeviceService _deviceService;
-        private readonly IMapper _mapper;
 
-        public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<ProductionManagementSystemUser> userManager)
+        public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<User> userManager)
         {
             _taskService = taskService;
             _deviceService = deviceService;
-            _mapper = new MapperConfiguration(cfg =>
-                {
-                    cfg.CreateMap<TaskDTO, TaskViewModel>()
-                        .ForMember(
-                            task => task.Status, 
-                            opt => opt.MapFrom(
-                                src => _taskService.GetTaskStatusName(src.Status)
-                                )
-                            );
-                    cfg.CreateMap<TaskViewModel, TaskDTO>();
-                    cfg.CreateMap<DeviceDTO, DeviceViewModel>();
-                    cfg.CreateMap<LogDTO, LogViewModel>();
-                    cfg.CreateMap<ObtainedDesign, ObtainedDesignDTO>();
-                    cfg.CreateMap<ObtainedDesignDTO, ObtainedDesign>();
-                    cfg.CreateMap<ObtainedComponent, ObtainedComponentDTO>();
-                    cfg.CreateMap<ObtainedComponentDTO, ObtainedComponent>();
-                })
-                .CreateMapper();
             _userManager = userManager;
         }
 
@@ -65,41 +41,35 @@ namespace ProductionManagementSystem.Controllers
 
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             var roles = await _userManager.GetRolesAsync(user);
-            var tasksDto = (await _taskService.GetTasksAsync(roles)).ToList();
-            var tasksViewModel =
-                _mapper.Map<IEnumerable<TaskDTO>, IEnumerable<TaskViewModel>>(tasksDto).ToList();
+            var tasks = (await _taskService.GetTasksByUserRoleAsync(roles)).ToList();
+            tasks = SortingTasks(tasks, sortOrder).ToList();
             
-            tasksViewModel = SortingTasks(tasksViewModel, sortOrder).ToList();
-            
-            
-            return View(tasksViewModel);
+            return View(tasks);
         }
         
         public async Task<IActionResult> Create()
         {
-            ViewBag.Devices = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
+            ViewBag.Devices = new SelectList(_deviceService.GetAll(), "Id", "Name");
             return View();
         }
         
         [HttpPost]
-        public async Task<IActionResult> Create(TaskViewModel taskViewModel)
+        public async Task<IActionResult> Create(Task taskViewModel)
         {
-            var taskDto = _mapper.Map<TaskViewModel, TaskDTO>(taskViewModel);
-            await _taskService.CreateTaskAsync(taskDto);
+            await _taskService.CreateAsync(taskViewModel);
             return RedirectToAction(nameof(Index));
         }
         
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             try
             {
-                var taskDto = await _taskService.GetTaskAsync(id);
-                var taskViewModel = _mapper.Map<TaskDTO, TaskViewModel>(taskDto);
-                ViewBag.States = new SelectList(GetStates(taskDto), "Id", "Name");
-                ViewBag.ComponentTemplate = await _deviceService.GetComponentsTemplatesAsync(taskDto.DeviceId);
-                ViewBag.DesignTemplate = await _deviceService.GetDesignTemplatesAsync(taskDto.DeviceId);
-                ViewBag.Logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(_taskService.GetLogs(id));
-                return View(taskViewModel);
+                var task = await _taskService.GetByIdAsync(id);
+                ViewBag.States = new SelectList(GetStates(task), "Id", "Name");
+                ViewBag.ComponentTemplate = (await _deviceService.GetByIdAsync(task.DeviceId)).Montage;
+                ViewBag.DesignTemplate = (await _deviceService.GetByIdAsync(task.DeviceId)).Designs;
+                // ViewBag.Logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(_taskService.GetLogs(id));
+                return View(task);
             }
             catch (PageNotFoundException)
             {
@@ -107,26 +77,25 @@ namespace ProductionManagementSystem.Controllers
             }
         }
         
-        public async Task<IActionResult> Delete(int? id)
-        {
-            try
-            {
-                var taskDto = await _taskService.GetTaskAsync(id);
-                var taskViewModel = _mapper.Map<TaskDTO, TaskViewModel>(taskDto);
-                return View(taskViewModel);
-            }
-            catch (PageNotFoundException)
-            {
-                throw new Exception("Страница не найдена.");
-            }
-        }
-        
-        [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                await _taskService.DeleteTaskAsync(id);
+                var task = await _taskService.GetByIdAsync(id);
+                return View(task);
+            }
+            catch (PageNotFoundException)
+            {
+                throw new Exception("Страница не найдена.");
+            }
+        }
+        
+        [HttpPost("[controller]/Delete/{id}")]
+        public async Task<IActionResult> DeleteConfirm(int id)
+        {
+            try
+            {
+                await _taskService.DeleteByIdAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (PageNotFoundException)
@@ -135,14 +104,13 @@ namespace ProductionManagementSystem.Controllers
             }
         }
         
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                var taskDto = await _taskService.GetTaskAsync(id);
-                var taskViewModel = _mapper.Map<TaskDTO, TaskViewModel>(taskDto);
-                ViewBag.Devices = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
-                return View(taskViewModel);
+                var task = await _taskService.GetByIdAsync(id);
+                ViewBag.Devices = new SelectList(_deviceService.GetAll(), "Id", "Name");
+                return View(task);
             }
             catch (PageNotFoundException)
             {
@@ -151,17 +119,15 @@ namespace ProductionManagementSystem.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> Edit(TaskViewModel taskModel)
+        public async Task<IActionResult> Edit(Task taskModel)
         {
-            var taskDto = _mapper.Map<TaskViewModel, TaskDTO>(taskModel);
-            await _taskService.UpdateTaskAsync(taskDto);
+            await _taskService.UpdateAsync(taskModel);
             return RedirectToAction(nameof(Details), new {id = taskModel.Id});
         }
         
         [HttpPost]
         public async Task<IActionResult> Transfer(int taskId, string full, int to, string message)
         {
-            LogService.UserName = User.Identity?.Name;
             await _taskService.TransferAsync(taskId, full == "true", to, message);
             return RedirectToAction(nameof(Details), new {id = taskId});
         }
@@ -169,9 +135,10 @@ namespace ProductionManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> ReceiveComponent(int taskId)
         {
+            var task = await _taskService.GetByIdAsync(taskId);
             ViewBag.TaskId = taskId;
-            ViewBag.Components = await _taskService.GetDeviceComponentsTemplatesFromTaskAsync(taskId);
-            ViewBag.ObtainedComponents = _taskService.GetObtainedComponents(taskId);
+            ViewBag.Components = await _deviceService.GetMontagesFromDeviceByDeviceId(task.DeviceId);
+            ViewBag.ObtainedComponents = (await _taskService.GetByIdAsync(task.Id)).ObtainedMontages;
             return View();
         }
 
@@ -185,9 +152,10 @@ namespace ProductionManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> ReceiveDesign(int taskId)
         {
+            var task = await _taskService.GetByIdAsync(taskId);
             ViewBag.TaskId = taskId;
-            ViewBag.Designs = await _taskService.GetDeviceDesignTemplateFromTaskAsync(taskId);
-            ViewBag.ObtainedDesigns = _taskService.GetObtainedDesigns(taskId);
+            ViewBag.Designs = await _deviceService.GetDesignsFromDeviceByDeviceId(task.DeviceId);
+            ViewBag.ObtainedDesigns = (await _taskService.GetByIdAsync(taskId)).ObtainedDesigns;
             return View();
         }
 
@@ -198,7 +166,7 @@ namespace ProductionManagementSystem.Controllers
             return RedirectToAction(nameof(Details), new {id = taskId});
         }
 
-        private static IEnumerable<TaskViewModel> SortingTasks(IEnumerable<TaskViewModel> tasks, string sortOrder)
+        private static IEnumerable<Task> SortingTasks(IEnumerable<Task> tasks, string sortOrder)
         {
             switch (sortOrder)
             {
@@ -243,7 +211,7 @@ namespace ProductionManagementSystem.Controllers
             return tasks;
         }
 
-        private IEnumerable<dynamic> GetStates(TaskDTO task)
+        private IEnumerable<dynamic> GetStates(Task task)
         {
             if (task == null)
             {
@@ -251,10 +219,9 @@ namespace ProductionManagementSystem.Controllers
             }
             
             var states = new List<object>();
-            foreach( StatusEnum status in Enum.GetValues(typeof(StatusEnum)) )
+            foreach(TaskStatusEnum status in Enum.GetValues(typeof(TaskStatusEnum)) )
             {
                 states.Add(new {Id = (int)status, Name = _taskService.GetTaskStatusName(status)});
-                
                 if (task.Status < status)
                 {
                     break;

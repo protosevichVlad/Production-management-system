@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.DAL.Repositories;
+using ProductionManagementSystem.Models.Components;
 using ProductionManagementSystem.Models.Devices;
 using ProductionManagementSystem.Models.Logs;
 using Task = System.Threading.Tasks.Task;
@@ -16,6 +17,8 @@ namespace ProductionManagementSystem.BLL.Services
         Task AddDeviceAsync(int? id);
         Task ReceiveDeviceAsync(int? id);
         Task DeleteByIdAsync(int id);
+        Task<IEnumerable<Montage>> GetMontagesFromDeviceByDeviceId(int deviceId);
+        Task<IEnumerable<Design>> GetDesignsFromDeviceByDeviceId(int deviceId);
     }
 
     public class DeviceService : BaseService<Device>, IDeviceService
@@ -90,6 +93,18 @@ namespace ProductionManagementSystem.BLL.Services
         public async Task DeleteByIdAsync(int id)
         {
             await this.DeleteAsync(new Device() {Id = id});
+        }
+
+        public async Task<IEnumerable<Montage>> GetMontagesFromDeviceByDeviceId(int deviceId)
+        {
+            return _db.MontageInDeviceRepository.Find(m => m.DeviceId == deviceId).Select(async md => await _db.MontageRepository.GetByIdAsync(md.ComponentId))
+                .Select(t => t.Result);
+        }
+
+        public async Task<IEnumerable<Design>> GetDesignsFromDeviceByDeviceId(int deviceId)
+        {
+            return _db.DesignInDeviceRepository.Find(m => m.DeviceId == deviceId).Select(async md => await _db.DesignRepository.GetByIdAsync(md.ComponentId))
+                .Select(t => t.Result);
         }
         
         private async Task AddDeviceAsync(int? id, int quantity)

@@ -1,5 +1,6 @@
-﻿@using ProductionManagementSystem.DAL.Enums
-@model ProductionManagementSystem.WEB.Models.TaskViewModel
+﻿@using ProductionManagementSystem.Models.Tasks
+@using ProductionManagementSystem.Models.Users
+@model ProductionManagementSystem.Models.Tasks.Task
 @{
     ViewData["Title"] = "Задача №" + Model.Id;
 }
@@ -50,7 +51,7 @@
             </thead>
             @foreach (var comp in ViewBag.ComponentTemplate)
             {
-                var obtainedComp = Model.ObtainedComponents.FirstOrDefault(d => comp.Component.Id == d.ComponentId);
+                var obtainedComp = Model.ObtainedMontages.FirstOrDefault(d => comp.Component.Id == d.ComponentId);
                 <tr @if (obtainedComp.Obtained + comp.Component.Quantity < comp.Quantity) 
                     { 
                         @: class="table-danger"
@@ -94,7 +95,7 @@
             </thead>
             @foreach (var des in ViewBag.DesignTemplate)
             {
-                var obtainedDes = Model.ObtainedDesigns.FirstOrDefault(d => des.Design.Id == d.DesignId);
+                var obtainedDes = Model.ObtainedDesigns.FirstOrDefault(d => des.Design.Id == d.ComponentId);
                 <tr @if (obtainedDes.Obtained + des.Design.Quantity < des.Quantity) 
                     { 
                         @: class="table-danger"
