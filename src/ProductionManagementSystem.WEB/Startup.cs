@@ -7,11 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.DAL.EF;
-using ProductionManagementSystem.DAL.Entities;
 using ProductionManagementSystem.DAL.Repositories;
+using ProductionManagementSystem.Models.Users;
 
 namespace ProductionManagementSystem
 {
@@ -34,7 +33,7 @@ namespace ProductionManagementSystem
             );
             
 
-            services.AddIdentity<ProductionManagementSystemUser, IdentityRole>(options =>
+            services.AddIdentity<User, IdentityRole>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = true;
                     options.Password.RequireDigit = false;
@@ -55,14 +54,14 @@ namespace ProductionManagementSystem
             });
 
             var uow = new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection"));
-            services.AddSingleton<IComponentService>(_ => new ComponentService(uow));
+            services.AddSingleton<IMontageService>(_ => new MontageService(uow));
             services.AddSingleton<IDesignService>(_ => new DesignService(uow));
             services.AddSingleton<IDeviceService>(_ => new DeviceService(uow));
             services.AddSingleton<ITaskService>(_ => new TaskService(uow));
             services.AddSingleton<IOrderService>(_ => new OrderService(uow));
             services.AddSingleton<ILogService>(_ => new LogService(uow));
-            services.AddSingleton<IComponentsSupplyRequestService>(_ => new ComponentsSupplyRequestService(uow));
-            services.AddSingleton<IDesignsSupplyRequestService>(_ => new DesignsSupplyRequestService(uow));
+            services.AddSingleton<IMontageSupplyRequestService>(_ => new MontageSupplyRequestService(uow));
+            services.AddSingleton<IDesignSupplyRequestService>(_ => new DesignSupplyRequestService(uow));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

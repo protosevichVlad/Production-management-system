@@ -1,21 +1,17 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ProductionManagementSystem.BLL.Interfaces;
-using ProductionManagementSystem.DAL.Entities;
+using ProductionManagementSystem.Models.Users;
 using ProductionManagementSystem.WEB.Models;
 
-namespace ProductionManagementSystem.Controllers
+namespace ProductionManagementSystem.WEB.Controllers
 {
     public class HomeController : Controller
     {
-        private UserManager<ProductionManagementSystemUser> _userManager;
+        private UserManager<User> _userManager;
         private RoleManager<IdentityRole> _roleManager;
         
-        public HomeController(UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
+        public HomeController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
