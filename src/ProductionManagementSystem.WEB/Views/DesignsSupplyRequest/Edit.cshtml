@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.WEB.Models.DesignsSupplyRequestViewModel
+﻿@model ProductionManagementSystem.Models.SupplyRequests.DesignSupplyRequest
 
 @{
     ViewBag.Title = "Изменить заявку на заказ конструктива №" + @Model.Id;
@@ -13,7 +13,7 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <input asp-for="Id" hidden class="form-control" autocomplete="off">
-            <input asp-for="DesignId" hidden class="form-control" autocomplete="off">
+            <input asp-for="ComponentId" hidden class="form-control" autocomplete="off">
             <input asp-for="DateAdded" hidden class="form-control" autocomplete="off">
             <input asp-for="User" hidden class="form-control" autocomplete="off">
             <input asp-for="StatusSupply" hidden class="form-control" autocomplete="off">

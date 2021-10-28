@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.WEB.Models.DesignsSupplyRequestViewModel
+﻿@model ProductionManagementSystem.Models.SupplyRequests.DesignSupplyRequest
 
 @{
     ViewBag.Title = "Добавление новой заявки на заказ конструктива";
@@ -27,17 +27,17 @@
                 <span asp-validation-for="DesiredDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DesignId" class="control-label"></label>
-                @if (Model != null && Model.DesignId != 0)
+                <label asp-for="ComponentId" class="control-label"></label>
+                @if (Model != null && Model.ComponentId != 0)
                 {
                     <select asp-items="ViewBag.Designs" class="form-select js-example-basic-single" disabled></select>
-                    <input asp-for="DesignId" hidden/>
+                    <input asp-for="ComponentId" hidden/>
                 }
                 else
                 {
-                    <select asp-for="DesignId" asp-items="ViewBag.Designs" class="form-select js-example-basic-single"></select>
+                    <select asp-for="ComponentId" asp-items="ViewBag.Designs" class="form-select js-example-basic-single"></select>
                 }
-                <span asp-validation-for="DesignId" class="text-danger"></span>
+                <span asp-validation-for="ComponentId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Quantity" class="control-label"></label>

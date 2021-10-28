@@ -8,6 +8,7 @@ namespace ProductionManagementSystem.BLL.Services
     public interface IDesignSupplyRequestService : IBaseService<DesignSupplyRequest>
     {
         Task ChangeStatusAsync(int id, int to, string message);
+        Task DeleteByIdAsync(int id);
     }
 
     public class DesignSupplyRequestService : BaseService<DesignSupplyRequest>, IDesignSupplyRequestService
@@ -38,6 +39,11 @@ namespace ProductionManagementSystem.BLL.Services
             
             await UpdateAsync(designSupplyRequest);
             await _log.CreateAsync(new Log() {Message = message});
+        }
+
+        public async Task DeleteByIdAsync(int id)
+        {
+            await this.DeleteAsync(new DesignSupplyRequest() {Id = id});
         }
     }
 }
