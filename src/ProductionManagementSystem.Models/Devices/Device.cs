@@ -12,9 +12,9 @@ namespace ProductionManagementSystem.Models.Devices
         public string Description { get; set; }
         
         [NotMapped]
-        public IEnumerable<DesignInDevice> Designs { get; set; }
+        public List<DesignInDevice> Designs { get; set; }
         [NotMapped]
-        public IEnumerable<MontageInDevice> Montage { get; set; }
+        public List<MontageInDevice> Montage { get; set; }
         
         public override string ToString()
         {

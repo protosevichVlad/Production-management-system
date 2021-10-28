@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ProductionManagementSystem.Models.Devices;
 
 namespace ProductionManagementSystem.WEB.Models
 {
@@ -18,7 +19,7 @@ namespace ProductionManagementSystem.WEB.Models
         
         [Display(Name = "Прибор")]
         public int DeviceId { get; set; }
-        public DeviceViewModel Device { get; set; }
+        public Device Device { get; set; }
         
         [Display(Name = "Описание")]
         public string Description { get; set; }

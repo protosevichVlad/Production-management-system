@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.WEB.Models.DeviceViewModel;
+﻿@model ProductionManagementSystem.Models.Devices.Device;
 
 @{
     ViewBag.Title = "Удалить" + @Model.Name;
@@ -42,12 +42,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                @for (int i = 0; i < Model.ComponentNames.Length; i++)
+                @for (int i = 0; i < Model.Montage.Count(); i++)
                 {
                     <tr>
-                        <td class="td-with-name">@Model.ComponentNames[i]</td>
-                        <td>@Model.ComponentQuantity[i]</td>
-                        <td class="td-with-description">@Model.ComponentDescriptions[i]</td>
+                        <td class="td-with-name">@Model.Montage[i].Component.ToString()</td>
+                        <td>@Model.Montage[i].Quantity</td>
+                        <td class="td-with-description">@Model.Montage[i].Description</td>
                     </tr>
                 }
                 </tbody>
@@ -71,12 +71,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                @for (int i = 0; i < Model.DesignNames.Length; i++)
+                @for (int i = 0; i < Model.Designs.Count(); i++)
                 {
                     <tr>
-                        <td class="td-with-name">@Model.DesignNames[i]</td>
-                        <td>@Model.DesignQuantity[i]</td>
-                        <td class="td-with-description">@Model.DesignDescriptions[i]</td>
+                        <td class="td-with-name">@Model.Designs[i].Component.ToString()</td>
+                        <td>@Model.Designs[i].Quantity</td>
+                        <td class="td-with-description">@Model.Designs[i].Description</td>
                     </tr>
                 }
                 </tbody>

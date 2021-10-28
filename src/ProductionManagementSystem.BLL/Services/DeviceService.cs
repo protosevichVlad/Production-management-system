@@ -15,6 +15,7 @@ namespace ProductionManagementSystem.BLL.Services
         Task<IEnumerable<string>> GetNamesAsync();
         Task AddDeviceAsync(int? id);
         Task ReceiveDeviceAsync(int? id);
+        Task DeleteByIdAsync(int id);
     }
 
     public class DeviceService : BaseService<Device>, IDeviceService
@@ -84,6 +85,11 @@ namespace ProductionManagementSystem.BLL.Services
         public async Task AddDeviceAsync(int? id)
         {
             await AddDeviceAsync(id, 1);
+        }
+
+        public async Task DeleteByIdAsync(int id)
+        {
+            await this.DeleteAsync(new Device() {Id = id});
         }
         
         private async Task AddDeviceAsync(int? id, int quantity)

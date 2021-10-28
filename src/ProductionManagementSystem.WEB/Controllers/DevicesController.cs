@@ -5,34 +5,25 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.DAL.Enums;
-using ProductionManagementSystem.WEB.Models;
+using ProductionManagementSystem.Models.Devices;
+using ProductionManagementSystem.Models.Users;
 
-namespace ProductionManagementSystem.Controllers
+namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize(Roles = RoleEnum.Admin)]
     public class DevicesController : Controller
     {
         private readonly IDeviceService _deviceService;
-        private readonly IComponentService _componentService;
+        private readonly IMontageService _montageService;
         private readonly IDesignService _designService;
-        private readonly IMapper _mapper;
 
-        public DevicesController(IDeviceService deviceService, IComponentService componentService, IDesignService designService)
+        public DevicesController(IDeviceService deviceService, IMontageService montageService, IDesignService designService)
         {
             _deviceService = deviceService;
-            _componentService = componentService;
+            _montageService = montageService;
             _designService = designService;
-            _mapper = new MapperConfiguration(cfg =>
-                {
-                    cfg.CreateMap<DeviceViewModel, DeviceDTO>();
-                    cfg.CreateMap<DeviceDTO, DeviceViewModel>();
-                })
-                .CreateMapper();
         }
 
         public async Task<IActionResult> Index(string sortOrder)
@@ -40,7 +31,7 @@ namespace ProductionManagementSystem.Controllers
             ViewData["NumSortParm"] = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
             ViewData["NameSortParm"] = sortOrder == "Name" ? "name_desc" : "Name";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
-            var devices = await _deviceService.GetDevicesAsync();
+            IEnumerable<Device> devices = _deviceService.GetAll();
 
             switch (sortOrder)
             {
@@ -64,7 +55,7 @@ namespace ProductionManagementSystem.Controllers
                     break;
             }
             
-            return View(_mapper.Map<IEnumerable<DeviceDTO>, IEnumerable<DeviceViewModel>>(devices));
+            return View(devices);
         }
 
         [HttpGet]
@@ -74,11 +65,9 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(DeviceViewModel deviceViewModel)
+        public async Task<IActionResult> Create(Device device)
         {
-            DeviceDTO device = _mapper.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
-            LogService.UserName = User.Identity?.Name;
-            await _deviceService.CreateDeviceAsync(device);
+            await _deviceService.CreateAsync(device);
             return RedirectToAction(nameof(Index));
         }
 
@@ -87,11 +76,10 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
-                var device = await _deviceService.GetDeviceAsync(id);
-                var deviceViewModel = _mapper.Map<DeviceDTO, DeviceViewModel>(device);
-                ViewBag.Components = await _componentService.GetComponentsAsync();
-                ViewBag.Designs = await _designService.GetDesignsAsync();
-                return View(deviceViewModel);
+                var device = await _deviceService.GetByIdAsync(id);
+                ViewBag.Components = _montageService.GetAll();
+                ViewBag.Designs = _designService.GetAll();
+                return View(device);
             }
             catch (Exception e)
             {
@@ -101,20 +89,18 @@ namespace ProductionManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(DeviceViewModel deviceViewModel)
+        public async Task<IActionResult> Edit(Device device)
         {
             try
             {
-                DeviceDTO device = _mapper.Map<DeviceViewModel, DeviceDTO>(deviceViewModel);
-                LogService.UserName = User.Identity?.Name;
-                await _deviceService.UpdateDeviceAsync(device);
+                await _deviceService.UpdateAsync(device);
                 return RedirectToAction(nameof(Details), new {id = device.Id});
             }
             catch (IntersectionOfEntitiesException e)
             {
                 TempData["ErrorMessage"] = e.Message;
                 TempData["ErrorHeader"] = e.Header;
-                return RedirectToAction(nameof(Details), new { id = deviceViewModel.Id });
+                return RedirectToAction(nameof(Details), new { id = device.Id });
                 
             }
             catch (Exception e)
@@ -129,7 +115,7 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
-                var device = _mapper.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id));
+                var device = await _deviceService.GetByIdAsync(id);
                 ViewBag.ErrorMessage = TempData["ErrorMessage"];
                 ViewBag.ErrorHeader = TempData["ErrorHeader"];
                 TempData["ErrorMessage"] = null;
@@ -143,11 +129,11 @@ namespace ProductionManagementSystem.Controllers
             }
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var device = _mapper.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id));
+                var device = await _deviceService.GetByIdAsync(id);
                 return View(device);
             }
             catch (Exception e)
@@ -164,15 +150,14 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
-                LogService.UserName = User.Identity?.Name;
-                await _deviceService.DeleteDeviceAsync(id);
+                await _deviceService.DeleteByIdAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (IntersectionOfEntitiesException e)
             {
                 ViewBag.ErrorMessage = e.Message;
                 ViewBag.ErrorHeader = e.Header;
-                return View(_mapper.Map<DeviceDTO, DeviceViewModel>(await _deviceService.GetDeviceAsync(id)));
+                return View(await _deviceService.GetByIdAsync(id));
             }
             catch (Exception e)
             {
@@ -184,8 +169,7 @@ namespace ProductionManagementSystem.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAllDevices()
         {
-            var devices = await _deviceService.GetDevicesAsync();
-            return Json(devices);
+            return Json(_deviceService.GetAll());
         }
     }
     

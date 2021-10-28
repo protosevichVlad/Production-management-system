@@ -34,8 +34,8 @@ namespace ProductionManagementSystem.DAL.Repositories
                 return null;
             foreach (var device in devices)
             {
-                device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id);
-                device.Montage = _db.MontageInDevices.Where(m => m.DeviceId == device.Id);
+                device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToList();
+                device.Montage = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
             }
 
             return devices;
@@ -47,8 +47,8 @@ namespace ProductionManagementSystem.DAL.Repositories
             if (device == null)
                 return null;
             
-            device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id);
-            device.Montage = _db.MontageInDevices.Where(m => m.DeviceId == device.Id);
+            device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToList();
+            device.Montage = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
             return device;
         }
 
@@ -86,8 +86,8 @@ namespace ProductionManagementSystem.DAL.Repositories
             
             foreach (var device in devices)
             {
-                device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id);
-                device.Montage = _db.MontageInDevices.Where(m => m.DeviceId == device.Id);
+                device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToList();
+                device.Montage = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
             }
 
             return devices;
