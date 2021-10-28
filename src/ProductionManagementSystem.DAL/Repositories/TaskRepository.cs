@@ -31,6 +31,9 @@ namespace ProductionManagementSystem.DAL.Repositories
         public override async System.Threading.Tasks.Task<Task> GetByIdAsync(int id)
         {
             var task = await base.GetByIdAsync(id);
+            if (task == null)
+                return null;
+            
             task.ObtainedDesigns = _db.ObtainedDesigns.Where(d => d.TaskId == task.Id);
             task.ObtainedMontages = _db.ObtainedMontages.Where(m => m.TaskId == task.Id);
 
@@ -51,15 +54,19 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public override void Delete(Task item)
         {
-            _db.ObtainedDesigns.RemoveRange(item.ObtainedDesigns);
-            _db.ObtainedMontages.RemoveRange(item.ObtainedMontages);
+            _db.ObtainedMontages.RemoveRange(_db.ObtainedMontages.Where(m => m.TaskId == item.Id));
+            _db.ObtainedDesigns.RemoveRange(_db.ObtainedDesigns.Where(d => d.TaskId == item.Id));
+            
             base.Delete(item);
         }
 
         public override async System.Threading.Tasks.Task CreateAsync(Task item)
         {
-            await _db.ObtainedDesigns.AddRangeAsync(item.ObtainedDesigns);
-            await _db.ObtainedMontages.AddRangeAsync(item.ObtainedMontages);
+            if (item.ObtainedDesigns != null)
+                await _db.ObtainedDesigns.AddRangeAsync(item.ObtainedDesigns);
+            if(item.ObtainedMontages != null)
+                await _db.ObtainedMontages.AddRangeAsync(item.ObtainedMontages);
+            
             await base.CreateAsync(item);
         }
     }
