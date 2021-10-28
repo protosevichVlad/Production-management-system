@@ -16,6 +16,7 @@ namespace ProductionManagementSystem.BLL.Services
         Task<IEnumerable<string>> GetTypesAsync();
         Task IncreaseQuantityOfMontageAsync(int id, int quantity);
         Task DecreaseQuantityOfDesignAsync(int id, int quantity);
+        Task DeleteByIdAsync(int id);
     }
 
     public class MontageService : BaseService<Montage>, IMontageService
@@ -102,6 +103,11 @@ namespace ProductionManagementSystem.BLL.Services
         private async Task<bool> ComponentExistsAsync(int id)
         {
             return GetAll().Any(e => e.Id == id);
+        }
+
+        public async Task DeleteByIdAsync(int id)
+        {
+            await this.DeleteAsync(new Montage() {Id = id});
         }
     }
 }

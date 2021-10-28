@@ -1,41 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Interfaces;
 using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.DAL.Entities;
-using ProductionManagementSystem.DAL.Enums;
+using ProductionManagementSystem.Models.Components;
+using ProductionManagementSystem.Models.Users;
 using ProductionManagementSystem.WEB.Models;
 
-namespace ProductionManagementSystem.Controllers
+namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize(Roles = RoleEnum.OrderPicker)]
-    public class ComponentsController : Controller
+    public class MontagesController : Controller
     {
-        private readonly IComponentService _componentService;
+        private readonly IMontageService _montageService;
         private readonly IDeviceService _deviceService;
-        private readonly IMapper _mapper;
 
-        public ComponentsController(IComponentService service, IDeviceService deviceService)
+        public MontagesController(IMontageService montageService, IDeviceService deviceService)
         {
-            _componentService = service;
+            _montageService = montageService;
             _deviceService = deviceService;
-            
-            _mapper = new MapperConfiguration(cfg =>
-                {
-                    cfg.CreateMap<ComponentViewModel, ComponentDTO>();
-                    cfg.CreateMap<ComponentDTO, ComponentViewModel>();
-                    cfg.CreateMap<ComponentDTO, Component>();
-                    cfg.CreateMap<Component, ComponentDTO>();
-                })
-                .CreateMapper();
         }
         
         // GET: Components
@@ -56,7 +44,7 @@ namespace ProductionManagementSystem.Controllers
             ViewData["sortOrder"] = sortOrder;
             ViewData["CurrentFilter"] = searchString;
 
-            var components = await _componentService.GetComponentsAsync();
+            var components = _montageService.GetAll();
             
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -108,36 +96,23 @@ namespace ProductionManagementSystem.Controllers
                     break;
             }
 
-            components = components.Skip((page - 1) * pageSize).Take(pageSize);
-            var componentsViewModel =
-                _mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<ComponentViewModel>>(components);
-            
+            ViewBag.AllComponents = components;
             ViewBag.Page = page;
-            ViewBag.AllComponents = (await _componentService.GetComponentsAsync()).Select(c => c.Name).Distinct();
-            return View(componentsViewModel);
+            components = components.Skip((page - 1) * pageSize).Take(pageSize);
+            return View(components);
         }
 
         // GET: Components/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            try
-            {
-                var component = await _componentService.GetComponentAsync(id);
-                var componentViewModel =
-                    _mapper.Map<ComponentDTO, ComponentViewModel>(component);
-                return View(componentViewModel);
-            }
-            catch (PageNotFoundException)
-            {
-                throw new Exception("Страница не найдена.");
-            }
+            return View(await _montageService.GetByIdAsync(id));    
         }
 
         // GET: Components/Create
         public async Task<IActionResult> Create()
         {
-            ViewBag.AllTypes = await _componentService.GetTypesAsync();
-            ViewBag.AllComponents = (await _componentService.GetComponentsAsync()).Select(c => c.Name).Distinct();
+            ViewBag.AllTypes = await _montageService.GetTypesAsync();
+            ViewBag.AllComponents = _montageService.GetAll().Select(c => c.Name).Distinct();
             return View();
         }
 
@@ -146,29 +121,24 @@ namespace ProductionManagementSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] ComponentViewModel componentViewModel)
+        public async Task<IActionResult> Create([Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] Montage montage)
         {
             if (ModelState.IsValid)
             {
-                var component =
-                    _mapper.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
-                LogService.UserName = User.Identity?.Name;
-                await _componentService.CreateComponentAsync(component);
-                return RedirectToAction(nameof(Index));
+                await _montageService.CreateAsync(montage);
+                return RedirectToAction(nameof(Details), new {id = montage.Id});
             }
-            return View(componentViewModel);
+            return View(montage);
         }
 
         // GET: Components/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                var component = await _componentService.GetComponentAsync(id);
-                var componentViewModel =
-                    _mapper.Map<ComponentDTO, ComponentViewModel>(component);
-                ViewBag.AllTypes = await _componentService.GetTypesAsync();
-                return View(componentViewModel);
+                var montage = await _montageService.GetByIdAsync(id);
+                ViewBag.AllTypes = await _montageService.GetTypesAsync();
+                return View(montage);
             }
             catch (PageNotFoundException)
             {
@@ -181,41 +151,26 @@ namespace ProductionManagementSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] ComponentViewModel componentViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Name,Nominal,Corpus,Explanation,Manufacturer,Quantity")] Montage montage)
         {
-            if (id != componentViewModel.Id)
+            if (id != montage.Id)
             {
                 throw new Exception("Страница не найдена.");
             }
 
             if (ModelState.IsValid)
             {
-                var component =
-                    _mapper.Map<ComponentViewModel, ComponentDTO>(componentViewModel);
-                LogService.UserName = User.Identity?.Name;
-                await _componentService.UpdateComponentAsync(component);
-                return RedirectToAction(nameof(Details), new {id = componentViewModel.Id});
+                await _montageService.UpdateAsync(montage);
+                return RedirectToAction(nameof(Details), new {id = montage.Id});
             }
             
-            return View(componentViewModel);
+            return View(montage);
         }
 
         // GET: Components/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var component = await _componentService.GetComponentAsync(id);
-                var componentViewModel =
-                    _mapper.Map<ComponentDTO, ComponentViewModel>(component);
-                return View(componentViewModel);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-
+            return View(await _montageService.GetByIdAsync(id));
         }
 
         // POST: Components/Delete/5
@@ -225,16 +180,14 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
-                LogService.UserName = User.Identity?.Name;
-                await _componentService.DeleteComponentAsync(id);
+                await _montageService.DeleteByIdAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (IntersectionOfEntitiesException e)
             {
                 ViewBag.ErrorMessage = e.Message;
                 ViewBag.ErrorHeader = e.Header;
-                return View(
-                    _mapper.Map<ComponentDTO, ComponentViewModel>(await _componentService.GetComponentAsync(id)));
+                return View(await _montageService.GetByIdAsync(id));
             }
         }
         
@@ -246,7 +199,7 @@ namespace ProductionManagementSystem.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAllComponents()
         {
-            IEnumerable<ComponentDTO> components = await _componentService.GetComponentsAsync();
+            IEnumerable<Montage> components = _montageService.GetAll();
             foreach (var comp in components)
             {
                 comp.Name = comp.ToString();
@@ -262,7 +215,7 @@ namespace ProductionManagementSystem.Controllers
         [NonAction]
         private async Task<IEnumerable<string>> GetAllTypes()
         {
-            return await _componentService.GetTypesAsync();
+            return await _montageService.GetTypesAsync();
         }
         
         /// <summary>
@@ -274,12 +227,10 @@ namespace ProductionManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Add(int id, int? taskId)
         {
-            var component = await _componentService.GetComponentAsync(id);
-            var componentViewModel =
-                _mapper.Map<ComponentDTO, ComponentViewModel>(component);
+            var montage = await _montageService.GetByIdAsync(id);
             ViewBag.TaskId = taskId;
             
-            return View(componentViewModel);
+            return View(montage);
         }
         
         /// <summary>
@@ -291,17 +242,8 @@ namespace ProductionManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(int componentId, int quantity)
         {
-            try
-            {
-                LogService.UserName = User.Identity?.Name;
-                await _componentService.AddComponentAsync(componentId, quantity);
-                return RedirectToAction(nameof(Details), new {id = componentId});
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            await _montageService.IncreaseQuantityOfMontageAsync(componentId, quantity);
+            return RedirectToAction(nameof(Details), new {id = componentId});
         }
         
         /// <summary>
@@ -312,10 +254,8 @@ namespace ProductionManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Receive(int id)
         {
-            var component = await _componentService.GetComponentAsync(id);
-            var componentViewModel =
-                _mapper.Map<ComponentDTO, ComponentViewModel>(component);
-            return View(componentViewModel);
+            var montage = await _montageService.GetByIdAsync(id);
+            return View(montage);
         }
         
         /// <summary>
@@ -327,26 +267,17 @@ namespace ProductionManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Receive(int componentId, int quantity)
         {
-            try
-            {
-                LogService.UserName = User.Identity?.Name;
-                await _componentService.AddComponentAsync(componentId, -quantity);
-                return RedirectToAction(nameof(Details), new {id = componentId});
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            await _montageService.DecreaseQuantityOfDesignAsync(componentId, quantity);
+            return RedirectToAction(nameof(Details), new {id = componentId});
         }
 
         public async Task<IActionResult> AddMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
-            var selectListTypes = new SelectList(await _componentService.GetTypesAsync());
+            var selectListDevice = new SelectList(_deviceService.GetAll(), "Id", "Name");
+            var selectListTypes = new SelectList(await _montageService.GetTypesAsync());
 
             var components = new ComponentsForDevice();
-            List<Component> componentsInDevice = new List<Component>();
+            List<Montage> componentsInDevice = new List<Montage>();
             if (deviceId != null)
             {
                 var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
@@ -355,11 +286,11 @@ namespace ProductionManagementSystem.Controllers
                     device.Selected = true;
                 }
                 
-                componentsInDevice.AddRange((await _deviceService.GetComponentsTemplatesAsync((int) deviceId)).Select(c => c.Component).ToArray());
+                componentsInDevice.AddRange((await _deviceService.GetByIdAsync((int) deviceId)).Montage.Select(c => c.Component).ToArray());
             }
             else
             {
-                componentsInDevice.AddRange(_mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<Component>>(await _componentService.GetComponentsAsync()));
+                componentsInDevice.AddRange(_montageService.GetAll());
             }
 
 
@@ -400,10 +331,9 @@ namespace ProductionManagementSystem.Controllers
                 throw new Exception("Device not found.");
             }
 
-            LogService.UserName = User.Identity?.Name;
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                await _componentService.AddComponentAsync(components.ComponentId[index], components.Quantity[index]);
+                await _montageService.IncreaseQuantityOfMontageAsync(components.ComponentId[index], components.Quantity[index]);
             }
             
             return RedirectToAction(nameof(AddMultiple));
@@ -411,12 +341,12 @@ namespace ProductionManagementSystem.Controllers
         
         public async Task<IActionResult> ReceiveMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
-            var selectListTypes = new SelectList(await _componentService.GetTypesAsync());
+            var selectListDevice = new SelectList(_deviceService.GetAll(), "Id", "Name");
+            var selectListTypes = new SelectList(await _montageService.GetTypesAsync());
 
             var components = new ComponentsForDevice();
-            List<Component> componentsInDevice = new List<Component>();
-            if (deviceId != null)
+            List<Montage> componentsInDevice = new List<Montage>();
+            if (deviceId.HasValue)
             {
                 var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
                 if (device != null)
@@ -424,11 +354,11 @@ namespace ProductionManagementSystem.Controllers
                     device.Selected = true;
                 }
                 
-                componentsInDevice.AddRange((await _deviceService.GetComponentsTemplatesAsync((int) deviceId)).Select(c => c.Component).ToArray());
+                componentsInDevice.AddRange((await _deviceService.GetByIdAsync(deviceId.Value)).Montage.Select(c => c.Component).ToArray());
             }
             else
             {
-                componentsInDevice.AddRange(_mapper.Map<IEnumerable<ComponentDTO>, IEnumerable<Component>>(await _componentService.GetComponentsAsync()));
+                componentsInDevice.AddRange(_montageService.GetAll());
             }
 
 
@@ -469,10 +399,9 @@ namespace ProductionManagementSystem.Controllers
                 throw new Exception("Device not found.");
             }
 
-            LogService.UserName = User.Identity?.Name;
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                await _componentService.AddComponentAsync(components.ComponentId[index], -components.Quantity[index]);
+                await _montageService.IncreaseQuantityOfMontageAsync(components.ComponentId[index], -components.Quantity[index]);
             }
             
             return RedirectToAction(nameof(ReceiveMultiple));
