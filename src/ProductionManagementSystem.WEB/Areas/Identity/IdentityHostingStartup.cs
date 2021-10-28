@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ProductionManagementSystem.DAL.Entities;
 // using ProductionManagementSystem.Data;
 //
 // [assembly: HostingStartup(typeof(ProductionManagementSystem.Areas.Identity.IdentityHostingStartup))]
