@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using ProductionManagementSystem.Models.Components;
 
 namespace ProductionManagementSystem.WEB.Models
 {
@@ -13,7 +14,7 @@ namespace ProductionManagementSystem.WEB.Models
         public TaskViewModel Task { get; set; }
         [Display(Name = "Монтаж")]
         public int DesignId { get; set; }
-        public DesignViewModel Design { get; set; }
+        public Design Design { get; set; }
         
         [Display(Name = "Пользователь")]
         public UserViewModel User { get; set; }

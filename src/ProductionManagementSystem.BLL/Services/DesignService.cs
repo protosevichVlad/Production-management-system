@@ -15,6 +15,7 @@ namespace ProductionManagementSystem.BLL.Services
         Task<IEnumerable<string>> GetTypesAsync();
         Task IncreaseQuantityOfDesignAsync(int id, int quantity);
         Task DecreaseQuantityOfDesignAsync(int id, int quantity);
+        Task DeleteByIdAsync(int id);
     }
 
     public class DesignService : BaseService<Design>, IDesignService
@@ -36,6 +37,11 @@ namespace ProductionManagementSystem.BLL.Services
             }
 
             await base.DeleteAsync(design);
+        }
+
+        public async Task DeleteByIdAsync(int id)
+        {
+            await DeleteAsync(new Design() {Id = id});
         }
 
         public async Task<IEnumerable<string>> GetTypesAsync()
