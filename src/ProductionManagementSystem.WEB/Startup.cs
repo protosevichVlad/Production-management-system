@@ -10,10 +10,9 @@ using Microsoft.Extensions.Hosting;
 using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Repositories;
-using ProductionManagementSystem.Models.Components;
 using ProductionManagementSystem.Models.Users;
 
-namespace ProductionManagementSystem
+namespace ProductionManagementSystem.WEB
 {
     public class Startup
     {
