@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Repositories;
+using ProductionManagementSystem.Models.Components;
 using ProductionManagementSystem.Models.Users;
 
 namespace ProductionManagementSystem
@@ -53,15 +54,15 @@ namespace ProductionManagementSystem
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
 
-            var uow = new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection"));
-            services.AddSingleton<IMontageService>(_ => new MontageService(uow));
-            services.AddSingleton<IDesignService>(_ => new DesignService(uow));
-            services.AddSingleton<IDeviceService>(_ => new DeviceService(uow));
-            services.AddSingleton<ITaskService>(_ => new TaskService(uow));
-            services.AddSingleton<IOrderService>(_ => new OrderService(uow));
-            services.AddSingleton<ILogService>(_ => new LogService(uow));
-            services.AddSingleton<IMontageSupplyRequestService>(_ => new MontageSupplyRequestService(uow));
-            services.AddSingleton<IDesignSupplyRequestService>(_ => new DesignSupplyRequestService(uow));
+            services.AddScoped<IUnitOfWork>(_ => new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IMontageService, MontageService>();
+            services.AddScoped<IDesignService, DesignService>();
+            services.AddScoped<IDeviceService, DeviceService>();
+            services.AddScoped<ITaskService, TaskService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ILogService, LogService>();
+            services.AddScoped<IMontageSupplyRequestService, MontageSupplyRequestService>();
+            services.AddScoped<IDesignSupplyRequestService, DesignSupplyRequestService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
