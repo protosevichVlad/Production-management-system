@@ -5,44 +5,23 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductionManagementSystem.BLL.DTO;
 using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Interfaces;
-using ProductionManagementSystem.DAL.Enums;
+using ProductionManagementSystem.BLL.Services;
+using ProductionManagementSystem.Models.Orders;
+using ProductionManagementSystem.Models.Users;
 using ProductionManagementSystem.WEB.Models;
+using Task = ProductionManagementSystem.Models.Tasks.Task;
 
-namespace ProductionManagementSystem.Controllers
+namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize(Roles = RoleEnum.Admin)]
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
-        private readonly IMapper _mapper;
         
-        
-        public OrdersController(IOrderService orderService, ITaskService taskService)
+        public OrdersController(IOrderService orderService)
         {
             _orderService = orderService;
-            _mapper = new MapperConfiguration(cfg =>
-                {
-                    cfg.CreateMap<OrderDTO, OrderViewModel>();
-                    cfg.CreateMap<TaskDTO, TaskViewModel>()
-                        .ForMember(
-                        task => task.Status, 
-                        opt => opt.MapFrom(
-                            src => taskService.GetTaskStatusName(src.Status)
-                        )
-                    );
-                    cfg.CreateMap<DeviceDTO, DeviceViewModel>();
-                    cfg.CreateMap<OrderViewModel, OrderDTO>();
-                    cfg.CreateMap<TaskViewModel, TaskDTO>();
-                    cfg.CreateMap<DeviceViewModel, DeviceDTO>();
-                    cfg.CreateMap<ObtainedDesign, ObtainedDesignDTO>();
-                    cfg.CreateMap<ObtainedDesignDTO, ObtainedDesign>();
-                    cfg.CreateMap<ObtainedComponent, ObtainedComponentDTO>();
-                    cfg.CreateMap<ObtainedComponentDTO, ObtainedComponent>();
-                })
-                .CreateMapper();
         }
 
         public async Task<IActionResult> Index(string sortOrder)
@@ -53,7 +32,7 @@ namespace ProductionManagementSystem.Controllers
             ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
             ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
             
-            var ordersViewModel = _mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(await _orderService.GetOrdersAsync());
+            var ordersViewModel = _orderService.GetAll();
             ordersViewModel = SortingOrders(ordersViewModel, sortOrder);
             return View(ordersViewModel);
         }
@@ -65,19 +44,18 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(OrderViewModel orderModel)
+        public async Task<IActionResult> Create(Order orderModel)
         {
             if (ModelState.IsValid)
             {
-                var orderDto = _mapper.Map<OrderViewModel, OrderDTO>(orderModel);
-                await _orderService.CreateOrderAsync(orderDto); 
+                await _orderService.CreateAsync(orderModel); 
                 return RedirectToAction(nameof(Index));
             }
 
             return View(orderModel);
         }
 
-        public async Task<IActionResult> Details(int? id, string sortOrder)
+        public async Task<IActionResult> Details(int id, string sortOrder)
         {
             try
             {
@@ -86,10 +64,10 @@ namespace ProductionManagementSystem.Controllers
                 ViewData["StartDateSortParm"] = sortOrder == "StartDate" ? "startdate_desc" : "StartDate";
                 ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
                 ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
-                
-                var orderViewModel = _mapper.Map<OrderDTO, OrderViewModel>(await _orderService.GetOrderAsync(id));
 
-                orderViewModel.Tasks = SortingTasks(orderViewModel.Tasks, sortOrder).ToList();
+                var orderViewModel = await _orderService.GetByIdAsync(id);
+                
+                orderViewModel.Tasks = SortingTasks(_orderService.GetTasksByOrderId(orderViewModel.Id), sortOrder).ToList();
                 return View(orderViewModel);
             }
             catch (PageNotFoundException)
@@ -98,11 +76,11 @@ namespace ProductionManagementSystem.Controllers
             }
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var orderViewModel = _mapper.Map<OrderDTO, OrderViewModel>(await _orderService.GetOrderAsync(id));
+                var orderViewModel = await _orderService.GetByIdAsync(id);
                 return View(orderViewModel);
             }
             catch (PageNotFoundException)
@@ -113,11 +91,11 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpPost]
         [ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirm(int? id)
+        public async Task<IActionResult> DeleteConfirm(int id)
         {
             try
             {
-                await _orderService.DeleteOrderAsync(id);
+                await _orderService.DeleteByIdAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (PageNotFoundException)
@@ -126,7 +104,7 @@ namespace ProductionManagementSystem.Controllers
             }       
         }
         
-        private static IEnumerable<TaskViewModel> SortingTasks(IEnumerable<TaskViewModel> items, string sortOrder)
+        private static IEnumerable<Task> SortingTasks(IEnumerable<Task> items, string sortOrder)
         {
             switch (sortOrder)
             {
@@ -171,7 +149,7 @@ namespace ProductionManagementSystem.Controllers
             return items;
         }
         
-        private static IEnumerable<OrderViewModel> SortingOrders(IEnumerable<OrderViewModel> items, string sortOrder)
+        private static IEnumerable<Order> SortingOrders(IEnumerable<Order> items, string sortOrder)
         {
             switch (sortOrder)
             {

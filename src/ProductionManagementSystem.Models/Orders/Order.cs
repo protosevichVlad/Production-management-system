@@ -24,5 +24,8 @@ namespace ProductionManagementSystem.Models.Orders
         
         [NotMapped]
         public List<Task> Tasks { get; set; }
+        
+        [NotMapped]
+        public string Status { get; set; }
     }
 }
