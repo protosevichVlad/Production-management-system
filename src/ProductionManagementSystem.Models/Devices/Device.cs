@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProductionManagementSystem.Models.Devices
 {
+    [Table("Devices")]
     public class Device
     {
         public int Id { get; set; }

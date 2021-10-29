@@ -3,6 +3,7 @@ using ProductionManagementSystem.Models.Components;
 
 namespace ProductionManagementSystem.Models.Tasks
 {
+    [Table("ObtainedComponents")]
     public class ObtainedMontage : ObtainedBase
     {
         [NotMapped]

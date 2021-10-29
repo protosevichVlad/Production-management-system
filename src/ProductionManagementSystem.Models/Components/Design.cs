@@ -1,5 +1,8 @@
-﻿namespace ProductionManagementSystem.Models.Components
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ProductionManagementSystem.Models.Components
 {
+    [Table("Designs")]
     public class Design : ComponentBase
     {
         public string ShortDescription { get; set; }

@@ -6,6 +6,7 @@ using ProductionManagementSystem.Models.Users;
 
 namespace ProductionManagementSystem.Models.Logs
 {
+    [Table("Logs")]
     public class Log
     {
         public int Id { get; set; }

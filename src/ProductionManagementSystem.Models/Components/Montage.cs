@@ -1,5 +1,8 @@
-﻿namespace ProductionManagementSystem.Models.Components
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ProductionManagementSystem.Models.Components
 {
+    [Table("Components")]
     public class Montage : ComponentBase
     {
         public string Nominal { get; set; }

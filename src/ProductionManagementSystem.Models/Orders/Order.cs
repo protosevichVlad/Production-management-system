@@ -6,6 +6,7 @@ using ProductionManagementSystem.Models.Tasks;
 
 namespace ProductionManagementSystem.Models.Orders
 {
+    [Table("Orders")]
     public class Order
     {
         public int Id { get; set; }
