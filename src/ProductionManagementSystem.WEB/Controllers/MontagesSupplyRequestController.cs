@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductionManagementSystem.BLL.Services;
+using ProductionManagementSystem.Models.Components;
 using ProductionManagementSystem.Models.SupplyRequests;
 using ProductionManagementSystem.WEB.Models;
 using ProductionManagementSystem.WEB.Models.Modals;
@@ -34,7 +35,11 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             return View(_montageSupplyRequestService.GetAll()
                 .OrderBy(c => c.StatusSupply)
-                .ThenBy(c => c.DesiredDate));
+                .ThenBy(c => c.DesiredDate).Select(s =>
+                {
+                    s.Montage = _montageService.GetByIdAsync(s.ComponentId).Result;
+                    return s;
+                }));
         }
 
         public async Task<ViewResult> Create(int? taskId, int? componentId)
@@ -88,6 +93,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<ViewResult> Details(int id)
         {
             var viewModel = await _montageSupplyRequestService.GetByIdAsync(id);
+            viewModel.Montage = await _montageService.GetByIdAsync(viewModel.ComponentId);
 
             ViewBag.Modal = new ModalSupplyRequest
             {
@@ -118,7 +124,9 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         public async Task<ActionResult> Delete(int id)
         {
-            return View(await _montageSupplyRequestService.GetByIdAsync(id));
+            var viewModel = await _montageSupplyRequestService.GetByIdAsync(id);
+            viewModel.Montage = await _montageService.GetByIdAsync(viewModel.ComponentId);
+            return View(viewModel);
         }
         
         [HttpPost, ActionName("Delete")]
