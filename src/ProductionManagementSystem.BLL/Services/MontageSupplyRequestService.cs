@@ -20,6 +20,7 @@ namespace ProductionManagementSystem.BLL.Services
         {
             _montageService = new MontageService(uow);
             _log = new LogService(uow);
+            _currentRepository = _db.MontageSupplyRequestRepository;
         }
         
         public void Dispose()

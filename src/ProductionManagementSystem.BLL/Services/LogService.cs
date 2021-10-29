@@ -12,7 +12,7 @@ namespace ProductionManagementSystem.BLL.Services
     {
         public LogService(IUnitOfWork uow) : base(uow)
         {
-            
+            _currentRepository = _db.LogRepository;
         }
     }
 }

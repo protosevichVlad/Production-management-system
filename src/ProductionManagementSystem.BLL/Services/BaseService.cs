@@ -20,15 +20,14 @@ namespace ProductionManagementSystem.BLL.Services
         public Task DeleteAsync(TItem item);
     }
     
-    public class BaseService<TItem> : IBaseService<TItem>
+    public abstract class BaseService<TItem> : IBaseService<TItem>
     {
         protected IUnitOfWork _db;
         protected IRepository<TItem> _currentRepository;
 
-        public BaseService(IUnitOfWork db)
+        protected BaseService(IUnitOfWork db)
         {
             _db = db;
-            _currentRepository = _db.GetRepository<TItem>() ?? throw new NullReferenceException(nameof(_currentRepository));
         }
 
         public virtual IEnumerable<TItem> GetAll()

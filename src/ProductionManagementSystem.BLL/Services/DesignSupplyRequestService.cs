@@ -20,6 +20,7 @@ namespace ProductionManagementSystem.BLL.Services
         {
             _designService = new DesignService(uow);
             _log = new LogService(uow);
+            _currentRepository = _db.DesignsSupplyRequestRepository;
         }
         
         public void Dispose()

@@ -30,7 +30,6 @@ namespace ProductionManagementSystem.BLL.Services
         private readonly IMontageService _montageService;
         private readonly IDesignService _designService;
         private readonly ILogService _logService;
-        private readonly IMapper _mapper;
 
         public TaskService(IUnitOfWork uow) : base(uow)
         {
@@ -38,6 +37,7 @@ namespace ProductionManagementSystem.BLL.Services
             _montageService = new MontageService(uow);
             _designService = new DesignService(uow);
             _logService = new LogService(uow);
+            _currentRepository = _db.TaskRepository;
         }
 
         public override async Task CreateAsync(Models.Tasks.Task task)

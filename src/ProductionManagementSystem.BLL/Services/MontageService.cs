@@ -26,6 +26,7 @@ namespace ProductionManagementSystem.BLL.Services
         public MontageService(IUnitOfWork uow) : base(uow)
         {
             _log = new LogService(uow);
+            _currentRepository = _db.MontageRepository;
         }
         
         public override async Task DeleteAsync(Montage montage)

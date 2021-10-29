@@ -19,6 +19,7 @@ namespace ProductionManagementSystem.BLL.Services
         public OrderService(IUnitOfWork uow) : base(uow)
         {
             _taskService = new TaskService(uow);
+            _currentRepository = _db.OrderRepository;
         }
         
         public override async Task CreateAsync(Order order)

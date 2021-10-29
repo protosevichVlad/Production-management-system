@@ -6,7 +6,6 @@ namespace ProductionManagementSystem.DAL.Repositories
 {
     public interface IUnitOfWork : IDisposable
     {
-        IRepository<TInstance> GetRepository<TInstance>();
         IMontageRepository MontageRepository { get; }
         IDesignRepository DesignRepository { get; }
         IDeviceRepository DeviceRepository { get; }
@@ -48,36 +47,6 @@ namespace ProductionManagementSystem.DAL.Repositories
         public EFUnitOfWork(ApplicationContext applicationContext)
         {
             _db = applicationContext;
-        }
-
-        public IRepository<TInstance> GetRepository<TInstance>()
-        {
-            if (_montageRepository is IRepository<TInstance> montageRepository)
-                return montageRepository;
-            if (_designRepository is IRepository<TInstance> designRepository)
-                return designRepository;
-            if (_deviceRepository is IRepository<TInstance> deviceRepository)
-                return deviceRepository;
-            if (_logRepository is IRepository<TInstance> logRepository)
-                return logRepository;
-            if (_orderRepository is IRepository<TInstance> orderRepository)
-                return orderRepository;
-            if (_taskRepository is IRepository<TInstance> taskRepository)
-                return taskRepository;
-            if (_montageInDeviceRepository is IRepository<TInstance> montageInDeviceRepository)
-                return montageInDeviceRepository;
-            if (_designInDeviceRepository is IRepository<TInstance> designInDeviceRepository)
-                return designInDeviceRepository;
-            if (_obtainedDesignRepository is IRepository<TInstance> obtainedDesignRepository)
-                return obtainedDesignRepository;
-            if (_obtainedMontageRepository is IRepository<TInstance> obtainedMontageRepository)
-                return obtainedMontageRepository;
-            if (_montageSupplyRequestRepository is IRepository<TInstance> montageSupplyRequestRepository)
-                return montageSupplyRequestRepository;
-            if (_designsSupplyRequestRepository is IRepository<TInstance> designsSupplyRequestRepository)
-                return designsSupplyRequestRepository;
-
-            return null;
         }
 
         public IMontageRepository MontageRepository => _montageRepository ??= new MontageRepository(_db);

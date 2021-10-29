@@ -25,6 +25,7 @@ namespace ProductionManagementSystem.BLL.Services
         public DesignService(IUnitOfWork uow) : base(uow)
         {
             _log = new LogService(_db);
+            _currentRepository = _db.DesignRepository;
         }
 
         public override async Task DeleteAsync(Design design)
