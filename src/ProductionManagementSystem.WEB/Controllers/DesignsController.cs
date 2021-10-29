@@ -35,7 +35,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
             ViewData["CurrentFilter"] = searchString;
-            var designs = _designService.GetAll();
+            var designs = await _designService.GetAll();
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -99,7 +99,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> Create()
         {
             ViewBag.AllTypes = await _designService.GetTypesAsync();
-            ViewBag.AllDesigns = _designService.GetAll().Select(d => d.Name).Distinct();
+            ViewBag.AllDesigns = (await _designService.GetAll()).Select(d => d.Name).Distinct();
             return View();
         }
         
@@ -167,7 +167,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAllDesigns()
         {
-            return Json(_designService.GetAll().Select(d => d.ToString()));
+            return Json((await _designService.GetAll()).Select(d => d.ToString()));
         }
         
         [HttpGet]
@@ -199,7 +199,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         public async Task<IActionResult> AddMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList( _deviceService.GetAll(), "Id", "Name");
+            var selectListDevice = new SelectList(await _deviceService.GetAll(), "Id", "Name");
             var selectListTypes = new SelectList(await _designService.GetTypesAsync());
 
             var components = new ComponentsForDevice();
@@ -216,7 +216,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             }
             else
             {
-                componentsInDevice.AddRange(_designService.GetAll());
+                componentsInDevice.AddRange(await _designService.GetAll());
             }
 
             if (typeName != null)
@@ -267,7 +267,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpGet]
         public async Task<IActionResult> ReceiveMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(_deviceService.GetAll(), "Id", "Name");
+            var selectListDevice = new SelectList(await _deviceService.GetAll(), "Id", "Name");
             var selectListTypes = new SelectList(await _designService.GetTypesAsync());
 
             var components = new ComponentsForDevice();
@@ -284,7 +284,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             }
             else
             {
-                componentsInDevice.AddRange( _designService.GetAll());
+                componentsInDevice.AddRange( await _designService.GetAll());
             }
 
 

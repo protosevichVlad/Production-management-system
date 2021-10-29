@@ -32,7 +32,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
             ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
             
-            var ordersViewModel = _orderService.GetAll();
+            var ordersViewModel = await _orderService.GetAll();
             ordersViewModel = SortingOrders(ordersViewModel, sortOrder);
             return View(ordersViewModel);
         }
@@ -67,7 +67,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
                 var orderViewModel = await _orderService.GetByIdAsync(id);
                 
-                orderViewModel.Tasks = SortingTasks(_orderService.GetTasksByOrderId(orderViewModel.Id), sortOrder).ToList();
+                orderViewModel.Tasks = SortingTasks(await _orderService.GetTasksByOrderIdAsync(orderViewModel.Id), sortOrder).ToList();
                 return View(orderViewModel);
             }
             catch (PageNotFoundException)

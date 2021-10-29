@@ -80,8 +80,8 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
             await using (var context = GetDdContext(options))
             {
                 // Act
-                var montageRepository = new MontageRepository(context);
-                var result = montageRepository.GetAll().ToList();
+                var repository = new MontageRepository(context);
+                var result = (await repository.GetAllAsync()).ToList();
 
                 // Assert
                 Assert.NotNull(result);
@@ -102,7 +102,7 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
             await using var context = GetDdContext(options);
             // Act
             var montageRepository = new MontageRepository(context);
-            var result = montageRepository.GetAll();
+            var result = await montageRepository.GetAllAsync();
 
             // Assert
             Assert.IsEmpty(result);

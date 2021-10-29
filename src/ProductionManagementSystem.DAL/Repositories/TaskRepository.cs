@@ -16,9 +16,9 @@ namespace ProductionManagementSystem.DAL.Repositories
         {
         }
 
-        public override IEnumerable<Task> GetAll()
+        public override async System.Threading.Tasks.Task<IEnumerable<Task>> GetAllAsync()
         {
-            var tasks = base.GetAll();
+            var tasks = await base.GetAllAsync();
             foreach (var task in tasks)
             {
                 task.ObtainedDesigns = _db.ObtainedDesigns.Where(d => d.TaskId == task.Id);
@@ -40,9 +40,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             return task;
         }
 
-        public override IEnumerable<Task> Find(Func<Task, bool> predicate)
+        public override async System.Threading.Tasks.Task<IEnumerable<Task>> FindAsync(Func<Task, bool> predicate)
         {
-            var tasks = base.Find(predicate);
+            var tasks = await base.FindAsync(predicate);
             foreach (var task in tasks)
             {
                 task.ObtainedDesigns = _db.ObtainedDesigns.Where(d => d.TaskId == task.Id);

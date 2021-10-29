@@ -58,7 +58,7 @@ namespace ProductionManagementSystem.BLL.Services
         private async Task<Tuple<bool, string>> CheckInTaskAsync(Device device)
         {
             string errorMessage;
-            var task = _db.TaskRepository.GetAll()
+            var task = (await _db.TaskRepository.GetAllAsync())
                 .FirstOrDefault(t => device.Id == t.DeviceId);
             if (task != null)
             {
@@ -72,7 +72,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task<IEnumerable<string>> GetNamesAsync()
         {
-            var devices = GetAll();
+            var devices = await GetAll();
             if (devices == null)
             {
                 return Array.Empty<string>();
@@ -98,13 +98,13 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task<IEnumerable<Montage>> GetMontagesFromDeviceByDeviceId(int deviceId)
         {
-            return _db.MontageInDeviceRepository.Find(m => m.DeviceId == deviceId).Select(async md => await _db.MontageRepository.GetByIdAsync(md.ComponentId))
+            return (await _db.MontageInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).Select(async md => await _db.MontageRepository.GetByIdAsync(md.ComponentId))
                 .Select(t => t.Result);
         }
 
         public async Task<IEnumerable<Design>> GetDesignsFromDeviceByDeviceId(int deviceId)
         {
-            return _db.DesignInDeviceRepository.Find(m => m.DeviceId == deviceId).Select(async md => await _db.DesignRepository.GetByIdAsync(md.ComponentId))
+            return (await _db.DesignInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).Select(async md => await _db.DesignRepository.GetByIdAsync(md.ComponentId))
                 .Select(t => t.Result);
         }
         

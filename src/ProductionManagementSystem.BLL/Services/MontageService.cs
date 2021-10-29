@@ -43,7 +43,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task<IEnumerable<string>> GetTypesAsync()
         {
-            var montages = GetAll().ToList();
+            var montages = await GetAll();
             IEnumerable<string> types = montages.OrderBy(c => c.Type).Select(c => c.Type).Distinct();
             return types;
         }
@@ -87,11 +87,11 @@ namespace ProductionManagementSystem.BLL.Services
         private async Task<Tuple<bool, string>> CheckInDevicesAsync(Montage montage)
         {
             string errorMessage;
-            var montageInDevice = _db.MontageInDeviceRepository.GetAll()
+            var montageInDevice = (await _db.MontageInDeviceRepository.GetAllAsync())
                 .FirstOrDefault(c => montage.Id == c.ComponentId);
             if (montageInDevice != null)
             {
-                var device = _db.DeviceRepository.GetAll().FirstOrDefault(d => d.Id == montageInDevice.DeviceId);
+                var device = (await _db.DeviceRepository.GetAllAsync()).FirstOrDefault(d => d.Id == montageInDevice.DeviceId);
                 errorMessage = $"<i class='bg-light'>{montage}</i> используется в <i class='bg-light'>{device}</i>.<br />" +
                                $"Для удаления <i class='bg-light'>{montage}</i>, удалите <i class='bg-light'>{device}</i>.<br />";
                 return new Tuple<bool, string>(false, errorMessage);
@@ -103,7 +103,7 @@ namespace ProductionManagementSystem.BLL.Services
         
         private async Task<bool> ComponentExistsAsync(int id)
         {
-            return GetAll().Any(e => e.Id == id);
+            return (await GetAll()).Any(e => e.Id == id);
         }
 
         public async Task DeleteByIdAsync(int id)

@@ -47,7 +47,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task<IEnumerable<string>> GetTypesAsync()
         {
-            var designs = GetAll().ToList();
+            var designs = await GetAll();
             IEnumerable<string> types = designs.Select(d => d.Type).Distinct().OrderBy(d => d);
             return types;
         }
@@ -86,12 +86,12 @@ namespace ProductionManagementSystem.BLL.Services
         private async Task<Tuple<bool, string>> CheckInDevicesAsync(Design design)
         {
             string errorMessage;
-            var designInDevice = _db.DesignInDeviceRepository.GetAll()
+            var designInDevice = (await _db.DesignInDeviceRepository.GetAllAsync())
                 .FirstOrDefault(d => design.Id == d.ComponentId);
             if (designInDevice != null)
             {
                 // TODO: use device Service
-                var device = _db.DeviceRepository.GetAll().FirstOrDefault(d => d.Id == designInDevice.DeviceId);
+                var device = (await _db.DeviceRepository.GetAllAsync()).FirstOrDefault(d => d.Id == designInDevice.DeviceId);
                 errorMessage = $"<i class='bg-light'>{design}</i> используется в <i class='bg-light'>{device}</i>.<br />" +
                                $"Для удаления <i class='bg-light'>{design}</i>, удалите <i class='bg-light'>{device}</i>.<br />";
                 return new Tuple<bool, string>(false, errorMessage);
@@ -104,7 +104,7 @@ namespace ProductionManagementSystem.BLL.Services
                 
         private async Task<bool> DesignExistsAsync(int id)
         {
-            return GetAll().Any(e => e.Id == id);
+            return (await GetAll()).Any(e => e.Id == id);
         }
     }
 }

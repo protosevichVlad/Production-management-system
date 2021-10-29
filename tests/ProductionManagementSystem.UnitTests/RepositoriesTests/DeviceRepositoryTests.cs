@@ -114,7 +114,7 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
             {
                 // Act
                 var repository = new DeviceRepository(context);
-                var result = repository.GetAll().ToList();
+                var result = (await repository.GetAllAsync()).ToList();
 
                 // Assert
                 Assert.NotNull(result);
@@ -138,7 +138,7 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
             await using var context = GetDdContext(options);
             // Act
             var repository = new DeviceRepository(context);
-            var result = repository.GetAll();
+            var result = await repository.GetAllAsync();
 
             // Assert
             Assert.IsEmpty(result);

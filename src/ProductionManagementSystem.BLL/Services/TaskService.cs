@@ -67,7 +67,7 @@ namespace ProductionManagementSystem.BLL.Services
         public async Task<IEnumerable<Models.Tasks.Task>> GetTasksByUserRoleAsync(IEnumerable<string> roles)
         {
             TaskStatusEnum accessLevel = ToStatus(roles);
-            return Find(task => (task.Status & accessLevel) == task.Status);
+            return await Find(task => (task.Status & accessLevel) == task.Status);
         }
         
         public async System.Threading.Tasks.Task TransferAsync(int taskId, bool full, int to, string message)

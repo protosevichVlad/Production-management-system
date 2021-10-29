@@ -8,7 +8,7 @@ namespace ProductionManagementSystem.BLL.Services
 {
     public interface IOrderService : IBaseService<Order>
     {
-        IEnumerable<Models.Tasks.Task> GetTasksByOrderId(int orderId);
+        Task<IEnumerable<Models.Tasks.Task>> GetTasksByOrderIdAsync(int orderId);
         Task DeleteByIdAsync(int orderId);
     }
 
@@ -43,9 +43,9 @@ namespace ProductionManagementSystem.BLL.Services
             await base.DeleteAsync(order);
         }
 
-        public IEnumerable<Models.Tasks.Task> GetTasksByOrderId(int orderId)
+        public async Task<IEnumerable<Models.Tasks.Task>> GetTasksByOrderIdAsync(int orderId)
         {
-            return _db.TaskRepository.Find(t => t.OrderId == orderId);
+            return await _db.TaskRepository.FindAsync(t => t.OrderId == orderId);
         }
 
         public async Task DeleteByIdAsync(int orderId)

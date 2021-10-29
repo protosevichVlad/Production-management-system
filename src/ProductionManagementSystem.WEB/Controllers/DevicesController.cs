@@ -31,7 +31,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewData["NumSortParm"] = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
             ViewData["NameSortParm"] = sortOrder == "Name" ? "name_desc" : "Name";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
-            IEnumerable<Device> devices = _deviceService.GetAll();
+            IEnumerable<Device> devices = await _deviceService.GetAll();
 
             switch (sortOrder)
             {

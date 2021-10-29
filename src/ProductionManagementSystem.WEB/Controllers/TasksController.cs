@@ -49,7 +49,7 @@ namespace ProductionManagementSystem.Controllers
         
         public async Task<IActionResult> Create()
         {
-            ViewBag.Devices = new SelectList(_deviceService.GetAll(), "Id", "Name");
+            ViewBag.Devices = new SelectList(await _deviceService.GetAll(), "Id", "Name");
             return View();
         }
         
@@ -109,7 +109,7 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 var task = await _taskService.GetByIdAsync(id);
-                ViewBag.Devices = new SelectList(_deviceService.GetAll(), "Id", "Name");
+                ViewBag.Devices = new SelectList(await _deviceService.GetAll(), "Id", "Name");
                 return View(task);
             }
             catch (PageNotFoundException)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.Models.Devices;
 
@@ -27,9 +28,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             await base.CreateAsync(device);
         }
 
-        public override IEnumerable<Device> GetAll()
+        public override async Task<IEnumerable<Device>> GetAllAsync()
         {
-            var devices = base.GetAll();
+            var devices = await base.GetAllAsync();
             if (devices == null)
                 return null;
             foreach (var device in devices)
@@ -47,8 +48,8 @@ namespace ProductionManagementSystem.DAL.Repositories
             if (device == null)
                 return null;
             
-            device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToList();
-            device.Montage = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
+            device.Designs = await _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToListAsync();
+            device.Montage = await _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToListAsync();
             return device;
         }
 
@@ -78,9 +79,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             base.Delete(device);
         }
 
-        public override IEnumerable<Device> Find(Func<Device, bool> predicate)
+        public override async Task<IEnumerable<Device>> FindAsync(Func<Device, bool> predicate)
         {
-            var devices = base.Find(predicate);
+            var devices = await base.FindAsync(predicate);
             if (devices == null)
                 return null;
             

@@ -12,9 +12,9 @@ namespace ProductionManagementSystem.BLL.Services
 {
     public interface IBaseService<TItem> : IDisposable
     {
-        public IEnumerable<TItem> GetAll();
+        public Task<IEnumerable<TItem>> GetAll();
         public Task<TItem> GetByIdAsync(int id);
-        public IEnumerable<TItem> Find(Func<TItem, bool> predicate);
+        public Task<IEnumerable<TItem>> Find(Func<TItem, bool> predicate);
         public Task CreateAsync(TItem item);
         public Task UpdateAsync(TItem item);
         public Task DeleteAsync(TItem item);
@@ -30,9 +30,9 @@ namespace ProductionManagementSystem.BLL.Services
             _db = db;
         }
 
-        public virtual IEnumerable<TItem> GetAll()
+        public virtual async Task<IEnumerable<TItem>> GetAll()
         {
-            return _currentRepository.GetAll();
+            return await _currentRepository.GetAllAsync();
         }
 
         public virtual async Task<TItem> GetByIdAsync(int id)
@@ -40,9 +40,9 @@ namespace ProductionManagementSystem.BLL.Services
             return await _currentRepository.GetByIdAsync(id);
         }
 
-        public virtual IEnumerable<TItem> Find(Func<TItem, bool> predicate)
+        public virtual async Task<IEnumerable<TItem>> Find(Func<TItem, bool> predicate)
         {
-            return _currentRepository.Find(predicate);
+            return await _currentRepository.FindAsync(predicate);
         }
 
         public virtual async Task CreateAsync(TItem item)

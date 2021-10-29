@@ -33,7 +33,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         public async Task<ViewResult> Index()
         {
-            return View(_montageSupplyRequestService.GetAll()
+            return View((await _montageSupplyRequestService.GetAll())
                 .OrderBy(c => c.StatusSupply)
                 .ThenBy(c => c.DesiredDate).Select(s =>
                 {
@@ -60,7 +60,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             }
             else
             {
-                ViewBag.Components = _montageService.GetAll()
+                ViewBag.Components = (await _montageService.GetAll())
                     .Select(c => new SelectListItem(c.ToString(), c.Id.ToString())).AsEnumerable();
             }
             

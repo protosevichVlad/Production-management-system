@@ -18,9 +18,9 @@ namespace ProductionManagementSystem.DAL.Repositories
         {
         }
 
-        public override IEnumerable<Order> GetAll()
+        public override async Task<IEnumerable<Order>> GetAllAsync()
         {
-            var orders = base.GetAll().ToList();
+            var orders = await base.GetAllAsync();
             foreach (var order in orders)
             {
                 order.Tasks = _db.Tasks.Where(t => t.OrderId == order.Id).ToList();

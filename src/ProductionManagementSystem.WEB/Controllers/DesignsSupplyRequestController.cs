@@ -31,7 +31,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         public async Task<ViewResult> Index()
         {
-            return View(_designSupplyRequestService.GetAll()
+            return View((await _designSupplyRequestService.GetAll())
                 .OrderBy(d => d.StatusSupply)
                 .ThenBy(d => d.DesiredDate).Select(s =>
                 {
@@ -58,7 +58,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             }
             else
             {
-                ViewBag.Designs = _designService.GetAll()
+                ViewBag.Designs = (await _designService.GetAll())
                     .Select(c => new SelectListItem(c.ToString(), c.Id.ToString())).AsEnumerable();
             }
             

@@ -9,9 +9,9 @@ namespace ProductionManagementSystem.DAL.Repositories
 {
     public interface IRepository<TItem>
     {
-        public IEnumerable<TItem> GetAll();
+        public Task<IEnumerable<TItem>> GetAllAsync();
         public Task<TItem> GetByIdAsync(int id);
-        public IEnumerable<TItem> Find(Func<TItem, bool> predicate);
+        public Task<IEnumerable<TItem>> FindAsync(Func<TItem, bool> predicate);
         public Task CreateAsync(TItem item);
         public void Update(TItem item);
         public void Delete(TItem item);
@@ -30,9 +30,9 @@ namespace ProductionManagementSystem.DAL.Repositories
             _dbSet = db.Set<TItem>();
         }
 
-        public virtual IEnumerable<TItem> GetAll()
+        public virtual async Task<IEnumerable<TItem>> GetAllAsync()
         {
-            return _dbSet;
+            return await _dbSet.ToListAsync();
         }
 
         public virtual async Task<TItem> GetByIdAsync(int id)
@@ -40,7 +40,7 @@ namespace ProductionManagementSystem.DAL.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public virtual IEnumerable<TItem> Find(Func<TItem, bool> predicate)
+        public virtual async Task<IEnumerable<TItem>> FindAsync(Func<TItem, bool> predicate)
         {
             return _dbSet.Where(predicate);
         }
