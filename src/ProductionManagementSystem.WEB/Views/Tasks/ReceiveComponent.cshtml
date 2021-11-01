@@ -1,10 +1,12 @@
-﻿@{
+﻿@model ProductionManagementSystem.Models.Tasks.Task
+
+@{
     ViewBag.Title = "Получение монтажа";
 }
-<a class="btn btn-light" asp-action="Details" asp-route-id="@ViewBag.TaskId">Перейти к задаче</a>
+<a class="btn btn-light" asp-action="Details" asp-route-id="@Model.Id">Перейти к задаче</a>
 <form action="" method="post">
-    <input hidden value="@ViewBag.TaskId" name="taskId">
-    <table class="table">
+    <input hidden value="@Model.Id" name="taskId">
+    <table class="table table-sm">
         <thead>
         <tr>
             <td>Наименование</td>
@@ -14,11 +16,11 @@
             <td>Получить</td>
         </tr>
         </thead>
-        @foreach (var comp in ViewBag.Components)
+        @foreach (var comp in Model.Device.Montages)
         {
-            var obtainedComp = ((IEnumerable<dynamic>) ViewBag.ObtainedComponents).FirstOrDefault(c => comp.Component.Id == c.Component.Id);
+            var obtainedComp = Model.ObtainedMontages.FirstOrDefault(om => comp.ComponentId == om.ComponentId);
             if (obtainedComp == null)
-            {
+            {   
                 continue;
             }
             

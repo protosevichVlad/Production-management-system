@@ -147,10 +147,8 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> ReceiveComponent(int taskId)
         {
             var task = await _taskService.GetByIdAsync(taskId);
-            ViewBag.TaskId = taskId;
-            ViewBag.Components = await _deviceService.GetMontagesFromDeviceByDeviceId(task.DeviceId);
-            ViewBag.ObtainedComponents = (await _taskService.GetByIdAsync(task.Id)).ObtainedMontages;
-            return View();
+            await InitTaskAsync(task);
+            return View(task);
         }
 
         [HttpPost]
@@ -164,10 +162,8 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> ReceiveDesign(int taskId)
         {
             var task = await _taskService.GetByIdAsync(taskId);
-            ViewBag.TaskId = taskId;
-            ViewBag.Designs = await _deviceService.GetDesignsFromDeviceByDeviceId(task.DeviceId);
-            ViewBag.ObtainedDesigns = (await _taskService.GetByIdAsync(taskId)).ObtainedDesigns;
-            return View();
+            await InitTaskAsync(task);
+            return View(task);
         }
 
         [HttpPost]

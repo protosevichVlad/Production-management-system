@@ -98,14 +98,16 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task<IEnumerable<Montage>> GetMontagesFromDeviceByDeviceId(int deviceId)
         {
-            return (await _db.MontageInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).Select(async md => await _db.MontageRepository.GetByIdAsync(md.ComponentId))
-                .Select(t => t.Result);
+            return (await _db.MontageInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).ToList()
+                .Select(async md => await _db.MontageRepository.GetByIdAsync(md.ComponentId))
+                .Select(t => t.Result).Where(t => t != null).ToList();
         }
 
         public async Task<IEnumerable<Design>> GetDesignsFromDeviceByDeviceId(int deviceId)
         {
-            return (await _db.DesignInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).Select(async md => await _db.DesignRepository.GetByIdAsync(md.ComponentId))
-                .Select(t => t.Result);
+            return (await _db.DesignInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).ToList()
+                .Select(async md => await _db.DesignRepository.GetByIdAsync(md.ComponentId))
+                .Select(t => t.Result).Where(t => t != null).ToList();
         }
         
         private async Task AddDeviceAsync(int? id, int quantity)

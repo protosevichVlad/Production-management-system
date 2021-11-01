@@ -1,10 +1,12 @@
-﻿@{
+﻿@model ProductionManagementSystem.Models.Tasks.Task;
+
+@{
     ViewBag.Title = "Получение конструктива";
 }
-<a class="btn btn-light" asp-action="Details" asp-route-id="@ViewBag.TaskId">Перейти к задаче</a>
+<a class="btn btn-light" asp-action="Details" asp-route-id="@Model.Id">Перейти к задаче</a>
 <form action="" method="post">
-    <input hidden value="@ViewBag.TaskId" name="taskId">
-    <table class="table">
+    <input hidden value="@Model.Id" name="taskId">
+    <table class="table table-sm">
         <thead>
         <tr>
             <td>Наименование</td>
@@ -14,9 +16,9 @@
             <td>Получить</td>
         </tr>
         </thead>
-        @foreach (var des in ViewBag.Designs)
+        @foreach (var des in Model.Device.Designs)
         {
-            var obtainedDes = ((IEnumerable<dynamic>) ViewBag.ObtainedDesigns).FirstOrDefault(d => des.Design.Id == d.Design.Id);
+            var obtainedDes = Model.ObtainedDesigns.FirstOrDefault(d => des.ComponentId == d.ComponentId);
             if (obtainedDes == null)
             {
                 continue;
@@ -26,13 +28,13 @@
                 { 
                     @:class="table-success" 
                 }> 
-                <td>@des.Design.ToString()</td>
+                <td>@des.Component.ToString()</td>
                 <td>@des.Quantity</td>
-                <td>@des.Design.Quantity</td>
+                <td>@des.Component.Quantity</td>
                 <td>@obtainedDes.Obtained</td>
-                <td><input type="number" name="designObt" autocomplete="off" required min="-@obtainedDes.Obtained" max="@des.Design.Quantity" value="0"></td>
+                <td><input type="number" name="designObt" autocomplete="off" required min="-@obtainedDes.Obtained" max="@des.Component.Quantity" value="0"></td>
             </tr>
-            <input type="number" name="designIds" hidden value="@des.Design.Id"/>
+            <input type="number" name="designIds" hidden value="@des.Component.Id"/>
         }
     </table>
     <button class="btn btn-primary">Получить</button>
