@@ -40,7 +40,7 @@ function removeDesigns(index) {
         return;
     }
     
-    let tr = document.querySelector(`#DesignTr${index}`);
+    let tr = document.querySelector(`#DesignsTr${index}`);
     tr.remove();
     updateIndex('DesignsIds');
 }
