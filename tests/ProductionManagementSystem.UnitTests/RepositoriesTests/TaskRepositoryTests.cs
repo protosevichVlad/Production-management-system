@@ -176,7 +176,7 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
             await using (var context = GetDdContext(options))
             {
                 var repository = new TaskRepository(context);
-                repository.Update(new Task {Id = 1, Description = "name123", Status = TaskStatusEnum.Done});
+                repository.UpdateAsync(new Task {Id = 1, Description = "name123", Status = TaskStatusEnum.Done});
                 await repository.SaveAsync();
                 var montage = await context.Tasks.FirstOrDefaultAsync();
 
@@ -203,7 +203,7 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
             await using (var context = GetDdContext(options))
             {
                 var repository = new TaskRepository(context);
-                repository.Update(new Task
+                repository.UpdateAsync(new Task
                 {
                     Id = 1, Description = "newName", DeviceId = 1,
                     ObtainedDesigns = new ObtainedDesign[1]

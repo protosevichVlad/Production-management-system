@@ -55,7 +55,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public virtual async Task UpdateAsync(TItem item)
         {
-            _currentRepository.Update(item);
+            await _currentRepository.UpdateAsync(item);
             await _db.SaveAsync();
             //TODO: await _log.CreateLogAsync(new LogDTO($"Был изменён конструктив {design}"){DesignId = design.Id});
         }

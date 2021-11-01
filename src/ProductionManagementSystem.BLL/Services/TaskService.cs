@@ -129,7 +129,7 @@ namespace ProductionManagementSystem.BLL.Services
                 {
                     obtComp.Obtained += componentObt[i];
                     await _montageService.DecreaseQuantityOfDesignAsync(componentIds[i], componentObt[i]);
-                    _db.ObtainedMontageRepository.Update(obtComp);
+                    _db.ObtainedMontageRepository.UpdateAsync(obtComp);
                 }
             }
         }
@@ -144,7 +144,7 @@ namespace ProductionManagementSystem.BLL.Services
                 {
                     obtDes.Obtained += designObt[i];
                     await _designService.DecreaseQuantityOfDesignAsync(designIds[i], designObt[i]);
-                    _db.ObtainedDesignRepository.Update(obtDes);
+                    _db.ObtainedDesignRepository.UpdateAsync(obtDes);
                 }
             }
         }
@@ -157,7 +157,7 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 obtMont.Obtained += componentObt;
                 await _montageService.IncreaseQuantityOfMontageAsync(componentId, -componentObt);
-                _db.ObtainedMontageRepository.Update(obtMont);
+                _db.ObtainedMontageRepository.UpdateAsync(obtMont);
             }
         }
         
@@ -169,7 +169,7 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 obtDes.Obtained += designObt;
                 await _designService.IncreaseQuantityOfDesignAsync(designId, -designObt);
-                _db.ObtainedDesignRepository.Update(obtDes);
+                _db.ObtainedDesignRepository.UpdateAsync(obtDes);
             }
         }
 

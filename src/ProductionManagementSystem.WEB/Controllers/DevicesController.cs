@@ -165,6 +165,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var device = await _deviceService.GetByIdAsync(id);
+                InitComponents(device);
                 return View(device);
             }
             catch (Exception e)

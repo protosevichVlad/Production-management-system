@@ -142,7 +142,7 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
             await using (var context = GetDdContext(options))
             {
                 var repository = new OrderRepository(context);
-                repository.Update(new Order {Id = 1, Customer = "name123", Description = "nominal"});
+                repository.UpdateAsync(new Order {Id = 1, Customer = "name123", Description = "nominal"});
                 await repository.SaveAsync();
                 var order = await context.Orders.FirstOrDefaultAsync();
 

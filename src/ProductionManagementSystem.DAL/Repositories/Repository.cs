@@ -13,7 +13,7 @@ namespace ProductionManagementSystem.DAL.Repositories
         public Task<TItem> GetByIdAsync(int id);
         public Task<IEnumerable<TItem>> FindAsync(Func<TItem, bool> predicate);
         public Task CreateAsync(TItem item);
-        public void Update(TItem item);
+        public Task UpdateAsync(TItem item);
         public void Delete(TItem item);
         public Task SaveAsync();
     }
@@ -50,7 +50,7 @@ namespace ProductionManagementSystem.DAL.Repositories
             await _dbSet.AddAsync(item);
         }
 
-        public virtual void Update(TItem item)
+        public virtual async Task UpdateAsync(TItem item)
         {
             _db.Entry<TItem>(item).State = EntityState.Modified;
         }

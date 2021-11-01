@@ -237,7 +237,7 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
             await using (var context = GetDdContext(options))
             {
                 var repository = new DeviceRepository(context);
-                repository.Update(new Device {Id = 1, Name = "name123", Quantity = 15, Description = "nominal"});
+                repository.UpdateAsync(new Device {Id = 1, Name = "name123", Quantity = 15, Description = "nominal"});
                 await repository.SaveAsync();
                 var montage = await context.Devices.FirstOrDefaultAsync();
 
@@ -276,7 +276,7 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
             {
                 // Act
                 var repository = new DeviceRepository(context);
-                repository.Update(new Device
+                repository.UpdateAsync(new Device
                 {
                     Id = 1, Name = "name", Quantity = 10,
                     Montages = new List<MontageInDevice>()

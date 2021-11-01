@@ -20,12 +20,21 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public override async Task CreateAsync(Device device)
         {
-            if (device.Designs != null)
-                await _db.DesignInDevices.AddRangeAsync(device.Designs);
-            if (device.Montages != null)
-                await _db.MontageInDevices.AddRangeAsync(device.Montages);
-            
             await base.CreateAsync(device);
+            await _db.SaveChangesAsync();
+
+            if (device.Designs != null)
+                await _db.DesignInDevices.AddRangeAsync(device.Designs.Select(d =>
+                {
+                    d.DeviceId = device.Id;
+                    return d;
+                }));
+            if (device.Montages != null)
+                await _db.MontageInDevices.AddRangeAsync(device.Montages.Select(m =>
+                {
+                    m.DeviceId = device.Id;
+                    return m;
+                }));
         }
 
         public override async Task<IEnumerable<Device>> GetAllAsync()
@@ -53,29 +62,31 @@ namespace ProductionManagementSystem.DAL.Repositories
             return device;
         }
 
-        public override void Update(Device device)
+        public override async Task UpdateAsync(Device device)
         {
             _db.MontageInDevices.RemoveRange(_db.MontageInDevices.Where(d => d.DeviceId == device.Id));
             _db.DesignInDevices.RemoveRange(_db.DesignInDevices.Where(d => d.DeviceId == device.Id));
 
             if (device.Designs != null)
-            {
-                _db.DesignInDevices.AddRange(device.Designs);
-            }
-
+                await _db.DesignInDevices.AddRangeAsync(device.Designs.Select(d =>
+                {
+                    d.DeviceId = device.Id;
+                    return d;
+                }));
             if (device.Montages != null)
-            {
-                _db.MontageInDevices.AddRange(device.Montages);
-            }
+                await _db.MontageInDevices.AddRangeAsync(device.Montages.Select(m =>
+                {
+                    m.DeviceId = device.Id;
+                    return m;
+                }));
             
-            base.Update(device);
+            await base.UpdateAsync(device);
         }
 
         public override void Delete(Device device)
         {
             _db.MontageInDevices.RemoveRange(_db.MontageInDevices.Where(d => d.DeviceId == device.Id));
             _db.DesignInDevices.RemoveRange(_db.DesignInDevices.Where(d => d.DeviceId == device.Id));
-            
             base.Delete(device);
         }
 

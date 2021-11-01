@@ -145,7 +145,7 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
             await using (var context = GetDdContext(options))
             {
                 var montageRepository = new MontageRepository(context);
-                montageRepository.Update(new Montage {Id = 1, Name = "name123", Quantity = 15, Nominal = "nominal"});
+                montageRepository.UpdateAsync(new Montage {Id = 1, Name = "name123", Quantity = 15, Nominal = "nominal"});
                 await montageRepository.SaveAsync();
                 var montage = await context.Montages.FirstOrDefaultAsync();
 
