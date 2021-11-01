@@ -72,7 +72,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task<IEnumerable<string>> GetNamesAsync()
         {
-            var devices = await GetAll();
+            var devices = await GetAllAsync();
             if (devices == null)
             {
                 return Array.Empty<string>();

@@ -12,7 +12,7 @@ namespace ProductionManagementSystem.BLL.Services
 {
     public interface IBaseService<TItem> : IDisposable
     {
-        public Task<IEnumerable<TItem>> GetAll();
+        public Task<IEnumerable<TItem>> GetAllAsync();
         public Task<TItem> GetByIdAsync(int id);
         public Task<IEnumerable<TItem>> Find(Func<TItem, bool> predicate);
         public Task CreateAsync(TItem item);
@@ -30,7 +30,7 @@ namespace ProductionManagementSystem.BLL.Services
             _db = db;
         }
 
-        public virtual async Task<IEnumerable<TItem>> GetAll()
+        public virtual async Task<IEnumerable<TItem>> GetAllAsync()
         {
             return await _currentRepository.GetAllAsync();
         }

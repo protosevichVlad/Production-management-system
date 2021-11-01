@@ -22,8 +22,8 @@ namespace ProductionManagementSystem.DAL.Repositories
         {
             if (device.Designs != null)
                 await _db.DesignInDevices.AddRangeAsync(device.Designs);
-            if (device.Montage != null)
-                await _db.MontageInDevices.AddRangeAsync(device.Montage);
+            if (device.Montages != null)
+                await _db.MontageInDevices.AddRangeAsync(device.Montages);
             
             await base.CreateAsync(device);
         }
@@ -36,7 +36,7 @@ namespace ProductionManagementSystem.DAL.Repositories
             foreach (var device in devices)
             {
                 device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToList();
-                device.Montage = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
+                device.Montages = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
             }
 
             return devices;
@@ -49,7 +49,7 @@ namespace ProductionManagementSystem.DAL.Repositories
                 return null;
             
             device.Designs = await _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToListAsync();
-            device.Montage = await _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToListAsync();
+            device.Montages = await _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToListAsync();
             return device;
         }
 
@@ -63,9 +63,9 @@ namespace ProductionManagementSystem.DAL.Repositories
                 _db.DesignInDevices.AddRange(device.Designs);
             }
 
-            if (device.Montage != null)
+            if (device.Montages != null)
             {
-                _db.MontageInDevices.AddRange(device.Montage);
+                _db.MontageInDevices.AddRange(device.Montages);
             }
             
             base.Update(device);
@@ -88,7 +88,7 @@ namespace ProductionManagementSystem.DAL.Repositories
             foreach (var device in devices)
             {
                 device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToList();
-                device.Montage = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
+                device.Montages = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
             }
 
             return devices;

@@ -32,7 +32,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
             ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
             
-            var ordersViewModel = await _orderService.GetAll();
+            var ordersViewModel = await _orderService.GetAllAsync();
             ordersViewModel = SortingOrders(ordersViewModel, sortOrder);
             return View(ordersViewModel);
         }

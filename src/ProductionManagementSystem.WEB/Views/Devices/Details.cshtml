@@ -46,12 +46,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                @for (int i = 0; i < Model.Montage.Count(); i++)
+                @for (int i = 0; i < Model.Montages.Count(); i++)
                 {
                     <tr>
-                        <td class="td-with-name">@Model.Montage[i].Component.ToString()</td>
-                        <td>@Model.Montage[i].Quantity</td>
-                        <td class="td-with-description">@Model.Montage[i].Description</td>
+                        <td class="td-with-name">@Model.Montages[i].Component.ToString()</td>
+                        <td>@Model.Montages[i].Quantity</td>
+                        <td class="td-with-description">@Model.Montages[i].Description</td>
                     </tr>
                 }
                 </tbody>

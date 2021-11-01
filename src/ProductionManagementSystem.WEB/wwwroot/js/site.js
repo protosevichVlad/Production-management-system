@@ -10,7 +10,7 @@ async function createComponent() {
     let length = component_selects.length + 1;
     let str = await createTextComponent(length);
 
-    let lastTr = document.querySelector(`#comTr0`);
+    let lastTr = document.querySelector(`#ComponentTr0`);
     lastTr.insertAdjacentHTML('beforeBegin', str);
     updateIndex('ComponentIds');
     undisableButton('#buttonCreateComponent');
@@ -24,7 +24,7 @@ async function createDesign() {
     let length = design_selects.length + 1;
     let str = await createTextDesign(length);
 
-    let lastTr = document.querySelector(`#desTr0`);
+    let lastTr = document.querySelector(`#DesignTr0`);
     lastTr.insertAdjacentHTML('beforeBegin', str);
     updateIndex('DesignIds');
     undisableButton('#buttonCreateDesign');
@@ -33,7 +33,7 @@ async function createDesign() {
 }
 
 async function createTextComponent(id) {
-    let str = `<tr id="comTr${id}"><td class="ComponentIds"></td><td><select class="ComponentSelect align-top width-100 form-select js-example-basic-single" name="ComponentIds">`;
+    let str = `<tr id="ComponentTr${id}"><td class="ComponentIds"></td><td><select class="ComponentSelect align-top width-100 form-select js-example-basic-single" name="ComponentIds">`;
 
     let r = await new Request('/Components/GetAllComponents');
     let componentsJson = await fetch(r).then(c => c.json());
@@ -49,7 +49,7 @@ async function createTextComponent(id) {
 }
 
 async function createTextDesign(id) {
-    let str = `<tr id="desTr${id}"><td class="DesignIds"></td><td><select class="DesignSelect align-top width-100 form-select js-example-basic-single" name="DesignIds">`;
+    let str = `<tr id="DesignTr${id}"><td class="DesignIds"></td><td><select class="DesignSelect align-top width-100 form-select js-example-basic-single" name="DesignIds">`;
 
     let r = await new Request('/Designs/GetAllDesigns');
     let componentsJson = await fetch(r).then(c => c.json());
@@ -73,7 +73,7 @@ function removeComponent(index) {
         return;
     }
     
-    let tr = document.querySelector(`#comTr${index}`);
+    let tr = document.querySelector(`#ComponentTr${index}`);
     tr.remove();
     updateIndex('ComponentIds');
 }
@@ -87,7 +87,7 @@ function removeDesign(index) {
         return;
     }
     
-    let tr = document.querySelector(`#desTr${index}`);
+    let tr = document.querySelector(`#DesignTr${index}`);
     tr.remove();
     updateIndex('DesignIds');
 }

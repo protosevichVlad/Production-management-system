@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.Models.Devices;
@@ -31,7 +32,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewData["NumSortParm"] = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
             ViewData["NameSortParm"] = sortOrder == "Name" ? "name_desc" : "Name";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
-            IEnumerable<Device> devices = await _deviceService.GetAll();
+            IEnumerable<Device> devices = await _deviceService.GetAllAsync();
 
             switch (sortOrder)
             {
@@ -77,8 +78,9 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var device = await _deviceService.GetByIdAsync(id);
-                ViewBag.Components = _montageService.GetAll();
-                ViewBag.Designs = _designService.GetAll();
+                InitComponents(device);
+                ViewBag.Montages = await _montageService.GetAllAsync();
+                ViewBag.Designs = await _designService.GetAllAsync();
                 return View(device);
             }
             catch (Exception e)
@@ -116,6 +118,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var device = await _deviceService.GetByIdAsync(id);
+                InitComponents(device);
                 ViewBag.ErrorMessage = TempData["ErrorMessage"];
                 ViewBag.ErrorHeader = TempData["ErrorHeader"];
                 TempData["ErrorMessage"] = null;
@@ -169,7 +172,21 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAllDevices()
         {
-            return Json(_deviceService.GetAll());
+            return Json(_deviceService.GetAllAsync());
+        }
+
+        private void InitComponents(Device device)
+        {
+            device.Montages = device.Montages.Select(async m =>
+            {
+                m.Component = await _montageService.GetByIdAsync(m.ComponentId);
+                return m;
+            }).Select(t => t.Result).Where(i => i != null).ToList();
+            device.Designs = device.Designs.Select(async d =>
+            {
+                d.Component = await _designService.GetByIdAsync(d.ComponentId);
+                return d;
+            }).Select(t => t.Result).Where(i => i != null).ToList();
         }
     }
     

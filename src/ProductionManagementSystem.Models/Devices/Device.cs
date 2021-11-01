@@ -15,7 +15,7 @@ namespace ProductionManagementSystem.Models.Devices
         [NotMapped]
         public List<DesignInDevice> Designs { get; set; }
         [NotMapped]
-        public List<MontageInDevice> Montage { get; set; }
+        public List<MontageInDevice> Montages { get; set; }
         
         public override string ToString()
         {

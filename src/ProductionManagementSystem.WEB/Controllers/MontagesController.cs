@@ -43,7 +43,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewData["sortOrder"] = sortOrder;
             ViewData["CurrentFilter"] = searchString;
 
-            var components = await _montageService.GetAll();
+            var components = await _montageService.GetAllAsync();
             
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -111,7 +111,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> Create()
         {
             ViewBag.AllTypes = await _montageService.GetTypesAsync();
-            ViewBag.AllComponents = (await _montageService.GetAll()).Select(c => c.Name).Distinct();
+            ViewBag.AllComponents = (await _montageService.GetAllAsync()).Select(c => c.Name).Distinct();
             return View();
         }
 
@@ -198,7 +198,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAllComponents()
         {
-            IEnumerable<Montage> components = await _montageService.GetAll();
+            IEnumerable<Montage> components = await _montageService.GetAllAsync();
             foreach (var comp in components)
             {
                 comp.Name = comp.ToString();
@@ -272,7 +272,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         public async Task<IActionResult> AddMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(await _deviceService.GetAll(), "Id", "Name");
+            var selectListDevice = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
             var selectListTypes = new SelectList(await _montageService.GetTypesAsync());
 
             var components = new ComponentsForDevice();
@@ -285,11 +285,11 @@ namespace ProductionManagementSystem.WEB.Controllers
                     device.Selected = true;
                 }
                 
-                componentsInDevice.AddRange((await _deviceService.GetByIdAsync((int) deviceId)).Montage.Select(c => c.Component).ToArray());
+                componentsInDevice.AddRange((await _deviceService.GetByIdAsync((int) deviceId)).Montages.Select(c => c.Component).ToArray());
             }
             else
             {
-                componentsInDevice.AddRange(await _montageService.GetAll());
+                componentsInDevice.AddRange(await _montageService.GetAllAsync());
             }
 
 
@@ -340,7 +340,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         public async Task<IActionResult> ReceiveMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(await _deviceService.GetAll(), "Id", "Name");
+            var selectListDevice = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
             var selectListTypes = new SelectList(await _montageService.GetTypesAsync());
 
             var components = new ComponentsForDevice();
@@ -353,11 +353,11 @@ namespace ProductionManagementSystem.WEB.Controllers
                     device.Selected = true;
                 }
                 
-                componentsInDevice.AddRange((await _deviceService.GetByIdAsync(deviceId.Value)).Montage.Select(c => c.Component).ToArray());
+                componentsInDevice.AddRange((await _deviceService.GetByIdAsync(deviceId.Value)).Montages.Select(c => c.Component).ToArray());
             }
             else
             {
-                componentsInDevice.AddRange(await _montageService.GetAll());
+                componentsInDevice.AddRange(await _montageService.GetAllAsync());
             }
 
 

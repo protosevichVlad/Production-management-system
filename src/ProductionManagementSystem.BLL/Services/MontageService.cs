@@ -43,7 +43,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task<IEnumerable<string>> GetTypesAsync()
         {
-            var montages = await GetAll();
+            var montages = await GetAllAsync();
             IEnumerable<string> types = montages.OrderBy(c => c.Type).Select(c => c.Type).Distinct();
             return types;
         }
@@ -103,7 +103,7 @@ namespace ProductionManagementSystem.BLL.Services
         
         private async Task<bool> ComponentExistsAsync(int id)
         {
-            return (await GetAll()).Any(e => e.Id == id);
+            return (await GetAllAsync()).Any(e => e.Id == id);
         }
 
         public async Task DeleteByIdAsync(int id)

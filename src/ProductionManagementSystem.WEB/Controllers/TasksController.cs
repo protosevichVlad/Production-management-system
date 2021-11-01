@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Services;
-using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
 using ProductionManagementSystem.Models.Tasks;
 using ProductionManagementSystem.Models.Users;
 using Task = ProductionManagementSystem.Models.Tasks.Task;
 
-namespace ProductionManagementSystem.Controllers
+namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize]
     public class TasksController : Controller
@@ -43,13 +43,19 @@ namespace ProductionManagementSystem.Controllers
             var roles = await _userManager.GetRolesAsync(user);
             var tasks = (await _taskService.GetTasksByUserRoleAsync(roles)).ToList();
             tasks = SortingTasks(tasks, sortOrder).ToList();
+
+            tasks.Select(async t =>
+            {
+                t.Device = await _deviceService.GetByIdAsync(t.DeviceId);
+                return t;
+            }).Select(t => t.Result).Where(i => i != null).ToList();
             
             return View(tasks);
         }
         
         public async Task<IActionResult> Create()
         {
-            ViewBag.Devices = new SelectList(await _deviceService.GetAll(), "Id", "Name");
+            ViewBag.Devices = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
             return View();
         }
         
@@ -65,8 +71,9 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 var task = await _taskService.GetByIdAsync(id);
+                task.Device = _deviceService.GetByIdAsync(task.DeviceId).Result;
                 ViewBag.States = new SelectList(GetStates(task), "Id", "Name");
-                ViewBag.ComponentTemplate = (await _deviceService.GetByIdAsync(task.DeviceId)).Montage;
+                ViewBag.ComponentTemplate = (await _deviceService.GetByIdAsync(task.DeviceId)).Montages;
                 ViewBag.DesignTemplate = (await _deviceService.GetByIdAsync(task.DeviceId)).Designs;
                 // ViewBag.Logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(_taskService.GetLogs(id));
                 return View(task);
@@ -109,7 +116,7 @@ namespace ProductionManagementSystem.Controllers
             try
             {
                 var task = await _taskService.GetByIdAsync(id);
-                ViewBag.Devices = new SelectList(await _deviceService.GetAll(), "Id", "Name");
+                ViewBag.Devices = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
                 return View(task);
             }
             catch (PageNotFoundException)

@@ -53,7 +53,7 @@ namespace ProductionManagementSystem.BLL.Services
                     TaskId = task.Id,
                     Obtained = d.Quantity
                 });
-            task.ObtainedMontages = (await _deviceService.GetByIdAsync(task.DeviceId)).Montage.Select(m =>
+            task.ObtainedMontages = (await _deviceService.GetByIdAsync(task.DeviceId)).Montages.Select(m =>
                 new ObtainedMontage()
                 {
                     ComponentId = m.Id,
@@ -67,7 +67,8 @@ namespace ProductionManagementSystem.BLL.Services
         public async Task<IEnumerable<Models.Tasks.Task>> GetTasksByUserRoleAsync(IEnumerable<string> roles)
         {
             TaskStatusEnum accessLevel = ToStatus(roles);
-            return await Find(task => (task.Status & accessLevel) == task.Status);
+            var tasks = await Find(task => (task.Status & accessLevel) == task.Status);
+            return tasks;
         }
         
         public async System.Threading.Tasks.Task TransferAsync(int taskId, bool full, int to, string message)

@@ -47,7 +47,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task<IEnumerable<string>> GetTypesAsync()
         {
-            var designs = await GetAll();
+            var designs = await GetAllAsync();
             IEnumerable<string> types = designs.Select(d => d.Type).Distinct().OrderBy(d => d);
             return types;
         }
@@ -104,7 +104,7 @@ namespace ProductionManagementSystem.BLL.Services
                 
         private async Task<bool> DesignExistsAsync(int id)
         {
-            return (await GetAll()).Any(e => e.Id == id);
+            return (await GetAllAsync()).Any(e => e.Id == id);
         }
     }
 }

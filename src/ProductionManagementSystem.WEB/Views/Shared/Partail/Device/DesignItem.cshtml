@@ -1,0 +1,31 @@
+﻿@model ProductionManagementSystem.WEB.Models.Device.DeviceItem<ProductionManagementSystem.Models.Components.Design>
+
+<tr id="@(Model.ComponentType)Tr@(Model.Id + 1)">
+    <td class="@(Model.ComponentType)Ids">
+        @(Model.Id + 1)
+    </td>
+    <td class="td-with-name">
+        <select class="@(Model.ComponentType)Select align-top width-100 form-select js-example-basic-single" name="Device.@(Model.ComponentType)[@Model.Id].ComponentId">
+            @foreach (var component in Model.AllComponents)
+            {
+                if (component.Id == Model.SelectedComponentId)
+                {
+                    <option value="@component.Id" selected>@component.ToString()</option>
+                }
+                else
+                {
+                    <option value="@component.Id">@component.ToString()</option>
+                }
+            }
+        </select>
+    </td>
+    <td>
+        <input class="@(Model.ComponentType)Input align-top form-control" name="Device.@(Model.ComponentType)[@Model.Id].Quantity" type="number" required value="@Model.Component.Quantity" autocomplete="off" min="0"/>
+    </td>
+    <td class="td-with-description">
+        <textarea class="align-top w-100 form-control" name="Device.@(Model.ComponentType)[@Model.Id].Descriptions">@Model.Component.Description</textarea>
+    </td>
+    <td class="border-0">
+        <button type="button" class="btn-close" aria-label="Close" onclick="remove@(Model.ComponentType)(@(Model.Id + 1))"></button>
+    </td>
+</tr>

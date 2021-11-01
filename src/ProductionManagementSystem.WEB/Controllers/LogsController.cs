@@ -24,7 +24,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         public async Task<IActionResult> Index(string userName, int? deviceId, int? componentId, int? designId, int? taskId, int? orderId)
         {
-            IEnumerable<Log> logs = await _logService.GetAll();
+            IEnumerable<Log> logs = await _logService.GetAllAsync();
 
             if (userName != null)
             {

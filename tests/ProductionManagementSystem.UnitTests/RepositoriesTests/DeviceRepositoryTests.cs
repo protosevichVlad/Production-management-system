@@ -46,8 +46,8 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
                 Assert.AreEqual("name", result.Name);
                 Assert.AreEqual(1, result.Quantity);
                 Assert.AreEqual(null, result.Description);
-                Assert.AreEqual(15, result.Montage.First().Quantity);
-                Assert.AreEqual(2, result.Montage.Count());
+                Assert.AreEqual(15, result.Montages.First().Quantity);
+                Assert.AreEqual(2, result.Montages.Count());
                 Assert.AreEqual(5, result.Designs.First().Quantity);
                 Assert.AreEqual(2, result.Designs.Count());
             }
@@ -122,8 +122,8 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
                 Assert.AreEqual("name", result[0].Name);
                 Assert.AreEqual(1, result[0].Quantity);
                 Assert.AreEqual(null, result[0].Description);
-                Assert.AreEqual(15, result[0].Montage.First().Quantity);
-                Assert.AreEqual(2, result[0].Montage.Count());
+                Assert.AreEqual(15, result[0].Montages.First().Quantity);
+                Assert.AreEqual(2, result[0].Montages.Count());
                 Assert.AreEqual(5, result[0].Designs.First().Quantity);
                 Assert.AreEqual(2, result[0].Designs.Count());
             }
@@ -189,7 +189,7 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
                 await repository.CreateAsync(new Device
                 {
                     Id = 1, Name = "name", Quantity = 10,
-                    Montage = new List<MontageInDevice>()
+                    Montages = new List<MontageInDevice>()
                     {
                         new MontageInDevice() {ComponentId = 1, Quantity = 2, DeviceId = 1},
                         new MontageInDevice() {ComponentId = 2, Quantity = 4, DeviceId = 1},
@@ -279,7 +279,7 @@ namespace ProductionManagementSystem.UnitTests.RepositoriesTests
                 repository.Update(new Device
                 {
                     Id = 1, Name = "name", Quantity = 10,
-                    Montage = new List<MontageInDevice>()
+                    Montages = new List<MontageInDevice>()
                     {
                         new MontageInDevice() {Id = 1, ComponentId = 1, Quantity = 2, DeviceId = 1},
                         new MontageInDevice() {Id = 2, ComponentId = 2, Quantity = 4, DeviceId = 1},
