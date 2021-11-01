@@ -49,9 +49,13 @@
                 }
             </tr>
             </thead>
-            @foreach (var comp in ViewBag.ComponentTemplate)
+            @foreach (var comp in Model.Device.Montages)
             {
                 var obtainedComp = Model.ObtainedMontages.FirstOrDefault(d => comp.Component.Id == d.ComponentId);
+                if (obtainedComp == null)
+                {
+                    continue;
+                }
                 <tr @if (obtainedComp.Obtained + comp.Component.Quantity < comp.Quantity) 
                     { 
                         @: class="table-danger"
@@ -78,7 +82,6 @@
     <div class="table-responsive-xl">
         <h4>Общее количество конструктива:
             <a class="btn btn-light btn-sm" asp-action="ReceiveDesign" asp-route-taskId="@Model.Id">Получить</a>
-            <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="AddMultiple" asp-route-taskId="@Model.Device.Id">Добавить конструктив на склад</a>
         </h4>
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">
@@ -93,10 +96,14 @@
                 }
             </tr>
             </thead>
-            @foreach (var des in ViewBag.DesignTemplate)
+            @foreach (var des in Model.Device.Designs)
             {
-                var obtainedDes = Model.ObtainedDesigns.FirstOrDefault(d => des.Design.Id == d.ComponentId);
-                <tr @if (obtainedDes.Obtained + des.Design.Quantity < des.Quantity) 
+                var obtainedDes = Model.ObtainedDesigns.FirstOrDefault(d => des.ComponentId == d.ComponentId);
+                if (obtainedDes == null)
+                {
+                    continue;
+                }
+                <tr @if (obtainedDes.Obtained + des.Component.Quantity < des.Quantity) 
                     { 
                         @: class="table-danger"
                     } 
@@ -105,14 +112,14 @@
                         @: class="table-success"
                     } 
                 >
-                    <td><a asp-controller="Designs" asp-action="Details" asp-route-id="@des.Design.Id">@des.Design.ToString()</a></td>
+                    <td><a asp-controller="Designs" asp-action="Details" asp-route-id="@des.Component.Id">@des.Component.ToString()</a></td>
                     <td>@des.Quantity</td>
-                    <td>@des.Design.Quantity</td>
+                    <td>@des.Component.Quantity</td>
                     <td>@obtainedDes.Obtained</td>
                     @if (User.IsInRole(RoleEnum.OrderPicker))
                     {
                         <td>
-                            <a class="btn btn-light btn-sm" asp-controller="DesignsSupplyRequest" asp-action="Create" asp-route-designId="@des.Design.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
+                            <a class="btn btn-light btn-sm" asp-controller="DesignsSupplyRequest" asp-action="Create" asp-route-designId="@des.Component.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
                         </td>
                     }
                 </tr>
@@ -123,7 +130,7 @@
 <br>
 <hr/>
 <h3>Логи</h3>
-<partial name="Partail/_LogsPartail" model="@ViewBag.Logs"/>
+@* <partial name="Partail/_LogsPartail" model="@ViewBag.Logs"/> *@
 <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

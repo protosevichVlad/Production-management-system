@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.Models.Tasks;
 
@@ -34,8 +35,8 @@ namespace ProductionManagementSystem.DAL.Repositories
             if (task == null)
                 return null;
             
-            task.ObtainedDesigns = _db.ObtainedDesigns.Where(d => d.TaskId == task.Id);
-            task.ObtainedMontages = _db.ObtainedMontages.Where(m => m.TaskId == task.Id);
+            task.ObtainedDesigns = await _db.ObtainedDesigns.Where(d => d.TaskId == task.Id).ToListAsync();
+            task.ObtainedMontages = await _db.ObtainedMontages.Where(m => m.TaskId == task.Id).ToListAsync();
 
             return task;
         }
@@ -62,12 +63,22 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public override async System.Threading.Tasks.Task CreateAsync(Task item)
         {
-            if (item.ObtainedDesigns != null)
-                await _db.ObtainedDesigns.AddRangeAsync(item.ObtainedDesigns);
-            if(item.ObtainedMontages != null)
-                await _db.ObtainedMontages.AddRangeAsync(item.ObtainedMontages);
-            
             await base.CreateAsync(item);
+            await _db.SaveChangesAsync();
+            
+            if (item.ObtainedDesigns != null)
+                await _db.ObtainedDesigns.AddRangeAsync(item.ObtainedDesigns.Select(d =>
+                {
+                    d.TaskId = item.Id;
+                    return d;
+                }));
+            if(item.ObtainedMontages != null)
+                await _db.ObtainedMontages.AddRangeAsync(item.ObtainedMontages.Select(m =>
+                {
+                    m.TaskId = item.Id;
+                    return m;
+                }));
+            
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,12 +21,16 @@ namespace ProductionManagementSystem.WEB.Controllers
         private readonly UserManager<User> _userManager;
         private readonly ITaskService _taskService;
         private readonly IDeviceService _deviceService;
+        private readonly IMontageService _montageService;
+        private readonly IDesignService _designService;
 
-        public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<User> userManager)
+        public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<User> userManager, IMontageService montageService, IDesignService designService)
         {
             _taskService = taskService;
             _deviceService = deviceService;
             _userManager = userManager;
+            _montageService = montageService;
+            _designService = designService;
         }
 
         public async Task<IActionResult> Index(string sortOrder, string searchString)
@@ -71,10 +76,8 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var task = await _taskService.GetByIdAsync(id);
-                task.Device = _deviceService.GetByIdAsync(task.DeviceId).Result;
+                await InitTaskAsync(task);
                 ViewBag.States = new SelectList(GetStates(task), "Id", "Name");
-                ViewBag.ComponentTemplate = (await _deviceService.GetByIdAsync(task.DeviceId)).Montages;
-                ViewBag.DesignTemplate = (await _deviceService.GetByIdAsync(task.DeviceId)).Designs;
                 // ViewBag.Logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(_taskService.GetLogs(id));
                 return View(task);
             }
@@ -89,6 +92,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var task = await _taskService.GetByIdAsync(id);
+                await InitTaskAsync(task);
                 return View(task);
             }
             catch (PageNotFoundException)
@@ -171,6 +175,32 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             await _taskService.ReceiveDesignsAsync(taskId, designIds, designObt);
             return RedirectToAction(nameof(Details), new {id = taskId});
+        }
+
+        private async System.Threading.Tasks.Task InitTaskAsync(Task task)
+        {
+            task.Device = await _deviceService.GetByIdAsync(task.DeviceId);
+            task.Device.Montages = task.Device.Montages.Select(async m =>
+            {
+                m.Component = await _montageService.GetByIdAsync(m.ComponentId);
+                return m;
+            }).Select(t => t.Result).Where(i => i != null).ToList();
+            task.Device.Designs = task.Device.Designs.Select(async d =>
+            {
+                d.Component = await _designService.GetByIdAsync(d.ComponentId);
+                return d;
+            }).Select(t => t.Result).Where(i => i != null).ToList();
+            
+            task.ObtainedMontages = task.ObtainedMontages.Select(async m =>
+            {
+                m.Montage = await _montageService.GetByIdAsync(m.ComponentId);
+                return m;
+            }).Select(t => t.Result).Where(i => i != null).ToList();
+            task.ObtainedDesigns = task.ObtainedDesigns.Select(async d =>
+            {
+                d.Design = await _designService.GetByIdAsync(d.ComponentId);
+                return d;
+            }).Select(t => t.Result).Where(i => i != null).ToList();
         }
 
         private static IEnumerable<Task> SortingTasks(IEnumerable<Task> tasks, string sortOrder)

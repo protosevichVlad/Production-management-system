@@ -49,16 +49,14 @@ namespace ProductionManagementSystem.BLL.Services
             task.ObtainedDesigns = (await _deviceService.GetByIdAsync(task.DeviceId)).Designs.Select(d =>
                 new ObtainedDesign()
                 {
-                    ComponentId = d.Id,
+                    ComponentId = d.ComponentId,
                     TaskId = task.Id,
-                    Obtained = d.Quantity
                 });
             task.ObtainedMontages = (await _deviceService.GetByIdAsync(task.DeviceId)).Montages.Select(m =>
                 new ObtainedMontage()
                 {
-                    ComponentId = m.Id,
+                    ComponentId = m.ComponentId,
                     TaskId = task.Id,
-                    Obtained = m.Quantity
                 });
             
             await base.CreateAsync(task);
