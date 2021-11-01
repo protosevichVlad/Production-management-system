@@ -3,69 +3,22 @@
 
 // Write your JavaScript code.
 
+async function createDeviceItem(type)
+{
+    disableButton(`#buttonCreate${type}`);
+    let component_selects = [...document.getElementsByClassName(`${type}sSelect`)];
+    let length = component_selects.length;
+    $.get(`/devices/GetPartialViewForDeviceItem?type=${type}&index=${length}`, function(data) {
+        $(`#${type}Tr0`).before(data)
+        $('.js-example-basic-single').select2();
+    });
 
-async function createComponent() {
-    disableButton('#buttonCreateComponent');
-    let component_selects = [...document.getElementsByClassName('ComponentSelect')];
-    let length = component_selects.length + 1;
-    let str = await createTextComponent(length);
-
-    let lastTr = document.querySelector(`#ComponentTr0`);
-    lastTr.insertAdjacentHTML('beforeBegin', str);
-    updateIndex('ComponentIds');
-    undisableButton('#buttonCreateComponent');
-
-    $('.js-example-basic-single').select2();
+    updateIndex(`${type}sIds`);
+    undisableButton(`#buttonCreate${type}`);
 }
 
-async function createDesign() {
-    disableButton('#buttonCreateDesign');
-    let design_selects = [...document.getElementsByClassName('DesignSelect')];
-    let length = design_selects.length + 1;
-    let str = await createTextDesign(length);
-
-    let lastTr = document.querySelector(`#DesignTr0`);
-    lastTr.insertAdjacentHTML('beforeBegin', str);
-    updateIndex('DesignIds');
-    undisableButton('#buttonCreateDesign');
-
-    $('.js-example-basic-single').select2();
-}
-
-async function createTextComponent(id) {
-    let str = `<tr id="ComponentTr${id}"><td class="ComponentIds"></td><td><select class="ComponentSelect align-top width-100 form-select js-example-basic-single" name="ComponentIds">`;
-
-    let r = await new Request('/Components/GetAllComponents');
-    let componentsJson = await fetch(r).then(c => c.json());
-
-    for (let i = 0; i < componentsJson.length; i++) {
-        let c = componentsJson[i]
-        str += `<option value="${c.id}">${c.name}</option>`;
-    }
-    str += `</select></td><td><input class="ComponentInput align-top form-control" name="ComponentQuantity" type="number" required autocomplete="off" min="0" />`;
-    str += `</td><td><textarea name="ComponentDescriptions" class="align-top form-control w-100"></textarea></td>`;
-    str += `<td class="border-0"><button type="button" class="btn-close" aria-label="Close" onclick="removeComponent(${id})"></button></td></tr>`;
-    return str;
-}
-
-async function createTextDesign(id) {
-    let str = `<tr id="DesignTr${id}"><td class="DesignIds"></td><td><select class="DesignSelect align-top width-100 form-select js-example-basic-single" name="DesignIds">`;
-
-    let r = await new Request('/Designs/GetAllDesigns');
-    let componentsJson = await fetch(r).then(c => c.json());
-
-    for (let i = 0; i < componentsJson.length; i++) {
-        let c = componentsJson[i]
-        str += `<option value="${c.id}">${c.name}</option>`;
-    }
-    str += `</select></td><td><input class="DesignInput align-top form-control" name="DesignQuantity" type="number" required autocomplete="off" min="0" />`;
-    str += `</td><td><textarea name="DesignDescriptions" class="align-top form-control w-100"></textarea></td>`;
-    str += `<td class="border-0"><button type="button" class="btn-close" aria-label="Close" onclick="removeDesign(${id})"></button></td></tr>`;
-    return str;
-}
-
-function removeComponent(index) {
-    let component_selects = [...document.getElementsByClassName('ComponentSelect')];
+function removeMontages(index) {
+    let component_selects = [...document.getElementsByClassName('MontagesSelect')];
     let length = component_selects.length;
 
     if (length === 0)
@@ -73,13 +26,13 @@ function removeComponent(index) {
         return;
     }
     
-    let tr = document.querySelector(`#ComponentTr${index}`);
+    let tr = document.querySelector(`#MontagesTr${index}`);
     tr.remove();
-    updateIndex('ComponentIds');
+    updateIndex('MontagesIds');
 }
 
-function removeDesign(index) {
-    let design_selects = [...document.getElementsByClassName('DesignSelect')];
+function removeDesigns(index) {
+    let design_selects = [...document.getElementsByClassName('DesignsSelect')];
     let length = design_selects.length;
 
     if (length === 0)
@@ -89,7 +42,7 @@ function removeDesign(index) {
     
     let tr = document.querySelector(`#DesignTr${index}`);
     tr.remove();
-    updateIndex('DesignIds');
+    updateIndex('DesignsIds');
 }
 
 function disableButton(selector)

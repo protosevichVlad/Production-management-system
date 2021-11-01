@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Services;
+using ProductionManagementSystem.Models.Components;
 using ProductionManagementSystem.Models.Devices;
 using ProductionManagementSystem.Models.Users;
+using ProductionManagementSystem.WEB.Models.Device;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
@@ -57,6 +60,31 @@ namespace ProductionManagementSystem.WEB.Controllers
             }
             
             return View(devices);
+        }
+
+        public async Task<IActionResult> GetPartialViewForDeviceItem(string type, int index)
+        {
+            if (type.ToLower() == "montage")
+            {
+                DeviceItem<Montage> viewModelMontage = new DeviceItem<Montage>()
+                {
+                    Id = index,
+                    Component = new MontageInDevice(),
+                    AllComponents = await _montageService.GetAllAsync(),
+                    SelectedComponentId = 0
+                };
+                return PartialView("Partail/Device/Montageitem", viewModelMontage);
+            }
+            
+            DeviceItem<Design> viewModelDesign = new DeviceItem<Design>()
+            {
+                Id = index,
+                Component = new DesignInDevice(),
+                AllComponents = await _designService.GetAllAsync(),
+                SelectedComponentId = 0
+            };
+            return PartialView("Partail/Device/DesignItem", viewModelDesign);
+            
         }
 
         [HttpGet]
