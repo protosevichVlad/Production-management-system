@@ -25,12 +25,13 @@ namespace ProductionManagementSystem.BLL.Services
         public override async Task CreateAsync(Order order)
         {
             order.DateStart = DateTime.Now.Date;
+            await base.CreateAsync(order);
+
             foreach (var task in order.Tasks)
             {
+                task.OrderId = order.Id;
                 await _taskService.CreateAsync(task);
             }
-
-            await base.CreateAsync(order);
         }
 
         public override async Task DeleteAsync(Order order)

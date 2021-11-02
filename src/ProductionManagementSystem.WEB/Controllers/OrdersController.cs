@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Services;
+using ProductionManagementSystem.Models.Devices;
 using ProductionManagementSystem.Models.Orders;
 using ProductionManagementSystem.Models.Users;
 using ProductionManagementSystem.WEB.Models;
+using ProductionManagementSystem.WEB.Models.Order;
 using Task = ProductionManagementSystem.Models.Tasks.Task;
 
 namespace ProductionManagementSystem.WEB.Controllers
@@ -18,10 +20,14 @@ namespace ProductionManagementSystem.WEB.Controllers
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
+        private readonly IDeviceService _deviceService;
+        private readonly ITaskService _taskService;
         
-        public OrdersController(IOrderService orderService)
+        public OrdersController(IOrderService orderService, IDeviceService deviceService, ITaskService taskService)
         {
             _orderService = orderService;
+            _deviceService = deviceService;
+            _taskService = taskService;
         }
 
         public async Task<IActionResult> Index(string sortOrder)
@@ -44,11 +50,26 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Order orderModel)
+        public async Task<IActionResult> Create(Order orderModel, int[] DeviceQuantity)
         {
             if (ModelState.IsValid)
             {
-                await _orderService.CreateAsync(orderModel); 
+                List<Task> tasks = new List<Task>();
+                for (int i = 0; i < DeviceQuantity.Length; i++)
+                {
+                    for (int j = 0; j < DeviceQuantity[i]; j++)
+                    {
+                        tasks.Add(new Task()
+                        {
+                            Deadline = orderModel.Deadline,
+                            DeviceId = orderModel.Tasks[i].DeviceId,
+                            Description = orderModel.Tasks[i].Description
+                        });
+                    }
+                }
+
+                orderModel.Tasks = tasks;
+                await _orderService.CreateAsync(orderModel);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -66,8 +87,12 @@ namespace ProductionManagementSystem.WEB.Controllers
                 ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
 
                 var orderViewModel = await _orderService.GetByIdAsync(id);
-                
-                orderViewModel.Tasks = SortingTasks(await _orderService.GetTasksByOrderIdAsync(orderViewModel.Id), sortOrder).ToList();
+                var tasks = (await _orderService.GetTasksByOrderIdAsync(orderViewModel.Id)).ToList().Select(async t =>
+                {
+                    t.Device = await _deviceService.GetByIdAsync(t.DeviceId);
+                    return t;
+                }).Select(t => t.Result).Where(t => t != null).ToList();
+                orderViewModel.Tasks = SortingTasks(tasks, sortOrder).ToList();
                 return View(orderViewModel);
             }
             catch (PageNotFoundException)
@@ -149,6 +174,15 @@ namespace ProductionManagementSystem.WEB.Controllers
             return items;
         }
         
+        public async Task<IActionResult> GetOrderItem(int index)
+        {
+            return PartialView("Partail/Order/OrderItem", new OrderItem()
+            {
+                Index = index,
+                AllDevices = await _deviceService.GetAllAsync()
+            });
+        }
+
         private static IEnumerable<Order> SortingOrders(IEnumerable<Order> items, string sortOrder)
         {
             switch (sortOrder)

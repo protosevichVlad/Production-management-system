@@ -1,0 +1,29 @@
+﻿@model ProductionManagementSystem.WEB.Models.Order.OrderItem
+
+<tr id="devTr@(Model.Index + 1)">
+    <td class="DeviceIds">@(Model.Index + 1)</td>
+    <td>
+        <select class="DeviceSelect align-top width-100 form-select" name="Tasks[@Model.Index].DeviceId">
+            @foreach (var device in Model.AllDevices)
+            {
+                if (Model.Device != null && device.Id == Model.Device.Id)
+                {
+                    <option value="@device.Id" selected>@device.ToString()</option>
+                }
+                else
+                {
+                    <option value="@device.Id">@device.ToString()</option>
+                }
+            }
+        </select>
+    </td>
+    <td>
+        <input class="DeviceInput align-top form-control" name="DeviceQuantity[@Model.Index]" type="number" required autocomplete="off" min="0" value="@Model.Quantity"/>
+    </td>
+    <td>
+        <textarea name="Tasks[@Model.Index].Description" class="align-top form-control w-100">@Model.Description</textarea>
+    </td>
+    <td class="border-0">
+        <button type="button" class="btn-close" aria-label="Close" onclick="removeDevice(@(Model.Index + 1))"></button>
+    </td>
+</tr>

@@ -68,11 +68,12 @@ function updateIndex(selector)
 async function createDevice() {
     disableButton('#buttonCreateDevice');
     let component_selects = [...document.getElementsByClassName('DeviceSelect')];
-    let length = component_selects.length + 1;
-    let str = await createTextDevice(length);
-
-    let lastTr = document.querySelector(`#devTr${length - 1}`);
-    lastTr.insertAdjacentHTML('afterEnd', str);
+    let length = component_selects.length;
+    $.get(`/orders/getOrderItem?index=${length}`, function(data) {
+        $(`#devTr0`).before(data)
+        $('.js-example-basic-single').select2();
+    });
+    
     updateIndex('DeviceIds');
     undisableButton('#buttonCreateDevice');
 }
