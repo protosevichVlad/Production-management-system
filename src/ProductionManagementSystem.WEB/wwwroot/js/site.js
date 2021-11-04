@@ -11,38 +11,38 @@ async function createDeviceItem(type)
     $.get(`/devices/GetPartialViewForDeviceItem?type=${type}&index=${length}`, function(data) {
         $(`#${type}Tr0`).before(data)
         $('.js-example-basic-single').select2();
+        undisableButton(`#buttonCreate${type}`);
     });
 
     updateIndex(`${type}sIds`);
-    undisableButton(`#buttonCreate${type}`);
 }
 
-function removeMontages(index) {
-    let component_selects = [...document.getElementsByClassName('MontagesSelect')];
-    let length = component_selects.length;
+function removeDeviceItem(type,index)
+{
+    let deviceItems = [...document.querySelectorAll(`.${type}Tr`)];
+    let length = deviceItems.length;
 
     if (length === 0)
     {
         return;
     }
     
-    let tr = document.querySelector(`#MontagesTr${index}`);
-    tr.remove();
-    updateIndex('MontagesIds');
-}
-
-function removeDesigns(index) {
-    let design_selects = [...document.getElementsByClassName('DesignsSelect')];
-    let length = design_selects.length;
-
-    if (length === 0)
+    for (let i = index - 1; i < length - 1; i++)
     {
-        return;
+        document.getElementsByName(`${type}[${i}].ComponentId`)[0].value =
+            document.getElementsByName(`${type}[${i + 1}].ComponentId`)[0].value
+        document.getElementsByName(`${type}[${i}].Quantity`)[0].value =
+            document.getElementsByName(`${type}[${i + 1}].Quantity`)[0].value
+        document.getElementsByName(`${type}[${i}].Descriptions`)[0].value =
+            document.getElementsByName(`${type}[${i + 1}].Descriptions`)[0].value
+        $('select[name="${type}[${i + 1}].ComponentId"]').val(
+            document.getElementsByName(`${type}[${i + 1}].ComponentId`)[0].value);
     }
-    
-    let tr = document.querySelector(`#DesignsTr${index}`);
+
+    let tr = document.querySelector(`#${type}Tr${length}`);
     tr.remove();
-    updateIndex('DesignsIds');
+    $('.js-example-basic-single').select2();
+    updateIndex(`${type}Ids`);
 }
 
 function disableButton(selector)
@@ -102,9 +102,23 @@ function removeDevice(index) {
     {
         return;
     }
+
+    let type = 'Tasks'
+    for (let i = index - 1; i < length - 1; i++)
+    {
+        document.getElementsByName(`${type}[${i}].DeviceId`)[0].value =
+            document.getElementsByName(`${type}[${i + 1}].DeviceId`)[0].value
+        document.getElementsByName(`${type}[${i}].Description`)[0].value =
+            document.getElementsByName(`${type}[${i + 1}].Description`)[0].value
+        document.getElementsByName(`DeviceQuantity[${i}]`)[0].value =
+            document.getElementsByName(`DeviceQuantity[${i + 1}]`)[0].value
+        $('select[name="${type}[${i + 1}].DeviceId"]').val(
+            document.getElementsByName(`${type}[${i + 1}].DeviceId`)[0].value);
+    }
     
-    let tr = document.querySelector(`#devTr${index}`);
+    let tr = document.querySelector(`#devTr${length}`);
     tr.remove();
+    $('.js-example-basic-single').select2();
     updateIndex('DeviceIds');
 }
 

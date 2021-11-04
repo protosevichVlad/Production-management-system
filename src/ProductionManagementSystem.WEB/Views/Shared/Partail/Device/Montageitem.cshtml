@@ -1,6 +1,6 @@
 ﻿@model ProductionManagementSystem.WEB.Models.Device.DeviceItem<ProductionManagementSystem.Models.Components.Montage>
 
-<tr id="@(Model.ComponentType)Tr@(Model.Id + 1)">
+<tr id="@(Model.ComponentType)Tr@(Model.Id + 1)" class="@(Model.ComponentType)Tr">
     <td class="@(Model.ComponentType)Ids">
         @(Model.Id + 1)
     </td>
@@ -26,6 +26,6 @@
         <textarea class="align-top w-100 form-control" name="@(Model.ComponentType)[@Model.Id].Descriptions">@Model.Component.Description</textarea>
     </td>
     <td class="border-0">
-        <button type="button" class="btn-close" aria-label="Close" onclick="remove@(Model.ComponentType)(@(Model.Id + 1))"></button>
+        <button type="button" class="btn-close" aria-label="Close" onclick="removeDeviceItem('@(Model.ComponentType)', @(Model.Id + 1))"></button>
     </td>
 </tr>
