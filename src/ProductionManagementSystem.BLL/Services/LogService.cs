@@ -18,7 +18,7 @@ namespace ProductionManagementSystem.BLL.Services
      
         public string CurrentUserName
         {
-            get => _user.UserName;
+            get => _user?.UserName;
             set
             {
                 _user = _userManager.FindByNameAsync(value).Result;
