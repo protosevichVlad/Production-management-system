@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models.Components;
 using ProductionManagementSystem.Models.Logs;
-using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
@@ -21,11 +19,8 @@ namespace ProductionManagementSystem.BLL.Services
 
     public class MontageService : BaseServiceWithLogs<Montage>, IMontageService
     {
-        private readonly ILogService _log;
-        
         public MontageService(IUnitOfWork uow) : base(uow)
         {
-            _log = new LogService(uow);
             _currentRepository = _db.MontageRepository;
         }
         
@@ -55,29 +50,29 @@ namespace ProductionManagementSystem.BLL.Services
                 return;
             }
 
-            var montage = await GetByIdAsync(id);
+            var montage = await _currentRepository.GetByIdAsync(id);
             montage.Quantity += quantity;
-            await UpdateAsync(montage);
+            await _currentRepository.UpdateAsync(montage);
 
             if (quantity < 0)
             {
-                await _log.CreateAsync(new Log() {Message = $"Было получено {-quantity}ед. монтажа {montage}", MontageId = montage.Id});
+                await _db.LogRepository.CreateAsync(new Log {Message = $"Было получено {-quantity}ед. монтажа {montage}", MontageId = montage.Id});
             }
             else
             {
-                await _log.CreateAsync(new Log() {Message = $"Было добавлено {quantity}ед. монтажа {montage}", MontageId = montage.Id});
+                await _db.LogRepository.CreateAsync(new Log {Message = $"Было добавлено {quantity}ед. монтажа {montage}", MontageId = montage.Id});
             }
         }
 
         public async Task DecreaseQuantityOfDesignAsync(int id, int quantity)
         {
-            await this.IncreaseQuantityOfMontageAsync(id, -quantity);
+            await IncreaseQuantityOfMontageAsync(id, -quantity);
         }
         
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="component"></param>
+        /// <param name="montage"></param>
         /// <returns>Return true, if component not using in devices.</returns>
         private async Task<Tuple<bool, string>> CheckInDevicesAsync(Montage montage)
         {
@@ -95,34 +90,26 @@ namespace ProductionManagementSystem.BLL.Services
             errorMessage = String.Empty;
             return new Tuple<bool, string>(true, errorMessage);
         }
-        
-        private async Task<bool> ComponentExistsAsync(int id)
-        {
-            return (await GetAllAsync()).Any(e => e.Id == id);
-        }
 
         public async Task DeleteByIdAsync(int id)
         {
-            await this.DeleteAsync(new Montage() {Id = id});
+            await DeleteAsync(new Montage {Id = id});
         }
         
          
         protected override async Task CreateLogForCreatingAsync(Montage item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был создан монтаж " + item.ToString(), MontageId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был создан монтаж " + item, MontageId = item.Id });
         }
 
         protected override async Task CreateLogForUpdatingAsync(Montage item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был изменён монтаж " + item.ToString(), MontageId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был изменён монтаж " + item, MontageId = item.Id });
         }
 
         protected override async Task CreateLogForDeletingAsync(Montage item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был удалён монтаж " + item.ToString(), MontageId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён монтаж " + item, MontageId = item.Id });
         }
     }
 }

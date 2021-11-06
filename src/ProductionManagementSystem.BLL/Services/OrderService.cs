@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models.Logs;
 using ProductionManagementSystem.Models.Orders;
+using ProductionManagementSystem.Models.Tasks;
 
 namespace ProductionManagementSystem.BLL.Services
 {
     public interface IOrderService : IBaseService<Order>
     {
-        Task<IEnumerable<Models.Tasks.Task>> GetTasksByOrderIdAsync(int orderId);
-        Task DeleteByIdAsync(int orderId);
+        System.Threading.Tasks.Task<IEnumerable<Task>> GetTasksByOrderIdAsync(int orderId);
+        System.Threading.Tasks.Task DeleteByIdAsync(int orderId);
     }
 
     public class OrderService : BaseServiceWithLogs<Order>, IOrderService
@@ -23,7 +23,7 @@ namespace ProductionManagementSystem.BLL.Services
             _currentRepository = _db.OrderRepository;
         }
         
-        public override async Task CreateAsync(Order order)
+        public override async System.Threading.Tasks.Task CreateAsync(Order order)
         {
             order.DateStart = DateTime.Now.Date;
             await base.CreateAsync(order);
@@ -35,7 +35,7 @@ namespace ProductionManagementSystem.BLL.Services
             }
         }
 
-        public override async Task DeleteAsync(Order order)
+        public override async System.Threading.Tasks.Task DeleteAsync(Order order)
         {
             foreach (var task in order.Tasks)
             {
@@ -45,32 +45,29 @@ namespace ProductionManagementSystem.BLL.Services
             await base.DeleteAsync(order);
         }
 
-        protected override async Task CreateLogForCreatingAsync(Order item)
+        protected override async System.Threading.Tasks.Task CreateLogForCreatingAsync(Order item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был создан монтаж " + item.ToString(), OrderId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был создан монтаж " + item, OrderId = item.Id });
         }
 
-        protected override async Task CreateLogForUpdatingAsync(Order item)
+        protected override async System.Threading.Tasks.Task CreateLogForUpdatingAsync(Order item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был изменён монтаж " + item.ToString(), OrderId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был изменён монтаж " + item, OrderId = item.Id });
         }
 
-        protected override async Task CreateLogForDeletingAsync(Order item)
+        protected override async System.Threading.Tasks.Task CreateLogForDeletingAsync(Order item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был удалён монтаж " + item.ToString(), OrderId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён монтаж " + item, OrderId = item.Id });
         }
 
-        public async Task<IEnumerable<Models.Tasks.Task>> GetTasksByOrderIdAsync(int orderId)
+        public async System.Threading.Tasks.Task<IEnumerable<Task>> GetTasksByOrderIdAsync(int orderId)
         {
             return await _db.TaskRepository.FindAsync(t => t.OrderId == orderId);
         }
 
-        public async Task DeleteByIdAsync(int orderId)
+        public async System.Threading.Tasks.Task DeleteByIdAsync(int orderId)
         {
-            await this.DeleteAsync(new Order() {Id = orderId});
+            await DeleteAsync(new Order {Id = orderId});
         }
 
     }

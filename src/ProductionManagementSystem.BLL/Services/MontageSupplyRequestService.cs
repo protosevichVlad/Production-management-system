@@ -1,7 +1,7 @@
-﻿using ProductionManagementSystem.DAL.Repositories;
+﻿using System.Threading.Tasks;
+using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models.Logs;
 using ProductionManagementSystem.Models.SupplyRequests;
-using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
@@ -14,18 +14,11 @@ namespace ProductionManagementSystem.BLL.Services
     public class MontageSupplyRequestService : BaseServiceWithLogs<MontageSupplyRequest>, IMontageSupplyRequestService
     {
         private readonly IMontageService _montageService;
-        private ILogService _log;
         
         public MontageSupplyRequestService(IUnitOfWork uow) : base(uow)
         {
             _montageService = new MontageService(uow);
-            _log = new LogService(uow);
             _currentRepository = _db.MontageSupplyRequestRepository;
-        }
-        
-        public void Dispose()
-        {
-            _db.Dispose();
         }
 
         public async Task ChangeStatusAsync(int id, int to, string message = "")
@@ -38,31 +31,32 @@ namespace ProductionManagementSystem.BLL.Services
                     montageSupplyRequest.Quantity);
             }
             
-            await UpdateAsync(montageSupplyRequest);
-            await _log.CreateAsync(new Log() {Message = message});
+            await _currentRepository.UpdateAsync(montageSupplyRequest);
+            await _db.LogRepository.CreateAsync(new Log
+            {Message = message, 
+                MontageSupplyRequestId = montageSupplyRequest.Id, 
+                DesignId = montageSupplyRequest.ComponentId, 
+                TaskId = montageSupplyRequest.TaskId});
         }
 
         public async Task DeleteByIdAsync(int id)
         {
-            await this.DeleteAsync(new MontageSupplyRequest() {Id = id});
+            await DeleteAsync(new MontageSupplyRequest {Id = id});
         }
         
         protected override async Task CreateLogForCreatingAsync(MontageSupplyRequest item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Была создана заявка на снабжения монтажа " + item.ToString(), MontageSupplyRequestId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была создана заявка на снабжения монтажа " + item, MontageSupplyRequestId = item.Id });
         }
 
         protected override async Task CreateLogForUpdatingAsync(MontageSupplyRequest item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Была изменёна заявка на снабжения монтажа " + item.ToString(), MontageSupplyRequestId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была изменёна заявка на снабжения монтажа " + item, MontageSupplyRequestId = item.Id });
         }
 
         protected override async Task CreateLogForDeletingAsync(MontageSupplyRequest item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Была удалёна заявка на снабжения монтажа " + item.ToString(), MontageSupplyRequestId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была удалёна заявка на снабжения монтажа " + item, MontageSupplyRequestId = item.Id });
         }
     }
 }

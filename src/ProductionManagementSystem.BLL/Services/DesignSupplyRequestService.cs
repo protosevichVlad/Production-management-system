@@ -14,20 +14,13 @@ namespace ProductionManagementSystem.BLL.Services
     public class DesignSupplyRequestService : BaseServiceWithLogs<DesignSupplyRequest>, IDesignSupplyRequestService
     {
         private readonly IDesignService _designService;
-        private ILogService _log;
         
         public DesignSupplyRequestService(IUnitOfWork uow) : base(uow)
         {
             _designService = new DesignService(uow);
-            _log = new LogService(uow);
             _currentRepository = _db.DesignsSupplyRequestRepository;
         }
         
-        public void Dispose()
-        {
-            _db.Dispose();
-        }
-
         public async Task ChangeStatusAsync(int id, int to, string message = "")
         {
             var designSupplyRequest = await GetByIdAsync(id);
@@ -38,31 +31,32 @@ namespace ProductionManagementSystem.BLL.Services
                     designSupplyRequest.Quantity);
             }
             
-            await UpdateAsync(designSupplyRequest);
-            await _log.CreateAsync(new Log() {Message = message});
+            await _currentRepository.UpdateAsync(designSupplyRequest);
+            await _db.LogRepository.CreateAsync(new Log
+            {Message = message, 
+                DesignSupplyRequestId = designSupplyRequest.Id, 
+                DesignId = designSupplyRequest.ComponentId, 
+                TaskId = designSupplyRequest.TaskId});
         }
 
         public async Task DeleteByIdAsync(int id)
         {
-            await this.DeleteAsync(new DesignSupplyRequest() {Id = id});
+            await DeleteAsync(new DesignSupplyRequest {Id = id});
         }
         
         protected override async Task CreateLogForCreatingAsync(DesignSupplyRequest item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Была создана заявка на снабжения конструктива " + item.ToString(), DesignSupplyRequestId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была создана заявка на снабжения конструктива " + item, DesignSupplyRequestId = item.Id });
         }
 
         protected override async Task CreateLogForUpdatingAsync(DesignSupplyRequest item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Была изменёна заявка на снабжения конструктива " + item.ToString(), DesignSupplyRequestId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была изменёна заявка на снабжения конструктива " + item, DesignSupplyRequestId = item.Id });
         }
 
         protected override async Task CreateLogForDeletingAsync(DesignSupplyRequest item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Была удалёна заявка на снабжения конструктива " + item.ToString(), DesignSupplyRequestId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была удалёна заявка на снабжения конструктива " + item, DesignSupplyRequestId = item.Id });
         }
     }
 }

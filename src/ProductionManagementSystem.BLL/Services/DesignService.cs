@@ -6,7 +6,6 @@ using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models.Components;
 using ProductionManagementSystem.Models.Logs;
-using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
@@ -20,11 +19,8 @@ namespace ProductionManagementSystem.BLL.Services
 
     public class DesignService : BaseServiceWithLogs<Design>, IDesignService
     {
-        private readonly ILogService _log;
-        
         public DesignService(IUnitOfWork uow) : base(uow)
         {
-            _log = new LogService(_db);
             _currentRepository = _db.DesignRepository;
         }
 
@@ -42,7 +38,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task DeleteByIdAsync(int id)
         {
-            await DeleteAsync(new Design() {Id = id});
+            await DeleteAsync(new Design {Id = id});
         }
 
         public async Task<IEnumerable<string>> GetTypesAsync()
@@ -59,41 +55,38 @@ namespace ProductionManagementSystem.BLL.Services
                 return;
             }
 
-            var design = await GetByIdAsync(id);
+            var design = await _currentRepository.GetByIdAsync(id);
             design.Quantity += quantity;
-            await UpdateAsync(design);
+            await _currentRepository.UpdateAsync(design);
             
             if (quantity < 0)
             {
-                await _log.CreateAsync(new Log() {Message = $"Было получено {-quantity}ед. конструктива {design}", DesignId = design.Id});
+                await _db.LogRepository.CreateAsync(new Log {Message = $"Было получено {-quantity}ед. конструктива {design}", DesignId = design.Id});
             }
             else
             {
-                await _log.CreateAsync(new Log() {Message = $"Было добавлено {quantity}ед. конструктива {design}", DesignId = design.Id});
+                await _db.LogRepository.CreateAsync(new Log {Message = $"Было добавлено {quantity}ед. конструктива {design}", DesignId = design.Id});
             }
         }
         
         public async Task DecreaseQuantityOfDesignAsync(int id, int quantity)
         {
-            await this.IncreaseQuantityOfDesignAsync(id, -quantity);
+            await IncreaseQuantityOfDesignAsync(id, -quantity);
         }
         
         protected override async Task CreateLogForCreatingAsync(Design item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был создан конструктив " + item.ToString(), DesignId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был создан конструктив " + item, DesignId = item.Id });
         }
 
         protected override async Task CreateLogForUpdatingAsync(Design item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был изменён конструктив " + item.ToString(), DesignId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был изменён конструктив " + item, DesignId = item.Id });
         }
 
         protected override async Task CreateLogForDeletingAsync(Design item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был удалён конструктив " + item.ToString(), DesignId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён конструктив " + item, DesignId = item.Id });
         }
 
         private async Task<Tuple<bool, string>> CheckInDevicesAsync(Design design)
@@ -111,12 +104,6 @@ namespace ProductionManagementSystem.BLL.Services
 
             errorMessage = String.Empty;
             return new Tuple<bool, string>(true, errorMessage);
-        }
-        
-                
-        private async Task<bool> DesignExistsAsync(int id)
-        {
-            return (await GetAllAsync()).Any(e => e.Id == id);
         }
     }
 }

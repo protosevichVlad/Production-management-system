@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models.Logs;
 using ProductionManagementSystem.Models.Users;

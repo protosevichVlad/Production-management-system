@@ -3,56 +3,52 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models.Logs;
 using ProductionManagementSystem.Models.Tasks;
 using ProductionManagementSystem.Models.Users;
-using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
-    public interface ITaskService : IBaseService<Models.Tasks.Task>
+    public interface ITaskService : IBaseService<Task>
     {
-        Task<IEnumerable<Models.Tasks.Task>> GetTasksByUserRoleAsync(IEnumerable<string> roles);
-        Task TransferAsync(int taskId, bool full, int to, string message);
+        System.Threading.Tasks.Task<IEnumerable<Task>> GetTasksByUserRoleAsync(IEnumerable<string> roles);
+        System.Threading.Tasks.Task TransferAsync(int taskId, bool full, int to, string message);
         string GetTaskStatusName(TaskStatusEnum item);
-        Task ReceiveComponentsAsync(int taskId, int[] componentIds, int[] componentObt);
-        Task ReceiveDesignsAsync(int taskId, int[] designIds, int[] designObt);
-        Task ReceiveComponentAsync(int taskId, int componentId, int componentObt);
-        Task ReceiveDesignAsync(int taskId, int designId, int designObt);
-        Task DeleteByIdAsync(int id);
+        System.Threading.Tasks.Task ReceiveComponentsAsync(int taskId, int[] componentIds, int[] componentObt);
+        System.Threading.Tasks.Task ReceiveDesignsAsync(int taskId, int[] designIds, int[] designObt);
+        System.Threading.Tasks.Task ReceiveComponentAsync(int taskId, int componentId, int componentObt);
+        System.Threading.Tasks.Task ReceiveDesignAsync(int taskId, int designId, int designObt);
+        System.Threading.Tasks.Task DeleteByIdAsync(int id);
     }
-    public class TaskService : BaseServiceWithLogs<Models.Tasks.Task>, ITaskService
+    public class TaskService : BaseServiceWithLogs<Task>, ITaskService
     {
         private readonly IDeviceService _deviceService;
         private readonly IMontageService _montageService;
         private readonly IDesignService _designService;
-        private readonly ILogService _logService;
 
         public TaskService(IUnitOfWork uow) : base(uow)
         {
             _deviceService = new DeviceService(uow);
             _montageService = new MontageService(uow);
             _designService = new DesignService(uow);
-            _logService = new LogService(uow);
             _currentRepository = _db.TaskRepository;
         }
 
-        public override async Task CreateAsync(Models.Tasks.Task task)
+        public override async System.Threading.Tasks.Task CreateAsync(Task task)
         {
             task.Status = TaskStatusEnum.Equipment;
             task.EndTime = new DateTime();
             task.StartTime = DateTime.Now;
 
             task.ObtainedDesigns = (await _deviceService.GetByIdAsync(task.DeviceId)).Designs.Select(d =>
-                new ObtainedDesign()
+                new ObtainedDesign
                 {
                     ComponentId = d.ComponentId,
                     TaskId = task.Id,
                 });
             task.ObtainedMontages = (await _deviceService.GetByIdAsync(task.DeviceId)).Montages.Select(m =>
-                new ObtainedMontage()
+                new ObtainedMontage
                 {
                     ComponentId = m.ComponentId,
                     TaskId = task.Id,
@@ -61,7 +57,7 @@ namespace ProductionManagementSystem.BLL.Services
             await base.CreateAsync(task);
         }
 
-        public async Task<IEnumerable<Models.Tasks.Task>> GetTasksByUserRoleAsync(IEnumerable<string> roles)
+        public async System.Threading.Tasks.Task<IEnumerable<Task>> GetTasksByUserRoleAsync(IEnumerable<string> roles)
         {
             TaskStatusEnum accessLevel = ToStatus(roles);
             var tasks = await Find(task => (task.Status & accessLevel) == task.Status);
@@ -71,7 +67,7 @@ namespace ProductionManagementSystem.BLL.Services
         public async System.Threading.Tasks.Task TransferAsync(int taskId, bool full, int to, string message)
         {
             var task = await GetByIdAsync(taskId);
-            var logString = $"{_logService.CurrentUserName} изменил статус задачи №{taskId} с {GetTaskStatusName(task.Status)} ";
+            var logString = $"{_db.LogRepository.CurrentUser?.UserName} изменил статус задачи №{taskId} с {GetTaskStatusName(task.Status)} ";
             if (task.Status == TaskStatusEnum.Warehouse)
             {
                 await _deviceService.ReceiveDeviceAsync(task.DeviceId);
@@ -95,7 +91,7 @@ namespace ProductionManagementSystem.BLL.Services
 
             logString += $"на {GetTaskStatusName(task.Status)}" + 
                          (String.IsNullOrWhiteSpace(message) ? $" с сообщением: {message}": String.Empty);
-            await _logService.CreateAsync(new Log() {Message = logString, TaskId = task.Id, OrderId = task.OrderId});
+            await _db.LogRepository.CreateAsync(new Log {Message = logString, TaskId = task.Id, OrderId = task.OrderId});
         }
 
         public string GetTaskStatusName(TaskStatusEnum item)
@@ -117,7 +113,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async System.Threading.Tasks.Task ReceiveComponentsAsync(int taskId, int[] componentIds, int[] componentObt)
         {
-            var obtainedComp = (await GetByIdAsync(taskId)).ObtainedMontages;
+            var obtainedComp = (await GetByIdAsync(taskId)).ObtainedMontages.ToList();
             for (int i = 0; i < componentObt.Length; i++)
             {
                 var obtComp = obtainedComp.FirstOrDefault(c => c.ComponentId == componentIds[i]);
@@ -125,14 +121,14 @@ namespace ProductionManagementSystem.BLL.Services
                 {
                     obtComp.Obtained += componentObt[i];
                     await _montageService.DecreaseQuantityOfDesignAsync(componentIds[i], componentObt[i]);
-                    _db.ObtainedMontageRepository.UpdateAsync(obtComp);
+                    await _db.ObtainedMontageRepository.UpdateAsync(obtComp);
                 }
             }
         }
 
         public async System.Threading.Tasks.Task ReceiveDesignsAsync(int taskId, int[] designIds, int[] designObt)
         {
-            var obtainedDes = (await GetByIdAsync(taskId)).ObtainedDesigns;
+            var obtainedDes = (await GetByIdAsync(taskId)).ObtainedDesigns.ToList();
             for (int i = 0; i < designObt.Length; i++)
             {
                 var obtDes = obtainedDes.FirstOrDefault(c => c.ComponentId == designIds[i]);
@@ -140,7 +136,7 @@ namespace ProductionManagementSystem.BLL.Services
                 {
                     obtDes.Obtained += designObt[i];
                     await _designService.DecreaseQuantityOfDesignAsync(designIds[i], designObt[i]);
-                    _db.ObtainedDesignRepository.UpdateAsync(obtDes);
+                    await _db.ObtainedDesignRepository.UpdateAsync(obtDes);
                 }
             }
         }
@@ -153,7 +149,7 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 obtMont.Obtained += componentObt;
                 await _montageService.IncreaseQuantityOfMontageAsync(componentId, -componentObt);
-                _db.ObtainedMontageRepository.UpdateAsync(obtMont);
+                await _db.ObtainedMontageRepository.UpdateAsync(obtMont);
             }
         }
         
@@ -165,13 +161,13 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 obtDes.Obtained += designObt;
                 await _designService.IncreaseQuantityOfDesignAsync(designId, -designObt);
-                _db.ObtainedDesignRepository.UpdateAsync(obtDes);
+                await _db.ObtainedDesignRepository.UpdateAsync(obtDes);
             }
         }
 
-        public async Task DeleteByIdAsync(int id)
+        public async System.Threading.Tasks.Task DeleteByIdAsync(int id)
         {
-            await this.DeleteAsync(new Models.Tasks.Task() {Id = id});
+            await DeleteAsync(new Task {Id = id});
         }
 
 
@@ -195,22 +191,19 @@ namespace ProductionManagementSystem.BLL.Services
             return status;
         }
         
-        protected override async Task CreateLogForCreatingAsync(Models.Tasks.Task item)
+        protected override async System.Threading.Tasks.Task CreateLogForCreatingAsync(Task item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Была создана задача " + item.ToString(), TaskId = item.Id, OrderId = item.OrderId});
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была создана задача " + item, TaskId = item.Id, OrderId = item.OrderId});
         }
 
-        protected override async Task CreateLogForUpdatingAsync(Models.Tasks.Task item)
+        protected override async System.Threading.Tasks.Task CreateLogForUpdatingAsync(Task item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Была изменёна задача " + item.ToString(), TaskId = item.Id, OrderId = item.OrderId });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была изменёна задача " + item, TaskId = item.Id, OrderId = item.OrderId });
         }
 
-        protected override async Task CreateLogForDeletingAsync(Models.Tasks.Task item)
+        protected override async System.Threading.Tasks.Task CreateLogForDeletingAsync(Task item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Была удалёна задача " + item.ToString(), TaskId = item.Id, OrderId = item.OrderId });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была удалёна задача " + item, TaskId = item.Id, OrderId = item.OrderId });
         }
     }
 }

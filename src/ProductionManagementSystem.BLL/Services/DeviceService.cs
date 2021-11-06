@@ -7,7 +7,6 @@ using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models.Components;
 using ProductionManagementSystem.Models.Devices;
 using ProductionManagementSystem.Models.Logs;
-using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.BLL.Services
 {
@@ -23,11 +22,8 @@ namespace ProductionManagementSystem.BLL.Services
 
     public class DeviceService : BaseServiceWithLogs<Device>, IDeviceService
     {
-        private readonly ILogService _log;
-        
         public DeviceService(IUnitOfWork uow) : base(uow)
         {
-            _log = new LogService(uow);
             _currentRepository = _db.DeviceRepository;
         }
         
@@ -62,7 +58,7 @@ namespace ProductionManagementSystem.BLL.Services
                 .FirstOrDefault(t => device.Id == t.DeviceId);
             if (task != null)
             {
-                errorMessage = $"<i class='bg-light'>{device.ToString()}</i> используется в <i class='bg-light'>задаче №{task.Id}</i>.<br />";
+                errorMessage = $"<i class='bg-light'>{device}</i> используется в <i class='bg-light'>задаче №{task.Id}</i>.<br />";
                 return new Tuple<bool, string>(false, errorMessage);
             }
             
@@ -93,7 +89,7 @@ namespace ProductionManagementSystem.BLL.Services
 
         public async Task DeleteByIdAsync(int id)
         {
-            await this.DeleteAsync(new Device() {Id = id});
+            await DeleteAsync(new Device {Id = id});
         }
 
         public async Task<IEnumerable<Montage>> GetMontagesFromDeviceByDeviceId(int deviceId)
@@ -117,36 +113,33 @@ namespace ProductionManagementSystem.BLL.Services
                 throw new PageNotFoundException();
             }
 
-            var device = await GetByIdAsync(id.Value);
+            var device = await _currentRepository.GetByIdAsync(id.Value);
             device.Quantity += quantity;
-            await UpdateAsync(device);
+            await _currentRepository.UpdateAsync(device);
 
             if (quantity < 0)
             {
-                await _log.CreateAsync(new Log() { Message = $"Был получен прибор {device} со склада {quantity}шт.", DeviceId = device.Id});
+                await _db.LogRepository.CreateAsync(new Log { Message = $"Был получен прибор {device} со склада {quantity}шт.", DeviceId = device.Id});
             }
             else
             {
-                await _log.CreateAsync(new Log() { Message = $"Был добавлен прибор {device} на склад {-quantity}шт.", DeviceId = device.Id});
+                await _db.LogRepository.CreateAsync(new Log { Message = $"Был добавлен прибор {device} на склад {-quantity}шт.", DeviceId = device.Id});
             }
         }
         
         protected override async Task CreateLogForCreatingAsync(Device item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был создан прибор " + item.ToString(), DeviceId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был создан прибор " + item, DeviceId = item.Id });
         }
 
         protected override async Task CreateLogForUpdatingAsync(Device item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был изменён прибор " + item.ToString(), DeviceId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был изменён прибор " + item, DeviceId = item.Id });
         }
 
         protected override async Task CreateLogForDeletingAsync(Device item)
         {
-            await _db.LogRepository.CreateAsync(new Log()
-                { Message = "Был удалён прибор " + item.ToString(), DeviceId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён прибор " + item, DeviceId = item.Id });
         }
     }
 }
