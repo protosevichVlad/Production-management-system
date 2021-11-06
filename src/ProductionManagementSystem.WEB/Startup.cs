@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Services;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.DAL.Repositories;
@@ -53,7 +54,7 @@ namespace ProductionManagementSystem.WEB
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
 
-            services.AddScoped<IUnitOfWork>(_ => new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddUoWService(Configuration.GetConnectionString("DefaultConnection"));
             services.AddScoped<IMontageService, MontageService>();
             services.AddScoped<IDesignService, DesignService>();
             services.AddScoped<IDeviceService, DeviceService>();
