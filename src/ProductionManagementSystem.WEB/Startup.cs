@@ -91,6 +91,8 @@ namespace ProductionManagementSystem.WEB
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseMiddleware<GetCurrentUserMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
