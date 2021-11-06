@@ -36,11 +36,5 @@ namespace ProductionManagementSystem.BLL.Services
             _currentRepository = _db.LogRepository;
             _userManager = userManager;
         }
-
-        public override Task CreateAsync(Log item)
-        {
-            item.UserId = _user.Id;
-            return base.CreateAsync(item);
-        }
     }
 }

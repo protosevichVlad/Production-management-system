@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using ProductionManagementSystem.DAL.EF;
 using ProductionManagementSystem.Models.Logs;
 using ProductionManagementSystem.Models.Users;
@@ -21,6 +23,19 @@ namespace ProductionManagementSystem.DAL.Repositories
         {
             item.UserId = CurrentUser.Id;
             return base.CreateAsync(item);
+        }
+
+        public override async Task<IEnumerable<Log>> GetAllAsync()
+        {
+            var logs = await base.GetAllAsync();
+            if (logs == null) return Enumerable.Empty<Log>();
+            
+            foreach (var log in logs)
+            {
+                log.User = await _db.Users.FindAsync(log.UserId);
+            }
+
+            return logs;
         }
     }
 }
