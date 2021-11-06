@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProductionManagementSystem.Models.Devices;
 using ProductionManagementSystem.Models.Orders;
@@ -12,10 +13,20 @@ namespace ProductionManagementSystem.Models.Tasks
         public int Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        
+        [Display(Name = "Срок")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
+        [Required]
         public DateTime Deadline { get; set; }
+        
+        [Display(Name = "Описание")]
         public TaskStatusEnum Status { get; set; }
+        
+        [Display(Name = "Описание")]
         public string Description { get; set; }
         
+        [Display(Name = "Прибор")]
         [NotMapped]
         public Device Device { get; set; }
         public int DeviceId { get; set; }

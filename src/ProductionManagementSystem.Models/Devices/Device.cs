@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProductionManagementSystem.Models.Devices
@@ -8,8 +10,17 @@ namespace ProductionManagementSystem.Models.Devices
     public class Device
     {
         public int Id { get; set; }
+        
+        [Display(Name = "Наименование")]
+        [Required]
         public string Name { get; set; }
+        
+        [Display(Name = "Количество")]
+        [Range(0, Int32.MaxValue, ErrorMessage = "Количество должно быть больше 0")]
+        [Required]
         public int Quantity { get; set; }
+        
+        [Display(Name = "Описание")]
         public string Description { get; set; }
         
         [NotMapped]
