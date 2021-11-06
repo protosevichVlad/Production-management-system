@@ -73,8 +73,6 @@ namespace ProductionManagementSystem.WEB.Controllers
             if (ModelState.IsValid)
             {
                 viewModel.DateAdded = DateTime.Now;
-                // TODO User object
-                // viewModel.User.UserName = User.Identity?.Name;
                 viewModel.StatusSupply = SupplyStatusEnum.NotAccepted;
 
                 await _montageSupplyRequestService.CreateAsync(viewModel);

@@ -11,7 +11,7 @@ namespace ProductionManagementSystem.BLL.Services
         Task DeleteByIdAsync(int id);
     }
 
-    public class MontageSupplyRequestService : BaseService<MontageSupplyRequest>, IMontageSupplyRequestService
+    public class MontageSupplyRequestService : BaseServiceWithLogs<MontageSupplyRequest>, IMontageSupplyRequestService
     {
         private readonly IMontageService _montageService;
         private ILogService _log;
@@ -45,6 +45,24 @@ namespace ProductionManagementSystem.BLL.Services
         public async Task DeleteByIdAsync(int id)
         {
             await this.DeleteAsync(new MontageSupplyRequest() {Id = id});
+        }
+        
+        protected override async Task CreateLogForCreatingAsync(MontageSupplyRequest item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Была создана заявка на снабжения монтажа " + item.ToString(), MontageSupplyRequestId = item.Id });
+        }
+
+        protected override async Task CreateLogForUpdatingAsync(MontageSupplyRequest item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Была изменёна заявка на снабжения монтажа " + item.ToString(), MontageSupplyRequestId = item.Id });
+        }
+
+        protected override async Task CreateLogForDeletingAsync(MontageSupplyRequest item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Была удалёна заявка на снабжения монтажа " + item.ToString(), MontageSupplyRequestId = item.Id });
         }
     }
 }

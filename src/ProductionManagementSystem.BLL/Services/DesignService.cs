@@ -18,7 +18,7 @@ namespace ProductionManagementSystem.BLL.Services
         Task DeleteByIdAsync(int id);
     }
 
-    public class DesignService : BaseService<Design>, IDesignService
+    public class DesignService : BaseServiceWithLogs<Design>, IDesignService
     {
         private readonly ILogService _log;
         
@@ -77,12 +77,25 @@ namespace ProductionManagementSystem.BLL.Services
         {
             await this.IncreaseQuantityOfDesignAsync(id, -quantity);
         }
-
-        public void Dispose()
-        {
-            _db.Dispose();
-        }
         
+        protected override async Task CreateLogForCreatingAsync(Design item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Был создан конструктив " + item.ToString(), DesignId = item.Id });
+        }
+
+        protected override async Task CreateLogForUpdatingAsync(Design item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Был изменён конструктив " + item.ToString(), DesignId = item.Id });
+        }
+
+        protected override async Task CreateLogForDeletingAsync(Design item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Был удалён конструктив " + item.ToString(), DesignId = item.Id });
+        }
+
         private async Task<Tuple<bool, string>> CheckInDevicesAsync(Design design)
         {
             string errorMessage;
@@ -90,7 +103,6 @@ namespace ProductionManagementSystem.BLL.Services
                 .FirstOrDefault(d => design.Id == d.ComponentId);
             if (designInDevice != null)
             {
-                // TODO: use device Service
                 var device = (await _db.DeviceRepository.GetAllAsync()).FirstOrDefault(d => d.Id == designInDevice.DeviceId);
                 errorMessage = $"<i class='bg-light'>{design}</i> используется в <i class='bg-light'>{device}</i>.<br />" +
                                $"Для удаления <i class='bg-light'>{design}</i>, удалите <i class='bg-light'>{device}</i>.<br />";

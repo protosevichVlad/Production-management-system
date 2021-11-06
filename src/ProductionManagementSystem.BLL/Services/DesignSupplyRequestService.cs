@@ -11,7 +11,7 @@ namespace ProductionManagementSystem.BLL.Services
         Task DeleteByIdAsync(int id);
     }
 
-    public class DesignSupplyRequestService : BaseService<DesignSupplyRequest>, IDesignSupplyRequestService
+    public class DesignSupplyRequestService : BaseServiceWithLogs<DesignSupplyRequest>, IDesignSupplyRequestService
     {
         private readonly IDesignService _designService;
         private ILogService _log;
@@ -45,6 +45,24 @@ namespace ProductionManagementSystem.BLL.Services
         public async Task DeleteByIdAsync(int id)
         {
             await this.DeleteAsync(new DesignSupplyRequest() {Id = id});
+        }
+        
+        protected override async Task CreateLogForCreatingAsync(DesignSupplyRequest item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Была создана заявка на снабжения конструктива " + item.ToString(), DesignSupplyRequestId = item.Id });
+        }
+
+        protected override async Task CreateLogForUpdatingAsync(DesignSupplyRequest item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Была изменёна заявка на снабжения конструктива " + item.ToString(), DesignSupplyRequestId = item.Id });
+        }
+
+        protected override async Task CreateLogForDeletingAsync(DesignSupplyRequest item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Была удалёна заявка на снабжения конструктива " + item.ToString(), DesignSupplyRequestId = item.Id });
         }
     }
 }

@@ -21,7 +21,7 @@ namespace ProductionManagementSystem.BLL.Services
         Task<IEnumerable<Design>> GetDesignsFromDeviceByDeviceId(int deviceId);
     }
 
-    public class DeviceService : BaseService<Device>, IDeviceService
+    public class DeviceService : BaseServiceWithLogs<Device>, IDeviceService
     {
         private readonly ILogService _log;
         
@@ -129,6 +129,24 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 await _log.CreateAsync(new Log() { Message = $"Был добавлен прибор {device} на склад {-quantity}шт.", DeviceId = device.Id});
             }
+        }
+        
+        protected override async Task CreateLogForCreatingAsync(Device item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Был создан прибор " + item.ToString(), DeviceId = item.Id });
+        }
+
+        protected override async Task CreateLogForUpdatingAsync(Device item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Был изменён прибор " + item.ToString(), DeviceId = item.Id });
+        }
+
+        protected override async Task CreateLogForDeletingAsync(Device item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Был удалён прибор " + item.ToString(), DeviceId = item.Id });
         }
     }
 }

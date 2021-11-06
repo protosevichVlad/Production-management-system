@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using AutoMapper;
 using ProductionManagementSystem.DAL.Repositories;
 using ProductionManagementSystem.Models.Logs;
 using ProductionManagementSystem.Models.Tasks;
@@ -24,7 +23,7 @@ namespace ProductionManagementSystem.BLL.Services
         Task ReceiveDesignAsync(int taskId, int designId, int designObt);
         Task DeleteByIdAsync(int id);
     }
-    public class TaskService : BaseService<Models.Tasks.Task>, ITaskService
+    public class TaskService : BaseServiceWithLogs<Models.Tasks.Task>, ITaskService
     {
         private readonly IDeviceService _deviceService;
         private readonly IMontageService _montageService;
@@ -72,8 +71,7 @@ namespace ProductionManagementSystem.BLL.Services
         public async System.Threading.Tasks.Task TransferAsync(int taskId, bool full, int to, string message)
         {
             var task = await GetByIdAsync(taskId);
-            // TODO: change username
-            var logString = $"UserName изменил статус задачи №{taskId} с {GetTaskStatusName(task.Status)} ";
+            var logString = $"{_logService.CurrentUserName} изменил статус задачи №{taskId} с {GetTaskStatusName(task.Status)} ";
             if (task.Status == TaskStatusEnum.Warehouse)
             {
                 await _deviceService.ReceiveDeviceAsync(task.DeviceId);
@@ -195,6 +193,24 @@ namespace ProductionManagementSystem.BLL.Services
                 };
             }
             return status;
+        }
+        
+        protected override async Task CreateLogForCreatingAsync(Models.Tasks.Task item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Была создана задача " + item.ToString(), TaskId = item.Id, OrderId = item.OrderId});
+        }
+
+        protected override async Task CreateLogForUpdatingAsync(Models.Tasks.Task item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Была изменёна задача " + item.ToString(), TaskId = item.Id, OrderId = item.OrderId });
+        }
+
+        protected override async Task CreateLogForDeletingAsync(Models.Tasks.Task item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Была удалёна задача " + item.ToString(), TaskId = item.Id, OrderId = item.OrderId });
         }
     }
 }

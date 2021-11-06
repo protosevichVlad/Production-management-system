@@ -19,7 +19,7 @@ namespace ProductionManagementSystem.BLL.Services
         Task DeleteByIdAsync(int id);
     }
 
-    public class MontageService : BaseService<Montage>, IMontageService
+    public class MontageService : BaseServiceWithLogs<Montage>, IMontageService
     {
         private readonly ILogService _log;
         
@@ -73,11 +73,6 @@ namespace ProductionManagementSystem.BLL.Services
         {
             await this.IncreaseQuantityOfMontageAsync(id, -quantity);
         }
-
-        public void Dispose()
-        {
-            _db.Dispose();
-        }
         
         /// <summary>
         /// 
@@ -109,6 +104,25 @@ namespace ProductionManagementSystem.BLL.Services
         public async Task DeleteByIdAsync(int id)
         {
             await this.DeleteAsync(new Montage() {Id = id});
+        }
+        
+         
+        protected override async Task CreateLogForCreatingAsync(Montage item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Был создан монтаж " + item.ToString(), MontageId = item.Id });
+        }
+
+        protected override async Task CreateLogForUpdatingAsync(Montage item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Был изменён монтаж " + item.ToString(), MontageId = item.Id });
+        }
+
+        protected override async Task CreateLogForDeletingAsync(Montage item)
+        {
+            await _db.LogRepository.CreateAsync(new Log()
+                { Message = "Был удалён монтаж " + item.ToString(), MontageId = item.Id });
         }
     }
 }
