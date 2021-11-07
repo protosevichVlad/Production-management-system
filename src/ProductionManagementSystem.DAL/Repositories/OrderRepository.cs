@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -20,11 +21,9 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public override async Task<IEnumerable<Order>> GetAllAsync()
         {
-            var orders = await base.GetAllAsync();
+            var orders = (await base.GetAllAsync()).ToList();
             foreach (var order in orders)
-            {
-                order.Tasks = _db.Tasks.Where(t => t.OrderId == order.Id).ToList();
-            }
+                await InitOrderAsync(order);
             
             return orders;
         }
@@ -35,8 +34,22 @@ namespace ProductionManagementSystem.DAL.Repositories
             if (order == null)
                 return null;
             
-            order.Tasks = await _db.Tasks.Where(t => t.OrderId == id).ToListAsync();
+            await InitOrderAsync(order);
             return order;
+        }
+
+        public override async Task<IEnumerable<Order>> FindAsync(Func<Order, bool> predicate)
+        {
+            var orders = (await base.FindAsync(predicate)).ToList();
+            foreach (var order in orders)
+                await InitOrderAsync(order);
+            
+            return orders;
+        }
+
+        private async Task InitOrderAsync(Order order)
+        {
+            order.Tasks = await _db.Tasks.Where(t => t.OrderId == order.Id).ToListAsync();
         }
     }
 }

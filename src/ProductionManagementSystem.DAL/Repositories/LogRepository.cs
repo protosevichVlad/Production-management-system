@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ProductionManagementSystem.DAL.EF;
@@ -27,13 +28,25 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public override async Task<IEnumerable<Log>> GetAllAsync()
         {
-            var logs = await base.GetAllAsync();
-            if (logs == null) return Enumerable.Empty<Log>();
-            
+            var logs = (await base.GetAllAsync()).ToList();
             foreach (var log in logs)
-            {
                 log.User = await _db.Users.FindAsync(log.UserId);
-            }
+
+            return logs;
+        }
+        
+        public override async Task<Log> GetByIdAsync(int id)
+        {
+            var log = await base.GetByIdAsync(id);
+            log.User = await _db.Users.FindAsync(log.UserId);
+            return log;
+        }
+        
+        public override async Task<IEnumerable<Log>> FindAsync(Func<Log, bool> predicate)
+        {
+            var logs = (await base.FindAsync(predicate)).ToList();
+            foreach (var log in logs)
+                log.User = await _db.Users.FindAsync(log.UserId);
 
             return logs;
         }

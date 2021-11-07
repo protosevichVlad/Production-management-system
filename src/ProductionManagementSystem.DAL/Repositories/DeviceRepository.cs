@@ -39,15 +39,10 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public override async Task<IEnumerable<Device>> GetAllAsync()
         {
-            var devices = await base.GetAllAsync();
-            if (devices == null)
-                return null;
+            List<Device> devices = (await base.GetAllAsync()).ToList();
             foreach (var device in devices)
-            {
-                device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToList();
-                device.Montages = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
-            }
-
+                await InitDeviceAsync(device);
+            
             return devices;
         }
 
@@ -56,9 +51,8 @@ namespace ProductionManagementSystem.DAL.Repositories
             var device = await base.GetByIdAsync(id);
             if (device == null)
                 return null;
-            
-            device.Designs = await _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToListAsync();
-            device.Montages = await _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToListAsync();
+
+            await InitDeviceAsync(device);
             return device;
         }
 
@@ -92,17 +86,21 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         public override async Task<IEnumerable<Device>> FindAsync(Func<Device, bool> predicate)
         {
-            var devices = await base.FindAsync(predicate);
-            if (devices == null)
-                return null;
-            
+            List<Device> devices = (await base.FindAsync(predicate)).ToList();
             foreach (var device in devices)
-            {
-                device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToList();
-                device.Montages = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
-            }
+                await InitDeviceAsync(device);
 
             return devices;
+        }
+
+        private async Task InitDeviceAsync(Device device)
+        {
+            device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToList();
+            device.Montages = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
+            foreach (var montage in device.Montages)
+                montage.Component = await _db.Montages.FindAsync(montage.ComponentId);
+            foreach (var design in device.Designs)
+                design.Component = await _db.Designs.FindAsync(design.ComponentId);
         }
     }
 }
