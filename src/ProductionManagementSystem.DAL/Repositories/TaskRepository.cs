@@ -75,16 +75,16 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         private async System.Threading.Tasks.Task InitTaskAsync(Task task)
         {
-            task.ObtainedDesigns = _db.ObtainedDesigns.Where(d => d.TaskId == task.Id);
-            task.ObtainedMontages = _db.ObtainedMontages.Where(m => m.TaskId == task.Id);
+            task.ObtainedDesigns = await _db.ObtainedDesigns.Where(d => d.TaskId == task.Id).ToListAsync();
+            task.ObtainedMontages = await _db.ObtainedMontages.Where(m => m.TaskId == task.Id).ToListAsync();
             foreach (var obtainedMontage in task.ObtainedMontages)
                 obtainedMontage.Montage = await _db.Montages.FindAsync(obtainedMontage.ComponentId);
             foreach (var obtainedDesign in task.ObtainedDesigns)
                 obtainedDesign.Design = await _db.Designs.FindAsync(obtainedDesign.ComponentId);
 
             task.Device = await _db.Devices.FindAsync(task.DeviceId);
-            task.Device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == task.Device.Id).ToList();
-            task.Device.Montages = _db.MontageInDevices.Where(m => m.DeviceId == task.Device.Id).ToList();
+            task.Device.Designs = await _db.DesignInDevices.Where(d => d.DeviceId == task.Device.Id).ToListAsync();
+            task.Device.Montages = await _db.MontageInDevices.Where(m => m.DeviceId == task.Device.Id).ToListAsync();
             foreach (var montage in task.Device.Montages)
                 montage.Component = await _db.Montages.FindAsync(montage.ComponentId);
             foreach (var design in task.Device.Designs)

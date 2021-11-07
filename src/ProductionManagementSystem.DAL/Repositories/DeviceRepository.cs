@@ -95,8 +95,8 @@ namespace ProductionManagementSystem.DAL.Repositories
 
         private async Task InitDeviceAsync(Device device)
         {
-            device.Designs = _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToList();
-            device.Montages = _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToList();
+            device.Designs = await _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToListAsync();
+            device.Montages = await _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToListAsync();
             foreach (var montage in device.Montages)
                 montage.Component = await _db.Montages.FindAsync(montage.ComponentId);
             foreach (var design in device.Designs)
