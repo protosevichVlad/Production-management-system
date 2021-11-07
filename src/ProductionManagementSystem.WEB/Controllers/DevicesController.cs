@@ -106,7 +106,6 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var device = await _deviceService.GetByIdAsync(id);
-                InitComponents(device);
                 ViewBag.Montages = await _montageService.GetAllAsync();
                 ViewBag.Designs = await _designService.GetAllAsync();
                 return View(device);
@@ -146,7 +145,6 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var device = await _deviceService.GetByIdAsync(id);
-                InitComponents(device);
                 ViewBag.ErrorMessage = TempData["ErrorMessage"];
                 ViewBag.ErrorHeader = TempData["ErrorHeader"];
                 TempData["ErrorMessage"] = null;
@@ -165,7 +163,6 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var device = await _deviceService.GetByIdAsync(id);
-                InitComponents(device);
                 return View(device);
             }
             catch (Exception e)
@@ -202,20 +199,6 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<JsonResult> GetAllDevices()
         {
             return Json(_deviceService.GetAllAsync());
-        }
-
-        private void InitComponents(Device device)
-        {
-            device.Montages = device.Montages.Select(async m =>
-            {
-                m.Component = await _montageService.GetByIdAsync(m.ComponentId);
-                return m;
-            }).Select(t => t.Result).Where(i => i != null).ToList();
-            device.Designs = device.Designs.Select(async d =>
-            {
-                d.Component = await _designService.GetByIdAsync(d.ComponentId);
-                return d;
-            }).Select(t => t.Result).Where(i => i != null).ToList();
         }
     }
     

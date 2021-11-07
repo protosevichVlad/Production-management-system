@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.BLL.Infrastructure;
 using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.Models.Devices;
 using ProductionManagementSystem.Models.Orders;
 using ProductionManagementSystem.Models.Users;
-using ProductionManagementSystem.WEB.Models;
 using ProductionManagementSystem.WEB.Models.Order;
 using Task = ProductionManagementSystem.Models.Tasks.Task;
 
@@ -54,12 +51,12 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             if (ModelState.IsValid)
             {
-                List<Task> tasks = new List<Task>();
+                orderModel.Tasks = new List<Task>();
                 for (int i = 0; i < DeviceQuantity.Length; i++)
                 {
                     for (int j = 0; j < DeviceQuantity[i]; j++)
                     {
-                        tasks.Add(new Task()
+                        orderModel.Tasks.Add(new Task()
                         {
                             Deadline = orderModel.Deadline,
                             DeviceId = orderModel.Tasks[i].DeviceId,
@@ -68,7 +65,6 @@ namespace ProductionManagementSystem.WEB.Controllers
                     }
                 }
 
-                orderModel.Tasks = tasks;
                 await _orderService.CreateAsync(orderModel);
                 return RedirectToAction(nameof(Index));
             }
