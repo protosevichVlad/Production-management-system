@@ -5,37 +5,30 @@
 }
 
 <h2>Cписок конструктива</h2>
-<p>
-    <a asp-action="Create">Создать новый</a>
-</p>
 <div class="row">
     <div class="col">
         <form asp-action="Index" method="get">
-            <p>
-                Поиск: <input type="text" name="SearchString" list="datalistNameDesigns" autocomplete="off" value="@ViewData["CurrentFilter"]"/>
+            <div class="input-group mb-3 col-4">
+                <input type="text" name="SearchString" class="form-control" placeholder="" list="datalistNameDesigns" aria-describedby="button-addon1" autocomplete="off" value="@ViewData["CurrentFilter"]"/>
+                <button type="submit" class="btn btn-outline-secondary" id="button-addon1">Поиск</button>
                 <datalist id="datalistNameDesigns">
                     @foreach (var name in ViewBag.AllDesigns)
                     {
                         <option value="@name"/>
                     }
                 </datalist>
-                <input type="submit" value="Поиск" class="btn btn-primary" autocomplete="off"/>
-                @if (@ViewData["CurrentFilter"] != null)
-                {
-                    <text>|</text>
-                    <a asp-action="Index">Вернуться к полному списку</a>
-                }
-            </p>
+            </div>
         </form>
     </div>
-    <div class="col d-flex align-items-center justify-content-end">
+    <div class="col-8 d-flex align-items-center justify-content-end">
         @if (@ViewData["CurrentFilter"] == null)
         {
             <p class="d-flex">На складе @ViewBag.CountComponents наименований конструктива</p>
         }
         else
         {
-            <p class="d-flex">Было найдено @ViewBag.CountComponents наименований конструктива</p>
+            <p class="d-flex">Было найдено @ViewBag.CountComponents наименований конструктива | <a asp-action="Index"> Вернуться к полному списку</a></p>
+                
         }
     </div>
 </div>
@@ -55,7 +48,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.ShortDescription)
             </th>
-            <th></th>
+            <th class="td-with-buttons">
+                <a class="btn btn-primary btn-sm" asp-action="Create">Создать новый</a>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -75,7 +70,7 @@
                         @Html.DisplayFor(modelItem => item.ShortDescription)
                     </div>
                 </td>
-                <td class="td-with-buttons">
+                <td>
                     <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@item.Id">Подробности</a>
                     <a class="btn btn-light btn-sm" asp-action="Add" asp-route-id="@item.Id">Добавить</a>
                     <a class="btn btn-light btn-sm" asp-action="Receive" asp-route-id="@item.Id">Получить</a>

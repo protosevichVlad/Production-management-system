@@ -6,9 +6,6 @@
 }
 
 <h2>Cписок</h2>
-<p>
-    <a asp-action="Create">Создать новую заявку</a>
-</p>
 <div class="table-responsive-xl">
     <table class="table table-sm">
         <thead>
@@ -34,7 +31,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.StatusSupply)
             </th>
-            <th></th>
+            <th class="td-with-buttons">
+                <a class="btn btn-primary btn-sm" asp-action="Create">Создать новый</a>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -45,7 +44,7 @@
                     @Html.DisplayFor(modelItem => item.Id)
                 </td>
                 <td>
-                    @item.Montage.ToString()
+                    <a asp-controller="Designs" asp-action="Details" asp-route-id="@item.Montage.Id">@item.Montage.ToString()</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.TaskId)

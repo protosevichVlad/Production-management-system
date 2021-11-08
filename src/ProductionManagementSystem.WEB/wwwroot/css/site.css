@@ -124,6 +124,7 @@ tr:hover .password {
 
 .td-with-buttons {
     width: 315px;
+    text-align: center;
 }
 
 .td-with-log-message {
