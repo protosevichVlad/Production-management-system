@@ -25,6 +25,8 @@ namespace ProductionManagementSystem.Models.SupplyRequests
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime DesiredDate { get; set; }
+        
+        [Display(Name = "Статус")]
         public SupplyStatusEnum StatusSupply { get; set; }
         
         
