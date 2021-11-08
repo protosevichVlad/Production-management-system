@@ -125,6 +125,8 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 await _db.LogRepository.CreateAsync(new Log { Message = $"Был добавлен прибор {device} на склад {-quantity}шт.", DeviceId = device.Id});
             }
+            
+            await _db.SaveAsync();
         }
         
         protected override async Task CreateLogForCreatingAsync(Device item)

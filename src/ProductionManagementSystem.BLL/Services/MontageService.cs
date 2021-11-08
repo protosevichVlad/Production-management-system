@@ -62,6 +62,8 @@ namespace ProductionManagementSystem.BLL.Services
             {
                 await _db.LogRepository.CreateAsync(new Log {Message = $"Было добавлено {quantity}ед. монтажа {montage}", MontageId = montage.Id});
             }
+
+            await _db.SaveAsync();
         }
 
         public async Task DecreaseQuantityOfDesignAsync(int id, int quantity)

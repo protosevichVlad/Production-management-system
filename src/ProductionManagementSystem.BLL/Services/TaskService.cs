@@ -92,6 +92,7 @@ namespace ProductionManagementSystem.BLL.Services
             logString += $"на {GetTaskStatusName(task.Status)}" + 
                          (String.IsNullOrWhiteSpace(message) ? $" с сообщением: {message}": String.Empty);
             await _db.LogRepository.CreateAsync(new Log {Message = logString, TaskId = task.Id, OrderId = task.OrderId});
+            await _db.SaveAsync();
         }
 
         public string GetTaskStatusName(TaskStatusEnum item)
