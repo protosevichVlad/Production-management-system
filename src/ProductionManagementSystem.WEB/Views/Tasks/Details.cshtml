@@ -1,5 +1,6 @@
 ﻿@using ProductionManagementSystem.Models.Tasks
 @using ProductionManagementSystem.Models.Users
+@using ProductionManagementSystem.Models.Infrastructure
 @model ProductionManagementSystem.Models.Tasks.Task
 @{
     ViewData["Title"] = "Задача №" + Model.Id;
@@ -25,7 +26,7 @@
         <div class="col">
             <h4>Задача №@Model.Id</h4>
             <h4>Прибор: <a asp-controller="Devices" asp-action="Details" asp-route-id="@Model.Device.Id">@Model.Device.ToString()</a></h4>
-            <h4>Статус: @Model.Status</h4>
+            <h4>Статус: @Model.Status.GetTasksStatusName()</h4>
             <h4>Срок: @Model.Deadline.ToString("dd.MM.yyyy")</h4>
             <h4>Описание:</h4>
             <p>@Model.Description</p>

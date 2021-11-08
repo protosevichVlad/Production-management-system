@@ -1,4 +1,5 @@
-﻿@model ProductionManagementSystem.Models.Orders.Order
+﻿@using ProductionManagementSystem.Models.Infrastructure
+@model ProductionManagementSystem.Models.Orders.Order
 @{
     ViewData["Title"] = "Заказ №" + Model.Id;
 }
@@ -71,7 +72,7 @@
                             @t.Deadline.Date
                         </td>
                         <td>
-                            @t.Status
+                            @t.Status.GetTasksStatusName()
                         </td>
                         <td>
                             <div class="overflow-hidden text-truncate description">

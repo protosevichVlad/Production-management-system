@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ProductionManagementSystem.Models.Tasks.Task>
+﻿@using ProductionManagementSystem.Models.Infrastructure
+@model IEnumerable<ProductionManagementSystem.Models.Tasks.Task>
 @{
     ViewData["Title"] = "Задачи";
 }
@@ -52,7 +53,7 @@
                     @t.Deadline.Date
                 </td>
                 <td>
-                    @t.Status
+                    @t.Status.GetTasksStatusName()
                 </td>
                 <td>
                     @t.OrderId
