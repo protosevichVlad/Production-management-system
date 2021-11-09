@@ -28,5 +28,10 @@ namespace ProductionManagementSystem.Core.Models.Orders
         
         [NotMapped]
         public string Status { get; set; }
+
+        public override string ToString()
+        {
+            return $"№{Id}";
+        }
     }
 }

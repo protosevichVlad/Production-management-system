@@ -41,5 +41,10 @@ namespace ProductionManagementSystem.Core.Models.SupplyRequests
         public string UserId { get; set; }
         
         public int ComponentId { get; set; }
+
+        public override string ToString()
+        {
+            return $"№{this.Id} {this.Comment.ToString()}";
+        }
     }
 }

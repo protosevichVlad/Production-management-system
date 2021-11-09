@@ -39,5 +39,10 @@ namespace ProductionManagementSystem.Core.Models.Tasks
         public IEnumerable<ObtainedDesign> ObtainedDesigns { get; set; }
         [NotMapped]
         public IEnumerable<ObtainedMontage> ObtainedMontages { get; set; }
+
+        public override string ToString()
+        {
+            return $"№{this.Id} {this.Device.Name}";
+        }
     }
 }
