@@ -2,11 +2,11 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using ProductionManagementSystem.DAL.EF;
-using ProductionManagementSystem.Models.Tasks;
-using ProductionManagementSystem.DAL.Repositories;
-using ProductionManagementSystem.Models.Components;
-using ProductionManagementSystem.Models.Devices;
+using ProductionManagementSystem.Core.Data.EF;
+using ProductionManagementSystem.Core.Models.Tasks;
+using ProductionManagementSystem.Core.Models.Components;
+using ProductionManagementSystem.Core.Models.Devices;
+using ProductionManagementSystem.Core.Repositories;
 
 namespace ProductionManagementSystem.UnitTests.RepositoriesTests
 {

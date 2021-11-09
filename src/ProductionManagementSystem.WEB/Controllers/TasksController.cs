@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.Models.Tasks;
-using ProductionManagementSystem.Models.Users;
-using Task = ProductionManagementSystem.Models.Tasks.Task;
+using ProductionManagementSystem.Core.Infrastructure;
+using ProductionManagementSystem.Core.Models.Tasks;
+using ProductionManagementSystem.Core.Models.Users;
+using ProductionManagementSystem.Core.Services;
+using Task = ProductionManagementSystem.Core.Models.Tasks.Task;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {

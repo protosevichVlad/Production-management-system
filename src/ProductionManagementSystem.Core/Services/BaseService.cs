@@ -1,0 +1,66 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ProductionManagementSystem.Core.Repositories;
+
+namespace ProductionManagementSystem.Core.Services
+{
+    public interface IBaseService<TItem> : IDisposable
+    {
+        public Task<IEnumerable<TItem>> GetAllAsync();
+        public Task<TItem> GetByIdAsync(int id);
+        public Task<IEnumerable<TItem>> Find(Func<TItem, bool> predicate);
+        public Task CreateAsync(TItem item);
+        public Task UpdateAsync(TItem item);
+        public Task DeleteAsync(TItem item);
+    }
+    
+    public abstract class BaseService<TItem> : IBaseService<TItem>
+    {
+        protected IUnitOfWork _db;
+        protected IRepository<TItem> _currentRepository;
+
+        protected BaseService(IUnitOfWork db)
+        {
+            _db = db;
+        }
+
+        public virtual async Task<IEnumerable<TItem>> GetAllAsync()
+        {
+            return await _currentRepository.GetAllAsync();
+        }
+
+        public virtual async Task<TItem> GetByIdAsync(int id)
+        {
+            return await _currentRepository.GetByIdAsync(id);
+        }
+
+        public virtual async Task<IEnumerable<TItem>> Find(Func<TItem, bool> predicate)
+        {
+            return await _currentRepository.FindAsync(predicate);
+        }
+
+        public virtual async Task CreateAsync(TItem item)
+        {
+            await _currentRepository.CreateAsync(item);
+            await _db.SaveAsync();
+        }
+
+        public virtual async Task UpdateAsync(TItem item)
+        {
+            await _currentRepository.UpdateAsync(item);
+            await _db.SaveAsync();
+        }
+
+        public virtual async Task DeleteAsync(TItem item)
+        {
+            _currentRepository.Delete(item);
+            await _db.SaveAsync();
+        }
+
+        public void Dispose()
+        {
+            _db.Dispose();
+        }
+    }
+}

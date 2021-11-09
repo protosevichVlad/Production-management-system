@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.Models.Orders;
-using ProductionManagementSystem.Models.Users;
+using ProductionManagementSystem.Core.Infrastructure;
+using ProductionManagementSystem.Core.Models.Orders;
+using ProductionManagementSystem.Core.Models.Users;
+using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.WEB.Models.Order;
-using Task = ProductionManagementSystem.Models.Tasks.Task;
+using Task = ProductionManagementSystem.Core.Models.Tasks.Task;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {

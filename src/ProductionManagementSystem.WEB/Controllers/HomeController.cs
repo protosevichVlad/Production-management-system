@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ProductionManagementSystem.Models.Users;
+using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.WEB.Controllers

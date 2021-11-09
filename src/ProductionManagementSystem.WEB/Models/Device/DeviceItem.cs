@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using ProductionManagementSystem.Models.Components;
-using ProductionManagementSystem.Models.Devices;
+using ProductionManagementSystem.Core.Models.Components;
+using ProductionManagementSystem.Core.Models.Devices;
 
 namespace ProductionManagementSystem.WEB.Models.Device
 {

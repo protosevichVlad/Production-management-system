@@ -1,6 +1,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
-using ProductionManagementSystem.DAL.EF;
+using ProductionManagementSystem.Core.Data.EF;
 
 namespace ProductionManagementSystem.UnitTests
 {

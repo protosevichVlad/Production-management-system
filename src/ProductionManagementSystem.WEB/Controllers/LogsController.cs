@@ -4,11 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.Models.Logs;
-using ProductionManagementSystem.Models.Users;
-using ProductionManagementSystem.WEB.Models;
+using ProductionManagementSystem.Core.Infrastructure;
+using ProductionManagementSystem.Core.Models.Logs;
+using ProductionManagementSystem.Core.Models.Users;
+using ProductionManagementSystem.Core.Services;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {

@@ -7,11 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.DAL.EF;
-using ProductionManagementSystem.DAL.Repositories;
-using ProductionManagementSystem.Models.Users;
+using ProductionManagementSystem.Core.Data.EF;
+using ProductionManagementSystem.Core.Models.Users;
+using ProductionManagementSystem.Core.Repositories;
+using ProductionManagementSystem.Core.Services;
 
 namespace ProductionManagementSystem.WEB
 {
@@ -54,7 +53,7 @@ namespace ProductionManagementSystem.WEB
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
 
-            services.AddUoWService(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddScoped<IUnitOfWork>(_ => new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IMontageService, MontageService>();
             services.AddScoped<IDesignService, DesignService>();
             services.AddScoped<IDeviceService, DeviceService>();

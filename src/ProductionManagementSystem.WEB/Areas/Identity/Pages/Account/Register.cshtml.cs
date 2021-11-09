@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using ProductionManagementSystem.Models.Users;
+using ProductionManagementSystem.Core.Models.Users;
 using Task = System.Threading.Tasks.Task;
 
 namespace ProductionManagementSystem.Areas.Identity.Pages.Account

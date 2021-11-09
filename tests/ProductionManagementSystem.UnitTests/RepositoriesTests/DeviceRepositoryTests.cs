@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using ProductionManagementSystem.DAL.Repositories;
-using ProductionManagementSystem.Models.Components;
-using ProductionManagementSystem.Models.Devices;
+using ProductionManagementSystem.Core.Models.Components;
+using ProductionManagementSystem.Core.Models.Devices;
+using ProductionManagementSystem.Core.Repositories;
 
 namespace ProductionManagementSystem.UnitTests.RepositoriesTests
 {

@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\ProductionManagementSystem.BLL\ProductionManagementSystem.BLL.csproj" />
+      <ProjectReference Include="..\..\src\ProductionManagementSystem.Core\ProductionManagementSystem.Core.csproj" />
       <ProjectReference Include="..\..\src\ProductionManagementSystem.DAL\ProductionManagementSystem.DAL.csproj" />
     </ItemGroup>
 

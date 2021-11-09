@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using ProductionManagementSystem.BLL.Services;
+using ProductionManagementSystem.Core.Services;
 
 namespace ProductionManagementSystem.WEB
 {

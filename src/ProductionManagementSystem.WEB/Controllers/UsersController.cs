@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ProductionManagementSystem.Models.Users;
+using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.WEB.Models.UserViewModels;
 
 namespace ProductionManagementSystem.WEB.Controllers

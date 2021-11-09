@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.Models.Components;
-using ProductionManagementSystem.Models.SupplyRequests;
+using ProductionManagementSystem.Core.Models.SupplyRequests;
+using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.WEB.Models;
 using ProductionManagementSystem.WEB.Models.Modals;
 
