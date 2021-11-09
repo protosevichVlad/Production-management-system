@@ -6,18 +6,18 @@
     ViewData["Title"] = "Прибор: " + Model.Name;
 }
 
-<div class="row">
+<div class="row d-print-none">
     <div class="col">
         <h4>Подробная информация</h4>
     </div>
     <div class="col d-flex justify-content-md-end">
-        <button class="btn btn-link float-right" type="button" onclick="window.print()">Распечатать(Сохранить)</button>
-        <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
-        <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Index" asp-route-deviceId="@Model.Id">Логи</a>
-        <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+        <button class="btn btn-link float-right m-1" type="button" onclick="window.print()">Распечатать(Сохранить)</button>
+        <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+        <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-deviceId="@Model.Id">Логи</a>
+        <a class="btn btn-danger btn-sm m-1" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
     </div>
 </div>
-<div class="alert alert-info" role="alert">
+<div class="alert alert-info d-print-none" role="alert">
     Здесь вы можете узнать подробную информацию о @Model.Name.
 </div>
 <hr/>
@@ -49,7 +49,7 @@
                 @for (int i = 0; i < Model.Montages.Count(); i++)
                 {
                     <tr>
-                        <td class="td-with-name">@Model.Montages[i].Component.ToString()</td>
+                        <td class="td-with-name"><a asp-controller="Montages" asp-action="Details" asp-route-id="@Model.Montages[i].ComponentId">@Model.Montages[i].Component.ToString()</a></td>
                         <td>@Model.Montages[i].Quantity</td>
                         <td class="td-with-description">@Model.Montages[i].Description</td>
                     </tr>
@@ -78,7 +78,7 @@
                 @for (int i = 0; i < Model.Designs.Count(); i++)
                 {
                     <tr>
-                        <td class="td-with-name">@Model.Designs[i].Component.ToString()</td>
+                        <td class="td-with-name"><a asp-controller="Designs" asp-action="Details" asp-route-id="@Model.Designs[i].ComponentId">@Model.Designs[i].Component.ToString()</a></td>
                         <td>@Model.Designs[i].Quantity</td>
                         <td class="td-with-description">@Model.Designs[i].Description</td>
                     </tr>

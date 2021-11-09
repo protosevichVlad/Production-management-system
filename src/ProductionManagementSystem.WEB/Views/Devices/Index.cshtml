@@ -3,10 +3,6 @@
     ViewData["Title"] = "Приборы";
 }
 <h2>Cписок приборов</h2>
-
-<p>
-    <a asp-action="Create">Создать новый прибор</a>
-</p>
 <div class="table-responsive">
     <table class="table table-sm">
         <thead>
@@ -23,7 +19,9 @@
             <th>
                 Описание
             </th>
-            <th></th>
+            <th class="td-with-buttons">
+                <a class="btn btn-primary btn-sm" asp-action="Create">Создать новый прибор</a>
+            </th>
         </tr>
         </thead>
         <tbody>
