@@ -10,7 +10,7 @@
         <thead>
         <tr>
             <td>Наименование</td>
-            <td>Количество в задании</td>
+            <td>Количество в задаче</td>
             <td>Количество на складе</td>
             <td>Получено</td>
             <td>Получить</td>
@@ -24,15 +24,19 @@
                 continue;
             }
             
-            <tr @if (des.Quantity <= obtainedDes.Obtained) 
+            <tr @if (obtainedDes.Obtained + des.Component.Quantity < des.Quantity) 
                 { 
-                    @:class="table-success" 
-                }> 
+                    @: class="table-danger"
+                } 
+                else if (des.Quantity <= obtainedDes.Obtained) 
+                { 
+                    @: class="table-success"
+                } > 
                 <td>@des.Component.ToString()</td>
                 <td>@des.Quantity</td>
                 <td>@des.Component.Quantity</td>
                 <td>@obtainedDes.Obtained</td>
-                <td><input type="number" name="designObt" autocomplete="off" required min="-@obtainedDes.Obtained" max="@des.Component.Quantity" value="0"></td>
+                <td><input type="number" name="designObt" autocomplete="off" required min="-@obtainedDes.Obtained" max="@des.Component.Quantity" style="width:100px;" value="0"></td>
             </tr>
             <input type="number" name="designIds" hidden value="@des.Component.Id"/>
         }
