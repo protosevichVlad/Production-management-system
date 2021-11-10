@@ -11,7 +11,7 @@
         <h4>Подробная информация</h4>
     </div>
     <div class="col d-flex justify-content-end">
-        @* <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Index" asp-route-taskId="@Model.Id">Логи</a> *@
+        <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-designSupplyRequestId="@Model.Id">Логи</a>
         @if (Model.StatusSupply == SupplyStatusEnum.Ready)
         {
             <a class="btn btn-light btn-sm disabled m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>

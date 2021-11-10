@@ -21,39 +21,35 @@ namespace ProductionManagementSystem.WEB.Controllers
             _logService = service;
         }
 
-        public async Task<IActionResult> Index(string userName, int? deviceId, int? componentId, int? designId, int? taskId, int? orderId)
+        public async Task<IActionResult> Index(string userName, 
+            int? deviceId, int? montageId, int? designId, int? taskId, int? orderId,
+            int? designSupplyRequestId, int? montageSupplyRequestId)
         {
             IEnumerable<Log> logs = await _logService.GetAllAsync();
 
             if (userName != null)
-            {
                 logs = logs.Where(l => l.User.UserName == userName);
-            }
             
             if (deviceId != null)
-            {
                 logs = logs.Where(l => l.DesignId == deviceId);
-            }
             
-            if (componentId != null)
-            {
-                logs = logs.Where(l => l.MontageId == componentId);
-            }
+            if (montageId != null)
+                logs = logs.Where(l => l.MontageId == montageId);
             
             if (designId != null)
-            {
                 logs = logs.Where(l => l.DesignId == designId);
-            }
             
             if (taskId != null)
-            {
                 logs = logs.Where(l => l.TaskId == taskId);
-            }
             
             if (orderId != null)
-            {
                 logs = logs.Where(l => l.OrderId == orderId);
-            }
+            
+            if (montageSupplyRequestId != null)
+                logs = logs.Where(l => l.MontageSupplyRequestId == montageSupplyRequestId);
+            
+            if (designSupplyRequestId != null)
+                logs = logs.Where(l => l.DesignSupplyRequestId == designSupplyRequestId);
             
             return View(logs);
         }

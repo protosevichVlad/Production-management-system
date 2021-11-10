@@ -9,9 +9,9 @@
         <h4>Подробная информация</h4>
     </div>
     <div class="col d-flex justify-content-md-end">
-        <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-designId="@Model.Id">Логи</a>
         <a class="btn btn-light btn-sm m-1"  asp-action="Add" asp-route-id="@Model.Id">Добавить</a>
         <a class="btn btn-light btn-sm m-1" asp-action="Receive" asp-route-id="@Model.Id">Получить</a>
+        <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-designId="@Model.Id">Логи</a>
         <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
         <a class="btn btn-danger btn-sm m-1" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
     </div>

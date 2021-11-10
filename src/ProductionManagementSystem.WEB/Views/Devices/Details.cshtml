@@ -12,8 +12,8 @@
     </div>
     <div class="col d-flex justify-content-md-end">
         <button class="btn btn-link float-right m-1" type="button" onclick="window.print()">Распечатать(Сохранить)</button>
-        <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
         <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-deviceId="@Model.Id">Логи</a>
+        <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
         <a class="btn btn-danger btn-sm m-1" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
     </div>
 </div>
