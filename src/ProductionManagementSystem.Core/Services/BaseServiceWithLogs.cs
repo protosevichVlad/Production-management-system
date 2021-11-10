@@ -13,6 +13,7 @@ namespace ProductionManagementSystem.Core.Services
         public new virtual async Task CreateAsync(TItem item)
         {
             await _currentRepository.CreateAsync(item);
+            await _db.SaveAsync();
             await CreateLogForCreatingAsync(item);
             await _db.SaveAsync();
         }
