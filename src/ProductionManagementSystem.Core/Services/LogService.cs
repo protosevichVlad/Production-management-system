@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Repositories;
@@ -34,6 +38,16 @@ namespace ProductionManagementSystem.Core.Services
         {
             _currentRepository = _db.LogRepository;
             _userManager = userManager;
+        }
+
+        public override async Task<IEnumerable<Log>> GetAllAsync()
+        {
+            return (await base.GetAllAsync()).Reverse();
+        }
+
+        public override async Task<IEnumerable<Log>> Find(Func<Log, bool> predicate)
+        {
+            return (await base.Find(predicate)).Reverse();
         }
     }
 }
