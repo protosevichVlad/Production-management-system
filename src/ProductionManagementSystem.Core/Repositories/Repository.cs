@@ -14,6 +14,7 @@ namespace ProductionManagementSystem.Core.Repositories
         public Task<IEnumerable<TItem>> FindAsync(Func<TItem, bool> predicate);
         public Task CreateAsync(TItem item);
         public Task UpdateAsync(TItem item);
+        Task UpdateRangeAsync(List<TItem> items);
         public void Delete(TItem item);
         public Task SaveAsync();
     }
@@ -53,6 +54,11 @@ namespace ProductionManagementSystem.Core.Repositories
         public virtual async Task UpdateAsync(TItem item)
         {
             _db.Entry<TItem>(item).State = EntityState.Modified;
+        }
+
+        public virtual async Task UpdateRangeAsync(List<TItem> items)
+        {
+            _dbSet.UpdateRange(items);
         }
 
         public virtual void Delete(TItem item)

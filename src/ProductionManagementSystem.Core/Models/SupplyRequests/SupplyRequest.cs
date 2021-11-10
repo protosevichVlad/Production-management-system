@@ -5,11 +5,8 @@ using ProductionManagementSystem.Core.Models.Tasks;
 
 namespace ProductionManagementSystem.Core.Models.SupplyRequests
 {
-    public abstract class SupplyRequest 
+    public abstract class SupplyRequest : BaseEntity
     {
-        [Display(Name = "№")]
-        public int Id { get; set; }
-        
         [Display(Name = "Количество")]
         public int Quantity { get; set; }
         

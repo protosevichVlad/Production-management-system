@@ -143,5 +143,9 @@ namespace ProductionManagementSystem.Core.Services
         {
             await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён прибор " + item, DeviceId = item.Id });
         }
+        
+        protected override bool UpdateLogPredicate(Log log, Device item) => log.DeviceId == item.Id; 
+
+        protected override void UpdateLog(Log log) => log.DeviceId = null;
     }
 }

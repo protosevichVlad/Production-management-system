@@ -2,9 +2,8 @@
 
 namespace ProductionManagementSystem.Core.Models.Tasks
 {
-    public abstract class ObtainedBase
+    public abstract class ObtainedBase : BaseEntity
     {
-        public int Id { get; set; }
         public int Obtained { get; set; }
 
         [NotMapped]

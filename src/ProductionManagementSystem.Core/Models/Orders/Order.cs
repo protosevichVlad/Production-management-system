@@ -7,10 +7,8 @@ using ProductionManagementSystem.Core.Models.Tasks;
 namespace ProductionManagementSystem.Core.Models.Orders
 {
     [Table("Orders")]
-    public class Order
+    public class Order : BaseEntity
     {
-        public int Id { get; set; }
-        
         [Display(Name = "Срок")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]

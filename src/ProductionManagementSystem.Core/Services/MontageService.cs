@@ -113,5 +113,10 @@ namespace ProductionManagementSystem.Core.Services
         {
             await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён монтаж " + item, MontageId = item.Id });
         }
+        
+        
+        protected override bool UpdateLogPredicate(Log log, Montage item) => log.MontageId == item.Id; 
+
+        protected override void UpdateLog(Log log) => log.MontageId = null;
     }
 }

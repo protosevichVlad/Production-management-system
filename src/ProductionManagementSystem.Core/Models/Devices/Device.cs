@@ -6,10 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ProductionManagementSystem.Core.Models.Devices
 {
     [Table("Devices")]
-    public class Device
+    public class Device : BaseEntity
     {
-        public int Id { get; set; }
-        
         [Display(Name = "Наименование")]
         [Required]
         public string Name { get; set; }

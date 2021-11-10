@@ -71,6 +71,9 @@ namespace ProductionManagementSystem.Core.Services
         {
             await DeleteAsync(new Order {Id = orderId});
         }
+        
+        protected override bool UpdateLogPredicate(Log log, Order item) => log.OrderId == item.Id; 
 
+        protected override void UpdateLog(Log log) => log.OrderId = null;
     }
 }

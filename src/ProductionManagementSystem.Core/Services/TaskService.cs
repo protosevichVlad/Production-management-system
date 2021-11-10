@@ -206,5 +206,9 @@ namespace ProductionManagementSystem.Core.Services
         {
             await _db.LogRepository.CreateAsync(new Log { Message = "Была удалёна задача " + item, TaskId = item.Id, OrderId = item.OrderId });
         }
+        
+        protected override bool UpdateLogPredicate(Log log, Task item) => log.TaskId == item.Id; 
+
+        protected override void UpdateLog(Log log) => log.TaskId = null;
     }
 }

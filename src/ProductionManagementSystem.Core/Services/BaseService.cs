@@ -12,6 +12,7 @@ namespace ProductionManagementSystem.Core.Services
         public Task<IEnumerable<TItem>> Find(Func<TItem, bool> predicate);
         public Task CreateAsync(TItem item);
         public Task UpdateAsync(TItem item);
+        public Task UpdateRangeAsync(List<TItem> items);
         public Task DeleteAsync(TItem item);
     }
     
@@ -49,6 +50,12 @@ namespace ProductionManagementSystem.Core.Services
         public virtual async Task UpdateAsync(TItem item)
         {
             await _currentRepository.UpdateAsync(item);
+            await _db.SaveAsync();
+        }
+
+        public virtual async Task UpdateRangeAsync(List<TItem> items)
+        {
+            await _currentRepository.UpdateRangeAsync(items);
             await _db.SaveAsync();
         }
 

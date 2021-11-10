@@ -58,5 +58,9 @@ namespace ProductionManagementSystem.Core.Services
         {
             await _db.LogRepository.CreateAsync(new Log { Message = "Была удалёна заявка на снабжения конструктива " + item, DesignSupplyRequestId = item.Id });
         }
+        
+        protected override bool UpdateLogPredicate(Log log, DesignSupplyRequest item) => log.DesignSupplyRequestId == item.Id; 
+
+        protected override void UpdateLog(Log log) => log.DesignSupplyRequestId = null;
     }
 }

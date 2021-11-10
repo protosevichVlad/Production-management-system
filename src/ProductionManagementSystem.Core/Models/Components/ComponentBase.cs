@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProductionManagementSystem.Core.Models.Components
 {
-    public class ComponentBase
+    public class ComponentBase : BaseEntity
     {
-        public int Id { get; set; }
-        
         [Display(Name = "Конструктивная единица")]
         public string Type { get; set; }
         

@@ -6,9 +6,8 @@ using ProductionManagementSystem.Core.Models.Users;
 namespace ProductionManagementSystem.Core.Models.Logs
 {
     [Table("Logs")]
-    public class Log
+    public class Log : BaseEntity
     {
-        public int Id { get; set; }
         
         [Display(Name = "Дата и время")]
         public DateTime DateTime { get; set; }

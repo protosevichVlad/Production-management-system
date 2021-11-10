@@ -91,6 +91,10 @@ namespace ProductionManagementSystem.Core.Services
             await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён конструктив " + item, DesignId = item.Id });
         }
 
+        protected override bool UpdateLogPredicate(Log log, Design design) => log.DesignId == design.Id; 
+
+        protected override void UpdateLog(Log log) => log.DesignId = null;
+
         private async Task<Tuple<bool, string>> CheckInDevicesAsync(Design design)
         {
             string errorMessage;
