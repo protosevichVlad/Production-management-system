@@ -42,7 +42,7 @@ namespace ProductionManagementSystem.Core.Models.Tasks
 
         public override string ToString()
         {
-            return $"№{this.Id} {this.Device.Name}";
+            return $"№{this.Id}";
         }
     }
 }
