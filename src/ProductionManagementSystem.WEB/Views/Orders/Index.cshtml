@@ -3,10 +3,6 @@
     ViewData["Title"] = "Заказы";
 }
 <h2>Cписок заказов</h2>
-
-<p>
-    <a asp-action="Create">Новый заказ</a>
-</p>
 <div class="table-responsive">
     <table class="table table-sm">
         <thead>
@@ -29,7 +25,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-            <th></th>
+            <th class="td-with-buttons">
+                <a class="btn btn-primary btn-sm m-1" asp-action="Create">Новый заказ</a>
+            </th>
         </tr>
         </thead>
         <tbody>
