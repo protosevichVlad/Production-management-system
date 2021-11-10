@@ -28,36 +28,38 @@ namespace ProductionManagementSystem.Core.Services
             order.DateStart = DateTime.Now.Date;
             await base.CreateAsync(order);
 
-            foreach (var task in order.Tasks)
+            if (order.Tasks != null)
             {
-                task.OrderId = order.Id;
-                await _taskService.CreateAsync(task);
+                foreach (var task in order.Tasks)
+                {
+                    task.OrderId = order.Id;
+                    await _taskService.CreateAsync(task);
+                }
             }
         }
 
         public override async System.Threading.Tasks.Task DeleteAsync(Order order)
         {
-            foreach (var task in order.Tasks)
-            {
-                await _taskService.DeleteAsync(task);
-            }
+            if (order.Tasks != null)
+                foreach (var task in order.Tasks)
+                    await _taskService.DeleteAsync(task);
             
             await base.DeleteAsync(order);
         }
 
         protected override async System.Threading.Tasks.Task CreateLogForCreatingAsync(Order item)
         {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был создан монтаж " + item, OrderId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был создан заказ " + item, OrderId = item.Id });
         }
 
         protected override async System.Threading.Tasks.Task CreateLogForUpdatingAsync(Order item)
         {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был изменён монтаж " + item, OrderId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был изменён заказ " + item, OrderId = item.Id });
         }
 
         protected override async System.Threading.Tasks.Task CreateLogForDeletingAsync(Order item)
         {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён монтаж " + item, OrderId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён заказ " + item, OrderId = item.Id });
         }
 
         public async System.Threading.Tasks.Task<IEnumerable<Task>> GetTasksByOrderIdAsync(int orderId)

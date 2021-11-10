@@ -51,12 +51,12 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             if (ModelState.IsValid)
             {
-                orderModel.Tasks = new List<Task>();
+                var tasks = new List<Task>();
                 for (int i = 0; i < DeviceQuantity.Length; i++)
                 {
                     for (int j = 0; j < DeviceQuantity[i]; j++)
                     {
-                        orderModel.Tasks.Add(new Task()
+                        tasks.Add(new Task()
                         {
                             Deadline = orderModel.Deadline,
                             DeviceId = orderModel.Tasks[i].DeviceId,
@@ -65,6 +65,7 @@ namespace ProductionManagementSystem.WEB.Controllers
                     }
                 }
 
+                orderModel.Tasks = tasks;
                 await _orderService.CreateAsync(orderModel);
                 return RedirectToAction(nameof(Index));
             }

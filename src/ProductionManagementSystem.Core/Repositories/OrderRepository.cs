@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Core.Data.EF;
+using ProductionManagementSystem.Core.Models.Infrastructure;
 using ProductionManagementSystem.Core.Models.Orders;
 
 namespace ProductionManagementSystem.Core.Repositories
@@ -50,6 +51,8 @@ namespace ProductionManagementSystem.Core.Repositories
         private async Task InitOrderAsync(Order order)
         {
             order.Tasks = await _db.Tasks.Where(t => t.OrderId == order.Id).ToListAsync();
+            if (order.Tasks.Any())
+                order.Status = order.Tasks.Min(t => t.Status).GetTasksStatusName();
         }
     }
 }
