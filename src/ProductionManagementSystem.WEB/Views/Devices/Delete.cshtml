@@ -1,7 +1,7 @@
 ﻿@model ProductionManagementSystem.Core.Models.Devices.Device;
 
 @{
-    ViewBag.Title = "Удалить" + @Model.Name;
+    ViewBag.Title = "Удалить " + @Model.Name;
 }
 
 <div class="row">
@@ -12,75 +12,9 @@
     <div class="col d-flex justify-content-end">
         <form asp-action="Delete" class="text-right">
             <input type="hidden" asp-for="Id"/>
-            <input type="submit" value="Удалить" class="btn btn-danger"/>
+            <input type="submit" value="Удалить" class="btn btn-danger btn-sm m-1"/>
         </form>
     </div>
 </div>
 <hr />
-<div class="container">
-    <dl class='row'>
-        <dt class = 'col-sm-4'>Наименование</dt>
-        <dd class = 'col-sm-10'>@Model.Name</dd>
-        <dt class = 'col-sm-4'>Количество на складе:</dt>
-        <dd class = 'col-sm-10'>@Model.Quantity</dd>
-        <dt class = 'col-sm-4'>Описание</dt>
-        <dd class = 'col-sm-10'>@Model.Description</dd>
-    </dl>
-    <div class='row'>
-        <div class='col'>
-            <h3>Монтаж</h3>
-        </div>
-    </div>
-    <div class='row'>
-        <div class='col table-responsive' id='Components'>
-            <table class='table table-sm' style='width:100%;'>
-                <thead>
-                <tr>
-                    <th class="td-with-name">Наименование</th>
-                    <th>Количество в приборе</th>
-                    <th class="td-with-description">Примечание</th>
-                </tr>
-                </thead>
-                <tbody>
-                @for (int i = 0; i < Model.Montages.Count(); i++)
-                {
-                    <tr>
-                        <td class="td-with-name">@Model.Montages[i].Component.ToString()</td>
-                        <td>@Model.Montages[i].Quantity</td>
-                        <td class="td-with-description">@Model.Montages[i].Description</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <br />
-    <div class='row'>
-        <div class='col'>
-            <h3>Конструктив</h3>
-        </div>
-    </div>
-    <div class='row'>
-        <div class='col table-responsive' id='Designs'>
-            <table class='table table-sm' style='width:100%;'>
-                <thead>
-                <tr>
-                    <th class="td-with-name">Наименование</th>
-                    <th>Количество в приборе</th>
-                    <th class="td-with-description">Примечание</th>
-                </tr>
-                </thead>
-                <tbody>
-                @for (int i = 0; i < Model.Designs.Count(); i++)
-                {
-                    <tr>
-                        <td class="td-with-name">@Model.Designs[i].Component.ToString()</td>
-                        <td>@Model.Designs[i].Quantity</td>
-                        <td class="td-with-description">@Model.Designs[i].Description</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<partial name="Partail/Device/DeviceDetails" model="@Model"/>
