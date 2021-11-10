@@ -29,7 +29,7 @@ namespace ProductionManagementSystem.Core.Models.Orders
         [NotMapped]
         public List<Task> Tasks { get; set; }
         
-        
+        [Display(Name="Статус")]
         [NotMapped]
         public string Status { get; set; }
 
