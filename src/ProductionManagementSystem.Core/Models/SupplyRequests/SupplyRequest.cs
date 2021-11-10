@@ -44,7 +44,7 @@ namespace ProductionManagementSystem.Core.Models.SupplyRequests
 
         public override string ToString()
         {
-            return $"№{this.Id} {this.Comment.ToString()}";
+            return $"№{this.Id}";
         }
     }
 }
