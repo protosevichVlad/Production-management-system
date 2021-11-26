@@ -4,6 +4,7 @@ namespace ProductionManagementSystem.Core.Models.ElementsDifference
 {
     public class ElementDifference
     {
+        public int Id { get; set; }
         public ElementType ElementType { get; set; }
         public int ElementId { get; set; }
         public int Difference { get; set; }
