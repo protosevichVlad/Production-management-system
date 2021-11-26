@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Components;
+using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Repositories;
 
@@ -58,6 +59,9 @@ namespace ProductionManagementSystem.Core.Services
             var design = await _currentRepository.GetByIdAsync(id);
             design.Quantity += quantity;
             await _currentRepository.UpdateAsync(design);
+
+            await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()
+                {Difference = quantity, ElementId = design.Id, ElementType = ElementType.Design});
             
             if (quantity < 0)
             {

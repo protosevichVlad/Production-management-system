@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Components;
 using ProductionManagementSystem.Core.Models.Devices;
+using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Repositories;
 
@@ -116,6 +117,9 @@ namespace ProductionManagementSystem.Core.Services
             var device = await _currentRepository.GetByIdAsync(id.Value);
             device.Quantity += quantity;
             await _currentRepository.UpdateAsync(device);
+            
+            await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()
+                {Difference = quantity, ElementId = device.Id, ElementType = ElementType.Design});
 
             if (quantity < 0)
             {

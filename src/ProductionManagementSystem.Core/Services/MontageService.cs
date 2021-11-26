@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Components;
+using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Repositories;
 
@@ -54,6 +55,9 @@ namespace ProductionManagementSystem.Core.Services
             montage.Quantity += quantity;
             await _currentRepository.UpdateAsync(montage);
 
+            await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()
+                {Difference = quantity, ElementId = montage.Id, ElementType = ElementType.Design});
+            
             if (quantity < 0)
             {
                 await _db.LogRepository.CreateAsync(new Log {Message = $"Было получено {-quantity}ед. монтажа {montage}", MontageId = montage.Id});

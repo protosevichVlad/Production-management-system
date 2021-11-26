@@ -9,5 +9,10 @@ namespace ProductionManagementSystem.Core.Models.ElementsDifference
         public int ElementId { get; set; }
         public int Difference { get; set; }
         public DateTime DateTime { get; set; }
+
+        public ElementDifference()
+        {
+            this.DateTime = DateTime.Now;
+        }
     }
 }
