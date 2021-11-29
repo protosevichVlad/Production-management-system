@@ -3,9 +3,7 @@
 
 @if (Model.Data.Count() != 0)
 {
-    <div style="width: 800px; height: 800px">
-        <canvas id="chart"></canvas>
-    </div>
+    <partial name="Partail/Charts/BaseChart" model="@("chart")"/>
     <script>     
       const ctx = document.getElementById('chart');
       const myChart = new Chart(ctx, {

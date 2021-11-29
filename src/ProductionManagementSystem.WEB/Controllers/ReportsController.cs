@@ -25,7 +25,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> MontageMonthReport()
         {
             var montageMonthReport = await _reportService.GetMontageMonthReportAsync(2021, 11);
-            return View(new BarChartData(montageMonthReport));
+            return View(new StackedBarChart(montageMonthReport, "dd.MM.yyyy"));
         }
     }
 }
