@@ -1,0 +1,30 @@
+﻿@using ProductionManagementSystem.WEB.Helpers
+@model ProductionManagementSystem.WEB.Models.Charts.BarChartData
+
+<div style="width: 800px; height: 800px">
+    <canvas id="chart"></canvas>
+</div>
+
+@section Scripts
+{
+    <script>     
+      const ctx = document.getElementById('chart');
+      const myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: @ArrayHelper.ToString(@Model.Labels),
+              datasets: [{
+                  label: '@Model.Label',
+                  data: @ArrayHelper.ToString(Model.Data),
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+    </script>
+}

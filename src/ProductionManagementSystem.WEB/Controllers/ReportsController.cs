@@ -11,5 +11,10 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             return View();
         }
+
+        public IActionResult MontageMonthReport()
+        {
+            return View();
+        }
     }
 }

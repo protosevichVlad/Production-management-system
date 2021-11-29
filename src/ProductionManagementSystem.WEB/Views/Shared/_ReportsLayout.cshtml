@@ -1,7 +1,9 @@
 ﻿@{
+    ViewBag.Title = "Отчёты";
     Layout = "_BaseLayout";
 }
-<aside class="bd-sidebar" style="width: 200px">
+<div class="d-flex justify-content-start">
+<aside class="bd-sidebar" style="width: 200px; margin: 10px">
     <ul class="list-unstyled mb-0 py-3 pt-md-1">
       <li class="mb-1">
         <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDesign" aria-expanded="false" aria-controls="collapseDesign">
@@ -11,7 +13,7 @@
             <ul>
                 <li><a>Статистика за год</a></li>
                 <li><a>Статистика за квартал</a></li>
-                <li><a>Статистика за месяц</a></li>
+                <li><a asp-controller="Reports" asp-action="MontageMonthReport">Статистика за месяц</a></li>
                 <li><a>Статистика по частоте использования</a></li>
             </ul>
         </div>
@@ -21,7 +23,9 @@
 <main role="main" class="pb-3">
     @RenderBody()
 </main>
+</div>
 
 @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
     @RenderSection("Scripts", required: false)
 }
