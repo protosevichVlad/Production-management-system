@@ -56,7 +56,7 @@ namespace ProductionManagementSystem.Core.Services
             await _currentRepository.UpdateAsync(montage);
 
             await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()
-                {Difference = quantity, ElementId = montage.Id, ElementType = ElementType.Design});
+                {Difference = quantity, ElementId = montage.Id, ElementType = ElementType.Montage});
             
             if (quantity < 0)
             {
