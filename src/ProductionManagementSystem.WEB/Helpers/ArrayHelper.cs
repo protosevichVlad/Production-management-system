@@ -11,13 +11,15 @@ namespace ProductionManagementSystem.WEB.Helpers
         {
             StringBuilder result = new StringBuilder("[");
             var list = (List<int>) array;
+            
+            if (!list.Any()) return "";
             for (int i = 0; i < list.Count() - 1 ; i++)
             {
                 result.Append(list[i].ToString());
                 result.Append(",");
             }
             
-            result.Append(list[^1].ToString());
+            result.Append(list[list.Count() - 1].ToString());
             result.Append("]");
             return result.ToString();
         }
@@ -26,13 +28,15 @@ namespace ProductionManagementSystem.WEB.Helpers
         {
             StringBuilder result = new StringBuilder("[");
             var list = (List<string>) array;
+
+            if (!list.Any()) return "";
             for (int i = 0; i < list.Count() - 1 ; i++)
             {
                 result.Append("'" + list[i] + "'");
                 result.Append(",");
             }
             
-            result.Append("'" + list[^1] + "'");
+            result.Append("'" + list[list.Count() - 1] + "'");
             result.Append("]");
             return result.ToString();
         }
