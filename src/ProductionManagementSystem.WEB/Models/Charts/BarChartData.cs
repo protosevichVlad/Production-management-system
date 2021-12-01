@@ -3,7 +3,7 @@ using ProductionManagementSystem.Core.Models.ElementsDifference;
 
 namespace ProductionManagementSystem.WEB.Models.Charts
 {
-    public class BarChartData
+    public class BarChartData : BaseChart
     {
         public BarChartData(List<ElementDifference> elementDifferences)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Core.Data.EF;
@@ -23,10 +24,20 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public async  Task<List<ElementDifference>> GetByPeriodAsync(ElementType type, DateTime from, DateTime to)
         {
-            return await _dbSet
+            return _dbSet
                 .Where(x => x.ElementType == type && x.DateTime <= to && x.DateTime >= from)
+                .Select((Func<ElementDifference, ElementDifference>)(x =>
+                {
+                    x.Element = x.ElementType switch
+                    {
+                        ElementType.Design => _db.Designs.Find(x.ElementId),
+                        ElementType.Montage => _db.Montages.Find(x.ElementId),
+                        ElementType.Device => _db.Devices.Find(x.ElementId),
+                    };
+                    return x;
+                }))
                 .OrderBy(x => x.DateTime)
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task<List<ElementDifference>> GetByPeriodGroupByMonthAsync(ElementType type, DateTime from,
@@ -42,6 +53,16 @@ namespace ProductionManagementSystem.Core.Repositories
                     Difference = x.ToList().Sum(x => x.Difference),
                 })
                 .ToList()
+                .Select((Func<ElementDifference, ElementDifference>)(x =>
+                {
+                    x.Element = x.ElementType switch
+                    {
+                        ElementType.Design => _db.Designs.Find(x.ElementId),
+                        ElementType.Montage => _db.Montages.Find(x.ElementId),
+                        ElementType.Device => _db.Devices.Find(x.ElementId),
+                    };
+                    return x;
+                }))
                 .OrderBy(x => x.DateTime)
                 .ToList();
         }
@@ -58,6 +79,16 @@ namespace ProductionManagementSystem.Core.Repositories
                     Difference = x.ToList().Sum(x => x.Difference),
                 })
                 .ToList()
+                .Select((Func<ElementDifference, ElementDifference>)(x =>
+                {
+                    x.Element = x.ElementType switch
+                    {
+                        ElementType.Design => _db.Designs.Find(x.ElementId),
+                        ElementType.Montage => _db.Montages.Find(x.ElementId),
+                        ElementType.Device => _db.Devices.Find(x.ElementId),
+                    };
+                    return x;
+                }))
                 .OrderBy(x => x.DateTime)
                 .ToList();
         }

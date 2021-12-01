@@ -1,11 +1,11 @@
 ﻿@{
     Layout = "_BaseLayout";
 }
-
-<main role="main" class="pb-3">
-    @RenderBody()
-</main>
-
+<div class="container-xxl">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
 @section Scripts {
     @await RenderSectionAsync("Scripts", required: false)
 }

@@ -9,7 +9,7 @@
       const myChart = new Chart(ctx, {
           type: 'bar',
           data: {
-              labels: @Html.Raw(@ArrayHelper.ToString(@Model.Labels)),
+              labels: @Html.Encode(@ArrayHelper.ToString(@Model.Labels)),
               datasets: [{
                   label: '@Model.Label',
                   data: @ArrayHelper.ToString(Model.Data),
@@ -20,7 +20,13 @@
                   y: {
                       beginAtZero: true
                   }
-              }
+              },
+              plugins: {
+                title: {
+                    display: @((!String.IsNullOrWhiteSpace(Model.Title)).ToString().ToLower()),
+                    text: '@Model.Title'
+                },
+              },
           }
       });
     </script>

@@ -7,7 +7,7 @@ using ProductionManagementSystem.WEB.Helpers;
 
 namespace ProductionManagementSystem.WEB.Models.Charts
 {
-    public class StackedBarChart
+    public class StackedBarChart : BaseChart
     {
         private readonly List<string> _labels = new List<string>();
         private readonly Dictionary<int, Dataset> _datasets = new Dictionary<int, Dataset>();
@@ -24,7 +24,7 @@ namespace ProductionManagementSystem.WEB.Models.Charts
                     {
                         Color = $"rgb({random.Next(255)},{random.Next(255)},{random.Next(255)})", 
                         Data = new List<int>(Enumerable.Repeat(0, _labels.Count)), 
-                        Label = $"componentId = {elementDifference.ElementId}"
+                        Label = elementDifference.Element.ToString()
                     };
                 }
 

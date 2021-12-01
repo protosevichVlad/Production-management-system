@@ -1,17 +1,19 @@
-﻿@model ProductionManagementSystem.WEB.Models.Charts.StackedBarChart
-
+﻿@using System.Web
+@model ProductionManagementSystem.WEB.Models.Charts.StackedBarChart
 <partial name="Partail/Charts/BaseChart" model="@("StackedBarChart")"/>
-<script>
+<script type="text/javascript" charset="UTF-8">
 const data = {
   labels: @Html.Raw(@Model.Labels),
   datasets: [
     @foreach(var dataset in Model.Datasets) 
     {
-      @: {
-      @:    label: '@dataset.Label',
-      @:    data: @dataset.DataStringArray,
-      @:    backgroundColor: '@dataset.Color',
-      @: },
+       <text>
+       {
+          label: '@Html.Raw(dataset.Label)',
+          data: @dataset.DataStringArray,
+          backgroundColor: '@dataset.Color',
+       },
+       </text>
     }
   ]
 };
@@ -22,8 +24,8 @@ const config = {
   options: {
     plugins: {
       title: {
-        display: true,
-        text: 'Chart.js Bar Chart - Stacked'
+        display: @((!String.IsNullOrWhiteSpace(Model.Title)).ToString().ToLower()),
+        text: '@Model.Title'
       },
     },
     responsive: true,
