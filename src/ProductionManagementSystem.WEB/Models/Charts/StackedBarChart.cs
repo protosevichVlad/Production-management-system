@@ -20,9 +20,12 @@ namespace ProductionManagementSystem.WEB.Models.Charts
             {
                 if (!_datasets.ContainsKey(elementDifference.ElementId))
                 {
+                    var r = Math.Abs(elementDifference.Element.GetHashCode() % 256);
+                    var g = Math.Abs((elementDifference.Element.GetHashCode() >> 8) % 256);
+                    var b = Math.Abs((elementDifference.Element.GetHashCode() >> 16) % 256);
                     _datasets[elementDifference.ElementId] = new Dataset()
                     {
-                        Color = $"rgb({random.Next(255)},{random.Next(255)},{random.Next(255)})", 
+                        Color = $"rgb({r},{g},{b})", 
                         Data = new List<int>(Enumerable.Repeat(0, _labels.Count)), 
                         Label = elementDifference.Element.ToString()
                     };
