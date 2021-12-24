@@ -108,7 +108,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Reports" />
     <Folder Include="Pages" />
   </ItemGroup>
 

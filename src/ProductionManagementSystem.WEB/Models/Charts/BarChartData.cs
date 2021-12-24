@@ -5,16 +5,7 @@ namespace ProductionManagementSystem.WEB.Models.Charts
 {
     public class BarChartData : BaseChart
     {
-        public BarChartData(List<ElementDifference> elementDifferences)
-        {
-            Data = new List<int>();
-            Labels = new List<string>();
-            foreach (var elementDifference in elementDifferences)
-            {
-                Data.Add(elementDifference.Difference);
-                Labels.Add(elementDifference.DateTime.Date.ToString("dd.MM.yyyy"));
-            }
-        }
+        public BarChartData() { }
         
         public List<string> Labels { get; set; }
         public List<int> Data { get; set; }

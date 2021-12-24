@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.WEB.Models.Charts;
+using ProductionManagementSystem.WEB.Models.Reports;
+using ProductionManagementSystem.WEB.Services;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
@@ -24,8 +26,11 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         public async Task<IActionResult> MontageMonthReport()
         {
-            var montageMonthReport = await _reportService.GetMontageMonthReportAsync(2021, 11);
-            return View(new StackedBarChart(montageMonthReport, "dd.MM.yyyy"));
+            var montageMonthReport = await _reportService.GetMontageMonthReportAsync(2021, 12);
+            return View(new MonthReport()
+            {
+                BarChart = ChartService.ElementDiffToBarChart(await  _reportService.GroupByDateAsync(montageMonthReport, "dd.MM"))
+            });
         }
     }
 }
