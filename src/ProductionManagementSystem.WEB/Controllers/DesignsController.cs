@@ -211,7 +211,7 @@ namespace ProductionManagementSystem.WEB.Controllers
                     device.Selected = true;
                 }
                 
-                componentsInDevice.AddRange((await _deviceService.GetByIdAsync(deviceId.Value)).Designs.Select(c => c.Component).ToArray());
+                componentsInDevice.AddRange((await _deviceService.GetByIdAsync(deviceId.Value)).Designs.Select(c => c.Design).ToArray());
             }
             else
             {
@@ -279,7 +279,7 @@ namespace ProductionManagementSystem.WEB.Controllers
                     device.Selected = true;
                 }
                 
-                componentsInDevice.AddRange((await _deviceService.GetByIdAsync(deviceId.Value)).Designs.Select(c => c.Component).ToArray());
+                componentsInDevice.AddRange((await _deviceService.GetByIdAsync(deviceId.Value)).Designs.Select(c => c.Design).ToArray());
             }
             else
             {

@@ -25,14 +25,11 @@ namespace ProductionManagementSystem.Core.Models.SupplyRequests
         [Display(Name = "Статус")]
         public SupplyStatusEnum StatusSupply { get; set; }
         
-        
-        [NotMapped]
         public Task Task { get; set; }
         
         [Display(Name = "Задача №")]
         public int? TaskId { get; set; }
         
-        [NotMapped]
         public Users.User User { get; set; }
         [Display(Name = "Пользователь")]
         public string UserId { get; set; }

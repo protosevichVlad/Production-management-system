@@ -8,7 +8,6 @@ namespace ProductionManagementSystem.Core.Models.SupplyRequests
     public class MontageSupplyRequest : SupplyRequest
     {
         [Display(Name = "Монтаж")]
-        [NotMapped]
         public Montage Montage { get; set; }
     }
 }

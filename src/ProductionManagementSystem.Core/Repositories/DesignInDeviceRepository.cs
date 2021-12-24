@@ -26,7 +26,7 @@ namespace ProductionManagementSystem.Core.Repositories
         {
             var designsInDevice = (await base.GetAllAsync()).ToList();
             foreach (var designInDevice in designsInDevice)
-                designInDevice.Component = await _db.Designs.FindAsync(designInDevice.ComponentId);
+                designInDevice.Design= await _db.Designs.FindAsync(designInDevice.ComponentId);
             
             return designsInDevice;
         }
@@ -34,7 +34,7 @@ namespace ProductionManagementSystem.Core.Repositories
         public override async Task<DesignInDevice> GetByIdAsync(int id)
         {
             var designInDevice = await base.GetByIdAsync(id);
-            designInDevice.Component = await _db.Designs.FindAsync(designInDevice.ComponentId);
+            designInDevice.Design = await _db.Designs.FindAsync(designInDevice.ComponentId);
             return designInDevice;
         }
 
@@ -42,7 +42,7 @@ namespace ProductionManagementSystem.Core.Repositories
         {
             var designsInDevice = (await base.FindAsync(predicate)).ToList();
             foreach (var designInDevice in designsInDevice)
-                designInDevice.Component = await _db.Designs.FindAsync(designInDevice.ComponentId);
+                designInDevice.Design = await _db.Designs.FindAsync(designInDevice.ComponentId);
             
             return designsInDevice;
         }

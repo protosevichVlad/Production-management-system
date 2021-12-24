@@ -27,7 +27,7 @@ namespace ProductionManagementSystem.Core.Repositories
         {
             var montageInDevices = (await base.GetAllAsync()).ToList();
             foreach (var montageInDevice in montageInDevices)
-                montageInDevice.Component = await _db.Montages.FindAsync(montageInDevice.ComponentId);
+                montageInDevice.Montage = await _db.Montages.FindAsync(montageInDevice.ComponentId);
             
             return montageInDevices;
         }
@@ -38,7 +38,7 @@ namespace ProductionManagementSystem.Core.Repositories
             if (designInDevice == null)
                 return null;
             
-            designInDevice.Component = await _db.Montages.FindAsync(designInDevice.ComponentId);
+            designInDevice.Montage = await _db.Montages.FindAsync(designInDevice.ComponentId);
             return designInDevice;
         }
 
@@ -46,7 +46,7 @@ namespace ProductionManagementSystem.Core.Repositories
         {
             var montageInDevices = (await base.FindAsync(predicate)).ToList();
             foreach (var montageInDevice in montageInDevices)
-                montageInDevice.Component = await _db.Montages.FindAsync(montageInDevice.ComponentId);
+                montageInDevice.Montage = await _db.Montages.FindAsync(montageInDevice.ComponentId);
             
             return montageInDevices;
         }

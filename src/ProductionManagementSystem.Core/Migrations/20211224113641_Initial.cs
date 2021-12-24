@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ProductionManagementSystem.DAL.Migrations
+namespace ProductionManagementSystem.Core.Migrations
 {
     public partial class Initial : Migration
     {
@@ -35,6 +35,10 @@ namespace ProductionManagementSystem.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FirstName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LastName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -71,11 +75,6 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Type = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Name = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
                     Nominal = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Corpus = table.Column<string>(type: "longtext", nullable: true)
@@ -83,6 +82,11 @@ namespace ProductionManagementSystem.DAL.Migrations
                     Explanation = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Manufacturer = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -97,14 +101,14 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Type = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Name = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
                     ShortDescription = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -119,11 +123,11 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -132,25 +136,19 @@ namespace ProductionManagementSystem.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Logs",
+                name: "ElementDifferences",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    DateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UserLogin = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Message = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    ComponentId = table.Column<int>(type: "int", nullable: true),
-                    DesignId = table.Column<int>(type: "int", nullable: true),
-                    DeviceId = table.Column<int>(type: "int", nullable: true),
-                    TaskId = table.Column<int>(type: "int", nullable: true),
-                    OrderId = table.Column<int>(type: "int", nullable: true)
+                    ElementType = table.Column<int>(type: "int", nullable: false),
+                    ElementId = table.Column<int>(type: "int", nullable: false),
+                    Difference = table.Column<int>(type: "int", nullable: false),
+                    DateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Logs", x => x.Id);
+                    table.PrimaryKey("PK_ElementDifferences", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -301,32 +299,58 @@ namespace ProductionManagementSystem.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Logs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Message = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MontageId = table.Column<int>(type: "int", nullable: true),
+                    DesignId = table.Column<int>(type: "int", nullable: true),
+                    DeviceId = table.Column<int>(type: "int", nullable: true),
+                    TaskId = table.Column<int>(type: "int", nullable: true),
+                    OrderId = table.Column<int>(type: "int", nullable: true),
+                    MontageSupplyRequestId = table.Column<int>(type: "int", nullable: true),
+                    DesignSupplyRequestId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Logs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Logs_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "DeviceComponentsTemplates",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    MontageId = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    ComponentId = table.Column<int>(type: "int", nullable: false),
                     DeviceId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ComponentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeviceComponentsTemplates", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DeviceComponentsTemplates_Components_ComponentId",
-                        column: x => x.ComponentId,
+                        name: "FK_DeviceComponentsTemplates_Components_MontageId",
+                        column: x => x.MontageId,
                         principalTable: "Components",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DeviceComponentsTemplates_Devices_DeviceId",
-                        column: x => x.DeviceId,
-                        principalTable: "Devices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -336,11 +360,12 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DesignId = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    DesignId = table.Column<int>(type: "int", nullable: false),
                     DeviceId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ComponentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -350,13 +375,7 @@ namespace ProductionManagementSystem.DAL.Migrations
                         column: x => x.DesignId,
                         principalTable: "Designs",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DeviceDesignTemplates_Devices_DeviceId",
-                        column: x => x.DeviceId,
-                        principalTable: "Devices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -399,16 +418,17 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    TaskId = table.Column<int>(type: "int", nullable: true),
-                    ComponentId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "varchar(255)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    DateAdded = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    DesiredDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    MontageId = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    StatusSupply = table.Column<int>(type: "int", nullable: false)
+                    DateAdded = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DesiredDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    StatusSupply = table.Column<int>(type: "int", nullable: false),
+                    TaskId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ComponentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -420,11 +440,11 @@ namespace ProductionManagementSystem.DAL.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ComponentsSupplyRequests_Components_ComponentId",
-                        column: x => x.ComponentId,
+                        name: "FK_ComponentsSupplyRequests_Components_MontageId",
+                        column: x => x.MontageId,
                         principalTable: "Components",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ComponentsSupplyRequests_Tasks_TaskId",
                         column: x => x.TaskId,
@@ -440,16 +460,17 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    TaskId = table.Column<int>(type: "int", nullable: true),
-                    DesignId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "varchar(255)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    DateAdded = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    DesiredDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DesignId = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    StatusSupply = table.Column<int>(type: "int", nullable: false)
+                    DateAdded = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DesiredDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    StatusSupply = table.Column<int>(type: "int", nullable: false),
+                    TaskId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ComponentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -465,7 +486,7 @@ namespace ProductionManagementSystem.DAL.Migrations
                         column: x => x.DesignId,
                         principalTable: "Designs",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DesignsSupplyRequests_Tasks_TaskId",
                         column: x => x.TaskId,
@@ -481,19 +502,20 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    MontageId = table.Column<int>(type: "int", nullable: true),
+                    Obtained = table.Column<int>(type: "int", nullable: false),
                     TaskId = table.Column<int>(type: "int", nullable: false),
-                    ComponentId = table.Column<int>(type: "int", nullable: false),
-                    Obtained = table.Column<int>(type: "int", nullable: false)
+                    ComponentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ObtainedComponents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ObtainedComponents_Components_ComponentId",
-                        column: x => x.ComponentId,
+                        name: "FK_ObtainedComponents_Components_MontageId",
+                        column: x => x.MontageId,
                         principalTable: "Components",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ObtainedComponents_Tasks_TaskId",
                         column: x => x.TaskId,
@@ -509,9 +531,10 @@ namespace ProductionManagementSystem.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DesignId = table.Column<int>(type: "int", nullable: true),
+                    Obtained = table.Column<int>(type: "int", nullable: false),
                     TaskId = table.Column<int>(type: "int", nullable: false),
-                    DesignId = table.Column<int>(type: "int", nullable: false),
-                    Obtained = table.Column<int>(type: "int", nullable: false)
+                    ComponentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -521,7 +544,7 @@ namespace ProductionManagementSystem.DAL.Migrations
                         column: x => x.DesignId,
                         principalTable: "Designs",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ObtainedDesigns_Tasks_TaskId",
                         column: x => x.TaskId,
@@ -569,9 +592,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ComponentsSupplyRequests_ComponentId",
+                name: "IX_ComponentsSupplyRequests_MontageId",
                 table: "ComponentsSupplyRequests",
-                column: "ComponentId");
+                column: "MontageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ComponentsSupplyRequests_TaskId",
@@ -599,14 +622,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceComponentsTemplates_ComponentId",
+                name: "IX_DeviceComponentsTemplates_MontageId",
                 table: "DeviceComponentsTemplates",
-                column: "ComponentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DeviceComponentsTemplates_DeviceId",
-                table: "DeviceComponentsTemplates",
-                column: "DeviceId");
+                column: "MontageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceDesignTemplates_DesignId",
@@ -614,14 +632,14 @@ namespace ProductionManagementSystem.DAL.Migrations
                 column: "DesignId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceDesignTemplates_DeviceId",
-                table: "DeviceDesignTemplates",
-                column: "DeviceId");
+                name: "IX_Logs_UserId",
+                table: "Logs",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ObtainedComponents_ComponentId",
+                name: "IX_ObtainedComponents_MontageId",
                 table: "ObtainedComponents",
-                column: "ComponentId");
+                column: "MontageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ObtainedComponents_TaskId",
@@ -693,6 +711,9 @@ namespace ProductionManagementSystem.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "DeviceDesignTemplates");
+
+            migrationBuilder.DropTable(
+                name: "ElementDifferences");
 
             migrationBuilder.DropTable(
                 name: "Logs");

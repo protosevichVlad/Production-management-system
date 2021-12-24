@@ -16,6 +16,14 @@
 
     <ItemGroup>
       <Folder Include="Data" />
+      <Folder Include="Data\Migrations" />
+      <Folder Include="Infrastructure\Helpers" />
+      <Folder Include="Models\Charts" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Infrastructure\Helpers\DateHelper.cs" />
+      <Compile Remove="Models\Charts\StackedBarChart.cs" />
     </ItemGroup>
 
 </Project>

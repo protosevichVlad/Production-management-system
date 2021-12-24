@@ -24,7 +24,6 @@ namespace ProductionManagementSystem.Core.Models.Orders
         [Display(Name = "Описание")]
         public string Description { get; set; }
         
-        [NotMapped]
         public List<Task> Tasks { get; set; }
         
         [Display(Name="Статус")]

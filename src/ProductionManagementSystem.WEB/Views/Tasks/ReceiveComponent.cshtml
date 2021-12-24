@@ -24,7 +24,7 @@
                 continue;
             }
             
-            <tr @if (obtainedComp.Obtained + comp.Component.Quantity < comp.Quantity) 
+            <tr @if (obtainedComp.Obtained + comp.Montage.Quantity < comp.Quantity) 
                 { 
                     @: class="table-danger"
                 } 
@@ -32,13 +32,13 @@
                 { 
                     @: class="table-success"
                 }> 
-                <td>@comp.Component.ToString()</td>
+                <td>@comp.Montage.ToString()</td>
                 <td>@comp.Quantity</td>
-                <td>@comp.Component.Quantity</td>
+                <td>@comp.Montage.Quantity</td>
                 <td>@obtainedComp.Obtained</td>
-                <td><input type="number" name="componentObt" autocomplete="off" required min="-@obtainedComp.Obtained" max="@comp.Component.Quantity"  style="width:100px;" value="0"></td>
+                <td><input type="number" name="componentObt" autocomplete="off" required min="-@obtainedComp.Obtained" max="@comp.Montage.Quantity"  style="width:100px;" value="0"></td>
             </tr>
-            <input type="number" name="componentIds" hidden value="@comp.Component.Id"/>
+            <input type="number" name="componentIds" hidden value="@comp.Montage.Id"/>
         }
     </table>
     <button class="btn btn-primary">Получить</button>

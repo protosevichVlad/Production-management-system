@@ -26,11 +26,9 @@ namespace ProductionManagementSystem.Core.Models.Tasks
         public string Description { get; set; }
         
         [Display(Name = "Прибор")]
-        [NotMapped]
         public Device Device { get; set; }
         public int DeviceId { get; set; }
 
-        [NotMapped]
         public Order Order { get; set; }
         public int? OrderId { get; set; }
 

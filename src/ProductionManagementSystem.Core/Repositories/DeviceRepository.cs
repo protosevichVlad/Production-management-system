@@ -98,9 +98,9 @@ namespace ProductionManagementSystem.Core.Repositories
             device.Designs = await _db.DesignInDevices.Where(d => d.DeviceId == device.Id).ToListAsync();
             device.Montages = await _db.MontageInDevices.Where(m => m.DeviceId == device.Id).ToListAsync();
             foreach (var montage in device.Montages)
-                montage.Component = await _db.Montages.FindAsync(montage.ComponentId);
+                montage.Montage = await _db.Montages.FindAsync(montage.ComponentId);
             foreach (var design in device.Designs)
-                design.Component = await _db.Designs.FindAsync(design.ComponentId);
+                design.Design = await _db.Designs.FindAsync(design.ComponentId);
         }
     }
 }

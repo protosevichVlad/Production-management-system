@@ -51,12 +51,12 @@
             </thead>
             @foreach (var comp in Model.Device.Montages)
             {
-                var obtainedComp = Model.ObtainedMontages.FirstOrDefault(d => comp.Component.Id == d.ComponentId);
+                var obtainedComp = Model.ObtainedMontages.FirstOrDefault(d => comp.Montage.Id == d.ComponentId);
                 if (obtainedComp == null)
                 {
                     continue;
                 }
-                <tr @if (obtainedComp.Obtained + comp.Component.Quantity < comp.Quantity) 
+                <tr @if (obtainedComp.Obtained + comp.Montage.Quantity < comp.Quantity) 
                     { 
                         @: class="table-danger"
                     } 
@@ -65,14 +65,14 @@
                         @: class="table-success"
                     } 
                 >
-                    <td><a asp-controller="Montages" asp-action="Details" asp-route-id="@comp.Component.Id">@comp.Component.ToString()</a></td>
+                    <td><a asp-controller="Montages" asp-action="Details" asp-route-id="@comp.Montage.Id">@comp.Montage.ToString()</a></td>
                     <td>@comp.Quantity</td>
-                    <td>@comp.Component.Quantity</td>
+                    <td>@comp.Montage.Quantity</td>
                     <td>@obtainedComp.Obtained</td>
                     @if (User.IsInRole(RoleEnum.OrderPicker))
                     {
                         <td>
-                            <a class="btn btn-light btn-sm" asp-controller="MontagesSupplyRequest" asp-action="Create" asp-route-componentId="@comp.Component.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
+                            <a class="btn btn-light btn-sm" asp-controller="MontagesSupplyRequest" asp-action="Create" asp-route-componentId="@comp.Montage.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
                         </td>
                     }
                 </tr>
@@ -103,7 +103,7 @@
                 {
                     continue;
                 }
-                <tr @if (obtainedDes.Obtained + des.Component.Quantity < des.Quantity) 
+                <tr @if (obtainedDes.Obtained + des.Design.Quantity < des.Quantity) 
                     { 
                         @: class="table-danger"
                     } 
@@ -112,14 +112,14 @@
                         @: class="table-success"
                     } 
                 >
-                    <td><a asp-controller="Designs" asp-action="Details" asp-route-id="@des.Component.Id">@des.Component.ToString()</a></td>
+                    <td><a asp-controller="Designs" asp-action="Details" asp-route-id="@des.Design.Id">@des.Design.ToString()</a></td>
                     <td>@des.Quantity</td>
-                    <td>@des.Component.Quantity</td>
+                    <td>@des.Design.Quantity</td>
                     <td>@obtainedDes.Obtained</td>
                     @if (User.IsInRole(RoleEnum.OrderPicker))
                     {
                         <td>
-                            <a class="btn btn-light btn-sm" asp-controller="DesignsSupplyRequest" asp-action="Create" asp-route-designId="@des.Component.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
+                            <a class="btn btn-light btn-sm" asp-controller="DesignsSupplyRequest" asp-action="Create" asp-route-designId="@des.Design.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
                         </td>
                     }
                 </tr>
