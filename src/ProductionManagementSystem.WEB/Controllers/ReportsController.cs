@@ -49,6 +49,20 @@ namespace ProductionManagementSystem.WEB.Controllers
                 BarChart = ChartService.ElementDiffToBarChart(await  _reportService.GroupByDateAsync(montageMonthReport, "dd.MM"))
             });
         }
+        
+        public async Task<IActionResult> MontageYearReport(int? year, int? montageId)
+        {
+            if (!year.HasValue) year = DateTime.Now.Year;
+
+            if (year < 2020) year = DateTime.Now.Year;
+            
+            var montageMonthReport = await _reportService.GetMontageYearReportAsync(year.Value, montageId);
+            return View(new YearReport()
+            {
+                Years = GetYears(year),
+                BarChart = ChartService.ElementDiffToBarChart(await  _reportService.GroupByDateAsync(montageMonthReport, "MMMM"))
+            });
+        }
 
         private SelectList GetMonths(int? selected=null)
         {
