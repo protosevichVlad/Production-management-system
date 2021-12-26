@@ -24,12 +24,14 @@ namespace ProductionManagementSystem.WEB.Controllers
         private readonly IReportService _reportService;
         private readonly IMontageService _montageService;
         private readonly IDesignService _designService;
+        private readonly IDeviceService _deviceService;
 
-        public ReportsController(IReportService reportService, IMontageService montageService, IDesignService designService)
+        public ReportsController(IReportService reportService, IMontageService montageService, IDesignService designService, IDeviceService deviceService)
         {
             _reportService = reportService;
             _montageService = montageService;
             _designService = designService;
+            _deviceService = deviceService;
         }
 
         public IActionResult Index()
@@ -94,6 +96,35 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             return View("PeriodReport", await GetPeriodReport(ElementType.Design, from.Value, to.Value, entityId, groupBy));
         }
+        
+        public async Task<IActionResult> DeviceMonthReport(int? month, int? year, int entityId=-1)
+        {
+            if (!month.HasValue) month = DateTime.Now.Month;
+            if (!year.HasValue) year = DateTime.Now.Year;
+
+            if (month < 1 || month > 12) month = DateTime.Now.Month;
+            if (year < 2020) year = DateTime.Now.Year;
+            
+            return View("MonthReport", await GetMonthReport(ElementType.Device, year.Value, month.Value, entityId));
+        }
+        
+        public async Task<IActionResult> DeviceYearReport(int? year, int entityId=-1)
+        {
+            if (!year.HasValue) year = DateTime.Now.Year;
+
+            if (year < 2020) year = DateTime.Now.Year;
+            
+            return View("YearReport", await GetYearReport(ElementType.Device, year.Value, entityId));
+        }
+        
+        public async Task<IActionResult> DevicePeriodReport(DateTime? from, DateTime? to, int entityId=-1, string groupBy="dd.MM")
+        {
+            if (!from.HasValue) from = DateTime.Now.AddMonths(-1);
+            if (!to.HasValue) to = DateTime.Now;
+            if (from > to) return View("PeriodReport");
+
+            return View("PeriodReport", await GetPeriodReport(ElementType.Device, from.Value, to.Value, entityId, groupBy));
+        }
 
         private async Task<MonthReport> GetMonthReport(ElementType type, int year, int month, int entityId)
         {
@@ -143,6 +174,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             {
                 ElementType.Montage => await _montageService.GetListForSelectAsync(),
                 ElementType.Design => await _designService.GetListForSelectAsync(),
+                ElementType.Device => await _deviceService.GetListForSelectAsync(),
                 _ => new List<KeyValuePair<int, string>>(),
             });
             

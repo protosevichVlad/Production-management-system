@@ -17,6 +17,7 @@ namespace ProductionManagementSystem.Core.Services
         Task AddDeviceAsync(int? id);
         Task ReceiveDeviceAsync(int? id);
         Task DeleteByIdAsync(int id);
+        Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync();
         Task<IEnumerable<Montage>> GetMontagesFromDeviceByDeviceId(int deviceId);
         Task<IEnumerable<Design>> GetDesignsFromDeviceByDeviceId(int deviceId);
     }
@@ -131,6 +132,11 @@ namespace ProductionManagementSystem.Core.Services
             }
             
             await _db.SaveAsync();
+        }
+        
+        public async Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync()
+        {
+            return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString()));
         }
         
         protected override async Task CreateLogForCreatingAsync(Device item)
