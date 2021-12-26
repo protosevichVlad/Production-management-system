@@ -70,7 +70,6 @@ namespace ProductionManagementSystem.Core.Repositories
                     m.TaskId = item.Id;
                     return m;
                 }));
-            
         }
 
         private async System.Threading.Tasks.Task InitTaskAsync(Task task)
@@ -83,6 +82,9 @@ namespace ProductionManagementSystem.Core.Repositories
                 obtainedDesign.Design = await _db.Designs.FindAsync(obtainedDesign.ComponentId);
 
             task.Device = await _db.Devices.FindAsync(task.DeviceId);
+            if (task.Device == null)
+                return;
+            
             task.Device.Designs = await _db.DesignInDevices.Where(d => d.DeviceId == task.Device.Id).ToListAsync();
             task.Device.Montages = await _db.MontageInDevices.Where(m => m.DeviceId == task.Device.Id).ToListAsync();
             foreach (var montage in task.Device.Montages)
