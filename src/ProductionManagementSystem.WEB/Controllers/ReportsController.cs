@@ -67,11 +67,19 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             if (year < 2020) year = DateTime.Now.Year;
             
-            var montageMonthReport = await _reportService.GetMontageYearReportAsync(year.Value, entityId);
+            var montageYearReport = await _reportService.GetMontageYearReportAsync(year.Value, entityId);
+            var chart = ChartService.ElementDiffToBarChart(
+                await _reportService.GroupByDateAsync(montageYearReport, "MMMM"));
+            var entities = new List<KeyValuePair<int, string>>() {new KeyValuePair<int, string>(-1, "Все")};
+            entities.AddRange(await _montageService.GetListForSelectAsync());
+            var selectedList = new SelectList(entities, "Key", "Value", entityId);
+            chart.Label = entities.Find(x => x.Key == entityId).Value;
+            
             return View(new YearReport()
             {
                 Years = GetYears(year),
-                BarChart = ChartService.ElementDiffToBarChart(await  _reportService.GroupByDateAsync(montageMonthReport, "MMMM"))
+                Entities = selectedList,
+                BarChart = chart,
             });
         }
 

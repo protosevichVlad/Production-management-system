@@ -6,6 +6,7 @@ namespace ProductionManagementSystem.WEB.Models.Reports
     public class YearReport
     {
         public SelectList Years { get; set; }
+        public SelectList Entities { get; set; }
         public BarChartData BarChart { get; set; }
     }
 }
