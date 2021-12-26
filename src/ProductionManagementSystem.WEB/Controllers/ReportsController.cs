@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services;
-using ProductionManagementSystem.WEB.Models.Charts;
 using ProductionManagementSystem.WEB.Models.Reports;
 using ProductionManagementSystem.WEB.Services;
 
@@ -26,11 +23,13 @@ namespace ProductionManagementSystem.WEB.Controllers
     {
         private readonly IReportService _reportService;
         private readonly IMontageService _montageService;
+        private readonly IDesignService _designService;
 
-        public ReportsController(IReportService reportService, IMontageService montageService)
+        public ReportsController(IReportService reportService, IMontageService montageService, IDesignService designService)
         {
             _reportService = reportService;
             _montageService = montageService;
+            _designService = designService;
         }
 
         public IActionResult Index()
@@ -46,7 +45,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             if (month < 1 || month > 12) month = DateTime.Now.Month;
             if (year < 2020) year = DateTime.Now.Year;
             
-            return View(await GetMonthReport(ElementType.Montage, year.Value, month.Value, entityId));
+            return View("MonthReport", await GetMonthReport(ElementType.Montage, year.Value, month.Value, entityId));
         }
         
         public async Task<IActionResult> MontageYearReport(int? year, int entityId=-1)
@@ -55,16 +54,45 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             if (year < 2020) year = DateTime.Now.Year;
             
-            return View(await GetYearReport(ElementType.Montage, year.Value, entityId));
+            return View("YearReport", await GetYearReport(ElementType.Montage, year.Value, entityId));
         }
         
         public async  Task<IActionResult> MontagePeriodReport(DateTime? from, DateTime? to, int entityId=-1, string groupBy="dd.MM")
         {
             if (!from.HasValue) from = DateTime.Now.AddMonths(-1);
             if (!to.HasValue) to = DateTime.Now;
-            if (from > to) return View();
+            if (from > to) return View("PeriodReport");
 
-            return View(await GetPeriodReport(ElementType.Montage, from.Value, to.Value, entityId, groupBy));
+            return View("PeriodReport", await GetPeriodReport(ElementType.Montage, from.Value, to.Value, entityId, groupBy));
+        }
+        
+        public async Task<IActionResult> DesignMonthReport(int? month, int? year, int entityId=-1)
+        {
+            if (!month.HasValue) month = DateTime.Now.Month;
+            if (!year.HasValue) year = DateTime.Now.Year;
+
+            if (month < 1 || month > 12) month = DateTime.Now.Month;
+            if (year < 2020) year = DateTime.Now.Year;
+            
+            return View("MonthReport", await GetMonthReport(ElementType.Design, year.Value, month.Value, entityId));
+        }
+        
+        public async Task<IActionResult> DesignYearReport(int? year, int entityId=-1)
+        {
+            if (!year.HasValue) year = DateTime.Now.Year;
+
+            if (year < 2020) year = DateTime.Now.Year;
+            
+            return View("YearReport", await GetYearReport(ElementType.Design, year.Value, entityId));
+        }
+        
+        public async Task<IActionResult> DesignPeriodReport(DateTime? from, DateTime? to, int entityId=-1, string groupBy="dd.MM")
+        {
+            if (!from.HasValue) from = DateTime.Now.AddMonths(-1);
+            if (!to.HasValue) to = DateTime.Now;
+            if (from > to) return View("PeriodReport");
+
+            return View("PeriodReport", await GetPeriodReport(ElementType.Design, from.Value, to.Value, entityId, groupBy));
         }
 
         private async Task<MonthReport> GetMonthReport(ElementType type, int year, int month, int entityId)
@@ -105,11 +133,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         private async Task<BaseReport> GetBaseReport(ElementType type, DateTime from, DateTime to, int entityId, string groupBy)
         {
-            var periodReport = type switch
-            {
-                ElementType.Montage => await _reportService.GetMontagePeriodReportAsync(from, to, entityId),
-                _ => new List<ElementDifference>(),
-            };
+            var periodReport = await _reportService.GetPeriodReportAsync(type, from, to, entityId);
                 
             var chart = ChartService.ElementDiffToBarChart(
                 await _reportService.GroupByDateAsync(periodReport, groupBy));
@@ -118,6 +142,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             entities.AddRange(type switch
             {
                 ElementType.Montage => await _montageService.GetListForSelectAsync(),
+                ElementType.Design => await _designService.GetListForSelectAsync(),
                 _ => new List<KeyValuePair<int, string>>(),
             });
             

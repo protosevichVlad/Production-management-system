@@ -15,6 +15,7 @@ namespace ProductionManagementSystem.Core.Services
         Task<IEnumerable<string>> GetTypesAsync();
         Task IncreaseQuantityOfDesignAsync(int id, int quantity);
         Task DecreaseQuantityOfDesignAsync(int id, int quantity);
+        Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync();
         Task DeleteByIdAsync(int id);
     }
 
@@ -74,7 +75,12 @@ namespace ProductionManagementSystem.Core.Services
             
             await _db.SaveAsync();
         }
-        
+
+        public async Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync()
+        {
+            return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString()));
+        }
+
         public async Task DecreaseQuantityOfDesignAsync(int id, int quantity)
         {
             await IncreaseQuantityOfDesignAsync(id, -quantity);

@@ -13,6 +13,7 @@ namespace ProductionManagementSystem.Core.Services
         Task<List<ElementDifference>> GetMontageMonthReportAsync(int year, int month, int montageId);
         Task<List<ElementDifference>> GetMontageYearReportAsync(int year, int montageId);
         Task<List<ElementDifference>> GetMontagePeriodReportAsync(DateTime from, DateTime to, int montageId);
+        Task<List<ElementDifference>> GetPeriodReportAsync(ElementType type, DateTime from, DateTime to, int montageId);
         Task<List<ElementDifference>> GroupByDateAsync(List<ElementDifference> elementDifferences, string dateFormat);
     }
     
@@ -44,6 +45,15 @@ namespace ProductionManagementSystem.Core.Services
         {
             var result =
                 await _db.ElementDifferenceRepository.GetByPeriodGroupByDayAsync(ElementType.Montage, from, to, montageId);
+            result.AddRange(GenerateElementDifferences(from, to));
+            return result;
+        }
+
+        public async Task<List<ElementDifference>> GetPeriodReportAsync(ElementType type, DateTime from, DateTime to,
+            int elementId)
+        {
+            var result =
+                await _db.ElementDifferenceRepository.GetByPeriodGroupByDayAsync(type, from, to, elementId);
             result.AddRange(GenerateElementDifferences(from, to));
             return result;
         }

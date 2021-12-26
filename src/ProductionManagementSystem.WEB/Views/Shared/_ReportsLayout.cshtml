@@ -6,10 +6,10 @@
 <aside class="bd-sidebar" style="width: 200px; margin: 10px">
     <ul class="list-unstyled mb-0 py-3 pt-md-1">
       <li class="mb-1">
-        <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDesign" aria-expanded="false" aria-controls="collapseDesign">
+        <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMontage" aria-expanded="false" aria-controls="collapseMontage">
            >> Отчёты по конструктиву
         </button>
-        <div class="collapse" id="collapseDesign">
+        <div class="collapse" id="collapseMontage">
             <ul>
                 <li><a asp-controller="Reports" asp-action="MontageYearReport">Отчёты за год</a></li>
                 <li><a asp-controller="Reports" asp-action="MontageMonthReport">Отчёты за месяц</a></li>
@@ -17,6 +17,18 @@
             </ul>
         </div>
       </li>
+      <li class="mb-1">
+          <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDesign" aria-expanded="false" aria-controls="collapseDesign">
+             >> Отчёты по монтажу
+          </button>
+          <div class="collapse" id="collapseDesign">
+              <ul>
+                  <li><a asp-controller="Reports" asp-action="DesignYearReport">Отчёты за год</a></li>
+                  <li><a asp-controller="Reports" asp-action="DesignMonthReport">Отчёты за месяц</a></li>
+                  <li><a asp-controller="Reports" asp-action="DesignPeriodReport">Отчёты за период</a></li>
+              </ul>
+          </div>
+        </li>
     </ul>
 </aside>
 <main role="main" class="pb-3" style="width:calc(100% - 250px)">
