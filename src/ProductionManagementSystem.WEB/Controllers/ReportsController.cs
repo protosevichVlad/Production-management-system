@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ProductionManagementSystem.Core.Models;
+using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.WEB.Models.Charts;
@@ -44,21 +46,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             if (month < 1 || month > 12) month = DateTime.Now.Month;
             if (year < 2020) year = DateTime.Now.Year;
             
-            var montageMonthReport = await _reportService.GetMontageMonthReportAsync(year.Value, month.Value, entityId);
-            var chart = ChartService.ElementDiffToBarChart(
-                await _reportService.GroupByDateAsync(montageMonthReport, "dd.MM"));
-            var entities = new List<KeyValuePair<int, string>>() {new KeyValuePair<int, string>(-1, "Все")};
-            entities.AddRange(await _montageService.GetListForSelectAsync());
-            var selectedList = new SelectList(entities, "Key", "Value", entityId);
-            chart.Label = entities.Find(x => x.Key == entityId).Value;
-            
-            return View(new MonthReport()
-            {
-                Months = GetMonths(month),
-                Years = GetYears(year),
-                Entities = selectedList,
-                BarChart = chart
-            });
+            return View(await GetMonthReport(ElementType.Montage, year.Value, month.Value, entityId));
         }
         
         public async Task<IActionResult> MontageYearReport(int? year, int entityId=-1)
@@ -67,20 +55,80 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             if (year < 2020) year = DateTime.Now.Year;
             
-            var montageYearReport = await _reportService.GetMontageYearReportAsync(year.Value, entityId);
+            return View(await GetYearReport(ElementType.Montage, year.Value, entityId));
+        }
+        
+        public async  Task<IActionResult> MontagePeriodReport(DateTime? from, DateTime? to, int entityId=-1, string groupBy="dd.MM")
+        {
+            if (!from.HasValue) from = DateTime.Now.AddMonths(-1);
+            if (!to.HasValue) to = DateTime.Now;
+            if (from > to) return View();
+
+            return View(await GetPeriodReport(ElementType.Montage, from.Value, to.Value, entityId, groupBy));
+        }
+
+        private async Task<MonthReport> GetMonthReport(ElementType type, int year, int month, int entityId)
+        {
+            var report = await GetBaseReport(type, new DateTime(year, month, 1),
+                new DateTime(year, month, 1).AddMonths(1).AddSeconds(-1), entityId, "dd.MM");
+            MonthReport monthReport = new MonthReport();
+            monthReport.Entities = report.Entities;
+            monthReport.BarChart = report.BarChart;
+            monthReport.Years = GetYears(year);
+            monthReport.Months = GetMonths(month);
+            return monthReport;
+        }
+        
+        private async Task<YearReport> GetYearReport(ElementType type, int year, int entityId)
+        {
+            var report = await GetBaseReport(type, new DateTime(year, 1, 1),
+                new DateTime(year, 1, 1).AddYears(1).AddSeconds(-1), entityId, "MMMM");
+            YearReport yearReport = new YearReport();
+            yearReport.Entities = report.Entities;
+            yearReport.BarChart = report.BarChart;
+            yearReport.Years = GetYears(year);
+            return yearReport;
+        }
+        
+        private async Task<PeriodReport> GetPeriodReport(ElementType type, DateTime from, DateTime to, int entityId,
+            string groupBy)
+        {
+            var report = await GetBaseReport(type, from, to, entityId, groupBy);
+            PeriodReport periodReport = new PeriodReport();
+            periodReport.Entities = report.Entities;
+            periodReport.BarChart = report.BarChart;
+            periodReport.GroupBy = GetListOfGroup(groupBy);
+            periodReport.From = from;
+            periodReport.To = from;
+            return periodReport;
+        }
+        
+        private async Task<BaseReport> GetBaseReport(ElementType type, DateTime from, DateTime to, int entityId, string groupBy)
+        {
+            var periodReport = type switch
+            {
+                ElementType.Montage => await _reportService.GetMontagePeriodReportAsync(from, to, entityId),
+                _ => new List<ElementDifference>(),
+            };
+                
             var chart = ChartService.ElementDiffToBarChart(
-                await _reportService.GroupByDateAsync(montageYearReport, "MMMM"));
+                await _reportService.GroupByDateAsync(periodReport, groupBy));
+            
             var entities = new List<KeyValuePair<int, string>>() {new KeyValuePair<int, string>(-1, "Все")};
-            entities.AddRange(await _montageService.GetListForSelectAsync());
+            entities.AddRange(type switch
+            {
+                ElementType.Montage => await _montageService.GetListForSelectAsync(),
+                _ => new List<KeyValuePair<int, string>>(),
+            });
+            
             var selectedList = new SelectList(entities, "Key", "Value", entityId);
             chart.Label = entities.Find(x => x.Key == entityId).Value;
-            
-            return View(new YearReport()
+
+            return new BaseReport()
             {
-                Years = GetYears(year),
                 Entities = selectedList,
                 BarChart = chart,
-            });
+            };
         }
 
         private SelectList GetMonths(int? selected=null)
@@ -105,6 +153,15 @@ namespace ProductionManagementSystem.WEB.Controllers
                 result.Add(i);
             }
             return new SelectList(result, selected);
+        }
+
+        private SelectList GetListOfGroup(string selected)
+        {
+            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+            result.Add(new KeyValuePair<string, string>("dd.MM", "По дням"));
+            result.Add(new KeyValuePair<string, string>("MM.yyyy", "По месяцам"));
+            result.Add(new KeyValuePair<string, string>("yyyy", "По годам"));
+            return new SelectList(result, "Key", "Value", selected);
         }
     }
 }

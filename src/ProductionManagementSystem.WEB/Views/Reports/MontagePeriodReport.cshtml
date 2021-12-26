@@ -1,0 +1,17 @@
+﻿@model ProductionManagementSystem.WEB.Models.Reports.PeriodReport
+
+@{
+    Layout = "_ReportsLayout";
+}
+
+<form>
+    <div class="input-group mb-3" style="width: 1100px">
+        <input asp-for="From" class="form-control" style="width: 200px"/>
+        <input asp-for="To" class="form-control" style="width: 200px"/>
+        <select class="form-select" name="groupBy" asp-items="Model.GroupBy" style="width: 300px"></select>
+        <select class="form-select" name="entityId" asp-items="Model.Entities" style="width: 300px"></select>
+        <button class="btn btn-outline-secondary" type="submit">Показать</button>
+    </div>
+</form>
+
+<partial name="Partail/Charts/BarChart" model="Model.BarChart"/>
