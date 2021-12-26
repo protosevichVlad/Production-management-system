@@ -10,9 +10,9 @@ namespace ProductionManagementSystem.Core.Services
 {
     public interface IReportService
     {
-        Task<List<ElementDifference>> GetMontageMonthReportAsync(int year, int month, int? montageId=null);
-        Task<List<ElementDifference>> GetMontageYearReportAsync(int year, int? montageId);
-        Task<List<ElementDifference>> GetMontagePeriodReportAsync(DateTime from, DateTime to, int? montageId);
+        Task<List<ElementDifference>> GetMontageMonthReportAsync(int year, int month, int montageId);
+        Task<List<ElementDifference>> GetMontageYearReportAsync(int year, int montageId);
+        Task<List<ElementDifference>> GetMontagePeriodReportAsync(DateTime from, DateTime to, int montageId);
         Task<List<ElementDifference>> GroupByDateAsync(List<ElementDifference> elementDifferences, string dateFormat);
     }
     
@@ -26,24 +26,24 @@ namespace ProductionManagementSystem.Core.Services
         }
 
 
-        public async Task<List<ElementDifference>> GetMontageMonthReportAsync(int year, int month, int? montageId=null)
+        public async Task<List<ElementDifference>> GetMontageMonthReportAsync(int year, int month, int montageId=-1)
         {
             DateTime from = new DateTime(year, month, 1);
             DateTime to = new DateTime(year, month, 1).AddMonths(1).AddSeconds(-1);
             return await GetMontagePeriodReportAsync(from, to, montageId);
         }
         
-        public async Task<List<ElementDifference>> GetMontageYearReportAsync(int year, int? montageId=null)
+        public async Task<List<ElementDifference>> GetMontageYearReportAsync(int year, int montageId=-1)
         {
             DateTime from = new DateTime(year, 1, 1);
             DateTime to = new DateTime(year + 1, 1, 1).AddSeconds(-1);
             return await GetMontagePeriodReportAsync(from, to, montageId);
         }
 
-        public async Task<List<ElementDifference>> GetMontagePeriodReportAsync(DateTime from, DateTime to, int? montageId=null)
+        public async Task<List<ElementDifference>> GetMontagePeriodReportAsync(DateTime from, DateTime to, int montageId=-1)
         {
             var result =
-                await _db.ElementDifferenceRepository.GetByPeriodGroupByDayAsync(ElementType.Montage, from, to);
+                await _db.ElementDifferenceRepository.GetByPeriodGroupByDayAsync(ElementType.Montage, from, to, montageId);
             result.AddRange(GenerateElementDifferences(from, to));
             return result;
         }

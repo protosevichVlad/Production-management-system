@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +23,12 @@ namespace ProductionManagementSystem.WEB.Controllers
     public class ReportsController : Controller
     {
         private readonly IReportService _reportService;
+        private readonly IMontageService _montageService;
 
-        public ReportsController(IReportService reportService)
+        public ReportsController(IReportService reportService, IMontageService montageService)
         {
             _reportService = reportService;
+            _montageService = montageService;
         }
 
         public IActionResult Index()
@@ -33,7 +36,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             return View();
         }
 
-        public async Task<IActionResult> MontageMonthReport(int? month, int? year, int? montageId)
+        public async Task<IActionResult> MontageMonthReport(int? month, int? year, int entityId=-1)
         {
             if (!month.HasValue) month = DateTime.Now.Month;
             if (!year.HasValue) year = DateTime.Now.Year;
@@ -41,22 +44,30 @@ namespace ProductionManagementSystem.WEB.Controllers
             if (month < 1 || month > 12) month = DateTime.Now.Month;
             if (year < 2020) year = DateTime.Now.Year;
             
-            var montageMonthReport = await _reportService.GetMontageMonthReportAsync(year.Value, month.Value, montageId);
+            var montageMonthReport = await _reportService.GetMontageMonthReportAsync(year.Value, month.Value, entityId);
+            var chart = ChartService.ElementDiffToBarChart(
+                await _reportService.GroupByDateAsync(montageMonthReport, "dd.MM"));
+            var entities = new List<KeyValuePair<int, string>>() {new KeyValuePair<int, string>(-1, "Все")};
+            entities.AddRange(await _montageService.GetListForSelectAsync());
+            var selectedList = new SelectList(entities, "Key", "Value", entityId);
+            chart.Label = entities.Find(x => x.Key == entityId).Value;
+            
             return View(new MonthReport()
             {
                 Months = GetMonths(month),
                 Years = GetYears(year),
-                BarChart = ChartService.ElementDiffToBarChart(await  _reportService.GroupByDateAsync(montageMonthReport, "dd.MM"))
+                Entities = selectedList,
+                BarChart = chart
             });
         }
         
-        public async Task<IActionResult> MontageYearReport(int? year, int? montageId)
+        public async Task<IActionResult> MontageYearReport(int? year, int entityId=-1)
         {
             if (!year.HasValue) year = DateTime.Now.Year;
 
             if (year < 2020) year = DateTime.Now.Year;
             
-            var montageMonthReport = await _reportService.GetMontageYearReportAsync(year.Value, montageId);
+            var montageMonthReport = await _reportService.GetMontageYearReportAsync(year.Value, entityId);
             return View(new YearReport()
             {
                 Years = GetYears(year),

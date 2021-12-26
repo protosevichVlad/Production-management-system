@@ -15,6 +15,7 @@ namespace ProductionManagementSystem.Core.Services
         Task<IEnumerable<string>> GetTypesAsync();
         Task IncreaseQuantityOfMontageAsync(int id, int quantity);
         Task DecreaseQuantityOfDesignAsync(int id, int quantity);
+        Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync();
         Task DeleteByIdAsync(int id);
     }
 
@@ -96,6 +97,12 @@ namespace ProductionManagementSystem.Core.Services
             errorMessage = String.Empty;
             return new Tuple<bool, string>(true, errorMessage);
         }
+
+        public async Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync()
+        {
+            return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString()));
+        }
+
 
         public async Task DeleteByIdAsync(int id)
         {

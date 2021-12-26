@@ -11,7 +11,9 @@
           data: {
               labels: @Html.Raw(@ArrayHelper.ToString(@Model.Labels)),
               datasets: [{
-                  label: '@Model.Label',
+                  label: '@Html.Raw(@Model.Label)',
+                  borderColor: 'rgb(130, 205, 255)',
+                  backgroundColor: 'rgba(130, 205, 255,0.5)',
                   data: @ArrayHelper.ToString(Model.Data),
               }]
           },

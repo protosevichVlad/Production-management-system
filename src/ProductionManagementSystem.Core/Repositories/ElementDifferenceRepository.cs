@@ -13,7 +13,7 @@ namespace ProductionManagementSystem.Core.Repositories
     {
         Task<List<ElementDifference>> GetByPeriodAsync(ElementType type, DateTime from, DateTime to);
         Task<List<ElementDifference>>  GetByPeriodGroupByMonthAsync(ElementType type, DateTime from, DateTime to);
-        Task<List<ElementDifference>>  GetByPeriodGroupByDayAsync(ElementType type, DateTime from, DateTime to);
+        Task<List<ElementDifference>>  GetByPeriodGroupByDayAsync(ElementType type, DateTime from, DateTime to, int elementId);
     }
     
     public class ElementDifferenceRepository : Repository<ElementDifference>, IElementDifferenceRepository
@@ -67,10 +67,10 @@ namespace ProductionManagementSystem.Core.Repositories
                 .ToList();
         }
 
-        public async Task<List<ElementDifference>> GetByPeriodGroupByDayAsync(ElementType type, DateTime from, DateTime to)
+        public async Task<List<ElementDifference>> GetByPeriodGroupByDayAsync(ElementType type, DateTime from, DateTime to, int elementId=-1)
         {
             return _dbSet
-                .Where(x => x.ElementType == type && x.DateTime <= to && x.DateTime >= from)
+                .Where(x => x.ElementType == type && x.DateTime <= to && x.DateTime >= from && (elementId == -1 || elementId == x.Id))
                 .GroupBy(x => new {x.DateTime.Month, x.DateTime.Year, x.DateTime.Day, x.ElementId})
                 .Select(x => new ElementDifference()
                 {
