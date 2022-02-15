@@ -6,17 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ProductionManagementSystem.Core.Models.Devices
 {
     [Table("Devices")]
-    public class Device : BaseEntity
+    public class Device : CountingEntity
     {
-        [Display(Name = "Наименование")]
-        [Required]
-        public string Name { get; set; }
-        
-        [Display(Name = "Количество")]
-        [Range(0, Int32.MaxValue, ErrorMessage = "Количество должно быть больше 0")]
-        [Required]
-        public int Quantity { get; set; }
-        
         [Display(Name = "Описание")]
         public string Description { get; set; }
         

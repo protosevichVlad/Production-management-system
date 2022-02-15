@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductionManagementSystem.Core.Data.EF;
 
-namespace ProductionManagementSystem.DAL.Migrations
+namespace ProductionManagementSystem.Core.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20211029180242_RemaneTablesAndColumns")]
-    partial class RemaneTablesAndColumns
+    [Migration("20211224113641_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -157,6 +157,7 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("Quantity")
@@ -189,6 +190,7 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Nominal")
@@ -217,6 +219,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("DesignId")
+                        .HasColumnType("int");
+
                     b.Property<int>("DeviceId")
                         .HasColumnType("int");
 
@@ -224,6 +229,8 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DesignId");
 
                     b.ToTable("DeviceDesignTemplates");
                 });
@@ -238,6 +245,7 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("Quantity")
@@ -263,12 +271,40 @@ namespace ProductionManagementSystem.DAL.Migrations
                     b.Property<int>("DeviceId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MontageId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MontageId");
+
                     b.ToTable("DeviceComponentsTemplates");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.ElementsDifference.ElementDifference", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Difference")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ElementId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ElementType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ElementDifferences");
                 });
 
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.Logs.Log", b =>
@@ -305,9 +341,11 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Logs");
                 });
@@ -350,6 +388,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int?>("DesignId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DesiredDate")
                         .HasColumnType("datetime(6)");
 
@@ -363,9 +404,15 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DesignId");
+
+                    b.HasIndex("TaskId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("DesignsSupplyRequests");
                 });
@@ -388,6 +435,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                     b.Property<DateTime>("DesiredDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int?>("MontageId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -398,9 +448,15 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MontageId");
+
+                    b.HasIndex("TaskId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ComponentsSupplyRequests");
                 });
@@ -414,6 +470,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                     b.Property<int>("ComponentId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("DesignId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Obtained")
                         .HasColumnType("int");
 
@@ -421,6 +480,10 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DesignId");
+
+                    b.HasIndex("TaskId");
 
                     b.ToTable("ObtainedDesigns");
                 });
@@ -434,6 +497,9 @@ namespace ProductionManagementSystem.DAL.Migrations
                     b.Property<int>("ComponentId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MontageId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Obtained")
                         .HasColumnType("int");
 
@@ -441,6 +507,10 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MontageId");
+
+                    b.HasIndex("TaskId");
 
                     b.ToTable("ObtainedComponents");
                 });
@@ -473,6 +543,10 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DeviceId");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("Tasks");
                 });
@@ -596,6 +670,131 @@ namespace ProductionManagementSystem.DAL.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.Devices.DesignInDevice", b =>
+                {
+                    b.HasOne("ProductionManagementSystem.Core.Models.Components.Design", "Design")
+                        .WithMany()
+                        .HasForeignKey("DesignId");
+
+                    b.Navigation("Design");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.Devices.MontageInDevice", b =>
+                {
+                    b.HasOne("ProductionManagementSystem.Core.Models.Components.Montage", "Montage")
+                        .WithMany()
+                        .HasForeignKey("MontageId");
+
+                    b.Navigation("Montage");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.Logs.Log", b =>
+                {
+                    b.HasOne("ProductionManagementSystem.Core.Models.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.SupplyRequests.DesignSupplyRequest", b =>
+                {
+                    b.HasOne("ProductionManagementSystem.Core.Models.Components.Design", "Design")
+                        .WithMany()
+                        .HasForeignKey("DesignId");
+
+                    b.HasOne("ProductionManagementSystem.Core.Models.Tasks.Task", "Task")
+                        .WithMany()
+                        .HasForeignKey("TaskId");
+
+                    b.HasOne("ProductionManagementSystem.Core.Models.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Design");
+
+                    b.Navigation("Task");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.SupplyRequests.MontageSupplyRequest", b =>
+                {
+                    b.HasOne("ProductionManagementSystem.Core.Models.Components.Montage", "Montage")
+                        .WithMany()
+                        .HasForeignKey("MontageId");
+
+                    b.HasOne("ProductionManagementSystem.Core.Models.Tasks.Task", "Task")
+                        .WithMany()
+                        .HasForeignKey("TaskId");
+
+                    b.HasOne("ProductionManagementSystem.Core.Models.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Montage");
+
+                    b.Navigation("Task");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.Tasks.ObtainedDesign", b =>
+                {
+                    b.HasOne("ProductionManagementSystem.Core.Models.Components.Design", "Design")
+                        .WithMany()
+                        .HasForeignKey("DesignId");
+
+                    b.HasOne("ProductionManagementSystem.Core.Models.Tasks.Task", "Task")
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Design");
+
+                    b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.Tasks.ObtainedMontage", b =>
+                {
+                    b.HasOne("ProductionManagementSystem.Core.Models.Components.Montage", "Montage")
+                        .WithMany()
+                        .HasForeignKey("MontageId");
+
+                    b.HasOne("ProductionManagementSystem.Core.Models.Tasks.Task", "Task")
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Montage");
+
+                    b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.Tasks.Task", b =>
+                {
+                    b.HasOne("ProductionManagementSystem.Core.Models.Devices.Device", "Device")
+                        .WithMany()
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProductionManagementSystem.Core.Models.Orders.Order", "Order")
+                        .WithMany("Tasks")
+                        .HasForeignKey("OrderId");
+
+                    b.Navigation("Device");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.Orders.Order", b =>
+                {
+                    b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618
         }

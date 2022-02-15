@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Components;
 using ProductionManagementSystem.Core.Models.Devices;
+using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Repositories;
 
@@ -16,6 +17,7 @@ namespace ProductionManagementSystem.Core.Services
         Task AddDeviceAsync(int? id);
         Task ReceiveDeviceAsync(int? id);
         Task DeleteByIdAsync(int id);
+        Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync();
         Task<IEnumerable<Montage>> GetMontagesFromDeviceByDeviceId(int deviceId);
         Task<IEnumerable<Design>> GetDesignsFromDeviceByDeviceId(int deviceId);
     }
@@ -116,6 +118,9 @@ namespace ProductionManagementSystem.Core.Services
             var device = await _currentRepository.GetByIdAsync(id.Value);
             device.Quantity += quantity;
             await _currentRepository.UpdateAsync(device);
+            
+            await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()
+                {Difference = quantity, ElementId = device.Id, ElementType = ElementType.Design});
 
             if (quantity < 0)
             {
@@ -127,6 +132,11 @@ namespace ProductionManagementSystem.Core.Services
             }
             
             await _db.SaveAsync();
+        }
+        
+        public async Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync()
+        {
+            return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString()));
         }
         
         protected override async Task CreateLogForCreatingAsync(Device item)

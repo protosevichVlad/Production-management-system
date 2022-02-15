@@ -1,0 +1,45 @@
+﻿@using System.Web
+@model ProductionManagementSystem.WEB.Models.Charts.StackedBarChart
+<partial name="Partail/Charts/BaseChart" model="@("StackedBarChart")"/>
+<script type="text/javascript" charset="UTF-8">
+const data = {
+  labels: @Html.Raw(@Model.Labels),
+  datasets: [
+    @foreach(var dataset in Model.Datasets) 
+    {
+       <text>
+       {
+          label: '@Html.Raw(dataset.Label)',
+          data: @dataset.DataStringArray,
+          backgroundColor: '@dataset.Color',
+       },
+       </text>
+    }
+  ]
+};
+
+const config = {
+  type: 'bar',
+  data: data,
+  options: {
+    plugins: {
+      title: {
+        display: @((!String.IsNullOrWhiteSpace(Model.Title)).ToString().ToLower()),
+        text: '@Model.Title'
+      },
+    },
+    responsive: true,
+    scales: {
+      x: {
+        stacked: true,
+      },
+      y: {
+        stacked: true
+      }
+    }
+  }
+};
+
+const ctx = document.getElementById('StackedBarChart');
+const myChart = new Chart(ctx, config);
+</script>

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Core.Models.Components;
 using ProductionManagementSystem.Core.Models.Devices;
+using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Models.Orders;
 using ProductionManagementSystem.Core.Models.SupplyRequests;
@@ -27,6 +28,8 @@ namespace ProductionManagementSystem.Core.Data.EF
         
         public DbSet<MontageSupplyRequest> ComponentSupplyRequests { get; set; }
         public DbSet<DesignSupplyRequest> DesignSupplyRequests { get; set; }
+        
+        public DbSet<ElementDifference> ElementDifferences { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {

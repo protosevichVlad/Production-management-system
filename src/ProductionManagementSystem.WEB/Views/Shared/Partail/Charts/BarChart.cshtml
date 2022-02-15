@@ -1,0 +1,36 @@
+﻿@using ProductionManagementSystem.WEB.Helpers
+@model ProductionManagementSystem.WEB.Models.Charts.BarChartData
+
+@if (Model.Data.Count() != 0)
+{
+    <partial name="Partail/Charts/BaseChart" model="@("chart")"/>
+    <script>     
+      const ctx = document.getElementById('chart');
+      const myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: @Html.Raw(@ArrayHelper.ToString(@Model.Labels)),
+              datasets: [{
+                  label: '@Html.Raw(@Model.Label)',
+                  borderColor: 'rgb(130, 205, 255)',
+                  backgroundColor: 'rgba(130, 205, 255,0.5)',
+                  data: @ArrayHelper.ToString(Model.Data),
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              },
+              plugins: {
+                title: {
+                    display: @((!String.IsNullOrWhiteSpace(Model.Title)).ToString().ToLower()),
+                    text: '@Model.Title'
+                },
+              },
+          }
+      });
+    </script>
+}
+

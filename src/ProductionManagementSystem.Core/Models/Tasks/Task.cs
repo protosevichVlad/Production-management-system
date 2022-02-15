@@ -26,11 +26,9 @@ namespace ProductionManagementSystem.Core.Models.Tasks
         public string Description { get; set; }
         
         [Display(Name = "Прибор")]
-        [NotMapped]
         public Device Device { get; set; }
         public int DeviceId { get; set; }
 
-        [NotMapped]
         public Order Order { get; set; }
         public int? OrderId { get; set; }
 
@@ -38,6 +36,12 @@ namespace ProductionManagementSystem.Core.Models.Tasks
         public IEnumerable<ObtainedDesign> ObtainedDesigns { get; set; }
         [NotMapped]
         public IEnumerable<ObtainedMontage> ObtainedMontages { get; set; }
+
+        public Task()
+        {
+            this.StartTime = DateTime.Now;
+            this.Status = TaskStatusEnum.Equipment;
+        }
 
         public override string ToString()
         {

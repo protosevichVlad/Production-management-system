@@ -27,15 +27,6 @@ namespace ProductionManagementSystem.Core.Services
         {
             order.DateStart = DateTime.Now.Date;
             await base.CreateAsync(order);
-
-            if (order.Tasks != null)
-            {
-                foreach (var task in order.Tasks)
-                {
-                    task.OrderId = order.Id;
-                    await _taskService.CreateAsync(task);
-                }
-            }
         }
 
         public override async System.Threading.Tasks.Task DeleteAsync(Order order)

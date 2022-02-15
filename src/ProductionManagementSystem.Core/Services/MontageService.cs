@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Components;
+using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Repositories;
 
@@ -14,6 +15,7 @@ namespace ProductionManagementSystem.Core.Services
         Task<IEnumerable<string>> GetTypesAsync();
         Task IncreaseQuantityOfMontageAsync(int id, int quantity);
         Task DecreaseQuantityOfDesignAsync(int id, int quantity);
+        Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync();
         Task DeleteByIdAsync(int id);
     }
 
@@ -54,6 +56,9 @@ namespace ProductionManagementSystem.Core.Services
             montage.Quantity += quantity;
             await _currentRepository.UpdateAsync(montage);
 
+            await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()
+                {Difference = quantity, ElementId = montage.Id, ElementType = ElementType.Montage});
+            
             if (quantity < 0)
             {
                 await _db.LogRepository.CreateAsync(new Log {Message = $"Было получено {-quantity}ед. монтажа {montage}", MontageId = montage.Id});
@@ -92,6 +97,12 @@ namespace ProductionManagementSystem.Core.Services
             errorMessage = String.Empty;
             return new Tuple<bool, string>(true, errorMessage);
         }
+
+        public async Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync()
+        {
+            return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString()));
+        }
+
 
         public async Task DeleteByIdAsync(int id)
         {

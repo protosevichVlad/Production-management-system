@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Components;
+using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Repositories;
 
@@ -14,6 +15,7 @@ namespace ProductionManagementSystem.Core.Services
         Task<IEnumerable<string>> GetTypesAsync();
         Task IncreaseQuantityOfDesignAsync(int id, int quantity);
         Task DecreaseQuantityOfDesignAsync(int id, int quantity);
+        Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync();
         Task DeleteByIdAsync(int id);
     }
 
@@ -58,6 +60,9 @@ namespace ProductionManagementSystem.Core.Services
             var design = await _currentRepository.GetByIdAsync(id);
             design.Quantity += quantity;
             await _currentRepository.UpdateAsync(design);
+
+            await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()
+                {Difference = quantity, ElementId = design.Id, ElementType = ElementType.Design});
             
             if (quantity < 0)
             {
@@ -70,7 +75,12 @@ namespace ProductionManagementSystem.Core.Services
             
             await _db.SaveAsync();
         }
-        
+
+        public async Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync()
+        {
+            return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString()));
+        }
+
         public async Task DecreaseQuantityOfDesignAsync(int id, int quantity)
         {
             await IncreaseQuantityOfDesignAsync(id, -quantity);

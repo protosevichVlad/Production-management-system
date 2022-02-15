@@ -6,7 +6,6 @@ namespace ProductionManagementSystem.Core.Models.Tasks
     {
         public int Obtained { get; set; }
 
-        [NotMapped]
         public Task Task { get; set; }
         public int TaskId { get; set; }
 

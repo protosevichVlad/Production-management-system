@@ -87,6 +87,7 @@
 
   <ItemGroup>
     <Compile Remove="Новая папка\**" />
+    <Compile Remove="Models\Reports\ReportByElement.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -100,6 +101,10 @@
 
   <ItemGroup>
     <Content Remove="Новая папка\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages" />
   </ItemGroup>
 
 </Project>

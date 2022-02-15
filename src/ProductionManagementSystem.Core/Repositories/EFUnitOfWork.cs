@@ -18,6 +18,7 @@ namespace ProductionManagementSystem.Core.Repositories
         IDesignsSupplyRequestRepository DesignsSupplyRequestRepository { get; }
         IMontageSupplyRequestRepository MontageSupplyRequestRepository { get; }
         ILogRepository LogRepository { get; }
+        IElementDifferenceRepository ElementDifferenceRepository { get; }
 
         void Save();
         Task SaveAsync();
@@ -38,6 +39,7 @@ namespace ProductionManagementSystem.Core.Repositories
         private IObtainedMontageRepository _obtainedMontageRepository;
         private IMontageSupplyRequestRepository _montageSupplyRequestRepository;
         private IDesignsSupplyRequestRepository _designsSupplyRequestRepository;
+        private IElementDifferenceRepository _elementDifferenceRepository;
 
         public EFUnitOfWork(string connectionString)
         {
@@ -72,6 +74,9 @@ namespace ProductionManagementSystem.Core.Repositories
             _montageSupplyRequestRepository ??= new MontageSupplyRequestRepository(_db);
 
         public ILogRepository LogRepository => _logRepository ??= new LogRepository(_db);
+
+        public IElementDifferenceRepository ElementDifferenceRepository =>
+            _elementDifferenceRepository ??= new ElementDifferenceRepository(_db);
         
         private bool _disposed;
 

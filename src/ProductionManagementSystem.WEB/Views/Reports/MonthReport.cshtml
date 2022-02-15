@@ -1,0 +1,20 @@
+﻿@model ProductionManagementSystem.WEB.Models.Reports.MonthReport
+
+@{
+    Layout = "_ReportsLayout";
+}
+
+<form>
+    <div class="input-group mb-3" style="width: 700px">
+        <select class="form-select" name="year" asp-items="Model.Years" style="width: 100px"></select>
+        <select class="form-select" name="month" asp-items="Model.Months" style="width: 200px"></select>
+        <select class="form-select" name="entityId" asp-items="Model.Entities" style="width: 300px"></select>
+        <button class="btn btn-outline-secondary" type="submit">Показать</button>
+    </div>
+</form>
+
+<partial name="Partail/Charts/BarChart" model="Model.BarChart"/>
+
+@section Scripts
+{
+}

@@ -6,12 +6,24 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.10">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.10" />
       <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.1" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Data" />
+      <Folder Include="Data\Migrations" />
+      <Folder Include="Infrastructure\Helpers" />
+      <Folder Include="Models\Charts" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Infrastructure\Helpers\DateHelper.cs" />
+      <Compile Remove="Models\Charts\StackedBarChart.cs" />
     </ItemGroup>
 
 </Project>

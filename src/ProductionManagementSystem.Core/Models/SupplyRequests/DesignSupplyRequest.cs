@@ -8,7 +8,6 @@ namespace ProductionManagementSystem.Core.Models.SupplyRequests
     public class DesignSupplyRequest : SupplyRequest
     {
         [Display(Name = "Контструктив")]
-        [NotMapped]
         public Design Design { get; set; }
     }
 }
