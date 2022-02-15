@@ -49,7 +49,6 @@ namespace ProductionManagementSystem.Core.Repositories
         {
             _db.ObtainedMontages.RemoveRange(_db.ObtainedMontages.Where(m => m.TaskId == item.Id));
             _db.ObtainedDesigns.RemoveRange(_db.ObtainedDesigns.Where(d => d.TaskId == item.Id));
-            
             base.Delete(item);
         }
 

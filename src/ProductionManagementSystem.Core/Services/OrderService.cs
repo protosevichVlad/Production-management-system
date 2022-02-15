@@ -26,6 +26,9 @@ namespace ProductionManagementSystem.Core.Services
         public override async System.Threading.Tasks.Task CreateAsync(Order order)
         {
             order.DateStart = DateTime.Now.Date;
+            foreach (var task in order.Tasks)
+                await _taskService.CreateAsync(task);
+            
             await base.CreateAsync(order);
         }
 

@@ -103,6 +103,11 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var orderViewModel = await _orderService.GetByIdAsync(id);
+                var tasks = (await _orderService.GetTasksByOrderIdAsync(orderViewModel.Id)).ToList().Select(async t =>
+                {
+                    t.Device = await _deviceService.GetByIdAsync(t.DeviceId);
+                    return t;
+                }).Select(t => t.Result).Where(t => t != null).ToList();
                 return View(orderViewModel);
             }
             catch (PageNotFoundException)

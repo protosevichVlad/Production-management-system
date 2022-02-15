@@ -166,11 +166,12 @@ namespace ProductionManagementSystem.Core.Services
             }
         }
 
+       
+
         public async System.Threading.Tasks.Task DeleteByIdAsync(int id)
         {
             await DeleteAsync(new Task {Id = id});
         }
-
 
         private TaskStatusEnum ToStatus(IEnumerable<string> roles)
         {
