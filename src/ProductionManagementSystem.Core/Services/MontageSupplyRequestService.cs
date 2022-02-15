@@ -32,11 +32,15 @@ namespace ProductionManagementSystem.Core.Services
             }
             
             await _currentRepository.UpdateAsync(montageSupplyRequest);
+            await _db.SaveAsync();
             await _db.LogRepository.CreateAsync(new Log
-            {Message = message, 
+            {
+                Message = message, 
                 MontageSupplyRequestId = montageSupplyRequest.Id, 
                 DesignId = montageSupplyRequest.ComponentId, 
-                TaskId = montageSupplyRequest.TaskId});
+                TaskId = montageSupplyRequest.TaskId
+            });
+            await _db.SaveAsync();
         }
 
         public async Task DeleteByIdAsync(int id)
