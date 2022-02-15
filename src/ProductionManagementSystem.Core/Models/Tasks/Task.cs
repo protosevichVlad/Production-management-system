@@ -37,6 +37,12 @@ namespace ProductionManagementSystem.Core.Models.Tasks
         [NotMapped]
         public IEnumerable<ObtainedMontage> ObtainedMontages { get; set; }
 
+        public Task()
+        {
+            this.StartTime = DateTime.Now;
+            this.Status = TaskStatusEnum.Equipment;
+        }
+
         public override string ToString()
         {
             return $"№{this.Id}";
