@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ProductionManagementSystem.Core.Models.Components.ComponentBase">
+    <Position X="28.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Models\Components\ComponentBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.Core.Models.Components.Design">
+    <Position X="27.25" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAggAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Components\Design.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.Core.Models.Components.Montage">
+    <Position X="29.5" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAEAAAAAAQAAAAAAAAAAQAAAAAAAgA=</HashCode>
+      <FileName>Models\Components\Montage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.Core.Models.Devices.ComponentBaseInDevice">
+    <Position X="35.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAEAAAiAAAAAA=</HashCode>
+      <FileName>Models\Devices\ComponentBaseInDevice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.Core.Models.Devices.DesignInDevice" Collapsed="true">
+    <Position X="34" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Devices\DesignInDevice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.Core.Models.Devices.Device">
+    <Position X="31.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAEAAAAAAAAAAAAAAAAAAAAAACAAEA=</HashCode>
+      <FileName>Models\Devices\Device.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Designs" />
+      <Property Name="Montages" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="ProductionManagementSystem.Core.Models.Devices.MontageInDevice" Collapsed="true">
+    <Position X="36.25" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Devices\MontageInDevice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.Core.Models.BaseEntity">
+    <Position X="31.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\BaseEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.Core.Models.CountingEntity">
+    <Position X="29.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Models\CountingEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ProductionManagementSystem.WEB.Controllers.DesignsController" Collapsed="true">
+    <Position X="17.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAEAAAABAACAAAAAAAAAAAEAAEAyAAEAAAACAEA=</HashCode>
+      <FileName>Controllers\DesignsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Controllers.DesignsSupplyRequestController" Collapsed="true">
+    <Position X="19.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAABAACAAAAAAAAAAAUgAEACAAEAAAAAAFA=</HashCode>
+      <FileName>Controllers\DesignsSupplyRequestController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Controllers.DevicesController" Collapsed="true">
+    <Position X="14" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAABAACAAAAAAIAAAAEAgEACAAEIAAAAAEA=</HashCode>
+      <FileName>Controllers\DevicesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Controllers.HomeController" Collapsed="true">
+    <Position X="17.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAQAAAAAAAAAgAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\HomeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Controllers.LogsController" Collapsed="true">
+    <Position X="19.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAAAIAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\LogsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Controllers.MontagesController" Collapsed="true">
+    <Position X="12.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAEAAAABAAGAAAAAAIAAAAEAAEASAAEAAAACAQA=</HashCode>
+      <FileName>Controllers\MontagesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Controllers.MontagesSupplyRequestController" Collapsed="true">
+    <Position X="14" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAACAAAAAAIAAAIUgAEACAQEAAAAAABA=</HashCode>
+      <FileName>Controllers\MontagesSupplyRequestController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Controllers.OrdersController" Collapsed="true">
+    <Position X="12.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAABBAACAAAAgQAAAAAEAAEAAACEAAAAAABA=</HashCode>
+      <FileName>Controllers\OrdersController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Controllers.TasksController" Collapsed="true">
+    <Position X="14" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABEEAAABBAAAAAAAASYAAAAEAAEBCAAEAAAAAAFA=</HashCode>
+      <FileName>Controllers\TasksController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Controllers.UsersController" Collapsed="true">
+    <Position X="15.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAACBAAAAAAAgAAEAAEAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\UsersController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Models.Device.DeviceItem&lt;TComponent&gt;" Collapsed="true">
+    <Position X="12.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAQAAAAEBAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Models\Device\DeviceItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Models.Modals.ModalBase" Collapsed="true">
+    <Position X="9.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Models\Modals\ModalBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Models.Modals.ModalSupplyRequest" Collapsed="true">
+    <Position X="9.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAABAAAAAA=</HashCode>
+      <FileName>Models\Modals\ModalSupplyRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Models.Order.OrderItem" Collapsed="true">
+    <Position X="19.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAgAgAAAAAAAAAAAAAAAAAAAAEAgAAAAAA=</HashCode>
+      <FileName>Models\Order\OrderItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Models.UserViewModels.ChangeRoleViewModel" Collapsed="true">
+    <Position X="12.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAgAAAAAAAgAAQAAAAAAAAA=</HashCode>
+      <FileName>Models\UserViewModels\ChangeRoleViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Models.UserViewModels.CreateUserViewModel" Collapsed="true">
+    <Position X="15.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAAAAAAAAAgCAQAAAAAAIAA=</HashCode>
+      <FileName>Models\UserViewModels\CreateUserViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Models.ComponentsForDevice" Collapsed="true">
+    <Position X="14" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiAAAAAA=</HashCode>
+      <FileName>Models\ComponentsForDevice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Models.ErrorViewModel" Collapsed="true">
+    <Position X="15.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Models\ErrorViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Models.ObtainedComponent" Collapsed="true">
+    <Position X="15.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAEAAAAAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>Models\ObtainedComponent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Models.ObtainedDesign" Collapsed="true">
+    <Position X="17.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAEAAAAAAAAAAAAAAAAAAAgAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ObtainedDesign.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProductionManagementSystem.WEB.Models.UserViewModel" Collapsed="true">
+    <Position X="17.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAACAAAAAAAAAAAAAAAAAAAAACAQAAAAAAAAA=</HashCode>
+      <FileName>Models\UserViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="ProductionManagementSystem.WEB.Models.StatusSupplyEnum" Collapsed="true">
+    <Position X="12.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAEAAAAAAAEAAAAAAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Models\StatusSupplyEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
