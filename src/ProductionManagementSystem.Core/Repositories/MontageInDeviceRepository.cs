@@ -23,7 +23,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return _dbSet.Where(m => m.DeviceId == deviceId);
         }
     
-        public override async Task<IEnumerable<MontageInDevice>> GetAllAsync()
+        public override async Task<List<MontageInDevice>> GetAllAsync()
         {
             var montageInDevices = (await base.GetAllAsync()).ToList();
             foreach (var montageInDevice in montageInDevices)
@@ -42,7 +42,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return designInDevice;
         }
 
-        public override async Task<IEnumerable<MontageInDevice>> FindAsync(Func<MontageInDevice, bool> predicate)
+        public override async Task<List<MontageInDevice>> FindAsync(Func<MontageInDevice, bool> predicate)
         {
             var montageInDevices = (await base.FindAsync(predicate)).ToList();
             foreach (var montageInDevice in montageInDevices)

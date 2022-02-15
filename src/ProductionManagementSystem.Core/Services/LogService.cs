@@ -40,14 +40,18 @@ namespace ProductionManagementSystem.Core.Services
             _userManager = userManager;
         }
 
-        public override async Task<IEnumerable<Log>> GetAllAsync()
+        public override async Task<List<Log>> GetAllAsync()
         {
-            return (await base.GetAllAsync()).Reverse();
+            var result = await base.GetAllAsync();
+            result.Reverse();
+            return result;
         }
 
-        public override async Task<IEnumerable<Log>> Find(Func<Log, bool> predicate)
+        public override async Task<List<Log>> Find(Func<Log, bool> predicate)
         {
-            return (await base.Find(predicate)).Reverse();
+            var result = await base.Find(predicate);
+            result.Reverse();
+            return result;
         }
     }
 }

@@ -27,7 +27,7 @@ namespace ProductionManagementSystem.Core.Services
             montageSupplyRequest.StatusSupply = (SupplyStatusEnum) to;
             if ((SupplyStatusEnum) to == SupplyStatusEnum.Ready)
             {
-                await _montageService.IncreaseQuantityOfMontageAsync(montageSupplyRequest.ComponentId,
+                await _montageService.IncreaseQuantityAsync(montageSupplyRequest.ComponentId,
                     montageSupplyRequest.Quantity);
             }
             

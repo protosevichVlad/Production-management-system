@@ -18,7 +18,7 @@ namespace ProductionManagementSystem.Core.Repositories
         {
         }
 
-        public override async Task<IEnumerable<ObtainedDesign>> GetAllAsync()
+        public override async Task<List<ObtainedDesign>> GetAllAsync()
         {
             var obtainedDesigns = (await base.GetAllAsync()).ToList();
             foreach (var obtainedDesign in obtainedDesigns)
@@ -37,7 +37,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return obtainedDesign;
         }
 
-        public override async Task<IEnumerable<ObtainedDesign>> FindAsync(Func<ObtainedDesign, bool> predicate)
+        public override async Task<List<ObtainedDesign>> FindAsync(Func<ObtainedDesign, bool> predicate)
         {
             var obtainedDesigns = (await base.FindAsync(predicate)).ToList();
             foreach (var obtainedDesign in obtainedDesigns)

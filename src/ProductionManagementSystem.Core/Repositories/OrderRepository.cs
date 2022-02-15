@@ -20,7 +20,7 @@ namespace ProductionManagementSystem.Core.Repositories
         {
         }
 
-        public override async Task<IEnumerable<Order>> GetAllAsync()
+        public override async Task<List<Order>> GetAllAsync()
         {
             var orders = (await base.GetAllAsync()).ToList();
             foreach (var order in orders)
@@ -39,7 +39,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return order;
         }
 
-        public override async Task<IEnumerable<Order>> FindAsync(Func<Order, bool> predicate)
+        public override async Task<List<Order>> FindAsync(Func<Order, bool> predicate)
         {
             var orders = (await base.FindAsync(predicate)).ToList();
             foreach (var order in orders)

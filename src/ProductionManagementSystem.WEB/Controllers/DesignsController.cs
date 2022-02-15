@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -14,16 +13,10 @@ using ProductionManagementSystem.WEB.Models;
 namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize(Roles = RoleEnum.OrderPicker)]
-    public class DesignsController : Controller
+    public class DesignsController : ComponentBaseAbstractController<Design>
     {
-        private readonly IDesignService _designService;
-        private readonly IDeviceService _deviceService;
-        
-        
-        public DesignsController(IDesignService service, IDeviceService deviceService)
+        public DesignsController(IDesignService service, IDeviceService deviceService) : base(service, deviceService)
         {
-            _deviceService = deviceService;
-            _designService = service;
         }
 
         // GET: Designs
@@ -34,13 +27,13 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
             ViewData["CurrentFilter"] = searchString;
-            var designs = await _designService.GetAllAsync();
+            var designs = await _componentBaseService.GetAllAsync();
 
             if (!String.IsNullOrEmpty(searchString))
             {
                 designs = designs.Where(d => (d.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
                                              || (d.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
-                                             || (d.ShortDescription?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false));
+                                             || (d.ShortDescription?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
             }
             
             ViewBag.PageSize = pageSize;
@@ -64,41 +57,41 @@ namespace ProductionManagementSystem.WEB.Controllers
             switch (sortOrder)
             {
                 case "name_desc":
-                    designs = designsDto.OrderByDescending(d => d.Name);
+                    designs = designsDto.OrderByDescending(d => d.Name).ToList();
                     break;
                 case "Type":
-                    designs = designsDto.OrderBy(d => d.Type);
+                    designs = designsDto.OrderBy(d => d.Type).ToList();
                     break;
                 case "type_desc":
-                    designs = designsDto.OrderByDescending(d => d.Type);
+                    designs = designsDto.OrderByDescending(d => d.Type).ToList();
                     break;
                 case "Quantity":
-                    designs = designsDto.OrderBy(d => d.Quantity);
+                    designs = designsDto.OrderBy(d => d.Quantity).ToList();
                     break;
                 case "quantity_desc":
-                    designs = designsDto.OrderByDescending(d => d.Quantity);
+                    designs = designsDto.OrderByDescending(d => d.Quantity).ToList();
                     break;
                 default:
-                    designs = designsDto.OrderBy(d => d.Name);
+                    designs = designsDto.OrderBy(d => d.Name).ToList();
                     break;
             }
 
             ViewBag.AllDesigns = designs.Select(d => d.Name).Distinct();
-            designs = designs.Skip((page - 1) * pageSize).Take(pageSize);
+            designs = designs.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             return View(designs);
         }
 
         // GET: Designs/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            return View(await _designService.GetByIdAsync(id));
+            return View(await _componentBaseService.GetByIdAsync(id));
         }
 
         // GET: Designs/Create
         public async Task<IActionResult> Create()
         {
-            ViewBag.AllTypes = await _designService.GetTypesAsync();
-            ViewBag.AllDesigns = (await _designService.GetAllAsync()).Select(d => d.Name).Distinct();
+            ViewBag.AllTypes = await _componentBaseService.GetTypesAsync();
+            ViewBag.AllDesigns = (await _componentBaseService.GetAllAsync()).Select(d => d.Name).Distinct();
             return View();
         }
         
@@ -111,7 +104,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _designService.CreateAsync(design);
+                await _componentBaseService.CreateAsync(design);
                 return RedirectToAction(nameof(Details), new {id = design.Id});
             }
             return View(design);
@@ -120,8 +113,8 @@ namespace ProductionManagementSystem.WEB.Controllers
         // GET: Designs/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            var design = await _designService.GetByIdAsync(id);
-            ViewBag.AllTypes = await _designService.GetTypesAsync();
+            var design = await _componentBaseService.GetByIdAsync(id);
+            ViewBag.AllTypes = await _componentBaseService.GetTypesAsync();
             return View(design);
         }
 
@@ -133,7 +126,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _designService.UpdateAsync(design);
+                await _componentBaseService.UpdateAsync(design);
                 return RedirectToAction(nameof(Details), new {id = design.Id});
             }
             return View(design);
@@ -142,7 +135,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         // GET: Designs/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            var design = await _designService.GetByIdAsync(id);
+            var design = await _componentBaseService.GetByIdAsync(id);
             return View(design);
         }
 
@@ -152,33 +145,33 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             try
             {
-                await _designService.DeleteByIdAsync(id);
+                await _componentBaseService.DeleteByIdAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (IntersectionOfEntitiesException e)
             {
                 ViewBag.ErrorMessage = e.Message;
                 ViewBag.ErrorHeader = e.Header;
-                return View(await _designService.GetByIdAsync(id));
+                return View(await _componentBaseService.GetByIdAsync(id));
             }
         }
 
         [HttpGet]
         public async Task<JsonResult> GetAllDesigns()
         {
-            return Json((await _designService.GetAllAsync()).Select(d => d.ToString()));
+            return Json((await _componentBaseService.GetAllAsync()).Select(d => d.ToString()));
         }
         
         [HttpGet]
         public async Task<IActionResult> Add(int id)
         {
-            return View(await _designService.GetByIdAsync(id));
+            return View(await _componentBaseService.GetByIdAsync(id));
         }
         
         [HttpPost]
         public async Task<IActionResult> Add(int designId, int quantity)
         {
-            await _designService.IncreaseQuantityOfDesignAsync(designId, quantity);
+            await _componentBaseService.IncreaseQuantityAsync(designId, quantity);
             return RedirectToAction(nameof(Details), new { id = designId });
         }
         
@@ -186,69 +179,23 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> Receive(int id)
         {
 
-            return View(await _designService.GetByIdAsync(id));
+            return View(await _componentBaseService.GetByIdAsync(id));
         }
         [HttpPost]
         public async Task<IActionResult> Receive(int designId, int quantity)
         {
 
-            await _designService.DecreaseQuantityOfDesignAsync(designId, quantity);
+            await _componentBaseService.DecreaseQuantityAsync(designId, quantity);
             return RedirectToAction(nameof(Details), new { id = designId });
         }
         
         public async Task<IActionResult> AddMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
-            var selectListTypes = new SelectList(await _designService.GetTypesAsync());
-
-            var components = new ComponentsForDevice();
-            List<Design> componentsInDevice = new List<Design>();
-            if (deviceId.HasValue)
-            {
-                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
-                if (device != null)
-                {
-                    device.Selected = true;
-                }
-                
-                componentsInDevice.AddRange((await _deviceService.GetByIdAsync(deviceId.Value)).Designs.Select(c => c.Design).ToArray());
-            }
-            else
-            {
-                componentsInDevice.AddRange(await _designService.GetAllAsync());
-            }
-
-            if (typeName != null)
-            {
-                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
-                if (type != null)
-                {
-                    type.Selected = true;
-                }
-                
-                componentsInDevice = componentsInDevice.Where(c => c.Type == typeName).ToList();
-            }
-
-            ViewBag.TypeNames = selectListTypes;
-            ViewBag.Devices = selectListDevice;
-
-            var length = componentsInDevice.Count;
-            components.ComponentId = new int[length];
-            components.ComponentName = new string[length];
-            components.QuantityInStock = new int[length];
-            for (var index = 0; index < length; index++)
-            {
-                var componentInDevice = componentsInDevice[index];
-                components.ComponentName[index] = componentInDevice.ToString();
-                components.ComponentId[index] = componentInDevice.Id;
-                components.QuantityInStock[index] = componentInDevice.Quantity;
-            }
-
-            return View(components);
+            return View(await GetMultipleComponents(deviceId, typeName));
         }
         
         [HttpPost]
-        public async Task<IActionResult> AddMultiple(ComponentsForDevice components)
+        public async Task<IActionResult> AddMultiple(int? deviceId, string typeName, ComponentsForDevice components)
         {
             if (components == null)
             {
@@ -257,67 +204,20 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                await _designService.IncreaseQuantityOfDesignAsync(components.ComponentId[index], components.Quantity[index]);
+                await _componentBaseService.IncreaseQuantityAsync(components.ComponentId[index], components.Quantity[index]);
             }
             
-            return RedirectToAction(nameof(AddMultiple));
+            return RedirectToAction(nameof(AddMultiple), new {deviceId, typeName});
         }
         
         [HttpGet]
         public async Task<IActionResult> ReceiveMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
-            var selectListTypes = new SelectList(await _designService.GetTypesAsync());
-
-            var components = new ComponentsForDevice();
-            List<Design> componentsInDevice = new List<Design>();
-            if (deviceId != null)
-            {
-                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
-                if (device != null)
-                {
-                    device.Selected = true;
-                }
-                
-                componentsInDevice.AddRange((await _deviceService.GetByIdAsync(deviceId.Value)).Designs.Select(c => c.Design).ToArray());
-            }
-            else
-            {
-                componentsInDevice.AddRange( await _designService.GetAllAsync());
-            }
-
-
-            if (typeName != null)
-            {
-                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
-                if (type != null)
-                {
-                    type.Selected = true;
-                }
-                
-                componentsInDevice = componentsInDevice.Where(c => c.Type == typeName).ToList();
-            }
-
-            var length = componentsInDevice.Count;
-            components.ComponentId = new int[length];
-            components.ComponentName = new string[length];
-            components.Quantity = new int[length];
-            components.QuantityInStock = new int[length];
-            for (var index = 0; index < length; index++)
-            {
-                var componentInDevice = componentsInDevice[index];
-                components.ComponentName[index] = componentInDevice.ToString();
-                components.ComponentId[index] = componentInDevice.Id;
-                components.QuantityInStock[index] = componentInDevice.Quantity;
-            }
-
-            ViewBag.TypeNames = selectListTypes;
-            ViewBag.Devices = selectListDevice;
-            return View(components);
+            return View(await GetMultipleComponents(deviceId, typeName));
         }
         
         [HttpPost]
-        public async Task<IActionResult> ReceiveMultiple(ComponentsForDevice components)
+        public async Task<IActionResult> ReceiveMultiple(int? deviceId, string typeName, ComponentsForDevice components)
         {
             if (components == null)
             {
@@ -326,10 +226,10 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                await _designService.DecreaseQuantityOfDesignAsync(components.ComponentId[index], components.Quantity[index]);
+                await _componentBaseService.DecreaseQuantityAsync(components.ComponentId[index], components.Quantity[index]);
             }
             
-            return RedirectToAction(nameof(ReceiveMultiple));
+            return RedirectToAction(nameof(ReceiveMultiple), new {deviceId, typeName});
         }
     }
 }

@@ -4,19 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Components;
+using ProductionManagementSystem.Core.Models.Devices;
 using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Repositories;
 
 namespace ProductionManagementSystem.Core.Services
 {
-    public interface IMontageService : IBaseService<Montage>
+    
+    public interface IMontageService : IComponentBaseService<Montage>
     {
-        Task<IEnumerable<string>> GetTypesAsync();
-        Task IncreaseQuantityOfMontageAsync(int id, int quantity);
-        Task DecreaseQuantityOfDesignAsync(int id, int quantity);
-        Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync();
-        Task DeleteByIdAsync(int id);
     }
 
     public class MontageService : BaseServiceWithLogs<Montage>, IMontageService
@@ -38,14 +35,21 @@ namespace ProductionManagementSystem.Core.Services
             await base.DeleteAsync(montage);
         }
 
-        public async Task<IEnumerable<string>> GetTypesAsync()
+        public async Task<List<string>> GetTypesAsync()
         {
             var montages = await GetAllAsync();
-            IEnumerable<string> types = montages.OrderBy(c => c.Type).Select(c => c.Type).Distinct();
+            List<string> types = montages.OrderBy(c => c.Type).Select(c => c.Type).Distinct().ToList();
             return types;
         }
 
-        public async Task IncreaseQuantityOfMontageAsync(int id, int quantity)
+        public async Task<List<Montage>> GetByDeviceId(int deviceId)
+        {
+            return (await _db.MontageInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).Distinct(new ComponentBaseInDeviceEqualityComparer()).ToList()
+                .Select(async md => await _db.MontageRepository.GetByIdAsync(md.ComponentId))
+                .Select(t => t.Result).Where(t => t != null).ToList();
+        }
+
+        public async Task IncreaseQuantityAsync(int id, int quantity)
         {
             if (quantity == 0)
             {
@@ -71,9 +75,9 @@ namespace ProductionManagementSystem.Core.Services
             await _db.SaveAsync();
         }
 
-        public async Task DecreaseQuantityOfDesignAsync(int id, int quantity)
+        public async Task DecreaseQuantityAsync(int id, int quantity)
         {
-            await IncreaseQuantityOfMontageAsync(id, -quantity);
+            await IncreaseQuantityAsync(id, -quantity);
         }
         
         /// <summary>
@@ -98,9 +102,9 @@ namespace ProductionManagementSystem.Core.Services
             return new Tuple<bool, string>(true, errorMessage);
         }
 
-        public async Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync()
+        public async Task<List<KeyValuePair<int, string>>> GetListForSelectAsync()
         {
-            return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString()));
+            return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString())).ToList();
         }
 
 

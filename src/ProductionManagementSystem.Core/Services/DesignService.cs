@@ -4,19 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Components;
+using ProductionManagementSystem.Core.Models.Devices;
 using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Repositories;
 
 namespace ProductionManagementSystem.Core.Services
 {
-    public interface IDesignService : IBaseService<Design>
+    public interface IComponentBaseService<T> : IBaseService<T>
+        where T : ComponentBase
     {
-        Task<IEnumerable<string>> GetTypesAsync();
-        Task IncreaseQuantityOfDesignAsync(int id, int quantity);
-        Task DecreaseQuantityOfDesignAsync(int id, int quantity);
-        Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync();
+        Task<List<string>> GetTypesAsync();
+        Task<List<T>> GetByDeviceId(int deviceId);
+        Task IncreaseQuantityAsync(int id, int quantity);
+        Task DecreaseQuantityAsync(int id, int quantity);
+        Task<List<KeyValuePair<int, string>>> GetListForSelectAsync();
         Task DeleteByIdAsync(int id);
+    }
+
+    public interface IDesignService : IComponentBaseService<Design>
+    {
     }
 
     public class DesignService : BaseServiceWithLogs<Design>, IDesignService
@@ -43,14 +50,21 @@ namespace ProductionManagementSystem.Core.Services
             await DeleteAsync(new Design {Id = id});
         }
 
-        public async Task<IEnumerable<string>> GetTypesAsync()
+        public async Task<List<string>> GetTypesAsync()
         {
             var designs = await GetAllAsync();
-            IEnumerable<string> types = designs.Select(d => d.Type).Distinct().OrderBy(d => d);
+            List<string> types = designs.Select(d => d.Type).Distinct().OrderBy(d => d).ToList();
             return types;
         }
 
-        public async Task IncreaseQuantityOfDesignAsync(int id, int quantity)
+        public async Task<List<Design>> GetByDeviceId(int deviceId)
+        {
+            return (await _db.DesignInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).Distinct(new ComponentBaseInDeviceEqualityComparer()).ToList()
+                .Select(async md => await _db.DesignRepository.GetByIdAsync(md.ComponentId))
+                .Select(t => t.Result).Where(t => t != null).ToList();
+        }
+
+        public async Task IncreaseQuantityAsync(int id, int quantity)
         {
             if (quantity == 0)
             {
@@ -76,14 +90,14 @@ namespace ProductionManagementSystem.Core.Services
             await _db.SaveAsync();
         }
 
-        public async Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync()
+        public async Task<List<KeyValuePair<int, string>>> GetListForSelectAsync()
         {
-            return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString()));
+            return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString())).ToList();
         }
 
-        public async Task DecreaseQuantityOfDesignAsync(int id, int quantity)
+        public async Task DecreaseQuantityAsync(int id, int quantity)
         {
-            await IncreaseQuantityOfDesignAsync(id, -quantity);
+            await IncreaseQuantityAsync(id, -quantity);
         }
         
         protected override async Task CreateLogForCreatingAsync(Design item)

@@ -36,7 +36,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
             
             var ordersViewModel = await _orderService.GetAllAsync();
-            ordersViewModel = SortingOrders(ordersViewModel, sortOrder);
+            ordersViewModel = SortingOrders(ordersViewModel, sortOrder).ToList();
             return View(ordersViewModel);
         }
         

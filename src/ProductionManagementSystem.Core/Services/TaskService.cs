@@ -121,7 +121,7 @@ namespace ProductionManagementSystem.Core.Services
                 if (obtComp != null)
                 {
                     obtComp.Obtained += componentObt[i];
-                    await _montageService.DecreaseQuantityOfDesignAsync(componentIds[i], componentObt[i]);
+                    await _montageService.DecreaseQuantityAsync(componentIds[i], componentObt[i]);
                     await _db.ObtainedMontageRepository.UpdateAsync(obtComp);
                 }
             }
@@ -136,7 +136,7 @@ namespace ProductionManagementSystem.Core.Services
                 if (obtDes != null)
                 {
                     obtDes.Obtained += designObt[i];
-                    await _designService.DecreaseQuantityOfDesignAsync(designIds[i], designObt[i]);
+                    await _designService.DecreaseQuantityAsync(designIds[i], designObt[i]);
                     await _db.ObtainedDesignRepository.UpdateAsync(obtDes);
                 }
             }
@@ -149,7 +149,7 @@ namespace ProductionManagementSystem.Core.Services
             if (obtMont != null)
             {
                 obtMont.Obtained += componentObt;
-                await _montageService.IncreaseQuantityOfMontageAsync(componentId, -componentObt);
+                await _montageService.IncreaseQuantityAsync(componentId, -componentObt);
                 await _db.ObtainedMontageRepository.UpdateAsync(obtMont);
             }
         }
@@ -161,7 +161,7 @@ namespace ProductionManagementSystem.Core.Services
             if (obtDes != null)
             {
                 obtDes.Obtained += designObt;
-                await _designService.IncreaseQuantityOfDesignAsync(designId, -designObt);
+                await _designService.IncreaseQuantityAsync(designId, -designObt);
                 await _db.ObtainedDesignRepository.UpdateAsync(obtDes);
             }
         }

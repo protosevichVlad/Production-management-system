@@ -9,9 +9,9 @@ namespace ProductionManagementSystem.Core.Repositories
 {
     public interface IRepository<TItem>
     {
-        public Task<IEnumerable<TItem>> GetAllAsync();
+        public Task<List<TItem>> GetAllAsync();
         public Task<TItem> GetByIdAsync(int id);
-        public Task<IEnumerable<TItem>> FindAsync(Func<TItem, bool> predicate);
+        public Task<List<TItem>> FindAsync(Func<TItem, bool> predicate);
         public Task CreateAsync(TItem item);
         public Task UpdateAsync(TItem item);
         Task UpdateRangeAsync(List<TItem> items);
@@ -31,7 +31,7 @@ namespace ProductionManagementSystem.Core.Repositories
             _dbSet = db.Set<TItem>();
         }
 
-        public virtual async Task<IEnumerable<TItem>> GetAllAsync()
+        public virtual async Task<List<TItem>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
@@ -41,9 +41,9 @@ namespace ProductionManagementSystem.Core.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public virtual async Task<IEnumerable<TItem>> FindAsync(Func<TItem, bool> predicate)
+        public virtual async Task<List<TItem>> FindAsync(Func<TItem, bool> predicate)
         {
-            return _dbSet.Where(predicate);
+            return _dbSet.Where(predicate).ToList();
         }
 
         public virtual async Task CreateAsync(TItem item)

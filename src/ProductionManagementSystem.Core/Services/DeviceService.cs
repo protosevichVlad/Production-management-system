@@ -18,8 +18,8 @@ namespace ProductionManagementSystem.Core.Services
         Task ReceiveDeviceAsync(int? id);
         Task DeleteByIdAsync(int id);
         Task<IEnumerable<KeyValuePair<int, string>>> GetListForSelectAsync();
-        Task<IEnumerable<Montage>> GetMontagesFromDeviceByDeviceId(int deviceId);
-        Task<IEnumerable<Design>> GetDesignsFromDeviceByDeviceId(int deviceId);
+        Task<List<Montage>> GetMontagesFromDeviceByDeviceId(int deviceId);
+        Task<List<Design>> GetDesignsFromDeviceByDeviceId(int deviceId);
     }
 
     public class DeviceService : BaseServiceWithLogs<Device>, IDeviceService
@@ -94,16 +94,16 @@ namespace ProductionManagementSystem.Core.Services
             await DeleteAsync(new Device {Id = id});
         }
 
-        public async Task<IEnumerable<Montage>> GetMontagesFromDeviceByDeviceId(int deviceId)
+        public async Task<List<Montage>> GetMontagesFromDeviceByDeviceId(int deviceId)
         {
-            return (await _db.MontageInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).ToList()
+            return (await _db.MontageInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).Distinct(new ComponentBaseInDeviceEqualityComparer()).ToList()
                 .Select(async md => await _db.MontageRepository.GetByIdAsync(md.ComponentId))
                 .Select(t => t.Result).Where(t => t != null).ToList();
         }
 
-        public async Task<IEnumerable<Design>> GetDesignsFromDeviceByDeviceId(int deviceId)
+        public async Task<List<Design>> GetDesignsFromDeviceByDeviceId(int deviceId)
         {
-            return (await _db.DesignInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).ToList()
+            return (await _db.DesignInDeviceRepository.FindAsync(m => m.DeviceId == deviceId)).Distinct(new ComponentBaseInDeviceEqualityComparer()).ToList()
                 .Select(async md => await _db.DesignRepository.GetByIdAsync(md.ComponentId))
                 .Select(t => t.Result).Where(t => t != null).ToList();
         }

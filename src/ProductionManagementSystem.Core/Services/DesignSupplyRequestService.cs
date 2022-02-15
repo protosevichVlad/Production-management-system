@@ -27,7 +27,7 @@ namespace ProductionManagementSystem.Core.Services
             designSupplyRequest.StatusSupply = (SupplyStatusEnum) to;
             if ((SupplyStatusEnum) to == SupplyStatusEnum.Ready)
             {
-                await _designService.IncreaseQuantityOfDesignAsync(designSupplyRequest.ComponentId,
+                await _designService.IncreaseQuantityAsync(designSupplyRequest.ComponentId,
                     designSupplyRequest.Quantity);
             }
             

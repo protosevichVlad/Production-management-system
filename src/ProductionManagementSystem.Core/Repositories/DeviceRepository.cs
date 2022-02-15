@@ -37,7 +37,7 @@ namespace ProductionManagementSystem.Core.Repositories
                 }));
         }
 
-        public override async Task<IEnumerable<Device>> GetAllAsync()
+        public override async Task<List<Device>> GetAllAsync()
         {
             List<Device> devices = (await base.GetAllAsync()).ToList();
             foreach (var device in devices)
@@ -84,7 +84,7 @@ namespace ProductionManagementSystem.Core.Repositories
             base.Delete(device);
         }
 
-        public override async Task<IEnumerable<Device>> FindAsync(Func<Device, bool> predicate)
+        public override async Task<List<Device>> FindAsync(Func<Device, bool> predicate)
         {
             List<Device> devices = (await base.FindAsync(predicate)).ToList();
             foreach (var device in devices)

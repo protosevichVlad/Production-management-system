@@ -17,7 +17,7 @@ namespace ProductionManagementSystem.Core.Repositories
         {
         }
         
-        public override async Task<IEnumerable<MontageSupplyRequest>> GetAllAsync()
+        public override async Task<List<MontageSupplyRequest>> GetAllAsync()
         {
             List<MontageSupplyRequest> montageSupplyRequests = (await base.GetAllAsync()).ToList();
             foreach (var montageSupplyRequest in montageSupplyRequests)
@@ -36,7 +36,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return montageSupplyRequest;
         }
 
-        public override async Task<IEnumerable<MontageSupplyRequest>> FindAsync(Func<MontageSupplyRequest, bool> predicate)
+        public override async Task<List<MontageSupplyRequest>> FindAsync(Func<MontageSupplyRequest, bool> predicate)
         {
             List<MontageSupplyRequest> montageSupplyRequests = (await base.FindAsync(predicate)).ToList();
             foreach (var montageSupplyRequest in montageSupplyRequests)

@@ -26,7 +26,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return base.CreateAsync(item);
         }
 
-        public override async Task<IEnumerable<Log>> GetAllAsync()
+        public override async Task<List<Log>> GetAllAsync()
         {
             var logs = (await base.GetAllAsync()).ToList();
             foreach (var log in logs)
@@ -42,7 +42,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return log;
         }
         
-        public override async Task<IEnumerable<Log>> FindAsync(Func<Log, bool> predicate)
+        public override async Task<List<Log>> FindAsync(Func<Log, bool> predicate)
         {
             var logs = (await base.FindAsync(predicate)).ToList();
             foreach (var log in logs)

@@ -14,15 +14,11 @@ using ProductionManagementSystem.WEB.Models;
 namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize(Roles = RoleEnum.OrderPicker)]
-    public class MontagesController : Controller
+    public class MontagesController : ComponentBaseAbstractController<Montage>
     {
-        private readonly IMontageService _montageService;
-        private readonly IDeviceService _deviceService;
 
-        public MontagesController(IMontageService montageService, IDeviceService deviceService)
+        public MontagesController(IMontageService montageService, IDeviceService deviceService) : base(montageService, deviceService)
         {
-            _montageService = montageService;
-            _deviceService = deviceService;
         }
         
         // GET: Components
@@ -43,7 +39,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewData["sortOrder"] = sortOrder;
             ViewData["CurrentFilter"] = searchString;
 
-            var components = await _montageService.GetAllAsync();
+            var components = await _componentBaseService.GetAllAsync();
             
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -76,42 +72,42 @@ namespace ProductionManagementSystem.WEB.Controllers
             switch (sortOrder)  
             {
                 case "name_desc":
-                    components = componentsDto.OrderByDescending(d => d.Name);
+                    components = componentsDto.OrderByDescending(d => d.Name).ToList();
                     break;
                 case "Type":
-                    components = componentsDto.OrderBy(d => d.Type);
+                    components = componentsDto.OrderBy(d => d.Type).ToList();
                     break;
                 case "type_desc":
-                    components = componentsDto.OrderByDescending(d => d.Type);
+                    components = componentsDto.OrderByDescending(d => d.Type).ToList();
                     break;
                 case "Quantity":
-                    components = componentsDto.OrderBy(d => d.Quantity);
+                    components = componentsDto.OrderBy(d => d.Quantity).ToList();
                     break;
                 case "quantity_desc":
-                    components = componentsDto.OrderByDescending(d => d.Quantity);
+                    components = componentsDto.OrderByDescending(d => d.Quantity).ToList();
                     break;
                 default:
-                    components = componentsDto.OrderBy(d => d.Name);
+                    components = componentsDto.OrderBy(d => d.Name).ToList();
                     break;
             }
 
             ViewBag.AllComponents = components;
             ViewBag.Page = page;
-            components = components.Skip((page - 1) * pageSize).Take(pageSize);
+            components = components.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             return View(components);
         }
 
         // GET: Components/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            return View(await _montageService.GetByIdAsync(id));    
+            return View(await _componentBaseService.GetByIdAsync(id));    
         }
 
         // GET: Components/Create
         public async Task<IActionResult> Create()
         {
-            ViewBag.AllTypes = await _montageService.GetTypesAsync();
-            ViewBag.AllComponents = (await _montageService.GetAllAsync()).Select(c => c.Name).Distinct();
+            ViewBag.AllTypes = await _componentBaseService.GetTypesAsync();
+            ViewBag.AllComponents = (await _componentBaseService.GetAllAsync()).Select(c => c.Name).Distinct();
             return View();
         }
 
@@ -124,7 +120,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _montageService.CreateAsync(montage);
+                await _componentBaseService.CreateAsync(montage);
                 return RedirectToAction(nameof(Details), new {id = montage.Id});
             }
             return View(montage);
@@ -135,8 +131,8 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             try
             {
-                var montage = await _montageService.GetByIdAsync(id);
-                ViewBag.AllTypes = await _montageService.GetTypesAsync();
+                var montage = await _componentBaseService.GetByIdAsync(id);
+                ViewBag.AllTypes = await _componentBaseService.GetTypesAsync();
                 return View(montage);
             }
             catch (PageNotFoundException)
@@ -159,7 +155,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             if (ModelState.IsValid)
             {
-                await _montageService.UpdateAsync(montage);
+                await _componentBaseService.UpdateAsync(montage);
                 return RedirectToAction(nameof(Details), new {id = montage.Id});
             }
             
@@ -169,7 +165,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         // GET: Components/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            return View(await _montageService.GetByIdAsync(id));
+            return View(await _componentBaseService.GetByIdAsync(id));
         }
 
         // POST: Components/Delete/5
@@ -179,14 +175,14 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             try
             {
-                await _montageService.DeleteByIdAsync(id);
+                await _componentBaseService.DeleteByIdAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (IntersectionOfEntitiesException e)
             {
                 ViewBag.ErrorMessage = e.Message;
                 ViewBag.ErrorHeader = e.Header;
-                return View(await _montageService.GetByIdAsync(id));
+                return View(await _componentBaseService.GetByIdAsync(id));
             }
         }
         
@@ -198,7 +194,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAllComponents()
         {
-            IEnumerable<Montage> components = await _montageService.GetAllAsync();
+            IEnumerable<Montage> components = await _componentBaseService.GetAllAsync();
             foreach (var comp in components)
             {
                 comp.Name = comp.ToString();
@@ -214,7 +210,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         [NonAction]
         private async Task<IEnumerable<string>> GetAllTypes()
         {
-            return await _montageService.GetTypesAsync();
+            return await _componentBaseService.GetTypesAsync();
         }
         
         /// <summary>
@@ -226,7 +222,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpGet]
         public async Task<IActionResult> Add(int id, int? taskId)
         {
-            var montage = await _montageService.GetByIdAsync(id);
+            var montage = await _componentBaseService.GetByIdAsync(id);
             ViewBag.TaskId = taskId;
             
             return View(montage);
@@ -241,7 +237,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(int componentId, int quantity)
         {
-            await _montageService.IncreaseQuantityOfMontageAsync(componentId, quantity);
+            await _componentBaseService.IncreaseQuantityAsync(componentId, quantity);
             return RedirectToAction(nameof(Details), new {id = componentId});
         }
         
@@ -253,7 +249,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpGet]
         public async Task<IActionResult> Receive(int id)
         {
-            var montage = await _montageService.GetByIdAsync(id);
+            var montage = await _componentBaseService.GetByIdAsync(id);
             return View(montage);
         }
         
@@ -266,64 +262,17 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpPost]
         public async Task<IActionResult> Receive(int componentId, int quantity)
         {
-            await _montageService.DecreaseQuantityOfDesignAsync(componentId, quantity);
+            await _componentBaseService.DecreaseQuantityAsync(componentId, quantity);
             return RedirectToAction(nameof(Details), new {id = componentId});
         }
 
         public async Task<IActionResult> AddMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
-            var selectListTypes = new SelectList(await _montageService.GetTypesAsync());
-
-            var components = new ComponentsForDevice();
-            List<Montage> componentsInDevice = new List<Montage>();
-            if (deviceId != null)
-            {
-                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
-                if (device != null)
-                {
-                    device.Selected = true;
-                }
-                
-                componentsInDevice.AddRange((await _deviceService.GetByIdAsync((int) deviceId)).Montages.Select(c => c.Montage).ToArray());
-            }
-            else
-            {
-                componentsInDevice.AddRange(await _montageService.GetAllAsync());
-            }
-
-
-            if (typeName != null)
-            {
-                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
-                if (type != null)
-                {
-                    type.Selected = true;
-                }
-                
-                componentsInDevice = componentsInDevice.Where(c => c.Type == typeName).ToList();
-            }
-
-            ViewBag.TypeNames = selectListTypes;
-            ViewBag.Devices = selectListDevice;
-
-            var length = componentsInDevice.Count;
-            components.ComponentId = new int[length];
-            components.ComponentName = new string[length];
-            components.QuantityInStock = new int[length];
-            for (var index = 0; index < length; index++)
-            {
-                var componentInDevice = componentsInDevice[index];
-                components.ComponentName[index] = componentInDevice.ToString();
-                components.ComponentId[index] = componentInDevice.Id;
-                components.QuantityInStock[index] = componentInDevice.Quantity;
-            }
-
-            return View(components);
+            return View(await GetMultipleComponents(deviceId, typeName));
         }
         
         [HttpPost]
-        public async Task<IActionResult> AddMultiple(ComponentsForDevice components)
+        public async Task<IActionResult> AddMultiple(int? deviceId, string typeName, ComponentsForDevice components)
         {
             if (components == null)
             {
@@ -332,66 +281,19 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                await _montageService.IncreaseQuantityOfMontageAsync(components.ComponentId[index], components.Quantity[index]);
+                await _componentBaseService.IncreaseQuantityAsync(components.ComponentId[index], components.Quantity[index]);
             }
             
-            return RedirectToAction(nameof(AddMultiple));
+            return RedirectToAction(nameof(AddMultiple), new {deviceId, typeName});
         }
         
         public async Task<IActionResult> ReceiveMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
-            var selectListTypes = new SelectList(await _montageService.GetTypesAsync());
-
-            var components = new ComponentsForDevice();
-            List<Montage> componentsInDevice = new List<Montage>();
-            if (deviceId.HasValue)
-            {
-                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
-                if (device != null)
-                {
-                    device.Selected = true;
-                }
-                
-                componentsInDevice.AddRange((await _deviceService.GetByIdAsync(deviceId.Value)).Montages.Select(c => c.Montage).ToArray());
-            }
-            else
-            {
-                componentsInDevice.AddRange(await _montageService.GetAllAsync());
-            }
-
-
-            if (typeName != null)
-            {
-                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
-                if (type != null)
-                {
-                    type.Selected = true;
-                }
-                
-                componentsInDevice = componentsInDevice.Where(c => c.Type == typeName).ToList();
-            }
-
-            var length = componentsInDevice.Count;
-            components.ComponentId = new int[length];
-            components.ComponentName = new string[length];
-            components.Quantity = new int[length];
-            components.QuantityInStock = new int[length];
-            for (var index = 0; index < length; index++)
-            {
-                var componentInDevice = componentsInDevice[index];
-                components.ComponentName[index] = componentInDevice.ToString();
-                components.ComponentId[index] = componentInDevice.Id;
-                components.QuantityInStock[index] = componentInDevice.Quantity;
-            }
-
-            ViewBag.TypeNames = selectListTypes;
-            ViewBag.Devices = selectListDevice;
-            return View(components);
+            return View(await GetMultipleComponents(deviceId, typeName));
         }
         
         [HttpPost]
-        public async Task<IActionResult> ReceiveMultiple(ComponentsForDevice components)
+        public async Task<IActionResult> ReceiveMultiple(int? deviceId, string typeName, ComponentsForDevice components)
         {
             if (components == null)
             {
@@ -400,10 +302,10 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                await _montageService.DecreaseQuantityOfDesignAsync(components.ComponentId[index], components.Quantity[index]);
+                await _componentBaseService.DecreaseQuantityAsync(components.ComponentId[index], components.Quantity[index]);
             }
             
-            return RedirectToAction(nameof(ReceiveMultiple));
+            return RedirectToAction(nameof(ReceiveMultiple), new {deviceId, typeName});
         }
     }
 }

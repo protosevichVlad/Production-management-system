@@ -19,7 +19,7 @@ namespace ProductionManagementSystem.Core.Repositories
         }
         
         
-        public override async Task<IEnumerable<ObtainedMontage>> GetAllAsync()
+        public override async Task<List<ObtainedMontage>> GetAllAsync()
         {
             var obtainedMontages = (await base.GetAllAsync()).ToList();
             foreach (var obtainedMontage in obtainedMontages)
@@ -38,7 +38,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return obtainedMontage;
         }
 
-        public override async Task<IEnumerable<ObtainedMontage>> FindAsync(Func<ObtainedMontage, bool> predicate)
+        public override async Task<List<ObtainedMontage>> FindAsync(Func<ObtainedMontage, bool> predicate)
         {
             var obtainedMontages = (await base.FindAsync(predicate)).ToList();
             foreach (var obtainedMontage in obtainedMontages)
