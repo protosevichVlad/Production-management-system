@@ -49,11 +49,11 @@
                 }
             </tr>
             </thead>
-            @foreach (var comp in Model.Task.Device.Montages)
+            @foreach (var obtainedComp in Model.Task.ObtainedMontages )
             {
-                var obtainedComp = Model.Task.ObtainedMontages.FirstOrDefault(d => comp.Montage.Id == d.ComponentId);
-                if (obtainedComp == null)
-                {
+                var comp = Model.Task.Device.Montages.FirstOrDefault(om => obtainedComp.ComponentId == om.ComponentId);
+                if (comp == null)
+                {   
                     continue;
                 }
                 <tr @if (obtainedComp.Obtained + comp.Montage.Quantity < comp.Quantity) 
@@ -96,10 +96,11 @@
                 }
             </tr>
             </thead>
-            @foreach (var des in Model.Task.Device.Designs)
+            @foreach (var obtainedDes in Model.Task.ObtainedDesigns)
             {
-                var obtainedDes = Model.Task.ObtainedDesigns.FirstOrDefault(d => des.ComponentId == d.ComponentId);
-                if (obtainedDes == null)
+            
+                var des = Model.Task.Device.Designs.FirstOrDefault(d => obtainedDes.ComponentId == d.ComponentId);
+                if (des == null)
                 {
                     continue;
                 }

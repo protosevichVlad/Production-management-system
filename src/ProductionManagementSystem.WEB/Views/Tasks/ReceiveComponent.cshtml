@@ -16,10 +16,10 @@
             <td>Получить</td>
         </tr>
         </thead>
-        @foreach (var comp in Model.Device.Montages)
+        @foreach (var obtainedComp in Model.ObtainedMontages )
         {
-            var obtainedComp = Model.ObtainedMontages.FirstOrDefault(om => comp.ComponentId == om.ComponentId);
-            if (obtainedComp == null)
+            var comp = Model.Device.Montages.FirstOrDefault(om => obtainedComp.ComponentId == om.ComponentId);
+            if (comp == null)
             {   
                 continue;
             }

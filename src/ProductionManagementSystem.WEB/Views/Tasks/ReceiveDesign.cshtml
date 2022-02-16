@@ -16,10 +16,11 @@
             <td>Получить</td>
         </tr>
         </thead>
-        @foreach (var des in Model.Device.Designs)
+        @foreach (var obtainedDes in Model.ObtainedDesigns)
         {
-            var obtainedDes = Model.ObtainedDesigns.FirstOrDefault(d => des.ComponentId == d.ComponentId);
-            if (obtainedDes == null)
+            
+            var des = Model.Device.Designs.FirstOrDefault(d => obtainedDes.ComponentId == d.ComponentId);
+            if (des == null)
             {
                 continue;
             }
