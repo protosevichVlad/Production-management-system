@@ -10,6 +10,7 @@ using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Tasks;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services;
+using ProductionManagementSystem.WEB.Models.Tasks;
 using Task = ProductionManagementSystem.Core.Models.Tasks.Task;
 
 namespace ProductionManagementSystem.WEB.Controllers
@@ -20,16 +21,14 @@ namespace ProductionManagementSystem.WEB.Controllers
         private readonly UserManager<User> _userManager;
         private readonly ITaskService _taskService;
         private readonly IDeviceService _deviceService;
-        private readonly IMontageService _montageService;
-        private readonly IDesignService _designService;
+        private readonly ILogService _logService;
 
-        public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<User> userManager, IMontageService montageService, IDesignService designService)
+        public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<User> userManager, ILogService logService)
         {
             _taskService = taskService;
             _deviceService = deviceService;
             _userManager = userManager;
-            _montageService = montageService;
-            _designService = designService;
+            _logService = logService;
         }
 
         public async Task<IActionResult> Index(string sortOrder, string searchString)
@@ -77,7 +76,11 @@ namespace ProductionManagementSystem.WEB.Controllers
                 var task = await _taskService.GetByIdAsync(id);
                 ViewBag.States = new SelectList(GetStates(task), "Id", "Name");
                 // ViewBag.Logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(_taskService.GetLogs(id));
-                return View(task);
+                return View(new TaskDetailsViewModel()
+                {
+                    Task = task,
+                    Logs = await _logService.GetByTaskIdAsync(id)
+                });
             }
             catch (PageNotFoundException)
             {

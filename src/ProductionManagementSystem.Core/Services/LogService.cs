@@ -12,6 +12,7 @@ namespace ProductionManagementSystem.Core.Services
     public interface ILogService : IBaseService<Log>
     {
         string CurrentUserName { get; set; }
+        Task<List<Log>> GetByTaskIdAsync(int taskId);
     }
     
     public class LogService : BaseService<Log>, ILogService
@@ -27,6 +28,13 @@ namespace ProductionManagementSystem.Core.Services
                 _user = _userManager.FindByNameAsync(value).Result;
                 ((ILogRepository) _currentRepository).CurrentUser = _user;
             }
+        }
+
+        public async Task<List<Log>> GetByTaskIdAsync(int taskId)
+        {
+            var result = await _currentRepository.FindAsync(l => l.TaskId == taskId);
+            result.Reverse();
+            return result;
         }
 
         public LogService(IUnitOfWork uow) : base(uow)

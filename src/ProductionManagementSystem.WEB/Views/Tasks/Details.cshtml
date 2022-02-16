@@ -1,8 +1,8 @@
 ﻿@using ProductionManagementSystem.Core.Models.Users
 @using ProductionManagementSystem.Core.Models.Infrastructure
-@model ProductionManagementSystem.Core.Models.Tasks.Task
+@model ProductionManagementSystem.WEB.Models.Tasks.TaskDetailsViewModel
 @{
-    ViewData["Title"] = "Задача №" + Model.Id;
+    ViewData["Title"] = "Задача №" + Model.Task.Id;
 }
 
 <div class="row">
@@ -10,31 +10,31 @@
         <h4>Подробная информация</h4>
     </div>
     <div class="col d-flex justify-content-end">
-        <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
-        <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-taskId="@Model.Id">Логи</a>
+        <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Task.Id">Редактировать</a>
+        <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-taskId="@Model.Task.Id">Логи</a>
         <button type="button" class="btn btn-success btn-sm m-1" data-bs-toggle="modal" data-bs-target="#transferModal">Передать</button>
-        <a class="btn btn-danger btn-sm m-1" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+        <a class="btn btn-danger btn-sm m-1" asp-action="Delete" asp-route-id="@Model.Task.Id">Удалить</a>
     </div>
 </div>
 <div class="alert alert-info" role="alert">
-    Здесь вы можете узнать подробную информацию о задаче №@Model.Id.
+    Здесь вы можете узнать подробную информацию о задаче №@Model.Task.Id.
 </div>
 <hr />
 <div class="container">
     <div class="row">
         <div class="col">
-            <h4>Задача №@Model.Id</h4>
-            <h4>Прибор: <a asp-controller="Devices" asp-action="Details" asp-route-id="@Model.Device.Id">@Model.Device.ToString()</a></h4>
-            <h4>Статус: @Model.Status.GetTasksStatusName()</h4>
-            <h4>Срок: @Model.Deadline.ToString("dd.MM.yyyy")</h4>
+            <h4>Задача №@Model.Task.Id</h4>
+            <h4>Прибор: <a asp-controller="Devices" asp-action="Details" asp-route-id="@Model.Task.Device.Id">@Model.Task.Device.ToString()</a></h4>
+            <h4>Статус: @Model.Task.Status.GetTasksStatusName()</h4>
+            <h4>Срок: @Model.Task.Deadline.ToString("dd.MM.yyyy")</h4>
             <h4>Описание:</h4>
-            <p>@Model.Description</p>
+            <p>@Model.Task.Description</p>
         </div>
     </div>
     <hr/>
     <div class="table-responsive-xl">
         <h4>Общее количество монтажа:
-            <a class="btn btn-light btn-sm" asp-action="ReceiveComponent" asp-route-taskId="@Model.Id">Получить</a>
+            <a class="btn btn-light btn-sm" asp-action="ReceiveComponent" asp-route-taskId="@Model.Task.Id">Получить</a>
         </h4>
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">
@@ -49,9 +49,9 @@
                 }
             </tr>
             </thead>
-            @foreach (var comp in Model.Device.Montages)
+            @foreach (var comp in Model.Task.Device.Montages)
             {
-                var obtainedComp = Model.ObtainedMontages.FirstOrDefault(d => comp.Montage.Id == d.ComponentId);
+                var obtainedComp = Model.Task.ObtainedMontages.FirstOrDefault(d => comp.Montage.Id == d.ComponentId);
                 if (obtainedComp == null)
                 {
                     continue;
@@ -72,7 +72,7 @@
                     @if (User.IsInRole(RoleEnum.OrderPicker))
                     {
                         <td>
-                            <a class="btn btn-light btn-sm" asp-controller="MontagesSupplyRequest" asp-action="Create" asp-route-componentId="@comp.Montage.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
+                            <a class="btn btn-light btn-sm" asp-controller="MontagesSupplyRequest" asp-action="Create" asp-route-componentId="@comp.Montage.Id" asp-route-taskId="@Model.Task.Id">Добавить заявку</a>
                         </td>
                     }
                 </tr>
@@ -81,7 +81,7 @@
     </div>
     <div class="table-responsive-xl">
         <h4>Общее количество конструктива:
-            <a class="btn btn-light btn-sm" asp-action="ReceiveDesign" asp-route-taskId="@Model.Id">Получить</a>
+            <a class="btn btn-light btn-sm" asp-action="ReceiveDesign" asp-route-taskId="@Model.Task.Id">Получить</a>
         </h4>
         <table style="width:100%;" class="table table-sm">
             <thead class="thead-dark">
@@ -96,9 +96,9 @@
                 }
             </tr>
             </thead>
-            @foreach (var des in Model.Device.Designs)
+            @foreach (var des in Model.Task.Device.Designs)
             {
-                var obtainedDes = Model.ObtainedDesigns.FirstOrDefault(d => des.ComponentId == d.ComponentId);
+                var obtainedDes = Model.Task.ObtainedDesigns.FirstOrDefault(d => des.ComponentId == d.ComponentId);
                 if (obtainedDes == null)
                 {
                     continue;
@@ -119,7 +119,7 @@
                     @if (User.IsInRole(RoleEnum.OrderPicker))
                     {
                         <td>
-                            <a class="btn btn-light btn-sm" asp-controller="DesignsSupplyRequest" asp-action="Create" asp-route-designId="@des.Design.Id" asp-route-taskId="@Model.Id">Добавить заявку</a>
+                            <a class="btn btn-light btn-sm" asp-controller="DesignsSupplyRequest" asp-action="Create" asp-route-designId="@des.Design.Id" asp-route-taskId="@Model.Task.Id">Добавить заявку</a>
                         </td>
                     }
                 </tr>
@@ -130,7 +130,7 @@
 <br>
 <hr/>
 <h3>Логи</h3>
-@* <partial name="Partail/_LogsPartail" model="@ViewBag.Logs"/> *@
+<partial name="Partail/_LogsPartail" model="@Model.Logs"/>
 <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -140,7 +140,7 @@
             </div>
             <div class="modal-body">
                 <form method="post" asp-action="Transfer" id="transferForm">
-                    <input name="taskId" value="@Model.Id" hidden>
+                    <input name="taskId" value="@Model.Task.Id" hidden>
                     <div class="mb-3">
                         <label for="to" class="col-form-label"></label>
                         <select class="form-select" id="to" name="to" asp-items="ViewBag.States" onchange="changeStateTransfer()"></select>
