@@ -15,10 +15,10 @@ namespace ProductionManagementSystem.Core.Services
         System.Threading.Tasks.Task<IEnumerable<Task>> GetTasksByUserRoleAsync(IEnumerable<string> roles);
         System.Threading.Tasks.Task TransferAsync(int taskId, bool full, int to, string message);
         string GetTaskStatusName(TaskStatusEnum item);
-        System.Threading.Tasks.Task ReceiveComponentsAsync(int taskId, int[] componentIds, int[] componentObt);
-        System.Threading.Tasks.Task ReceiveDesignsAsync(int taskId, int[] designIds, int[] designObt);
-        System.Threading.Tasks.Task ReceiveComponentAsync(int taskId, int componentId, int componentObt);
-        System.Threading.Tasks.Task ReceiveDesignAsync(int taskId, int designId, int designObt);
+        System.Threading.Tasks.Task ReceiveComponentsAsync(int taskId, int[] obtainedCompIds, int[] componentObt);
+        System.Threading.Tasks.Task ReceiveDesignsAsync(int taskId, int[] obtainedDesIds, int[] designObt);
+        System.Threading.Tasks.Task ReceiveComponentAsync(int taskId, int obtainedCompId, int componentObt);
+        System.Threading.Tasks.Task ReceiveDesignAsync(int taskId, int obtainedDesId, int designObt);
         System.Threading.Tasks.Task DeleteByIdAsync(int id);
     }
     public class TaskService : BaseServiceWithLogs<Task>, ITaskService
@@ -112,58 +112,62 @@ namespace ProductionManagementSystem.Core.Services
             return String.Join(", ", result);
         }
 
-        public async System.Threading.Tasks.Task ReceiveComponentsAsync(int taskId, int[] componentIds, int[] componentObt)
+        public async System.Threading.Tasks.Task ReceiveComponentsAsync(int taskId, int[] obtainedCompIds, int[] componentObt)
         {
-            var obtainedComp = (await GetByIdAsync(taskId)).ObtainedMontages.ToList();
             for (int i = 0; i < componentObt.Length; i++)
             {
-                var obtComp = obtainedComp.FirstOrDefault(c => c.ComponentId == componentIds[i]);
+                var obtComp = await _db.ObtainedMontageRepository.GetByIdAsync(obtainedCompIds[i]);
                 if (obtComp != null)
                 {
                     obtComp.Obtained += componentObt[i];
-                    await _montageService.DecreaseQuantityAsync(componentIds[i], componentObt[i]);
+                    await _montageService.DecreaseQuantityAsync(obtComp.ComponentId, componentObt[i]);
                     await _db.ObtainedMontageRepository.UpdateAsync(obtComp);
                 }
             }
+
+            await _db.SaveAsync();
         }
 
-        public async System.Threading.Tasks.Task ReceiveDesignsAsync(int taskId, int[] designIds, int[] designObt)
+        public async System.Threading.Tasks.Task ReceiveDesignsAsync(int taskId, int[] obtainedDesIds, int[] designObt)
         {
-            var obtainedDes = (await GetByIdAsync(taskId)).ObtainedDesigns.ToList();
             for (int i = 0; i < designObt.Length; i++)
             {
-                var obtDes = obtainedDes.FirstOrDefault(c => c.ComponentId == designIds[i]);
+                var obtDes = await _db.ObtainedDesignRepository.GetByIdAsync(obtainedDesIds[i]);
                 if (obtDes != null)
                 {
                     obtDes.Obtained += designObt[i];
-                    await _designService.DecreaseQuantityAsync(designIds[i], designObt[i]);
+                    await _designService.DecreaseQuantityAsync(obtDes.ComponentId, designObt[i]);
                     await _db.ObtainedDesignRepository.UpdateAsync(obtDes);
                 }
             }
+            
+            await _db.SaveAsync();
         }
         
-        public async System.Threading.Tasks.Task ReceiveComponentAsync(int taskId, int componentId, int componentObt)
+        public async System.Threading.Tasks.Task ReceiveComponentAsync(int taskId, int obtainedCompId, int componentObt)
         {
-            var obtainedMont = (await GetByIdAsync(taskId)).ObtainedMontages;
-            var obtMont = obtainedMont.FirstOrDefault(c => c.ComponentId == componentId);
+            var obtMont = await _db.ObtainedMontageRepository.GetByIdAsync(obtainedCompId);
             if (obtMont != null)
             {
                 obtMont.Obtained += componentObt;
-                await _montageService.IncreaseQuantityAsync(componentId, -componentObt);
+                await _montageService.IncreaseQuantityAsync(obtMont.ComponentId, -componentObt);
                 await _db.ObtainedMontageRepository.UpdateAsync(obtMont);
             }
+
+            await _db.SaveAsync();
         }
         
-        public async System.Threading.Tasks.Task ReceiveDesignAsync(int taskId, int designId, int designObt)
+        public async System.Threading.Tasks.Task ReceiveDesignAsync(int taskId, int obtainedDesId, int designObt)
         {
-            var obtainedDes = (await GetByIdAsync(taskId)).ObtainedDesigns;
-            var obtDes = obtainedDes.FirstOrDefault(c => c.ComponentId == designId);
+            var obtDes = await _db.ObtainedDesignRepository.GetByIdAsync(obtainedDesId);
             if (obtDes != null)
             {
                 obtDes.Obtained += designObt;
-                await _designService.IncreaseQuantityAsync(designId, -designObt);
+                await _designService.IncreaseQuantityAsync(obtDes.ComponentId, -designObt);
                 await _db.ObtainedDesignRepository.UpdateAsync(obtDes);
             }
+            
+            await _db.SaveAsync();
         }
 
        

@@ -38,7 +38,7 @@
                 <td>@obtainedDes.Obtained</td>
                 <td><input type="number" name="designObt" autocomplete="off" required min="-@obtainedDes.Obtained" max="@des.Design.Quantity" style="width:100px;" value="0"></td>
             </tr>
-            <input type="number" name="designIds" hidden value="@des.Design.Id"/>
+            <input type="number" name="obtainedCompIds" hidden value="@obtainedDes.Id"/>
         }
     </table>
     <button class="btn btn-primary">Получить</button>
