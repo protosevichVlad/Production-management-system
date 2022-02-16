@@ -8,9 +8,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProductionManagementSystem.Core.Data.EF;
+using ProductionManagementSystem.Core.Models.SupplyRequests;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Repositories;
 using ProductionManagementSystem.Core.Services;
+using ProductionManagementSystem.Core.Services.SupplyRequestServices;
 
 namespace ProductionManagementSystem.WEB
 {
@@ -62,6 +64,7 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<IMontageSupplyRequestService, MontageSupplyRequestService>();
             services.AddScoped<IDesignSupplyRequestService, DesignSupplyRequestService>();
+            services.AddScoped<ISupplyRequestService<SupplyRequest>, SupplyRequestService>();
             services.AddScoped<IReportService, ReportService>();
         }
 

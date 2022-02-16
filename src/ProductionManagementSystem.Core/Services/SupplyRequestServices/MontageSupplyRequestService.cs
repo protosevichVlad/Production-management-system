@@ -1,11 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Models.SupplyRequests;
 using ProductionManagementSystem.Core.Repositories;
+using ProductionManagementSystem.Core.Services.SupplyRequestServices;
 
 namespace ProductionManagementSystem.Core.Services
 {
-    public interface IMontageSupplyRequestService : IBaseService<MontageSupplyRequest>
+    public interface IMontageSupplyRequestService : IBaseService<MontageSupplyRequest>, ISupplyRequestService<MontageSupplyRequest>
     {
         Task ChangeStatusAsync(int id, int to, string message);
         Task DeleteByIdAsync(int id);
@@ -41,6 +44,11 @@ namespace ProductionManagementSystem.Core.Services
                 TaskId = montageSupplyRequest.TaskId
             });
             await _db.SaveAsync();
+        }
+        
+        public async Task<List<MontageSupplyRequest>> GetSupplyRequestsByTaskIdAsync(int taskId)
+        {
+            return await _currentRepository.FindAsync(sr => sr.TaskId == taskId);
         }
 
         public async Task DeleteByIdAsync(int id)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Reflection;
 using ProductionManagementSystem.Core.Models.Tasks;
 
 namespace ProductionManagementSystem.Core.Models.SupplyRequests
@@ -24,6 +26,30 @@ namespace ProductionManagementSystem.Core.Models.SupplyRequests
         
         [Display(Name = "Статус")]
         public SupplyStatusEnum StatusSupply { get; set; }
+
+        [NotMapped]
+        public string StatusRuName
+        {
+            get 
+            {
+                string result = "";
+                foreach (var value in Enum.GetValues<SupplyStatusEnum>())
+                {
+                    if (this.StatusSupply == value)
+                    {
+                        result = value.GetType()
+                            .GetMember(value.ToString())
+                            .First()
+                            .GetCustomAttribute<DisplayAttribute>()
+                            ?.GetName();
+                        
+                        break;;
+                    }
+                }
+
+                return result;
+            }
+        }
         
         public Task Task { get; set; }
         

@@ -43,19 +43,16 @@
                 <th width="10%">В задаче</th>
                 <th width="10%">На складе</th>
                 <th width="10%">Получено</th>
-                @if (User.IsInRole(RoleEnum.OrderPicker))
-                {
-                    <th width="20%"></th>
-                }
+                <th width="20%">Заявка на снабжение</th>
             </tr>
             </thead>
             @foreach (var obtainedComp in Model.Task.ObtainedMontages )
             {
+                var supplyRequest = Model.SupplyRequests.FirstOrDefault(sr => sr.ComponentId == obtainedComp.ComponentId);
                 var comp = Model.Task.Device.Montages.FirstOrDefault(om => obtainedComp.ComponentId == om.ComponentId);
                 if (comp == null)
-                {   
                     continue;
-                }
+                
                 <tr @if (obtainedComp.Obtained + comp.Montage.Quantity < comp.Quantity) 
                     { 
                         @: class="table-danger"
@@ -69,12 +66,18 @@
                     <td>@comp.Quantity</td>
                     <td>@comp.Montage.Quantity</td>
                     <td>@obtainedComp.Obtained</td>
-                    @if (User.IsInRole(RoleEnum.OrderPicker))
-                    {
-                        <td>
-                            <a class="btn btn-light btn-sm" asp-controller="MontagesSupplyRequest" asp-action="Create" asp-route-componentId="@comp.Montage.Id" asp-route-taskId="@Model.Task.Id">Добавить заявку</a>
-                        </td>
-                    }
+                    <td>
+                        @if (supplyRequest != null)
+                        {
+                            <a class="btn-link" target="_blank" asp-controller="MontagesSupplyRequest" asp-action="Details"
+                               asp-route-id="@supplyRequest.Id">@supplyRequest.StatusRuName</a>
+                        }
+                        else if(User.IsInRole(RoleEnum.OrderPicker)) 
+                        {
+                            <a class="btn btn-light btn-sm" target="_blank" asp-controller="MontagesSupplyRequest" asp-action="Create"
+                               asp-route-componentId="@comp.Montage.Id" asp-route-taskId="@Model.Task.Id">Добавить заявку</a>
+                        }
+                    </td>
                 </tr>
             }
         </table>
@@ -90,15 +93,12 @@
                 <th width="10%">В задаче</th>
                 <th width="10%">На складе</th>
                 <th width="10%">Получено</th>
-                @if (User.IsInRole(RoleEnum.OrderPicker))
-                {
-                    <th width="20%"></th>
-                }
+                <th width="20%"></th>
             </tr>
             </thead>
             @foreach (var obtainedDes in Model.Task.ObtainedDesigns)
             {
-            
+                var supplyRequest = Model.SupplyRequests.FirstOrDefault(sr => sr.ComponentId == obtainedDes.ComponentId);
                 var des = Model.Task.Device.Designs.FirstOrDefault(d => obtainedDes.ComponentId == d.ComponentId);
                 if (des == null)
                 {
@@ -117,12 +117,19 @@
                     <td>@des.Quantity</td>
                     <td>@des.Design.Quantity</td>
                     <td>@obtainedDes.Obtained</td>
-                    @if (User.IsInRole(RoleEnum.OrderPicker))
-                    {
-                        <td>
-                            <a class="btn btn-light btn-sm" asp-controller="DesignsSupplyRequest" asp-action="Create" asp-route-designId="@des.Design.Id" asp-route-taskId="@Model.Task.Id">Добавить заявку</a>
-                        </td>
-                    }
+                    <td>
+                        
+                        @if (supplyRequest != null)
+                        {
+                            <a class="btn-link" target="_blank" asp-controller="DesignsSupplyRequest" asp-action="Details"
+                                asp-route-id="@supplyRequest.Id">@supplyRequest.StatusRuName</a>
+                        }
+                        else if(User.IsInRole(RoleEnum.OrderPicker)) 
+                        {
+                            <a class="btn btn-light btn-sm" target="_blank"  asp-controller="DesignsSupplyRequest" asp-action="Create" 
+                                asp-route-designId="@des.Design.Id" asp-route-taskId="@Model.Task.Id">Добавить заявку</a>
+                        }
+                    </td>
                 </tr>
             }
         </table>

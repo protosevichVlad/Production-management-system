@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.DependencyInjection;
 using ProductionManagementSystem.Core.Infrastructure;
+using ProductionManagementSystem.Core.Models.SupplyRequests;
 using ProductionManagementSystem.Core.Models.Tasks;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services;
+using ProductionManagementSystem.Core.Services.SupplyRequestServices;
 using ProductionManagementSystem.WEB.Models.Tasks;
 using Task = ProductionManagementSystem.Core.Models.Tasks.Task;
 
@@ -22,13 +25,15 @@ namespace ProductionManagementSystem.WEB.Controllers
         private readonly ITaskService _taskService;
         private readonly IDeviceService _deviceService;
         private readonly ILogService _logService;
+        private readonly ISupplyRequestService<SupplyRequest> _supplyRequestService;
 
-        public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<User> userManager, ILogService logService)
+        public TasksController(ITaskService taskService, IDeviceService deviceService, UserManager<User> userManager, ILogService logService, ISupplyRequestService<SupplyRequest> supplyRequestService)
         {
             _taskService = taskService;
             _deviceService = deviceService;
             _userManager = userManager;
             _logService = logService;
+            _supplyRequestService = supplyRequestService;
         }
 
         public async Task<IActionResult> Index(string sortOrder, string searchString)
@@ -79,7 +84,8 @@ namespace ProductionManagementSystem.WEB.Controllers
                 return View(new TaskDetailsViewModel()
                 {
                     Task = task,
-                    Logs = await _logService.GetByTaskIdAsync(id)
+                    Logs = await _logService.GetByTaskIdAsync(id),
+                    SupplyRequests = await _supplyRequestService.GetSupplyRequestsByTaskIdAsync(id)
                 });
             }
             catch (PageNotFoundException)
