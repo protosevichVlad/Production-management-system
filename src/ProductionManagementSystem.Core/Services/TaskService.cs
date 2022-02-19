@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Models.Tasks;
 using ProductionManagementSystem.Core.Models.Users;
@@ -170,7 +171,17 @@ namespace ProductionManagementSystem.Core.Services
             await _db.SaveAsync();
         }
 
-       
+        public override async System.Threading.Tasks.Task DeleteAsync(Task item)
+        {
+            if ((await _db.ObtainedDesignRepository.FindAsync(o => o.TaskId == item.Id)).Count > 0
+                || (await _db.ObtainedMontageRepository.FindAsync(o => o.TaskId == item.Id)).Count > 0)
+            {
+                throw new IntersectionOfEntitiesException($"Не удалось удалить задачу №{item.Id}",
+                    $"Задача №{item.Id} не может быть удалена, поскольку для этой задачи есть заявки на снабжение. Чтобы удалить задачу, сначала удалите все заявки снабжение для этой задачи.");
+            }
+            
+            await base.DeleteAsync(item);
+        }
 
         public async System.Threading.Tasks.Task DeleteByIdAsync(int id)
         {

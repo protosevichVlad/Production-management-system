@@ -104,7 +104,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             catch (PageNotFoundException)
             {
                 throw new Exception("Страница не найдена.");
-            }
+            };
         }
         
         [HttpPost("[controller]/Delete/{id}")]
@@ -115,10 +115,17 @@ namespace ProductionManagementSystem.WEB.Controllers
                 await _taskService.DeleteByIdAsync(id);
                 return RedirectToAction(nameof(Index));
             }
+            catch (IntersectionOfEntitiesException ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                ViewBag.ErrorHeader = ex.Header;
+                return View(nameof(Delete), await _taskService.GetByIdAsync(id));
+            }
             catch (PageNotFoundException)
             {
                 throw new Exception("Страница не найдена.");
             }
+            
         }
         
         public async Task<IActionResult> Edit(int id)
