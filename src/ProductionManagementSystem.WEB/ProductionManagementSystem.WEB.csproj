@@ -81,7 +81,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProductionManagementSystem.BLL\ProductionManagementSystem.BLL.csproj" />
     <ProjectReference Include="..\ProductionManagementSystem.Core\ProductionManagementSystem.Core.csproj" />
   </ItemGroup>
 
