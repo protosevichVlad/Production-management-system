@@ -3,6 +3,12 @@
 
 // Write your JavaScript code.
 
+$('.datepicker').datepicker({
+    format: "dd.mm.yyyy",
+    language: "ru",
+    autoclose: true
+});
+
 async function createDeviceItem(type)
 {
     disableButton(`#buttonCreate${type}`);

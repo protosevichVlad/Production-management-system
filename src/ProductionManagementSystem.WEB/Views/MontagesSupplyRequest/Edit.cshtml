@@ -26,7 +26,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="DesiredDate" class="control-label"></label>
-                <input asp-for="DesiredDate" class="form-control" autocomplete="off" required/>
+                <input asp-for="DesiredDate" type="text"  class="form-control datepicker" placeholder="dd.MM.yyyy" autocomplete="off" required/>
                 <span asp-validation-for="DesiredDate" class="text-danger"></span>
             </div>
             <div class="form-group">
