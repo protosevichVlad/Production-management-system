@@ -1,0 +1,56 @@
+﻿@using MySqlConnector
+@model ProductionManagementSystem.Core.Models.AltiumDB.TableColumn
+
+<tr id="Tr@(Model.Id)">
+  <td class="Ids">
+          @Model.Id
+      </td>
+  <td >
+    <div class="bx--text-input__field-wrapper">
+      <input id="text-input-3" type="text" class="bx--text-input bx--text-input--light" placeholder="Placeholder text" name="TableColumns[@Model.Id].ColumnName" value="@Model.ColumnName">
+    </div>
+  </td>
+  <td >
+    <div class="bx--select-input--inline__wrapper">
+      <div class="bx--select-input__wrapper">
+        <select id="select-id" class="bx--select-input" name="TableColumns[@Model.Id].ColumnType">
+          <option class="bx--select-option" value="" disabled selected hidden>
+            Choose an option
+          </option>
+          @foreach (var type in Enum.GetValues(typeof(MySqlDbType)).Cast<MySqlDbType>())
+          {
+            @if (type == Model.ColumnType)
+            {
+              <option class="bx--select-option" value="@((int) type)" selected>
+                @type
+              </option>
+            }
+            else
+            {
+              <option class="bx--select-option" value="@((int) type)">
+                @type
+              </option>
+            }
+          }
+        </select>
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 11L3 6 3.7 5.3 8 9.6 12.3 5.3 13 6z"></path>
+        </svg>
+      </div>
+    </div>
+  </td>
+  <td >
+    <div class="bx--form-item bx--checkbox-wrapper">
+      <input id="bx--checkbox-new-@(Model.Id)" class="bx--checkbox" type="checkbox" value="true" checked="@Model.Display"
+             name="TableColumns[@Model.Id].Display">
+      <label for="bx--checkbox-new-@(Model.Id)" class="bx--checkbox-label"></label>
+    </div>
+  </td>
+  <td>
+    <button class="bx--btn bx--btn--ghost" type="button" onclick="removeTableColumn(@(Model.Id + 1))">
+      <svg width="32" height="32">       
+           <image xlink:href="/carbonUIicons/close.svg"  width="32" height="32"/>    
+      </svg>
+    </button>
+  </td>
+</tr>

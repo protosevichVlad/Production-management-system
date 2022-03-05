@@ -42,7 +42,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return designInDevice;
         }
 
-        public override async Task<List<MontageInDevice>> FindAsync(Func<MontageInDevice, bool> predicate)
+        public override async Task<List<MontageInDevice>> FindAsync(Func<MontageInDevice, bool> predicate, string includeProperty=null)
         {
             var montageInDevices = (await base.FindAsync(predicate)).ToList();
             foreach (var montageInDevice in montageInDevices)

@@ -34,7 +34,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return designSupplyRequest;
         }
 
-        public override async Task<List<DesignSupplyRequest>> FindAsync(Func<DesignSupplyRequest, bool> predicate)
+        public override async Task<List<DesignSupplyRequest>> FindAsync(Func<DesignSupplyRequest, bool> predicate, string includeProperty=null)
         {
             List<DesignSupplyRequest> designSupplyRequests = (await base.FindAsync(predicate)).ToList();
             foreach (var designSupplyRequest in designSupplyRequests)

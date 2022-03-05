@@ -36,7 +36,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return montageSupplyRequest;
         }
 
-        public override async Task<List<MontageSupplyRequest>> FindAsync(Func<MontageSupplyRequest, bool> predicate)
+        public override async Task<List<MontageSupplyRequest>> FindAsync(Func<MontageSupplyRequest, bool> predicate, string includeProperty=null)
         {
             List<MontageSupplyRequest> montageSupplyRequests = (await base.FindAsync(predicate)).ToList();
             foreach (var montageSupplyRequest in montageSupplyRequests)

@@ -1,0 +1,63 @@
+﻿@using MySqlConnector
+@model ProductionManagementSystem.Core.Models.AltiumDB.DatabaseTable
+
+@{
+  ViewBag.Title = "Create table";
+  Layout = "Shared/_AltiumDBLayout";
+}
+<form method="post">
+  <div class="bx--form-item">
+    <label for="text-input-3" class="bx--label">@Html.LabelFor(x => x.TableName)</label>
+    <input id="text-input-3" type="text" class="bx--text-input bx--text-input--light" asp-for="TableName" readonly="@(Model.TableColumns.Count != 1 ? "readonly": "")">
+  </div>
+  <div class="bx--form-item">
+    <label for="text-input-3" class="bx--label">@Html.LabelFor(x => x.DisplayName)</label>
+    <input id="text-input-3" type="text" class="bx--text-input bx--text-input--light" asp-for="DisplayName">
+  </div>
+  <div class="bx--data-table-container " data-table>
+    <section class="bx--table-toolbar  bx--table-toolbar ">
+      <div class="bx--toolbar-content">
+        <button class="bx--btn bx--btn bx--btn--primary" type="button" id="buttonCreateTableColumn" onclick="createTableColumn()">
+          Add column
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
+          </svg>
+        </button>
+      </div>
+    </section>
+  <!-- End Toolbar Content -->
+  </div>
+  <table class="bx--data-table">
+    <thead>
+    <tr>
+      <th style="width: 30px"></th>
+      <th >
+        <span class="bx--table-header-label">Column name</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Type</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Display in table</span>
+      </th>
+      <th style="width: 30px"></th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (int i = 1; i < Model.TableColumns.Count; i++)
+    {
+        Model.TableColumns[i].Id = i;
+        <partial name="Shared/Table/TableColumn" model="Model.TableColumns[i]"/>      
+    }
+    <tr id="Tr0">
+      @Html.HiddenFor(x => x.TableColumns[0].ColumnName)
+      @Html.HiddenFor(x => x.TableColumns[0].ColumnType) @* Int32 *@
+      @Html.HiddenFor(x => x.TableColumns[0].Display)
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="bx--form-item">
+    <button class="bx--btn bx--btn--primary" type="submit">Submit</button>
+  </div>
+</form>

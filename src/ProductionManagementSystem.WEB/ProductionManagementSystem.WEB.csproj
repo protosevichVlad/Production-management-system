@@ -103,6 +103,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\AltiumDB\Tables" />
     <Folder Include="Pages" />
   </ItemGroup>
 

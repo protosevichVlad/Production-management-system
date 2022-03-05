@@ -39,7 +39,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return order;
         }
 
-        public override async Task<List<Order>> FindAsync(Func<Order, bool> predicate)
+        public override async Task<List<Order>> FindAsync(Func<Order, bool> predicate, string includeProperty=null)
         {
             var orders = (await base.FindAsync(predicate)).ToList();
             foreach (var order in orders)

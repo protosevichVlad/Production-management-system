@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage;
 using ProductionManagementSystem.Core.Data.EF;
+using ProductionManagementSystem.Core.Models.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Repositories
 {
@@ -19,6 +21,7 @@ namespace ProductionManagementSystem.Core.Repositories
         IMontageSupplyRequestRepository MontageSupplyRequestRepository { get; }
         ILogRepository LogRepository { get; }
         IElementDifferenceRepository ElementDifferenceRepository { get; }
+        IDatabaseTableRepository DatabaseTableRepository { get; }
 
         void Save();
         Task SaveAsync();
@@ -40,6 +43,7 @@ namespace ProductionManagementSystem.Core.Repositories
         private IMontageSupplyRequestRepository _montageSupplyRequestRepository;
         private IDesignsSupplyRequestRepository _designsSupplyRequestRepository;
         private IElementDifferenceRepository _elementDifferenceRepository;
+        private DatabaseTableRepository _databaseTableRepository;
 
         public EFUnitOfWork(string connectionString)
         {
@@ -77,7 +81,10 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public IElementDifferenceRepository ElementDifferenceRepository =>
             _elementDifferenceRepository ??= new ElementDifferenceRepository(_db);
-        
+
+        public IDatabaseTableRepository DatabaseTableRepository =>
+            _databaseTableRepository ??= new DatabaseTableRepository(_db);
+
         private bool _disposed;
 
         protected virtual void Dispose(bool disposing)

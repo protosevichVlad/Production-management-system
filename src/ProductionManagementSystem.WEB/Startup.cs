@@ -12,6 +12,7 @@ using ProductionManagementSystem.Core.Models.SupplyRequests;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Repositories;
 using ProductionManagementSystem.Core.Services;
+using ProductionManagementSystem.Core.Services.AltiumDB;
 using ProductionManagementSystem.Core.Services.SupplyRequestServices;
 
 namespace ProductionManagementSystem.WEB
@@ -66,6 +67,8 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<IDesignSupplyRequestService, DesignSupplyRequestService>();
             services.AddScoped<ISupplyRequestService<SupplyRequest>, SupplyRequestService>();
             services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IDatabaseService>(_ =>
+                new DatabaseService(Configuration.GetConnectionString("DefaultConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
