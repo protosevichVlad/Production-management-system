@@ -15,7 +15,7 @@
           <div class="bx--form-item">
             <label for="text-input-@column.ColumnName" class="bx--label">@column.ColumnName</label>
             <div class="bx--form__helper-text"></div>
-            <input id="text-input-@column.ColumnName" class="bx--text-input" name="data[@i].Value" value="@(Model.Data[column.ColumnName])">
+            <input id="text-input-@column.ColumnName" class="bx--text-input" name="data[@i].Value" value="@(Model.Data == null ? "" : Model.Data[column.ColumnName])">
             <input type="hidden" name="data[@i].Key" value="@column.ColumnName">
           </div>
           <br/>
