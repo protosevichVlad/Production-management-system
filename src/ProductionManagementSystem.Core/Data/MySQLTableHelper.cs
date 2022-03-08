@@ -18,7 +18,8 @@ namespace ProductionManagementSystem.Core.Data
         void InsertIntoTable(DatabaseTable table, IDictionary<string, object> data);
         void InsertListIntoTable(DatabaseTable table, List<IDictionary<string, object>> data);
         void UpdateDataInTable(DatabaseTable table, int id, IDictionary<string, object> data);
-        public Dictionary<string, object> GetEntityById(DatabaseTable table, int id);
+        Dictionary<string, object> GetEntityById(DatabaseTable table, int id);
+        void DeleteEntity(DatabaseTable table, int id);
     }
     
     public class MySQLTableHelper : IMySQLTableHelper
@@ -230,6 +231,27 @@ namespace ProductionManagementSystem.Core.Data
                 
                 reader.Close();
                 return row;
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                conn.Close(); 
+            }
+        }
+
+        public void DeleteEntity(DatabaseTable table, int id)
+        {
+            try
+            {
+                conn.Open();
+                
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = $"DELETE FROM {table.TableName} WHERE Id= @Id;";
+                cmd.Parameters.Add("@Id", DbType.Int32).Value = id;
+                cmd.ExecuteNonQuery();
             }
             catch(MySqlException ex)
             {

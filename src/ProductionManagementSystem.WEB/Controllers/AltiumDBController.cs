@@ -124,5 +124,13 @@ namespace ProductionManagementSystem.WEB.Controllers
                 data.ToDictionary(pair => pair.Key, pair=>(object)pair.Value));
             return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = tableName});
         }
+        
+        [HttpDelete]
+        [Route("AltiumDB/Tables/{tableName}/{id:int}")]
+        public async Task<IActionResult> Tables([FromRoute]string tableName, [FromRoute]int id)
+        {
+            await _databaseService.DeleteEntityById(tableName, id);
+            return Ok();
+        }
     }
 }
