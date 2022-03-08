@@ -104,8 +104,8 @@
     <thead>
     <tr>
       <th >
-        <button class="bx--table-sort" data-event="sort" title="Name">
-          <span class="bx--table-header-label">Name</span>
+        <button class="bx--table-sort" data-event="sort" title="Name in database">
+          <span class="bx--table-header-label">Name in database</span>
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--table-sort__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
             <path d="M12.3 9.3L8.5 13.1 8.5 1 7.5 1 7.5 13.1 3.7 9.3 3 10 8 15 13 10z"></path>
           </svg>
@@ -115,8 +115,8 @@
         </button>
       </th>
       <th >
-        <button class="bx--table-sort" data-event="sort" title="Protocol">
-          <span class="bx--table-header-label">Protocol</span>
+        <button class="bx--table-sort" data-event="sort" title="Dispaly name">
+          <span class="bx--table-header-label">Dispaly name</span>
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--table-sort__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
             <path d="M12.3 9.3L8.5 13.1 8.5 1 7.5 1 7.5 13.1 3.7 9.3 3 10 8 15 13 10z"></path>
           </svg>
@@ -134,10 +134,10 @@
     @foreach (var table in Model)
     {
       <tr >
-        <td onclick="location.href='Table_@table.TableName';">
+        <td onclick="location.href='Tables/@table.TableName';">
           @table.TableName
         </td>
-        <td onclick="location.href='Table_@table.TableName';">
+        <td onclick="location.href='Tables/@table.TableName';">
           @table.DisplayName
         </td>
         <td class="bx--table-column-menu" style="width: 50px">

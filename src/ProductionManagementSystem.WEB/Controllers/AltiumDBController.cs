@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
@@ -49,7 +50,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpGet]
-        [Route("[controller]/Table_{DatabaseTableName}")]
+        [Route("[controller]/Tables/{DatabaseTableName}")]
         public async Task<IActionResult> GetDataFromTable(string DatabaseTableName)
         {
             DataListViewModel vm = new DataListViewModel()
@@ -87,6 +88,23 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             await _databaseService.DeleteByTableNameAsync(tableName);
             return Ok();
+        }
+        
+        [HttpGet]
+        [Route("AltiumDB/Tables/{tableName}/CreateEntity")]
+        public async Task<IActionResult> CreateEntity([FromRoute]string tableName)
+        {
+            var table = await _databaseService.GetTableByNameAsync(tableName);
+            return View(table);
+        }
+        
+        [HttpPost]
+        [Route("AltiumDB/Tables/{tableName}/CreateEntity")]
+        public async Task<IActionResult> CreateEntity([FromRoute]string tableName, Dictionary<string, string> data)
+        {
+            await _databaseService.InsertIntoTableByTableNameAsync(tableName,
+                data.ToDictionary(pair => pair.Key, pair=>(object)pair.Value));
+            return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = tableName});
         }
     }
 }

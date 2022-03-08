@@ -15,6 +15,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         Task<DatabaseTable> GetTableByNameAsync(string tableName);
         Task<List<Dictionary<string, object>>> GetDataFromTableAsync(string tableName);
         Task DeleteByTableNameAsync(string tableName);
+        Task InsertIntoTableByTableNameAsync(string tableName, IDictionary<string, object> data);
     }
 
     public class DatabaseService : BaseService<DatabaseTable>, IDatabaseService
@@ -62,8 +63,16 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         public async Task DeleteByTableNameAsync(string tableName)
         {
             var table = await GetTableByNameAsync(tableName);
+            if (table == null) throw new NotImplementedException();
             _tableHelper.DeleteTable(table);
             await base.DeleteAsync(table);
+        }
+
+        public async Task InsertIntoTableByTableNameAsync(string tableName, IDictionary<string, object> data)
+        {
+            var table = await GetTableByNameAsync(tableName);
+            if (table == null) throw new NotImplementedException();
+            _tableHelper.InsertIntoTable(table, data);
         }
 
         public override async Task UpdateAsync(DatabaseTable newTable)

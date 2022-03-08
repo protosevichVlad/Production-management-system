@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
+using System.Linq;
 using MySqlConnector;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 
@@ -14,6 +15,8 @@ namespace ProductionManagementSystem.Core.Data
         void AddColumn(DatabaseTable table, TableColumn column);
         void DeleteColumn(DatabaseTable table, TableColumn column);
         List<Dictionary<string, object>> GetDataFromTable(DatabaseTable table);
+        void InsertIntoTable(DatabaseTable table, IDictionary<string, object> data);
+        void InsertListIntoTable(DatabaseTable table, List<IDictionary<string, object>> data);
     }
     
     public class MySQLTableHelper : IMySQLTableHelper
@@ -144,6 +147,37 @@ namespace ProductionManagementSystem.Core.Data
             {  
                 conn.Close(); 
             }
+        }
+
+        public void InsertIntoTable(DatabaseTable table, IDictionary<string, object> data)
+        {
+            try
+            {
+                conn.Open();
+                
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText =
+                    $"INSERT INTO {table.TableName} ({table.GetColumns()}) VALUES ({table.GenerateValueBinding()})";
+                foreach (var column in table.TableColumns.Where(x => x.ColumnName != "Id"))
+                {
+                    cmd.Parameters.Add($"@{column.ColumnName}", column.ColumnType).Value = data[column.ColumnName];
+                }
+
+                cmd.ExecuteNonQuery();
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                conn.Close(); 
+            }
+        }
+
+        public void InsertListIntoTable(DatabaseTable table, List<IDictionary<string, object>> data)
+        {
+            throw new NotImplementedException();
         }
 
         private string GetTypeName(MySqlDbType type)
