@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.Core.Models.AltiumDB.DatabaseTable
+﻿@model ProductionManagementSystem.WEB.Models.AltiumDB.CreateEditEntityViewModel
 
 @{
   ViewBag.Title = "Create entity";
@@ -9,13 +9,13 @@
   <div class="bx--row">
     <div class="bx--col-sm-2">
       <form method="post">
-        @foreach (var (column, i) in Model.TableColumns.Where(x => x.ColumnName != "Id")
+        @foreach (var (column, i) in Model.Table.TableColumns.Where(x => x.ColumnName != "Id")
           .Select((x, i) => (x, i)))
         {
           <div class="bx--form-item">
             <label for="text-input-@column.ColumnName" class="bx--label">@column.ColumnName</label>
             <div class="bx--form__helper-text"></div>
-            <input id="text-input-@column.ColumnName" class="bx--text-input" name="data[@i].Value">
+            <input id="text-input-@column.ColumnName" class="bx--text-input" name="data[@i].Value" value="@(Model.Data[column.ColumnName])">
             <input type="hidden" name="data[@i].Key" value="@column.ColumnName">
           </div>
           <br/>

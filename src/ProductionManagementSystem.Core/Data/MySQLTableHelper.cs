@@ -17,6 +17,8 @@ namespace ProductionManagementSystem.Core.Data
         List<Dictionary<string, object>> GetDataFromTable(DatabaseTable table);
         void InsertIntoTable(DatabaseTable table, IDictionary<string, object> data);
         void InsertListIntoTable(DatabaseTable table, List<IDictionary<string, object>> data);
+        void UpdateDataInTable(DatabaseTable table, int id, IDictionary<string, object> data);
+        public Dictionary<string, object> GetEntityById(DatabaseTable table, int id);
     }
     
     public class MySQLTableHelper : IMySQLTableHelper
@@ -178,6 +180,65 @@ namespace ProductionManagementSystem.Core.Data
         public void InsertListIntoTable(DatabaseTable table, List<IDictionary<string, object>> data)
         {
             throw new NotImplementedException();
+        }
+
+        public void UpdateDataInTable(DatabaseTable table, int id,  IDictionary<string, object> data)
+        {
+            try
+            {
+                conn.Open();
+                
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText =
+                    $"UPDATE {table.TableName} SET {table.GenerateUpdateBinding()} WHERE Id = @Id";
+                cmd.Parameters.Add("@Id", DbType.Int32).Value = id;
+                foreach (var column in table.TableColumns.Where(x => x.ColumnName != "Id"))
+                {
+                    cmd.Parameters.Add($"@{column.ColumnName}", column.ColumnType).Value = data[column.ColumnName];
+                }
+
+                cmd.ExecuteNonQuery();
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                conn.Close(); 
+            }
+        }
+
+        public Dictionary<string, object> GetEntityById(DatabaseTable table, int id)
+        {
+            try
+            {
+                conn.Open();
+                
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = $"SELECT * FROM {table.TableName} WHERE Id= @Id;";
+                cmd.Parameters.Add("@Id", DbType.Int32).Value = id;
+                MySqlDataReader reader = cmd.ExecuteReader();
+                var row = new Dictionary<string, object>();
+                while (reader.Read())
+                {
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        row.Add(table.TableColumns[i].ColumnName, reader[i]);
+                    }
+                }
+                
+                reader.Close();
+                return row;
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                conn.Close(); 
+            }
         }
 
         private string GetTypeName(MySqlDbType type)

@@ -95,7 +95,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> CreateEntity([FromRoute]string tableName)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
-            return View(table);
+            return View("CreateEntity",new CreateEditEntityViewModel() {Table = table});
         }
         
         [HttpPost]
@@ -103,6 +103,24 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> CreateEntity([FromRoute]string tableName, Dictionary<string, string> data)
         {
             await _databaseService.InsertIntoTableByTableNameAsync(tableName,
+                data.ToDictionary(pair => pair.Key, pair=>(object)pair.Value));
+            return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = tableName});
+        }
+        
+        [HttpGet]
+        [Route("AltiumDB/Tables/{tableName}/EditEntity/{id:int}")]
+        public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]int id)
+        {
+            var table = await _databaseService.GetTableByNameAsync(tableName);
+            var data = await _databaseService.GetEntityById(tableName, id);
+            return View("CreateEntity",new CreateEditEntityViewModel() {Table = table, Data = data});
+        }
+        
+        [HttpPost]
+        [Route("AltiumDB/Tables/{tableName}/EditEntity/{id:int}")]
+        public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]int id, Dictionary<string, string> data)
+        {
+            await _databaseService.UpdateEntityAsync(tableName, id,
                 data.ToDictionary(pair => pair.Key, pair=>(object)pair.Value));
             return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = tableName});
         }
