@@ -92,7 +92,7 @@
   @foreach(var columnName in Model.DatabaseTable.TableColumns.Where(x => x.Display).Select(x => x.ColumnName))
   {
     <td onclick="location.href='/AltiumDB/Tables/@Model.DatabaseTable.TableName/@Model.Data[i]["KeyID"]';">
-      @Model.Data[i][columnName]
+      <span style="white-space: pre-line">@Model.Data[i][columnName].ToString()</span>
     </td>
   }
   <!-- expand icon td -->
