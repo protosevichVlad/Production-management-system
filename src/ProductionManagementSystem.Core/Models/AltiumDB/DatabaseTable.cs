@@ -24,7 +24,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             StringBuilder result = new StringBuilder("");
             foreach (var column in TableColumns.Where(x => x.ColumnName != "Id"))
             {
-                result.Append(column.ColumnName);
+                result.Append($"`{column.ColumnName}`");
                 result.Append(", ");
             }
 
@@ -37,7 +37,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             StringBuilder result = new StringBuilder("");
             foreach (var column in TableColumns.Where(x => x.ColumnName != "Id"))
             {
-                result.Append($"@{column.ColumnName}");
+                result.Append(column.ParameterName);
                 result.Append(", ");
             }
 
@@ -50,7 +50,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             StringBuilder result = new StringBuilder("");
             foreach (var column in TableColumns.Where(x => x.ColumnName != "Id"))
             {
-                result.Append($"{column.ColumnName} = @{column.ColumnName}, ");
+                result.Append($"`{column.ColumnName}` = {column.ParameterName}, ");
             }
             result.Remove(result.Length - 2, 2);
             return result.ToString();

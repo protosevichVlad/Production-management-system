@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
+using MySqlConnector;
 using ProductionManagementSystem.Core.Data;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Repositories;
@@ -19,6 +21,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         Task UpdateEntityAsync(string tableName, int id, Dictionary<string, object> data);
         Task<IDictionary<string, object>> GetEntityById(string tableName, int id);
         Task DeleteEntityById(string tableName, int id);
+        Task ImportFromFile(string tableName, StreamReader stream, IDataImporter importer);
     }
 
     public class DatabaseService : BaseService<DatabaseTable>, IDatabaseService
@@ -34,15 +37,15 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         public override async Task CreateAsync(DatabaseTable item)
         {
             if (await this.TableIsExistsAsync(item.TableName)) throw new NotImplementedException();
-            await base.CreateAsync(item);
             _tableHelper.CreateTable(item);
+            await base.CreateAsync(item);
         }
 
         public override async Task DeleteAsync(DatabaseTable item)
         {
             if (!await this.TableIsExistsAsync(item.TableName)) throw new NotImplementedException();
-            await base.DeleteAsync(item);
             _tableHelper.DeleteTable(item);
+            await base.DeleteAsync(item);
         }
 
         public async Task<bool> TableIsExistsAsync(string tableName)
@@ -99,6 +102,30 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             _tableHelper.DeleteEntity(table, id);
         }
 
+        public async Task ImportFromFile(string tableName, StreamReader stream, IDataImporter importer)
+        {
+            await foreach (var table in importer.GetDatabaseTables(tableName, stream))
+            {
+                var data = await importer.GetData(stream, table);
+
+                try
+                {
+                    await CreateAsync(table);
+                    //TODO: write sql query for insert list dictionary
+                    foreach (var d in data)
+                    {
+                        await InsertIntoTableByTableNameAsync(table.TableName, d);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(table.DisplayName);
+                    Console.WriteLine(e.Message);
+                }
+                
+            }
+        }
+
         public override async Task UpdateAsync(DatabaseTable newTable)
         {
             var table = await GetTableByNameAsync(newTable.TableName);
@@ -136,5 +163,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
 
             await base.UpdateAsync(table);
         }
+        
+        
     }
 }

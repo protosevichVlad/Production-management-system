@@ -35,5 +35,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         {
             return HashCode.Combine(ColumnName, (int) ColumnType, DatabaseTableId);
         }
+
+        public string ParameterName => "@" + string.Join(string.Empty, ColumnName.Split('@', '-', ':', '(', ')', '/', '±', ',', '.', ';', '\''));
     }
 }

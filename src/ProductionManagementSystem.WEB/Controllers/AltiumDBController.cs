@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
 using ProductionManagementSystem.Core.Models.AltiumDB;
@@ -131,6 +133,38 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             await _databaseService.DeleteEntityById(tableName, id);
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("AltiumDB/ImportFromCSV")]
+        public async Task<IActionResult> ImportFromCSV()
+        {
+            return View();
+        }
+        
+        [HttpPost]
+        [Route("AltiumDB/ImportFromCSV")]
+        public async Task<IActionResult> ImportFromCSV(IFormFile csvFile)
+        {
+            var tableName = csvFile.FileName.Split('.')[0];
+            await _databaseService.ImportFromFile(tableName, new StreamReader(csvFile.OpenReadStream()), new CsvDataImporter());
+            return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = "AltiumDB_" + tableName});
+        }
+        
+        [HttpGet]
+        [Route("AltiumDB/ImportFromXlsx")]
+        public async Task<IActionResult> ImportFromXlsx()
+        {
+            return View(nameof(ImportFromCSV));
+        }
+        
+        [HttpPost]
+        [Route("AltiumDB/ImportFromXlsx")]
+        public async Task<IActionResult> ImportFromXlsx(IFormFile csvFile)
+        {
+            var tableName = csvFile.FileName.Split('.')[0];
+            await _databaseService.ImportFromFile(tableName, new StreamReader(csvFile.OpenReadStream()), new ExcelImporter());
+            return RedirectToAction(nameof(Tables));
         }
     }
 }
