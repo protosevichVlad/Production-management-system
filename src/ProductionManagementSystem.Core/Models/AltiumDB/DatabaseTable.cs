@@ -23,7 +23,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         public void InitAltiumDB(string tableName)
         {
             DisplayName = tableName;
-            TableName = $"AltiumDB_{tableName}";
+            TableName = $"AltiumDB_{tableName.Replace(' ', '_')}";
             TableColumns = new List<TableColumn>
             {
                 new TableColumn()

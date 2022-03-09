@@ -270,7 +270,7 @@ namespace ProductionManagementSystem.Core.Data
                 MySqlDbType.Bit => "BIT",
                 MySqlDbType.Int32 => "INT",
                 MySqlDbType.Double => "FLOAT",
-                MySqlDbType.String => "VARCHAR(255)",
+                MySqlDbType.String => "VARCHAR(511)",
                 _ => throw new NotImplementedException(),
             };
         }
