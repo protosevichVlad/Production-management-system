@@ -19,8 +19,9 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
     {
         public async IAsyncEnumerable<DatabaseTable> GetDatabaseTables(string tableName, StreamReader streamReader)
         {
-            DatabaseTable table = new DatabaseTable() {DisplayName = tableName, TableName = $"AltiumDB_{tableName}", TableColumns = new List<TableColumn>()};
-            table.TableColumns.Add(new TableColumn(){ColumnName = "Id", ColumnType = MySqlDbType.Int32, DatabaseOrder = 0});
+            DatabaseTable table = new DatabaseTable();
+            table.InitAltiumDB(tableName);
+            
             var line = await streamReader.ReadLineAsync();
             if (line == null) throw new NotImplementedException();
             if (table.TableColumns.Count <= 1)
@@ -73,8 +74,9 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                 foreach (var worksheet in package.Workbook.Worksheets)
                 {
                     tableName = worksheet.Name;
-                    DatabaseTable table = new DatabaseTable() {DisplayName = tableName, TableName = $"AltiumDB_{tableName.Replace(' ', '_')}", TableColumns = new List<TableColumn>()};
-                    table.TableColumns.Add(new TableColumn(){ColumnName = "Id", ColumnType = MySqlDbType.Int32, DatabaseOrder = 0});
+                    DatabaseTable table = new DatabaseTable();
+                    table.InitAltiumDB(tableName);
+                    
                     int i = 1;
                     while(!string.IsNullOrWhiteSpace(worksheet.Cells[1, i].Text))
                     {

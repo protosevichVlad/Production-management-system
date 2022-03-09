@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using MySqlConnector;
 
 namespace ProductionManagementSystem.Core.Models.AltiumDB
 {
@@ -17,6 +18,22 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
 
         public DatabaseTable()
         {
+        }
+
+        public void InitAltiumDB(string tableName)
+        {
+            DisplayName = tableName;
+            TableName = $"AltiumDB_{tableName}";
+            TableColumns = new List<TableColumn>
+            {
+                new TableColumn()
+                {
+                    ColumnName = "Id",
+                    DisplayingColumnName = "Id",
+                    ColumnType = MySqlDbType.Int32,
+                    DatabaseOrder = 0
+                }
+            };
         }
 
         public string GetColumns()
