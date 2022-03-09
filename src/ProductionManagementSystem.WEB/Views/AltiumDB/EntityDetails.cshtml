@@ -1,0 +1,33 @@
+﻿@model ProductionManagementSystem.WEB.Models.AltiumDB.EntityViewModel
+
+@{
+  ViewBag.Title = "Entity details";
+  Layout = "Shared/_AltiumDBLayout";
+}
+<div class="bx--grid">
+  <div class="bx--row">
+    <div class="bx--col-sm-2">
+      <section class="bx--structured-list">
+        <div class="bx--structured-list-thead">
+          <div class="bx--structured-list-row bx--structured-list-row--header-row">
+            <div class="bx--structured-list-th"></div>
+            <div class="bx--structured-list-th"></div>
+          </div>
+        </div>
+        <div class="bx--structured-list-tbody">
+          @foreach (var column in Model.Table.TableColumns.Where(x => x.ColumnName != "Id"))
+          {
+              <div class="bx--structured-list-row">
+                <div class="bx--structured-list-td bx--structured-list-content--nowrap">
+                  <strong>@column.DisplayingColumnName</strong>
+                </div>
+                <div class="bx--structured-list-td">
+                  @Model.Data[column.ColumnName]
+                </div>
+              </div>
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

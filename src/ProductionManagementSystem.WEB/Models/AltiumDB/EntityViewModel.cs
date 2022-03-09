@@ -3,7 +3,7 @@ using ProductionManagementSystem.Core.Models.AltiumDB;
 
 namespace ProductionManagementSystem.WEB.Models.AltiumDB
 {
-    public class CreateEditEntityViewModel
+    public class EntityViewModel
     {
         public DatabaseTable Table { get; set; }
         public IDictionary<string, object> Data { get; set; }

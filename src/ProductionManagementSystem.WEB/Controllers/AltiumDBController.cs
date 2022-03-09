@@ -102,7 +102,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> CreateEntity([FromRoute]string tableName)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
-            return View("CreateEntity",new CreateEditEntityViewModel() {Table = table});
+            return View("CreateEntity",new EntityViewModel() {Table = table});
         }
         
         [HttpPost]
@@ -120,7 +120,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
             var data = await _databaseService.GetEntityById(tableName, id);
-            return View("CreateEntity",new CreateEditEntityViewModel() {Table = table, Data = data});
+            return View("CreateEntity",new EntityViewModel() {Table = table, Data = data});
         }
         
         [HttpPost]
@@ -167,6 +167,19 @@ namespace ProductionManagementSystem.WEB.Controllers
             }
             
             return RedirectToAction(nameof(Tables));
+        }
+        
+        [HttpGet]
+        [Route("AltiumDB/Tables/{tableName}/{id:int}")]
+        public async Task<IActionResult> EntityDetails([FromRoute]string tableName, [FromRoute]int id)
+        {
+            var table = await _databaseService.GetTableByNameAsync(tableName);
+            var data = await _databaseService.GetEntityById(tableName, id);
+            return View(new EntityViewModel()
+            {
+                Table = table,
+                Data = data
+            });
         }
     }
 }
