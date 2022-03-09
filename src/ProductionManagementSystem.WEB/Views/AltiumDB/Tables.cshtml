@@ -9,36 +9,7 @@
     <h4 class="bx--data-table-header__title">Table title</h4>
     <p class="bx--data-table-header__description">Optional Helper Text</p>
   </div>
-  <section class="bx--table-toolbar ">
-    <div class="bx--batch-actions" aria-label="Table Action Bar">
-      <div class="bx--action-list">
-        <button class="bx--btn bx--btn--primary" type="button">
-          Delete
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-            <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
-          </svg>
-        </button>
-        <button class="bx--btn bx--btn--primary" type="button">
-          Save
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-            <path d="M13.9,4.6l-2.5-2.5C11.3,2.1,11.1,2,11,2H3C2.4,2,2,2.4,2,3v10c0,0.6,0.4,1,1,1h10c0.6,0,1-0.4,1-1V5	C14,4.9,13.9,4.7,13.9,4.6z M6,3h4v2H6V3z M10,13H6V9h4V13z M11,13V9c0-0.6-0.4-1-1-1H6C5.4,8,5,8.4,5,9v4H3V3h2v2c0,0.6,0.4,1,1,1	h4c0.6,0,1-0.4,1-1V3.2l2,2V13H11z"></path>
-          </svg>
-        </button>
-        <button class="bx--btn bx--btn--primary" type="button">
-          Download
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-            <path d="M13 7L12.3 6.3 8.5 10.1 8.5 1 7.5 1 7.5 10.1 3.7 6.3 3 7 8 12zM13 12v2H3v-2H2v2l0 0c0 .6.4 1 1 1h10c.6 0 1-.4 1-1l0 0v-2H13z"></path>
-          </svg>
-        </button>
-        <button data-event="action-bar-cancel" class="bx--btn bx--btn--primary bx--batch-summary__cancel">Cancel</button>
-      </div>
-      <div class="bx--batch-summary">
-        <p class="bx--batch-summary__para">
-          <span data-items-selected>3</span> items selected
-        </p>
-      </div>
-    </div>
-
+  <section class="bx--table-toolbar bx--table-toolbar--small">
     <div class="bx--toolbar-content">
       <!--  Default hidden search -->
       <div class="bx--toolbar-search-container-expandable">
@@ -86,7 +57,7 @@
     </div>
   </section>
   <!-- Table -->
-  <table class="bx--data-table  bx--data-table--sort bx--data-table--visible-overflow-menu  ">
+  <table class="bx--data-table  bx--data-table--sort bx--data-table--visible-overflow-menu bx--data-table--compact">
     <thead>
     <tr>
       <th >
