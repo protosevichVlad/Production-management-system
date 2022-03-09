@@ -56,7 +56,10 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
 
         public async Task<DatabaseTable> GetTableByNameAsync(string tableName)
         {
-            return (await _db.DatabaseTableRepository.FindAsync(x => x.TableName == tableName, "TableColumns")).FirstOrDefault();
+            var table = (await _db.DatabaseTableRepository.FindAsync(x => x.TableName == tableName, "TableColumns")).FirstOrDefault();
+            if (table == null) throw new NotImplementedException();
+            table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
+            return table;
         }
 
         public async Task<List<Dictionary<string, object>>> GetDataFromTableAsync(string tableName)

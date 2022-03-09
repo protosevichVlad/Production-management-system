@@ -20,15 +20,22 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         public async IAsyncEnumerable<DatabaseTable> GetDatabaseTables(string tableName, StreamReader streamReader)
         {
             DatabaseTable table = new DatabaseTable() {DisplayName = tableName, TableName = $"AltiumDB_{tableName}", TableColumns = new List<TableColumn>()};
-            table.TableColumns.Add(new TableColumn(){ColumnName = "Id", ColumnType = MySqlDbType.Int32});
+            table.TableColumns.Add(new TableColumn(){ColumnName = "Id", ColumnType = MySqlDbType.Int32, DatabaseOrder = 0});
             var line = await streamReader.ReadLineAsync();
             if (line == null) throw new NotImplementedException();
             if (table.TableColumns.Count <= 1)
             {
                 var columnsName = line.Split(',');
-                foreach (var columnName in columnsName)
+                foreach (var (columnName, i) in columnsName.Select((x, i) => (x, i)))
                 {
-                    table.TableColumns.Add(new TableColumn(){ColumnName = columnName.Replace(' ', '_'), ColumnType = MySqlDbType.String, Display = true});
+                    table.TableColumns.Add(new TableColumn()
+                    {
+                        ColumnName = columnName.Replace(' ', '_'), 
+                        DisplayingColumnName = columnName, 
+                        ColumnType = MySqlDbType.String, 
+                        Display = true, 
+                        DatabaseOrder = i+1
+                    });
                 }
             }
 
@@ -38,6 +45,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         public async Task<List<Dictionary<string, object>>> GetData(StreamReader streamReader, DatabaseTable table)
         {
             List<Dictionary<string, object>> data = new List<Dictionary<string, object>>();
+            table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
             while (true)
             {
                 var line = await streamReader.ReadLineAsync();
@@ -66,12 +74,19 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                 {
                     tableName = worksheet.Name;
                     DatabaseTable table = new DatabaseTable() {DisplayName = tableName, TableName = $"AltiumDB_{tableName.Replace(' ', '_')}", TableColumns = new List<TableColumn>()};
-                    table.TableColumns.Add(new TableColumn(){ColumnName = "Id", ColumnType = MySqlDbType.Int32});
+                    table.TableColumns.Add(new TableColumn(){ColumnName = "Id", ColumnType = MySqlDbType.Int32, DatabaseOrder = 0});
                     int i = 1;
                     while(!string.IsNullOrWhiteSpace(worksheet.Cells[1, i].Text))
                     {
                         var columnName = worksheet.Cells[1, i].Text;
-                        table.TableColumns.Add(new TableColumn(){ColumnName = columnName.Replace(' ', '_'), ColumnType = MySqlDbType.String, Display = true});
+                        table.TableColumns.Add(new TableColumn()
+                        {
+                            ColumnName = columnName.Replace(' ', '_'),
+                            DisplayingColumnName = columnName,
+                            ColumnType = MySqlDbType.String, 
+                            Display = true, 
+                            DatabaseOrder = i
+                        });
                         i++;
                     }
                     
@@ -82,8 +97,8 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
 
         public async Task<List<Dictionary<string, object>>> GetData(StreamReader streamReader, DatabaseTable table)
         {
+            table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            
             using(var package = new ExcelPackage(streamReader.BaseStream))
             {
                 List<Dictionary<string, object>> data = new List<Dictionary<string, object>>();
