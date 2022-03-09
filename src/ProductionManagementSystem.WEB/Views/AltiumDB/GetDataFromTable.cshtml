@@ -107,7 +107,7 @@
 <table class="bx--data-table  bx--data-table--compact bx--data-table--sort  ">
 <thead>
 <tr>
-  @foreach(var columnName in Model.DatabaseTable.TableColumns.Where(x => x.Display).Select(x => x.ColumnName))
+  @foreach(var columnName in Model.DatabaseTable.TableColumns.Where(x => x.Display).Select(x => x.DisplayingColumnName))
   {
     <!-- checkbox th -->
     <th>

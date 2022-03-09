@@ -8,7 +8,14 @@
 <form method="post">
   <div class="bx--form-item">
     <label for="text-input-3" class="bx--label">@Html.LabelFor(x => x.TableName)</label>
-    <input id="text-input-3" type="text" class="bx--text-input bx--text-input--light" asp-for="TableName" readonly="@(Model.TableColumns.Count != 1 ? "readonly": "")">
+    @if (Model.TableColumns.Count > 1)
+    {
+      <input id="text-input-3" type="text" class="bx--text-input bx--text-input--light" asp-for="TableName" readonly>
+    }
+    else
+    {
+      <input id="text-input-3" type="text" class="bx--text-input bx--text-input--light" asp-for="TableName">
+    }
   </div>
   <div class="bx--form-item">
     <label for="text-input-3" class="bx--label">@Html.LabelFor(x => x.DisplayName)</label>
@@ -35,7 +42,7 @@
         <span class="bx--table-header-label">Column name</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Type</span>
+        <span class="bx--table-header-label">Displaying column name</span>
       </th>
       <th >
         <span class="bx--table-header-label">Display in table</span>
@@ -51,7 +58,9 @@
     }
     <tr id="Tr0">
       @Html.HiddenFor(x => x.TableColumns[0].ColumnName)
-      @Html.HiddenFor(x => x.TableColumns[0].ColumnType) @* Int32 *@
+      @Html.HiddenFor(x => x.TableColumns[0].DisplayingColumnName)
+      @Html.HiddenFor(x => x.TableColumns[0].DatabaseOrder)
+      @Html.HiddenFor(x => x.TableColumns[0].ColumnType)
       @Html.HiddenFor(x => x.TableColumns[0].Display)
     </tr>
     </tbody>

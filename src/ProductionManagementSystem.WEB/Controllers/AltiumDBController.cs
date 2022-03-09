@@ -81,7 +81,12 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         public async Task<IActionResult> GetPartialViewForTableColumn(int index)
         {
-            return PartialView("Shared/Table/TableColumn", new TableColumn(){Id = index});
+            return PartialView("Shared/Table/TableColumn", new TableColumn()
+            {
+                Id = index, 
+                ColumnType = MySqlDbType.String,
+                DatabaseOrder = index,
+            });
         }
 
         [HttpDelete]
