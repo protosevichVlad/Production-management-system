@@ -141,34 +141,31 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpGet]
-        [Route("AltiumDB/ImportFromCSV")]
-        public async Task<IActionResult> ImportFromCSV()
+        [Route("AltiumDB/ImportTables")]
+        public async Task<IActionResult> ImportTables()
         {
             return View();
         }
         
         [HttpPost]
-        [Route("AltiumDB/ImportFromCSV")]
-        public async Task<IActionResult> ImportFromCSV(IFormFile csvFile)
+        [Route("AltiumDB/ImportTables")]
+        public async Task<IActionResult> ImportTables(IFormFile file)
         {
-            var tableName = csvFile.FileName.Split('.')[0];
-            await _databaseService.ImportFromFile(tableName, new StreamReader(csvFile.OpenReadStream()), new CsvDataImporter());
-            return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = "AltiumDB_" + tableName});
-        }
-        
-        [HttpGet]
-        [Route("AltiumDB/ImportFromXlsx")]
-        public async Task<IActionResult> ImportFromXlsx()
-        {
-            return View(nameof(ImportFromCSV));
-        }
-        
-        [HttpPost]
-        [Route("AltiumDB/ImportFromXlsx")]
-        public async Task<IActionResult> ImportFromXlsx(IFormFile csvFile)
-        {
-            var tableName = csvFile.FileName.Split('.')[0];
-            await _databaseService.ImportFromFile(tableName, new StreamReader(csvFile.OpenReadStream()), new ExcelImporter());
+            var tableName = file.FileName.Split('.')[0];
+            var fileExtension = file.FileName.Split('.')[^1];
+            switch (fileExtension)
+            {
+                case "csv":
+                    await _databaseService.ImportFromFile(tableName, new StreamReader(file.OpenReadStream()), new CsvDataImporter());
+                    return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = "AltiumDB_" + tableName});
+                case "xlsx":
+                    await _databaseService.ImportFromFile(tableName, new StreamReader(file.OpenReadStream()), new ExcelImporter());
+                    break;
+                
+                default:
+                    throw new NotImplementedException();
+            }
+            
             return RedirectToAction(nameof(Tables));
         }
     }
