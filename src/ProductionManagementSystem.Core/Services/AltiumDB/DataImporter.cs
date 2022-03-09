@@ -108,7 +108,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                 for (int rowIndex = 2;; rowIndex++)
                 {
                     var rowData = new Dictionary<string, object>();
-                    foreach (var (column, i) in table.TableColumns.Where(x => x.ColumnName != "Id").Select((x, i) => (x, i)))
+                    foreach (var (column, i) in table.TableColumns.Where(x => x.ColumnName !=  "KeyID" ).Select((x, i) => (x, i)))
                     {
                         rowData[column.ColumnName] = worksheet.Cells[rowIndex, i+1].Text;
                     }

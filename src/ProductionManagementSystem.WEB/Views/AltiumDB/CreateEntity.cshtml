@@ -9,7 +9,7 @@
   <div class="bx--row">
     <div class="bx--col-sm-2">
       <form method="post">
-        @foreach (var (column, i) in Model.Table.TableColumns.Where(x => x.ColumnName != "Id")
+        @foreach (var (column, i) in Model.Table.TableColumns.Where(x => x.ColumnName != "KeyID")
           .Select((x, i) => (x, i)))
         {
           <div class="bx--form-item">

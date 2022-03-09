@@ -37,10 +37,10 @@ namespace ProductionManagementSystem.Core.Data
             {
                 conn.Open();
                 MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = $"CREATE TABLE `{table.TableName}` (Id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY";
+                cmd.CommandText = $"CREATE TABLE `{table.TableName}` (KeyID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY";
                 for (int i = 0; i < table.TableColumns.Count; i++)
                 {
-                    if (table.TableColumns[i].ColumnName == "Id")
+                    if (table.TableColumns[i].ColumnName == "KeyID")
                         continue;
                     
                     cmd.CommandText += $", `{table.TableColumns[i].ColumnName}` {GetTypeName(table.TableColumns[i].ColumnType)}";
@@ -161,7 +161,7 @@ namespace ProductionManagementSystem.Core.Data
                 MySqlCommand cmd = conn.CreateCommand();
                 cmd.CommandText =
                     $"INSERT INTO `{table.TableName}` ({table.GetColumns()}) VALUES ({table.GenerateValueBinding()})";
-                foreach (var column in table.TableColumns.Where(x => x.ColumnName != "Id"))
+                foreach (var column in table.TableColumns.Where(x => x.ColumnName != "KeyID"))
                 {
                     cmd.Parameters.Add(column.ParameterName, column.ColumnType).Value = data[column.ColumnName];
                 }
@@ -191,9 +191,9 @@ namespace ProductionManagementSystem.Core.Data
                 
                 MySqlCommand cmd = conn.CreateCommand();
                 cmd.CommandText =
-                    $"UPDATE `{table.TableName}` SET {table.GenerateUpdateBinding()} WHERE Id = @Id";
-                cmd.Parameters.Add("@Id", DbType.Int32).Value = id;
-                foreach (var column in table.TableColumns.Where(x => x.ColumnName != "Id"))
+                    $"UPDATE `{table.TableName}` SET {table.GenerateUpdateBinding()} WHERE KeyID = @KeyID";
+                cmd.Parameters.Add("@KeyID", DbType.Int32).Value = id;
+                foreach (var column in table.TableColumns.Where(x => x.ColumnName != "KeyID"))
                 {
                     cmd.Parameters.Add(column.ParameterName, column.ColumnType).Value = data[column.ColumnName];
                 }
@@ -217,8 +217,8 @@ namespace ProductionManagementSystem.Core.Data
                 conn.Open();
                 
                 MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = $"SELECT * FROM `{table.TableName}` WHERE Id= @Id;";
-                cmd.Parameters.Add("@Id", DbType.Int32).Value = id;
+                cmd.CommandText = $"SELECT * FROM `{table.TableName}` WHERE KeyID= @KeyID;";
+                cmd.Parameters.Add("@KeyID", DbType.Int32).Value = id;
                 MySqlDataReader reader = cmd.ExecuteReader();
                 var row = new Dictionary<string, object>();
                 while (reader.Read())
@@ -249,8 +249,8 @@ namespace ProductionManagementSystem.Core.Data
                 conn.Open();
                 
                 MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = $"DELETE FROM `{table.TableName}` WHERE Id= @Id;";
-                cmd.Parameters.Add("@Id", DbType.Int32).Value = id;
+                cmd.CommandText = $"DELETE FROM `{table.TableName}` WHERE KeyID= @KeyID;";
+                cmd.Parameters.Add("@KeyID", DbType.Int32).Value = id;
                 cmd.ExecuteNonQuery();
             }
             catch(MySqlException ex)

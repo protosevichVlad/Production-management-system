@@ -28,8 +28,8 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             {
                 new TableColumn()
                 {
-                    ColumnName = "Id",
-                    DisplayingColumnName = "Id",
+                    ColumnName = "KeyID",
+                    DisplayingColumnName = "KeyID",
                     ColumnType = MySqlDbType.Int32,
                     DatabaseOrder = 0
                 }
@@ -39,7 +39,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         public string GetColumns()
         {
             StringBuilder result = new StringBuilder("");
-            foreach (var column in TableColumns.Where(x => x.ColumnName != "Id"))
+            foreach (var column in TableColumns.Where(x => x.ColumnName != "KeyID"))
             {
                 result.Append($"`{column.ColumnName}`");
                 result.Append(", ");
@@ -52,7 +52,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         public string GenerateValueBinding()
         {
             StringBuilder result = new StringBuilder("");
-            foreach (var column in TableColumns.Where(x => x.ColumnName != "Id"))
+            foreach (var column in TableColumns.Where(x => x.ColumnName != "KeyID"))
             {
                 result.Append(column.ParameterName);
                 result.Append(", ");
@@ -65,7 +65,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         public string GenerateUpdateBinding()
         {
             StringBuilder result = new StringBuilder("");
-            foreach (var column in TableColumns.Where(x => x.ColumnName != "Id"))
+            foreach (var column in TableColumns.Where(x => x.ColumnName != "KeyID"))
             {
                 result.Append($"`{column.ColumnName}` = {column.ParameterName}, ");
             }

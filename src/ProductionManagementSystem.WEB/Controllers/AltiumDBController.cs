@@ -38,7 +38,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             table.TableColumns.Add(new TableColumn()
             {
                 Display = false,
-                ColumnName = "Id",
+                ColumnName = "KeyID",
                 ColumnType = MySqlDbType.Int32,
             });
             return View(table);
