@@ -42,9 +42,6 @@
         <span class="bx--table-header-label">Column name</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Displaying column name</span>
-      </th>
-      <th >
         <span class="bx--table-header-label">Display in table</span>
       </th>
       <th style="width: 30px"></th>
@@ -58,7 +55,6 @@
     }
     <tr id="Tr0">
       @Html.HiddenFor(x => x.TableColumns[0].ColumnName)
-      @Html.HiddenFor(x => x.TableColumns[0].DisplayingColumnName)
       @Html.HiddenFor(x => x.TableColumns[0].DatabaseOrder)
       @Html.HiddenFor(x => x.TableColumns[0].ColumnType)
       @Html.HiddenFor(x => x.TableColumns[0].Display)

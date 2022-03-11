@@ -32,7 +32,6 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                     table.TableColumns.Add(new TableColumn()
                     {
                         ColumnName = columnName, 
-                        DisplayingColumnName = columnName, 
                         ColumnType = MySqlDbType.String, 
                         Display = true, 
                         DatabaseOrder = i+1
@@ -84,7 +83,6 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                         table.TableColumns.Add(new TableColumn()
                         {
                             ColumnName = columnName,
-                            DisplayingColumnName = columnName,
                             ColumnType = MySqlDbType.String, 
                             Display = true, 
                             DatabaseOrder = i

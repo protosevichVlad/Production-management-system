@@ -29,7 +29,6 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
                 new TableColumn()
                 {
                     ColumnName = "KeyID",
-                    DisplayingColumnName = "KeyID",
                     ColumnType = MySqlDbType.Int32,
                     DatabaseOrder = 0
                 }

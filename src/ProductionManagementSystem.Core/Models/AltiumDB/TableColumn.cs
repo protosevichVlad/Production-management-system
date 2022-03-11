@@ -16,7 +16,6 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         public int DatabaseTableId { get; set; }
         public DatabaseTable DatabaseTable { get; set; }
         public int DatabaseOrder { get; set; }
-        public string DisplayingColumnName { get; set; }
 
 
         public string ParameterName => "@" + string.Join(string.Empty, ColumnName.Split('@', ' ', '-', ':', '(', ')', '/', '±', ',', '.', ';', '\''));
