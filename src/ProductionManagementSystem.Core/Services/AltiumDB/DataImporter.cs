@@ -31,7 +31,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                 {
                     table.TableColumns.Add(new TableColumn()
                     {
-                        ColumnName = columnName.Replace(' ', '_'), 
+                        ColumnName = columnName, 
                         DisplayingColumnName = columnName, 
                         ColumnType = MySqlDbType.String, 
                         Display = true, 
@@ -83,7 +83,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                         var columnName = worksheet.Cells[1, i].Text;
                         table.TableColumns.Add(new TableColumn()
                         {
-                            ColumnName = columnName.Replace(' ', '_'),
+                            ColumnName = columnName,
                             DisplayingColumnName = columnName,
                             ColumnType = MySqlDbType.String, 
                             Display = true, 

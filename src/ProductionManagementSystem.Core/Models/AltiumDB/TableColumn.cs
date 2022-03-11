@@ -18,11 +18,14 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         public int DatabaseOrder { get; set; }
         public string DisplayingColumnName { get; set; }
 
+
+        public string ParameterName => "@" + string.Join(string.Empty, ColumnName.Split('@', ' ', '-', ':', '(', ')', '/', '±', ',', '.', ';', '\''));
+
         public bool Equals(TableColumn other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return ColumnName == other.ColumnName && ColumnType == other.ColumnType && DatabaseTableId == other.DatabaseTableId;
+            return Id == other.Id;
         }
 
         public override bool Equals(object obj)
@@ -35,9 +38,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(ColumnName, (int) ColumnType, DatabaseTableId);
+            return Id;
         }
-
-        public string ParameterName => "@" + string.Join(string.Empty, ColumnName.Split('@', '-', ':', '(', ')', '/', '±', ',', '.', ';', '\''));
     }
 }
