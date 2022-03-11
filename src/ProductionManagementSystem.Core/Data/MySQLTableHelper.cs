@@ -37,13 +37,7 @@ namespace ProductionManagementSystem.Core.Data
             {
                 conn.Open();
                 MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = $"CREATE TABLE `{table.TableName}` (";
-                for (int i = 0; i < table.TableColumns.Count - 1; i++)
-                {
-                    cmd.CommandText += $"`{table.TableColumns[i].ColumnName}` {GetTypeName(MySqlDbType.String)}, ";
-                }
-                if (table.TableColumns.Count > 1)
-                    cmd.CommandText += $"`{table.TableColumns[^1].ColumnName}` {GetTypeName(MySqlDbType.String)});";
+                cmd.CommandText = table.GenerateCreateTableSqlQuery();
                 cmd.ExecuteNonQuery();
             }
             catch(MySqlException ex)

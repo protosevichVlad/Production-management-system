@@ -63,5 +63,18 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             result.Remove(result.Length - 2, 2);
             return result.ToString();
         }
+        
+        public string GenerateCreateTableSqlQuery()
+        {
+            StringBuilder result = new StringBuilder($"CREATE TABLE `{TableName}` (");
+            foreach (var column in TableColumns)
+            {
+                result.Append($"`{column.ColumnName}` VARCHAR(511), ");
+            }
+            result.Remove(result.Length - 2, 2);
+            result.Append("); ");
+            result.Append($"grant select on `{TableName}` to AltiumDBUser;");
+            return result.ToString();
+        }
     }
 }
