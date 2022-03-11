@@ -34,13 +34,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<ViewResult> CreateTable()
         {
             var table = new DatabaseTable();
-            table.TableColumns = new List<TableColumn>();
-            table.TableColumns.Add(new TableColumn()
-            {
-                Display = false,
-                ColumnName = "KeyID",
-                ColumnType = MySqlDbType.Int32,
-            });
+            table.InitAltiumDB("");
             return View(table);
         }
 
@@ -52,27 +46,27 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpGet]
-        [Route("[controller]/Tables/{DatabaseTableName}")]
-        public async Task<IActionResult> GetDataFromTable(string DatabaseTableName)
+        [Route("[controller]/Tables/{tableName}")]
+        public async Task<IActionResult> GetDataFromTable(string tableName)
         {
             DataListViewModel vm = new DataListViewModel()
             {
-                DatabaseTable = await _databaseService.GetTableByNameAsync(DatabaseTableName),
-                Data = await _databaseService.GetDataFromTableAsync(DatabaseTableName)
+                DatabaseTable = await _databaseService.GetTableByNameAsync(tableName),
+                Data = await _databaseService.GetDataFromTableAsync(tableName)
             };
             return View("GetDataFromTable", vm);
         }
         
         [HttpGet]
-        [Route("[controller]/EditTable/{DatabaseTableName}")]
-        public async Task<IActionResult> EditTable(string DatabaseTableName)
+        [Route("[controller]/EditTable/{tableName}")]
+        public async Task<IActionResult> EditTable(string tableName)
         {
-            var table = await _databaseService.GetTableByNameAsync(DatabaseTableName);
+            var table = await _databaseService.GetTableByNameAsync(tableName);
             return View("CreateTable", table);
         }
         
         [HttpPost]
-        [Route("[controller]/EditTable/{DatabaseTableName}")]
+        [Route("[controller]/EditTable/{tableName}")]
         public async Task<IActionResult> EditTable(DatabaseTable table)
         {
             await _databaseService.UpdateAsync(table);
@@ -83,8 +77,6 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             return PartialView("Shared/Table/TableColumn", new TableColumn()
             {
-                Id = index, 
-                ColumnType = MySqlDbType.String,
                 DatabaseOrder = index,
             });
         }
@@ -109,34 +101,32 @@ namespace ProductionManagementSystem.WEB.Controllers
         [Route("AltiumDB/Tables/{tableName}/CreateEntity")]
         public async Task<IActionResult> CreateEntity([FromRoute]string tableName, Dictionary<string, string> data)
         {
-            await _databaseService.InsertIntoTableByTableNameAsync(tableName,
-                data.ToDictionary(pair => pair.Key, pair=>(object)pair.Value));
-            return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = tableName});
+            await _databaseService.InsertIntoTableByTableNameAsync(tableName, data);
+            return RedirectToAction(nameof(GetDataFromTable), new {tableName = tableName});
         }
         
         [HttpGet]
-        [Route("AltiumDB/Tables/{tableName}/EditEntity/{id:int}")]
-        public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]int id)
+        [Route("AltiumDB/Tables/{tableName}/EditEntity/{partNumber}")]
+        public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]string partNumber)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
-            var data = await _databaseService.GetEntityById(tableName, id);
+            var data = await _databaseService.GetEntityByPartNumber(tableName, partNumber);
             return View("CreateEntity",new EntityViewModel() {Table = table, Data = data});
         }
         
         [HttpPost]
-        [Route("AltiumDB/Tables/{tableName}/EditEntity/{id:int}")]
-        public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]int id, Dictionary<string, string> data)
+        [Route("AltiumDB/Tables/{tableName}/EditEntity/{partNumber}")]
+        public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]string partNumber, Dictionary<string, string> data)
         {
-            await _databaseService.UpdateEntityAsync(tableName, id,
-                data.ToDictionary(pair => pair.Key, pair=>(object)pair.Value));
-            return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = tableName});
+            await _databaseService.UpdateEntityAsync(tableName, partNumber,data);
+            return RedirectToAction(nameof(GetDataFromTable), new {tableName = tableName});
         }
         
         [HttpDelete]
-        [Route("AltiumDB/Tables/{tableName}/{id:int}")]
-        public async Task<IActionResult> Tables([FromRoute]string tableName, [FromRoute]int id)
+        [Route("AltiumDB/Tables/{tableName}/{partNumber}")]
+        public async Task<IActionResult> Tables([FromRoute]string tableName, [FromRoute]string partNumber)
         {
-            await _databaseService.DeleteEntityById(tableName, id);
+            await _databaseService.DeleteEntityById(tableName, partNumber);
             return Ok();
         }
 
@@ -157,8 +147,9 @@ namespace ProductionManagementSystem.WEB.Controllers
             {
                 case "csv":
                     await _databaseService.ImportFromFile(tableName, new StreamReader(file.OpenReadStream()), new CsvDataImporter());
-                    return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = "AltiumDB_" + tableName});
+                    return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = "AltiumDB " + tableName});
                 case "xlsx":
+                case "xls":
                     await _databaseService.ImportFromFile(tableName, new StreamReader(file.OpenReadStream()), new ExcelImporter());
                     break;
                 
@@ -170,11 +161,11 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpGet]
-        [Route("AltiumDB/Tables/{tableName}/{id:int}")]
-        public async Task<IActionResult> EntityDetails([FromRoute]string tableName, [FromRoute]int id)
+        [Route("AltiumDB/Tables/{tableName}/{partNumber}")]
+        public async Task<IActionResult> EntityDetails([FromRoute]string tableName, [FromRoute]string partNumber)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
-            var data = await _databaseService.GetEntityById(tableName, id);
+            var data = await _databaseService.GetEntityByPartNumber(tableName, partNumber);
             return View(new EntityViewModel()
             {
                 Table = table,

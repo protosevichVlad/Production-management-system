@@ -11,7 +11,6 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         [Key]
         public int Id { get; set; }
         public string ColumnName { get; set; }
-        public MySqlDbType ColumnType { get; set; }
         public bool Display { get; set; }
         public int DatabaseTableId { get; set; }
         public DatabaseTable DatabaseTable { get; set; }

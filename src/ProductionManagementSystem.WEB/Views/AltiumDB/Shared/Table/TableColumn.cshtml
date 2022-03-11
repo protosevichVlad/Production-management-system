@@ -1,29 +1,28 @@
 ﻿@using MySqlConnector
 @model ProductionManagementSystem.Core.Models.AltiumDB.TableColumn
 
-<tr id="Tr@(Model.Id)">
+<tr id="Tr@(Model.DatabaseOrder)">
   <td class="Ids">
-          @Model.Id
+          @Model.DatabaseOrder
       </td>
   <td >
     <div class="bx--text-input__field-wrapper">
-      <input id="text-input-1-@Model.Id" type="text" class="bx--text-input bx--text-input--light" placeholder="Placeholder text" name="TableColumns[@Model.Id].ColumnName" value="@Model.ColumnName">
+      <input id="text-input-1-@Model.DatabaseOrder" type="text" class="bx--text-input bx--text-input--light" placeholder="Placeholder text" name="TableColumns[@Model.DatabaseOrder].ColumnName" value="@Model.ColumnName">
     </div>
   </td>
   <td >
     <div class="bx--form-item bx--checkbox-wrapper">
-      <input id="bx--checkbox-new-@(Model.Id)" class="bx--checkbox" type="checkbox" value="true" checked="@Model.Display"
-             name="TableColumns[@Model.Id].Display">
-      <label for="bx--checkbox-new-@(Model.Id)" class="bx--checkbox-label"></label>
+      <input id="bx--checkbox-new-@(Model.DatabaseOrder)" class="bx--checkbox" type="checkbox" value="true" checked="@Model.Display"
+             name="TableColumns[@Model.DatabaseOrder].Display">
+      <label for="bx--checkbox-new-@(Model.DatabaseOrder)" class="bx--checkbox-label"></label>
     </div>
   </td>
   <td>
-    <button class="bx--btn bx--btn--ghost" type="button" onclick="removeTableColumn(@(Model.Id + 1))">
+    <button class="bx--btn bx--btn--ghost" type="button" onclick="removeTableColumn(@(Model.DatabaseOrder + 1))">
       <svg width="32" height="32">       
         <image xlink:href="/carbonUIicons/close.svg"  width="32" height="32"/>    
       </svg>
     </button>
   </td>
-  <input type="hidden" name="TableColumns[@Model.Id].ColumnType" value="@Model.ColumnType"/>
-  <input type="hidden" name="TableColumns[@Model.Id].DatabaseOrder" value="@Model.DatabaseOrder"/>
+  <input type="hidden" name="TableColumns[@Model.DatabaseOrder].DatabaseOrder" value="@Model.DatabaseOrder"/>
 </tr>

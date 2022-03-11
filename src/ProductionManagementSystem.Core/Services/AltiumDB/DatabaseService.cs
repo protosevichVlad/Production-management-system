@@ -15,22 +15,22 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
     {
         Task<bool> TableIsExistsAsync(string tableName);
         Task<DatabaseTable> GetTableByNameAsync(string tableName);
-        Task<List<Dictionary<string, object>>> GetDataFromTableAsync(string tableName);
+        Task<List<Dictionary<string, string>>> GetDataFromTableAsync(string tableName);
         Task DeleteByTableNameAsync(string tableName);
-        Task InsertIntoTableByTableNameAsync(string tableName, IDictionary<string, object> data);
-        Task UpdateEntityAsync(string tableName, int id, Dictionary<string, object> data);
-        Task<IDictionary<string, object>> GetEntityById(string tableName, int id);
-        Task DeleteEntityById(string tableName, int id);
+        Task InsertIntoTableByTableNameAsync(string tableName, IDictionary<string, string> data);
+        Task UpdateEntityAsync(string tableName, string partNumber, Dictionary<string, string> data);
+        Task<IDictionary<string, string>> GetEntityByPartNumber(string tableName, string partNumber);
+        Task DeleteEntityById(string tableName, string partNumber);
         Task ImportFromFile(string tableName, StreamReader stream, IDataImporter importer);
     }
 
     public class DatabaseService : BaseService<DatabaseTable>, IDatabaseService
     {
-        private IMySQLTableHelper _tableHelper;
+        private IMySqlTableHelper _tableHelper;
             
         public DatabaseService(string connectionString) : base(new EFUnitOfWork(connectionString))
         {
-            _tableHelper = new MySQLTableHelper(connectionString);
+            _tableHelper = new MySqlTableHelper(connectionString);
             _currentRepository = _db.DatabaseTableRepository;
         }
 
@@ -62,10 +62,10 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             return table;
         }
 
-        public async Task<List<Dictionary<string, object>>> GetDataFromTableAsync(string tableName)
+        public async Task<List<Dictionary<string, string>>> GetDataFromTableAsync(string tableName)
         {
             var table = await GetTableByNameAsync(tableName);
-            if (table == null) return new List<Dictionary<string, object>>();
+            if (table == null) return new List<Dictionary<string, string>>();
             return _tableHelper.GetDataFromTable(table);
         }
 
@@ -77,32 +77,32 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             await base.DeleteAsync(table);
         }
 
-        public async Task InsertIntoTableByTableNameAsync(string tableName, IDictionary<string, object> data)
+        public async Task InsertIntoTableByTableNameAsync(string tableName, IDictionary<string, string> data)
         {
             var table = await GetTableByNameAsync(tableName);
             if (table == null) throw new NotImplementedException();
             _tableHelper.InsertIntoTable(table, data);
         }
 
-        public async Task UpdateEntityAsync(string tableName,  int id, Dictionary<string, object> data)
+        public async Task UpdateEntityAsync(string tableName, string partNumber, Dictionary<string, string> data)
         {
             var table = await GetTableByNameAsync(tableName);
             if (table == null) throw new NotImplementedException();
-            _tableHelper.UpdateDataInTable(table, id, data);
+            _tableHelper.UpdateDataInTable(table, partNumber, data);
         }
 
-        public async Task<IDictionary<string, object>> GetEntityById(string tableName, int id)
+        public async Task<IDictionary<string, string>> GetEntityByPartNumber(string tableName, string partNumber)
         {
             var table = await GetTableByNameAsync(tableName);
             if (table == null) throw new NotImplementedException();
-            return _tableHelper.GetEntityById(table, id);
+            return _tableHelper.GetEntityByPartNumber(table, partNumber);
         }
 
-        public async Task DeleteEntityById(string tableName, int id)
+        public async Task DeleteEntityById(string tableName, string partNumber)
         {
             var table = await GetTableByNameAsync(tableName);
             if (table == null) throw new NotImplementedException();
-            _tableHelper.DeleteEntity(table, id);
+            _tableHelper.DeleteEntity(table, partNumber);
         }
 
         public async Task ImportFromFile(string tableName, StreamReader stream, IDataImporter importer)

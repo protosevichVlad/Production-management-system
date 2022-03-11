@@ -12,7 +12,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
     public interface IDataImporter
     {
         IAsyncEnumerable<DatabaseTable> GetDatabaseTables(string tableName, StreamReader streamReader);
-        Task<List<Dictionary<string, object>>> GetData(StreamReader streamReader, DatabaseTable table);
+        Task<List<Dictionary<string, string>>> GetData(StreamReader streamReader, DatabaseTable table);
     }
 
     public class CsvDataImporter : IDataImporter
@@ -32,7 +32,6 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                     table.TableColumns.Add(new TableColumn()
                     {
                         ColumnName = columnName, 
-                        ColumnType = MySqlDbType.String, 
                         Display = true, 
                         DatabaseOrder = i+1
                     });
@@ -42,15 +41,15 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             yield return table;
         }
 
-        public async Task<List<Dictionary<string, object>>> GetData(StreamReader streamReader, DatabaseTable table)
+        public async Task<List<Dictionary<string, string>>> GetData(StreamReader streamReader, DatabaseTable table)
         {
-            List<Dictionary<string, object>> data = new List<Dictionary<string, object>>();
+            List<Dictionary<string, string>> data = new List<Dictionary<string, string>>();
             table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
             while (true)
             {
                 var line = await streamReader.ReadLineAsync();
                 if (line == null) break;
-                data.Add(new Dictionary<string, object>());
+                data.Add(new Dictionary<string, string>());
                 var values = line.Split(',');
                 for (int i = 1; i < table.TableColumns.Count; i++)
                 {
@@ -83,7 +82,6 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                         table.TableColumns.Add(new TableColumn()
                         {
                             ColumnName = columnName,
-                            ColumnType = MySqlDbType.String, 
                             Display = true, 
                             DatabaseOrder = i
                         });
@@ -95,18 +93,18 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             }
         }
 
-        public async Task<List<Dictionary<string, object>>> GetData(StreamReader streamReader, DatabaseTable table)
+        public async Task<List<Dictionary<string, string>>> GetData(StreamReader streamReader, DatabaseTable table)
         {
             table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using(var package = new ExcelPackage(streamReader.BaseStream))
             {
-                List<Dictionary<string, object>> data = new List<Dictionary<string, object>>();
+                List<Dictionary<string, string>> data = new List<Dictionary<string, string>>();
                 var worksheet = package.Workbook.Worksheets[table.DisplayName];
                 for (int rowIndex = 2;; rowIndex++)
                 {
-                    var rowData = new Dictionary<string, object>();
-                    foreach (var (column, i) in table.TableColumns.Where(x => x.ColumnName !=  "KeyID" ).Select((x, i) => (x, i)))
+                    var rowData = new Dictionary<string, string>();
+                    foreach (var (column, i) in table.TableColumns.Select((x, i) => (x, i)))
                     {
                         rowData[column.ColumnName] = worksheet.Cells[rowIndex, i+1].Text;
                     }

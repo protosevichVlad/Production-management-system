@@ -6,6 +6,6 @@ namespace ProductionManagementSystem.WEB.Models.AltiumDB
     public class DataListViewModel
     {
         public DatabaseTable DatabaseTable { get; set; }
-        public List<Dictionary<string, object>> Data { get; set; }
+        public List<Dictionary<string, string>> Data { get; set; }
     }
 }

@@ -8,25 +8,25 @@ using ProductionManagementSystem.Core.Models.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Data
 {
-    public interface IMySQLTableHelper
+    public interface IMySqlTableHelper
     {
         void CreateTable(DatabaseTable table);
         void DeleteTable(DatabaseTable table);
         void AddColumn(DatabaseTable table, TableColumn column);
         void DeleteColumn(DatabaseTable table, TableColumn column);
-        List<Dictionary<string, object>> GetDataFromTable(DatabaseTable table);
-        void InsertIntoTable(DatabaseTable table, IDictionary<string, object> data);
-        void InsertListIntoTable(DatabaseTable table, List<IDictionary<string, object>> data);
-        void UpdateDataInTable(DatabaseTable table, int id, IDictionary<string, object> data);
-        Dictionary<string, object> GetEntityById(DatabaseTable table, int id);
-        void DeleteEntity(DatabaseTable table, int id);
+        List<Dictionary<string, string>> GetDataFromTable(DatabaseTable table);
+        void InsertIntoTable(DatabaseTable table, IDictionary<string, string> data);
+        void InsertListIntoTable(DatabaseTable table, List<IDictionary<string, string>> data);
+        void UpdateDataInTable(DatabaseTable table, string partNumber, IDictionary<string, string> data);
+        Dictionary<string, string> GetEntityByPartNumber(DatabaseTable table, string partNumber);
+        void DeleteEntity(DatabaseTable table, string partNumber);
     }
     
-    public class MySQLTableHelper : IMySQLTableHelper
+    public class MySqlTableHelper : IMySqlTableHelper
     {
         private MySqlConnection conn;
 
-        public MySQLTableHelper(string connectionString)
+        public MySqlTableHelper(string connectionString)
         {
             this.conn = new MySqlConnection(connectionString);
         }
@@ -37,16 +37,13 @@ namespace ProductionManagementSystem.Core.Data
             {
                 conn.Open();
                 MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = $"CREATE TABLE `{table.TableName}` (KeyID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY";
-                for (int i = 0; i < table.TableColumns.Count; i++)
+                cmd.CommandText = $"CREATE TABLE `{table.TableName}` (";
+                for (int i = 0; i < table.TableColumns.Count - 1; i++)
                 {
-                    if (table.TableColumns[i].ColumnName == "KeyID")
-                        continue;
-                    
-                    cmd.CommandText += $", `{table.TableColumns[i].ColumnName}` {GetTypeName(table.TableColumns[i].ColumnType)}";
+                    cmd.CommandText += $"`{table.TableColumns[i].ColumnName}` {GetTypeName(MySqlDbType.String)}, ";
                 }
-                
-                cmd.CommandText += $");";
+                if (table.TableColumns.Count > 1)
+                    cmd.CommandText += $"`{table.TableColumns[^1].ColumnName}` {GetTypeName(MySqlDbType.String)});";
                 cmd.ExecuteNonQuery();
             }
             catch(MySqlException ex)
@@ -86,7 +83,7 @@ namespace ProductionManagementSystem.Core.Data
                 conn.Open();
                 
                 MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = $"ALTER TABLE `{table.TableName}` ADD `{column.ColumnName}` {GetTypeName(column.ColumnType)};";
+                cmd.CommandText = $"ALTER TABLE `{table.TableName}` ADD `{column.ColumnName}` {GetTypeName(MySqlDbType.String)};";
                 cmd.ExecuteNonQuery();
             }
             catch(MySqlException ex)
@@ -118,11 +115,11 @@ namespace ProductionManagementSystem.Core.Data
                 conn.Close(); 
             }
         }
-        public List<Dictionary<string, object>> GetDataFromTable(DatabaseTable table)
+        public List<Dictionary<string, string>> GetDataFromTable(DatabaseTable table)
         {
             try
             {
-                List<Dictionary<string, object>> result = new List<Dictionary<string, object>>();
+                List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();
                 conn.Open();
                 
                 MySqlCommand cmd = conn.CreateCommand();
@@ -130,10 +127,10 @@ namespace ProductionManagementSystem.Core.Data
                 MySqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    var row = new Dictionary<string, object>();
+                    var row = new Dictionary<string, string>();
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        row.Add(table.TableColumns[i].ColumnName, reader[i]);
+                        row.Add(table.TableColumns[i].ColumnName, reader[i].ToString());
                     }
                     
                     result.Add(row);
@@ -152,7 +149,7 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public void InsertIntoTable(DatabaseTable table, IDictionary<string, object> data)
+        public void InsertIntoTable(DatabaseTable table, IDictionary<string, string> data)
         {
             try
             {
@@ -161,9 +158,9 @@ namespace ProductionManagementSystem.Core.Data
                 MySqlCommand cmd = conn.CreateCommand();
                 cmd.CommandText =
                     $"INSERT INTO `{table.TableName}` ({table.GetColumns()}) VALUES ({table.GenerateValueBinding()})";
-                foreach (var column in table.TableColumns.Where(x => x.ColumnName != "KeyID"))
+                foreach (var column in table.TableColumns)
                 {
-                    cmd.Parameters.Add(column.ParameterName, column.ColumnType).Value = data[column.ColumnName];
+                    cmd.Parameters.Add(column.ParameterName, MySqlDbType.String).Value = data[column.ColumnName];
                 }
 
                 cmd.ExecuteNonQuery();
@@ -178,12 +175,12 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public void InsertListIntoTable(DatabaseTable table, List<IDictionary<string, object>> data)
+        public void InsertListIntoTable(DatabaseTable table, List<IDictionary<string, string>> data)
         {
             throw new NotImplementedException();
         }
 
-        public void UpdateDataInTable(DatabaseTable table, int id,  IDictionary<string, object> data)
+        public void UpdateDataInTable(DatabaseTable table, string partNumber,  IDictionary<string, string> data)
         {
             try
             {
@@ -191,11 +188,11 @@ namespace ProductionManagementSystem.Core.Data
                 
                 MySqlCommand cmd = conn.CreateCommand();
                 cmd.CommandText =
-                    $"UPDATE `{table.TableName}` SET {table.GenerateUpdateBinding()} WHERE KeyID = @KeyID";
-                cmd.Parameters.Add("@KeyID", DbType.Int32).Value = id;
-                foreach (var column in table.TableColumns.Where(x => x.ColumnName != "KeyID"))
+                    $"UPDATE `{table.TableName}` SET {table.GenerateUpdateBinding()} WHERE `Part Number` = @WherePartNumber";
+                cmd.Parameters.Add("@WherePartNumber", DbType.String).Value = partNumber;
+                foreach (var column in table.TableColumns)
                 {
-                    cmd.Parameters.Add(column.ParameterName, column.ColumnType).Value = data[column.ColumnName];
+                    cmd.Parameters.Add(column.ParameterName, MySqlDbType.String).Value = data[column.ColumnName];
                 }
 
                 cmd.ExecuteNonQuery();
@@ -210,22 +207,22 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public Dictionary<string, object> GetEntityById(DatabaseTable table, int id)
+        public Dictionary<string, string> GetEntityByPartNumber(DatabaseTable table, string partNumber)
         {
             try
             {
                 conn.Open();
                 
                 MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = $"SELECT * FROM `{table.TableName}` WHERE KeyID= @KeyID;";
-                cmd.Parameters.Add("@KeyID", DbType.Int32).Value = id;
+                cmd.CommandText = $"SELECT * FROM `{table.TableName}` WHERE `Part Number`= @PartNumber;";
+                cmd.Parameters.Add("@PartNumber", DbType.String).Value = partNumber;
                 MySqlDataReader reader = cmd.ExecuteReader();
-                var row = new Dictionary<string, object>();
+                var row = new Dictionary<string, string>();
                 while (reader.Read())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        row.Add(table.TableColumns[i].ColumnName, reader[i]);
+                        row.Add(table.TableColumns[i].ColumnName, reader[i].ToString());
                     }
                 }
                 
@@ -242,15 +239,15 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public void DeleteEntity(DatabaseTable table, int id)
+        public void DeleteEntity(DatabaseTable table, string partNumber)
         {
             try
             {
                 conn.Open();
                 
                 MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = $"DELETE FROM `{table.TableName}` WHERE KeyID= @KeyID;";
-                cmd.Parameters.Add("@KeyID", DbType.Int32).Value = id;
+                cmd.CommandText = $"DELETE FROM `{table.TableName}` WHERE `Part Number` = @PartNumber;";
+                cmd.Parameters.Add("@PartNumber", DbType.String).Value = partNumber;
                 cmd.ExecuteNonQuery();
             }
             catch(MySqlException ex)
