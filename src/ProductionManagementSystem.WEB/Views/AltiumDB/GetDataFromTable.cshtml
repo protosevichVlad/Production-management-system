@@ -65,6 +65,7 @@
 <table class="bx--data-table  bx--data-table--compact bx--data-table--sort  ">
 <thead>
 <tr>
+  <th></th>
   @foreach(var columnName in Model.DatabaseTable.TableColumns.Where(x => x.Display).Select(x => x.ColumnName))
   {
     <!-- checkbox th -->
@@ -89,10 +90,25 @@
 @for(int i = 0; i < Model.Data.Count; i++)
 {
 <tr >
+  <td>
+    <img src="@Model.Data[i].ImageLink" style="width: 50px; height: 50px"/> 
+  </td>
+
   @foreach(var columnName in Model.DatabaseTable.TableColumns.Where(x => x.Display).Select(x => x.ColumnName))
   {
-    <td onclick="location.href='/AltiumDB/Tables/@Model.DatabaseTable.TableName/@Model.Data[i]["Part Number"]';">
-      <span style="white-space: pre-line">@Model.Data[i][columnName].ToString()</span>
+    <td>
+      @if (columnName == "Part Number")
+      {
+        <a href="/AltiumDB/Tables/@Model.DatabaseTable.TableName/@Model.Data[i]["Part Number"]">@Model.Data[i][columnName]</a>
+      }
+      else if (columnName == "ImageLink")
+      {
+        <img src="@Model.Data[i][columnName]"/>  
+      }
+      else
+      {
+          <span style="white-space: pre-line">@Model.Data[i][columnName].ToString()</span>
+      }
     </td>
   }
   <!-- expand icon td -->

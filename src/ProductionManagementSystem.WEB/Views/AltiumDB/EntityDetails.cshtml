@@ -1,33 +1,132 @@
-﻿@model ProductionManagementSystem.Core.Models.AltiumDB.BaseAltiumDbEntity
+﻿@using ProductionManagementSystem.Core.Models.AltiumDB
+@model ProductionManagementSystem.Core.Models.AltiumDB.BaseAltiumDbEntity
 
 @{
-  ViewBag.Title = "Entity details";
+  ViewBag.Title = Model.Category + " " + Model.PartNumber;
   Layout = "Shared/_AltiumDBLayout";
 }
 <div class="bx--grid">
   <div class="bx--row">
-    <div class="bx--col-sm-2">
-      <section class="bx--structured-list">
-        <div class="bx--structured-list-thead">
-          <div class="bx--structured-list-row bx--structured-list-row--header-row">
-            <div class="bx--structured-list-th"></div>
-            <div class="bx--structured-list-th"></div>
+    <div class="bx--col-lg-8">
+      <div class="bx--grid">
+        <div class="bx--row">
+          <div class="bx--col-lg-12">
+            <strong>Part Number: </strong>
+            @Model.PartNumber
           </div>
         </div>
-        <div class="bx--structured-list-tbody">
-          @foreach (var key in Model.Keys)
-          {
-              <div class="bx--structured-list-row">
-                <div class="bx--structured-list-td bx--structured-list-content--nowrap">
-                  <strong>@key</strong>
+        <div class="bx--row">
+          <div class="bx--col-lg-4">
+            <img src="@Model.ImageLink" style="width: 100%"/>
+          </div>
+          <div class="bx--col-lg-8">
+            <div class="bx--grid">
+              @foreach (var field in BaseAltiumDbEntity.ImportantFields)
+              {
+                <div class="bx--row">
+                  @if (field == "HelpURL")
+                  {
+                    <div class="bx--col-lg-4">
+                      <strong>Datasheet</strong>
+                    </div>
+                    <div class="bx--col-lg-8">
+                      <a href="@Model[field]">@Model.PartNumber Datasheet</a>
+                    </div>
+                  }
+                  else
+                  {
+                    <div class="bx--col-lg-4">
+                      <strong>@field</strong>
+                    </div>
+                    <div class="bx--col-lg-8">
+                      <span style="white-space: pre-line">@Model[field]</span>
+                    </div>
+                  }
                 </div>
-                <div class="bx--structured-list-td">  
-                  <span style="white-space: pre-line">@Model[key]</span>
-                </div>
-              </div>
-          }
+                <div class="bx--row" style="height: 10px"></div>
+              }
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
+      <div class="bx--grid">
+        <div class="bx--row" style="height: 20px"></div>
+        <div class="bx--row">
+          <div class="bx--col-lg-12">
+            <div class="bx--grid">
+              @foreach (var field in BaseAltiumDbEntity.NoImportantFields)
+              {
+                <div class="bx--row">
+                  <div class="bx--col-lg-4">
+                    <strong>@field</strong>
+                  </div>
+                  <div class="bx--col-lg-8">
+                    <span style="white-space: pre-line">@Model[field]</span>
+                  </div>
+                </div>
+                <div class="bx--row" style="height: 10px"></div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>  
+    </div>
+    <div class="bx--col-lg-4">
+      <div class="bx--grid">
+        <div class="bx--row">
+          <div class="bx--col--auto">
+            <strong>Pricing (EUR)</strong>
+          </div>
+        </div>
+        <div class="bx--row" style="height: 8px"></div>
+        <div class="bx--row">
+          <div class="bx--col-sm-1">
+            <strong>Qty.</strong>
+          </div>
+          <div class="bx--col-sm-1">
+            <strong>Unit Price</strong>
+          </div>
+          <div class="bx--col-sm-1">
+            <strong>Ext. Price</strong>
+          </div>
+        </div>
+        <div class="bx--row" style="height: 8px"></div>
+        <div class="bx--row">
+          <div class="bx--col-sm-1">
+            <strong>1</strong>
+          </div>
+          <div class="bx--col-sm-1">
+            <span>0,088 €	</span>
+          </div>
+          <div class="bx--col-sm-1">
+            <span>0,09 €	</span>
+          </div>
+        </div>
+        <div class="bx--row" style="height: 8px"></div>
+        <div class="bx--row">
+          <div class="bx--col-sm-1">
+            <strong>10</strong>
+          </div>
+          <div class="bx--col-sm-1">
+            <span>0,037 €</span>
+          </div>
+          <div class="bx--col-sm-1">
+            <span>0,37 €</span>
+          </div>
+        </div>
+        <div class="bx--row" style="height: 8px"></div>
+        <div class="bx--row">
+          <div class="bx--col-sm-1">
+            <strong>100</strong>
+          </div>
+          <div class="bx--col-sm-1">
+            <span>0,015 €</span>
+          </div>
+          <div class="bx--col-sm-1">
+            <span>1,5 €</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

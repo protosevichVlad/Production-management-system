@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ProductionManagementSystem.Core.Models.AltiumDB
 {
@@ -6,7 +7,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
     {
         public BaseAltiumDbEntity()
         {
-            foreach (var columnName in ColumnsList)
+            foreach (var columnName in Fields)
             {
                 this[columnName] = "";
             }
@@ -90,10 +91,17 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             set => this["ImageLink"] = value;
         }
 
-        public static List<string> ColumnsList { get; } = new List<string>()
+        public static List<string> Fields { get; } = new List<string>()
         {
             "Item", "Part Number", "Library Ref", "Footprint Ref", "Library Path", "Footprint Path", "Supplier",
             "Case", "Manufacturer", "HelpURL", "Description", "Category", "ImageLink"
         };
+        
+        public static List<string> ImportantFields { get; } = new List<string>()
+        {
+            "Item", "Manufacturer", "HelpURL", "Description"
+        };
+
+        public static List<string> NoImportantFields { get; } = Fields.Where(x => !ImportantFields.Contains(x) && x != "Part Number" && x != "ImageLink").ToList();
     }
 }
