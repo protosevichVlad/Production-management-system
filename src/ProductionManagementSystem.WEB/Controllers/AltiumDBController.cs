@@ -42,7 +42,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> CreateTable(DatabaseTable table)
         {
             await _databaseService.CreateAsync(table);
-            return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = table.TableName});
+            return RedirectToAction(nameof(GetDataFromTable), new {tableName = table.TableName});
         }
 
         [HttpGet]
@@ -70,7 +70,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> EditTable(DatabaseTable table)
         {
             await _databaseService.UpdateAsync(table);
-            return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = table.TableName});
+            return RedirectToAction(nameof(GetDataFromTable), new {tableName = table.TableName});
         }
         
         public async Task<IActionResult> GetPartialViewForTableColumn(int index)
@@ -99,7 +99,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpPost]
         [Route("AltiumDB/Tables/{tableName}/CreateEntity")]
-        public async Task<IActionResult> CreateEntity([FromRoute]string tableName, Dictionary<string, string> data)
+        public async Task<IActionResult> CreateEntity([FromRoute]string tableName, BaseAltiumDbEntity data)
         {
             await _databaseService.InsertIntoTableByTableNameAsync(tableName, data);
             return RedirectToAction(nameof(GetDataFromTable), new {tableName = tableName});
@@ -116,7 +116,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpPost]
         [Route("AltiumDB/Tables/{tableName}/EditEntity/{partNumber}")]
-        public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]string partNumber, Dictionary<string, string> data)
+        public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]string partNumber, BaseAltiumDbEntity data)
         {
             await _databaseService.UpdateEntityAsync(tableName, partNumber,data);
             return RedirectToAction(nameof(GetDataFromTable), new {tableName = tableName});
@@ -147,7 +147,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             {
                 case "csv":
                     await _databaseService.ImportFromFile(tableName, new StreamReader(file.OpenReadStream()), new CsvDataImporter());
-                    return RedirectToAction(nameof(GetDataFromTable), new {DatabaseTableName = "AltiumDB " + tableName});
+                    return RedirectToAction(nameof(GetDataFromTable), new {tableName = "AltiumDB " + tableName});
                 case "xlsx":
                 case "xls":
                     await _databaseService.ImportFromFile(tableName, new StreamReader(file.OpenReadStream()), new ExcelImporter());
@@ -166,11 +166,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
             var data = await _databaseService.GetEntityByPartNumber(tableName, partNumber);
-            return View(new EntityViewModel()
-            {
-                Table = table,
-                Data = data
-            });
+            return View(data);
         }
     }
 }

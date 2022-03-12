@@ -12,7 +12,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
     public interface IDataImporter
     {
         IAsyncEnumerable<DatabaseTable> GetDatabaseTables(string tableName, StreamReader streamReader);
-        Task<List<Dictionary<string, string>>> GetData(StreamReader streamReader, DatabaseTable table);
+        Task<List<BaseAltiumDbEntity>> GetData(StreamReader streamReader, DatabaseTable table);
     }
 
     public class CsvDataImporter : IDataImporter
@@ -29,27 +29,31 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                 var columnsName = line.Split(',');
                 foreach (var (columnName, i) in columnsName.Select((x, i) => (x, i)))
                 {
-                    table.TableColumns.Add(new TableColumn()
+                    var columnPosition = table.TableColumns.FindIndex(x => x.ColumnName == columnName);
+                    if (columnPosition == -1)
                     {
-                        ColumnName = columnName, 
-                        Display = true, 
-                        DatabaseOrder = i+1
-                    });
+                        table.TableColumns.Add(new TableColumn()
+                        {
+                            ColumnName = columnName, 
+                            Display = true, 
+                            DatabaseOrder = table.TableColumns.Count
+                        });
+                    }
                 }
             }
 
             yield return table;
         }
 
-        public async Task<List<Dictionary<string, string>>> GetData(StreamReader streamReader, DatabaseTable table)
+        public async Task<List<BaseAltiumDbEntity>> GetData(StreamReader streamReader, DatabaseTable table)
         {
-            List<Dictionary<string, string>> data = new List<Dictionary<string, string>>();
+            List<BaseAltiumDbEntity> data = new List<BaseAltiumDbEntity>();
             table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
             while (true)
             {
                 var line = await streamReader.ReadLineAsync();
                 if (line == null) break;
-                data.Add(new Dictionary<string, string>());
+                data.Add(new BaseAltiumDbEntity());
                 var values = line.Split(',');
                 for (int i = 1; i < table.TableColumns.Count; i++)
                 {
@@ -79,12 +83,16 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                     while(!string.IsNullOrWhiteSpace(worksheet.Cells[1, i].Text))
                     {
                         var columnName = worksheet.Cells[1, i].Text;
-                        table.TableColumns.Add(new TableColumn()
+                        var columnPosition = table.TableColumns.FindIndex(x => x.ColumnName == columnName);
+                        if (columnPosition == -1)
                         {
-                            ColumnName = columnName,
-                            Display = true, 
-                            DatabaseOrder = i
-                        });
+                            table.TableColumns.Add(new TableColumn()
+                            {
+                                ColumnName = columnName, 
+                                Display = true, 
+                                DatabaseOrder = table.TableColumns.Count
+                            });
+                        }
                         i++;
                     }
                     
@@ -93,20 +101,20 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             }
         }
 
-        public async Task<List<Dictionary<string, string>>> GetData(StreamReader streamReader, DatabaseTable table)
+        public async Task<List<BaseAltiumDbEntity>> GetData(StreamReader streamReader, DatabaseTable table)
         {
             table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using(var package = new ExcelPackage(streamReader.BaseStream))
             {
-                List<Dictionary<string, string>> data = new List<Dictionary<string, string>>();
+                List<BaseAltiumDbEntity> data = new List<BaseAltiumDbEntity>();
                 var worksheet = package.Workbook.Worksheets[table.DisplayName];
                 for (int rowIndex = 2;; rowIndex++)
                 {
-                    var rowData = new Dictionary<string, string>();
-                    foreach (var (column, i) in table.TableColumns.Select((x, i) => (x, i)))
+                    var rowData = new BaseAltiumDbEntity();
+                    for (int i = 0; i < table.TableColumns.Count; i++)
                     {
-                        rowData[column.ColumnName] = worksheet.Cells[rowIndex, i+1].Text;
+                        rowData[worksheet.Cells[1, i+1].Text] = worksheet.Cells[rowIndex, i+1].Text;
                     }
 
                     if (rowData.Values.All(x => string.IsNullOrWhiteSpace(x.ToString()))) break;

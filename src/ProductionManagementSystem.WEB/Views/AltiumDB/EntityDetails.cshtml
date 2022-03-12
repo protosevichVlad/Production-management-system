@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.WEB.Models.AltiumDB.EntityViewModel
+﻿@model ProductionManagementSystem.Core.Models.AltiumDB.BaseAltiumDbEntity
 
 @{
   ViewBag.Title = "Entity details";
@@ -15,14 +15,14 @@
           </div>
         </div>
         <div class="bx--structured-list-tbody">
-          @foreach (var column in Model.Table.TableColumns)
+          @foreach (var key in Model.Keys)
           {
               <div class="bx--structured-list-row">
                 <div class="bx--structured-list-td bx--structured-list-content--nowrap">
-                  <strong>@column.ColumnName</strong>
+                  <strong>@key</strong>
                 </div>
-                <div class="bx--structured-list-td">
-                  <span style="white-space: pre-line">@Model.Data[column.ColumnName]</span>
+                <div class="bx--structured-list-td">  
+                  <span style="white-space: pre-line">@Model[key]</span>
                 </div>
               </div>
           }

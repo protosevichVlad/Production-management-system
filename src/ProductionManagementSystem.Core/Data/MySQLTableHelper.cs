@@ -14,11 +14,11 @@ namespace ProductionManagementSystem.Core.Data
         void DeleteTable(DatabaseTable table);
         void AddColumn(DatabaseTable table, TableColumn column);
         void DeleteColumn(DatabaseTable table, TableColumn column);
-        List<Dictionary<string, string>> GetDataFromTable(DatabaseTable table);
-        void InsertIntoTable(DatabaseTable table, IDictionary<string, string> data);
-        void InsertListIntoTable(DatabaseTable table, List<IDictionary<string, string>> data);
-        void UpdateDataInTable(DatabaseTable table, string partNumber, IDictionary<string, string> data);
-        Dictionary<string, string> GetEntityByPartNumber(DatabaseTable table, string partNumber);
+        List<BaseAltiumDbEntity> GetDataFromTable(DatabaseTable table);
+        void InsertIntoTable(DatabaseTable table, BaseAltiumDbEntity data);
+        void InsertListIntoTable(DatabaseTable table, List<BaseAltiumDbEntity> data);
+        void UpdateDataInTable(DatabaseTable table, string partNumber, BaseAltiumDbEntity data);
+        BaseAltiumDbEntity GetEntityByPartNumber(DatabaseTable table, string partNumber);
         void DeleteEntity(DatabaseTable table, string partNumber);
     }
     
@@ -109,11 +109,11 @@ namespace ProductionManagementSystem.Core.Data
                 conn.Close(); 
             }
         }
-        public List<Dictionary<string, string>> GetDataFromTable(DatabaseTable table)
+        public List<BaseAltiumDbEntity> GetDataFromTable(DatabaseTable table)
         {
             try
             {
-                List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();
+                List<BaseAltiumDbEntity> result = new List<BaseAltiumDbEntity>();
                 conn.Open();
                 
                 MySqlCommand cmd = conn.CreateCommand();
@@ -121,10 +121,10 @@ namespace ProductionManagementSystem.Core.Data
                 MySqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    var row = new Dictionary<string, string>();
+                    var row = new BaseAltiumDbEntity();
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        row.Add(table.TableColumns[i].ColumnName, reader[i].ToString());
+                        row[table.TableColumns[i].ColumnName] = reader[i].ToString();
                     }
                     
                     result.Add(row);
@@ -143,7 +143,7 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public void InsertIntoTable(DatabaseTable table, IDictionary<string, string> data)
+        public void InsertIntoTable(DatabaseTable table, BaseAltiumDbEntity data)
         {
             try
             {
@@ -169,12 +169,12 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public void InsertListIntoTable(DatabaseTable table, List<IDictionary<string, string>> data)
+        public void InsertListIntoTable(DatabaseTable table, List<BaseAltiumDbEntity> data)
         {
             throw new NotImplementedException();
         }
 
-        public void UpdateDataInTable(DatabaseTable table, string partNumber,  IDictionary<string, string> data)
+        public void UpdateDataInTable(DatabaseTable table, string partNumber,  BaseAltiumDbEntity data)
         {
             try
             {
@@ -201,7 +201,7 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public Dictionary<string, string> GetEntityByPartNumber(DatabaseTable table, string partNumber)
+        public BaseAltiumDbEntity GetEntityByPartNumber(DatabaseTable table, string partNumber)
         {
             try
             {
@@ -211,12 +211,12 @@ namespace ProductionManagementSystem.Core.Data
                 cmd.CommandText = $"SELECT * FROM `{table.TableName}` WHERE `Part Number`= @PartNumber;";
                 cmd.Parameters.Add("@PartNumber", DbType.String).Value = partNumber;
                 MySqlDataReader reader = cmd.ExecuteReader();
-                var row = new Dictionary<string, string>();
+                var row = new BaseAltiumDbEntity();
                 while (reader.Read())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        row.Add(table.TableColumns[i].ColumnName, reader[i].ToString());
+                        row[table.TableColumns[i].ColumnName] = reader[i].ToString();
                     }
                 }
                 

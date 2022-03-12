@@ -24,7 +24,12 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         {
             DisplayName = tableName;
             TableName = $"AltiumDB {tableName}";
-            TableColumns = new List<TableColumn>();
+            TableColumns = BaseAltiumDbEntity.ColumnsList.Select((x, i) => new TableColumn()
+            {
+                ColumnName = x,
+                DatabaseOrder = i,
+                Display = true,
+            }).ToList();
         }
 
         public string GetColumns()
