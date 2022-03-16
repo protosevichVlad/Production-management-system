@@ -15,6 +15,8 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         public string TableName { get; set; }
         public string DisplayName { get; set; }
         public List<TableColumn> TableColumns { get; set; }
+        public int? DirectoryId { get; set; }
+        public Directory Directory { get; set; }
 
         public DatabaseTable()
         {

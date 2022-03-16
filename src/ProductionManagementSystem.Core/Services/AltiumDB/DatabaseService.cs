@@ -8,6 +8,7 @@ using MySqlConnector;
 using ProductionManagementSystem.Core.Data;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Repositories;
+using Directory = ProductionManagementSystem.Core.Models.AltiumDB.Directory;
 
 namespace ProductionManagementSystem.Core.Services.AltiumDB
 {
@@ -166,7 +167,5 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
 
             await base.UpdateAsync(table);
         }
-        
-        
     }
 }
