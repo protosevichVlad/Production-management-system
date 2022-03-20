@@ -6,7 +6,10 @@
   <script src="~/lib/jquery/dist/jquery.min.js"></script>
   <script type="text/javascript" src="~/js/carbon-components.min.js"></script>
   <link rel="stylesheet" href="~/css/carbon-components.min.css" />
+  <link rel="stylesheet" href="~/css/AltiumDB/site.css" />
+  <link rel="stylesheet" href="/components/TreeView/treeViewComponent.css" />
   <script type="text/javascript" src="~/js/AltiumDB/site.js"></script>
+  @RenderSection("Stylesheet", required:false);
 </head>
 <body>
 <header class="bx--header" role="banner" aria-label="IBM Platform Name" data-header>
@@ -16,6 +19,11 @@
       <li>
         <a class="bx--header__menu-item" asp-controller="AltiumDB" asp-action="Tables" tabindex="0">
           Tables
+        </a>
+      </li>
+      <li>
+        <a class="bx--header__menu-item" asp-controller="AltiumDB" asp-action="Directories" tabindex="0">
+          Directories setting
         </a>
       </li>
     </ul>
@@ -47,5 +55,6 @@
   </div>
   <span tabindex="0"></span>
 </div>
+<script src="/components/TreeView/treeViewComponent.js"></script>
 </body>
 </html>

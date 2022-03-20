@@ -1,0 +1,32 @@
+﻿/* Style the caret/arrow */
+.caret {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    left: -19px;
+}
+
+/* Create the caret/arrow with a unicode, and style it */
+.caret::before {
+    content: url(chevron--right.svg);
+    color: black;
+    display: inline-block;
+    width: 20px;
+    position: relative;
+    top: 6px;
+}
+
+/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+.caret-down::before {
+    transform: rotate(90deg);
+}
+
+/* Hide the nested list */
+.nested {
+    display: none;
+}
+
+/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+.active {
+    display: block;
+}

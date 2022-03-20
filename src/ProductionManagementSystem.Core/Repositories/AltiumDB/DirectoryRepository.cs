@@ -30,6 +30,7 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
             while (directories.Count > 0)
             {
                 var d = directories.Pop();
+                if (d == null) break;
                 d.Childs = await GetByParentIdAsync(d.Id);
                 foreach (var child in d.Childs)
                 {

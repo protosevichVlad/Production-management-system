@@ -67,6 +67,7 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<IDesignSupplyRequestService, DesignSupplyRequestService>();
             services.AddScoped<ISupplyRequestService<SupplyRequest>, SupplyRequestService>();
             services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IDirectoryService, DirectoryService>();
             services.AddScoped<IDatabaseService>(_ =>
                 new DatabaseService(Configuration.GetConnectionString("DefaultConnection")));
         }

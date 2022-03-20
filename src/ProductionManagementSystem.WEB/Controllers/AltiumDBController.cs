@@ -9,16 +9,19 @@ using MySqlConnector;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 using ProductionManagementSystem.WEB.Models.AltiumDB;
+using ProductionManagementSystem.WEB.Models.Components;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
     public class AltiumDBController : Controller
     {
         private IDatabaseService _databaseService;
-
-        public AltiumDBController(IDatabaseService databaseService)
+        private IDirectoryService _directoryService;
+        
+        public AltiumDBController(IDatabaseService databaseService, IDirectoryService directoryService)
         {
             _databaseService = databaseService;
+            _directoryService = directoryService;
         }
 
         public IActionResult Index()
@@ -167,6 +170,13 @@ namespace ProductionManagementSystem.WEB.Controllers
             var table = await _databaseService.GetTableByNameAsync(tableName);
             var data = await _databaseService.GetEntityByPartNumber(tableName, partNumber);
             return View(data);
+        }
+        
+        [HttpGet]
+        [Route("AltiumDB/Directories")]
+        public async Task<IActionResult> Directories()
+        {
+            return View(new TreeViewViewModel(await _directoryService.GetByIdAsync(0), true){ ShowPath = true});
         }
     }
 }

@@ -1,0 +1,21 @@
+﻿@using ProductionManagementSystem.WEB.Models.Components
+@model ProductionManagementSystem.WEB.Models.Components.TreeViewNodeViewModel
+
+<ul class="bx--list bx--list--nested nested">
+  @foreach (var node in Model.Nodes ?? Enumerable.Empty<TreeViewNodeViewModel>())
+  {
+    <li class="bx--list__item"><span class="caret" id="@node.Id">@node.Title</span>
+      <partial name="Partail/Components/TreeViewNodePartial" model="@node"/>
+    </li>
+  }
+  @foreach (var tuple in Model.Leaves)
+  {
+    <li class="bx--list__item">
+      <span class="leaves" id="@tuple.Item1">
+        @tuple.Item2
+      </span>
+    </li>
+  }
+</ul>
+
+
