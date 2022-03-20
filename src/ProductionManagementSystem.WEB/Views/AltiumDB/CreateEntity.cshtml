@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.WEB.Models.AltiumDB.EntityViewModel
+﻿@model ProductionManagementSystem.Core.Models.AltiumDB.BaseAltiumDbEntity
 
 @{
   ViewBag.Title = "Create entity";
@@ -6,32 +6,101 @@
 }
 
 <div class="bx--grid">
-  <div class="bx--row">
-    <div class="bx--col-sm-2">
-      <form method="post">
-        @foreach (var (column, i) in Model.Table.TableColumns.Select((x, i) => (x, i)))
-        {
-          <div class="bx--form-item">
-            <label for="text-input-@column.ColumnName" class="bx--label">@column.ColumnName</label>
-            <div class="bx--form__helper-text"></div>
-            @if (column.ColumnName == "Description")
-            {
-              <textarea id="text-input-@column.ColumnName" class="bx--text-input" name="data[@i].Value">
-                @(Model.Data == null ? "" : Model.Data[column.ColumnName])
-              </textarea>
-            }
-            else
-            {
-              <input id="text-input-@column.ColumnName" class="bx--text-input" name="data[@i].Value" value="@(Model.Data == null ? "" : Model.Data[column.ColumnName])">
-            }
-            <input type="hidden" name="data[@i].Key" value="@column.ColumnName">
-          </div>
-          <br/>
-        }
+  <form method="post">
+    <input type="hidden" name="Footprint Path" value="@Model.FootprintPath">
+    <input type="hidden" name="Library Path" value="@Model.LibraryPath">
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-6">
+        <label for="text-input-item" class="bx--label">Item</label>
+        <input id="text-input-item" type="text"
+               class="bx--text-input"
+               placeholder="Item" asp-for="Item">
+      </div>
+      <div class="bx--col-lg-6">
+        <label for="text-input-part-number" class="bx--label">Part Number</label>
+        <input id="text-input-part-number" type="text"
+               class="bx--text-input"
+               placeholder="Part Number" name="Part Number" value="@Model.PartNumber">
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-3">
+        <label for="text-input-Manufacturer" class="bx--label">Manufacturer</label>
+        <input id="text-input-Manufacturer" type="text"
+               class="bx--text-input"
+               placeholder="Manufacturer" asp-for="Manufacturer">
+      </div>
+      <div class="bx--col-lg-3">
+        <label for="text-input-Category" class="bx--label">Category</label>
+        <input id="text-input-Category" type="text"
+               class="bx--text-input"
+               placeholder="Category" asp-for="Category">
+      </div>
+      <div class="bx--col-lg-3">
+        <label for="text-input-Supplier" class="bx--label">Supplier</label>
+        <input id="text-input-Supplier" type="text"
+               class="bx--text-input"
+               placeholder="Supplier" asp-for="Supplier">
+      </div>
+      <div class="bx--col-lg-3">
+        <label for="text-input-Case" class="bx--label">Case</label>
+        <input id="text-input-Case" type="text"
+               class="bx--text-input"
+               placeholder="Case" asp-for="Case">
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-3">
+        <label for="text-input-LibraryRef" class="bx--label">Library Ref</label>
+        <input id="text-input-LibraryRef" type="text"
+               class="bx--text-input"
+               placeholder="Library Ref" name="Library Ref"  value="@Model.LibraryRef">
+      </div>
+      <div class="bx--col-lg-3">
+        <label for="text-input-part-number" class="bx--label">Footprint Ref</label>
+        <input id="text-input-FootprintRef" type="text"
+               class="bx--text-input"
+               placeholder="Footprint Ref" name="Footprint Ref" value="@Model.FootprintRef">
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      @foreach (var key in Model.OtherFields)
+      {
+        <div class="bx--col-lg-3">
+          <label for="text-input-@key" class="bx--label">@key</label>
+          <input id="text-input-@key" type="text"
+                 class="bx--text-input"
+                 placeholder="@key" name="@key" value="@(Model[key] == null ? "" : Model[key])">
+        </div>
+      }
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-6">
+        <label for="text-input-HelpURL" class="bx--label">HelpURL</label>
+        <input id="text-input-HelpURL" type="text"
+               class="bx--text-input"
+               placeholder="HelpURL" asp-for="HelpURL">
+      </div>
+      <div class="bx--col-lg-6">
+        <label for="text-input-part-ImageLink" class="bx--label">ImageLink</label>
+        <input id="text-input-part-ImageLink" type="text"
+               class="bx--text-input"
+               placeholder="ImageLink" asp-for="ImageLink">
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-12">
+        <label for="text-area-Description" class="bx--label">Description</label>
+        <textarea id="text-area-Description" class="bx--text-area"
+            rows="4" placeholder="Placeholder text." asp-for="Description"></textarea>
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-1">
         <div class="bx--form-item">
           <button class="bx--btn bx--btn--primary" type="submit">Save</button>
         </div>
-      </form>
+      </div>
     </div>
-  </div>
+  </form>
 </div>

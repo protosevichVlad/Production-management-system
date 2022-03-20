@@ -103,7 +103,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> CreateEntity([FromRoute]string tableName)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
-            return View("CreateEntity",new EntityViewModel() {Table = table});
+            return View("CreateEntity", new BaseAltiumDbEntity(table));
         }
         
         [HttpPost]
@@ -120,7 +120,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
             var data = await _databaseService.GetEntityByPartNumber(tableName, partNumber);
-            return View("CreateEntity",new EntityViewModel() {Table = table, Data = data});
+            return View("CreateEntity", data);
         }
         
         [HttpPost]
