@@ -25,6 +25,8 @@ for (let i = 0; i < leaves.length; i++) {
     });
 }
 
+openDirectory(document.querySelector("#SelectedDirectoryId").value);
+
 async function getPathToTable(id)
 {
     let url = `/api/AltiumDB/get-path-by-table-id/${id}`;
@@ -47,4 +49,16 @@ async function getPathToDirectory(id)
     }
     
     return '';
+}
+
+function openDirectory(id)
+{
+    let current = [...toggler].filter(x => x.id == id)[0];
+    current?.click();
+    while (current != undefined && current.classList!= undefined && current.classList.contains('caret'))
+    {
+        current.click();
+        current = current.parentElement.parentElement.parentElement.childNodes[0];
+    }
+    
 }

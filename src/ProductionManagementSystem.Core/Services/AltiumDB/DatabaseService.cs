@@ -165,6 +165,8 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                 }
             }
 
+            table.DirectoryId = newTable.DirectoryId;
+            table.DisplayName = newTable.DisplayName;
             await base.UpdateAsync(table);
         }
     }

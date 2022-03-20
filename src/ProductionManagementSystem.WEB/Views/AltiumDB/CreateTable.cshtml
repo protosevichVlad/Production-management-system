@@ -11,14 +11,7 @@
       <div class="bx--col-lg-8">
         <div class="bx--form-item">
           <label for="text-input-3" class="bx--label">@Html.LabelFor(x => x.TableName)</label>
-          @if (Model.TableColumns.Count > 1)
-          {
-            <input id="text-input-3" type="text" class="bx--text-input bx--text-input--light" asp-for="TableName" readonly>
-          }
-          else
-          {
-            <input id="text-input-3" type="text" class="bx--text-input bx--text-input--light" asp-for="TableName">
-          }
+          <input id="text-input-3" type="text" class="bx--text-input bx--text-input--light" asp-for="TableName">
         </div>
         <div class="bx--form-item">
           <label for="text-input-3" class="bx--label">@Html.LabelFor(x => x.DisplayName)</label>
@@ -26,28 +19,7 @@
         </div>
       </div>
       <div class="bx--col-lg-4">
-        <ul class="bx--list--unordered">
-          <li class="bx--list__item"><span class="caret">Beverages</span>
-            <ul class="nested bx--list--unordered bx--list--nested">
-              <li class="bx--list__item">Water</li>
-              <li class="bx--list__item">Coffee</li>
-              <li class="bx--list__item"><span class="caret">Tea</span>
-                <ul class="nested bx--list--unordered bx--list--nested">
-                  <li class="bx--list__item">Black Tea</li>
-                  <li class="bx--list__item">White Tea</li>
-                  <li class="bx--list__item"><span class="caret">Green Tea</span>
-                    <ul class="nested bx--list--unordered bx--list--nested">
-                      <li class="bx--list__item">Sencha</li>
-                      <li class="bx--list__item">Gyokuro</li>
-                      <li class="bx--list__item">Matcha</li>
-                      <li class="bx--list__item">Pi Lo Chun</li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
+        <partial name="Partail/Components/TreeViewPartial" model="ViewBag.DirectoriesTree"/>
       </div>
     </div>
     <div class="bx--row">
@@ -99,14 +71,3 @@
     </div>
   </div>
 </form>
-<script>
-var toggler = document.getElementsByClassName("caret");
-var i;
-
-for (i = 0; i < toggler.length; i++) {
-  toggler[i].addEventListener("click", function() {
-    this.parentElement.querySelector(".nested").classList.toggle("active");
-    this.classList.toggle("caret-down");
-  });
-}
-</script>

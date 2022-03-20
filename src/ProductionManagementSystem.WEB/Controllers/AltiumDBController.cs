@@ -38,6 +38,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             var table = new DatabaseTable();
             table.InitAltiumDB("");
+            ViewBag.DirectoriesTree = new TreeViewViewModel(await _directoryService.GetByIdAsync(0), false) { ShowPath = true};
             return View(table);
         }
 
@@ -65,6 +66,11 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> EditTable(string tableName)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
+            ViewBag.DirectoriesTree = new TreeViewViewModel(await _directoryService.GetByIdAsync(0), false)
+            {
+                ShowPath = true,
+                SelectedId = table.DirectoryId ?? 0,
+            };
             return View("CreateTable", table);
         }
         

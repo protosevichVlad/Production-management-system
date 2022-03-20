@@ -35,7 +35,6 @@ namespace ProductionManagementSystem.WEB.Models.Components
         public TreeViewViewModel() {}
         public TreeViewViewModel(Directory directory, bool showLeaves)
         {
-            SelectedId = directory.Id;
             Tree = new TreeViewNodeViewModel(directory, showLeaves);
         }
     }

@@ -1,6 +1,6 @@
 ﻿@model ProductionManagementSystem.WEB.Models.Components.TreeViewViewModel
 
-<input type="hidden" id="SelectedDirectoryId" name="SelectedDirectoryId"/>
+<input type="hidden" id="SelectedDirectoryId" name="DirectoryId" value="@Model.SelectedId"/>
 <input type="hidden" id="SelectedDatabaseId" name="SelectedDatabaseId"/>
 @if (Model.ShowPath)
 {
