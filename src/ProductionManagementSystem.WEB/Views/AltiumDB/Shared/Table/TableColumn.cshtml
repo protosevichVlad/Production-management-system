@@ -7,13 +7,13 @@
       </td>
   <td >
     <div class="bx--text-input__field-wrapper">
-      <input id="text-input-1-@Model.DatabaseOrder" type="text" class="bx--text-input bx--text-input--light bx--text-input--sm" placeholder="Placeholder text" name="TableColumns[@Model.DatabaseOrder].ColumnName" value="@Model.ColumnName">
+      <input id="text-input-1-@Model.DatabaseOrder" type="text" class="bx--text-input bx--text-input--light bx--text-input--sm" placeholder="Placeholder text" name="TableColumns[@(Model.DatabaseOrder - 1)].ColumnName" value="@Model.ColumnName">
     </div>
   </td>
   <td >
     <div class="bx--form-item bx--checkbox-wrapper">
       <input id="bx--checkbox-new-@(Model.DatabaseOrder)" class="bx--checkbox" type="checkbox" value="true" checked="@Model.Display"
-             name="TableColumns[@Model.DatabaseOrder].Display">
+             name="TableColumns[@(Model.DatabaseOrder - 1)].Display">
       <label for="bx--checkbox-new-@(Model.DatabaseOrder)" class="bx--checkbox-label"></label>
     </div>
   </td>
@@ -24,6 +24,6 @@
       </svg>
     </button>
   </td>
-  <input type="hidden" name="TableColumns[@Model.DatabaseOrder].DatabaseOrder" value="@Model.DatabaseOrder"/>
-  <input type="hidden" name="TableColumns[@Model.DatabaseOrder].Id" value="@Model.Id"/>
+  <input type="hidden" name="TableColumns[@(Model.DatabaseOrder - 1)].DatabaseOrder" value="@Model.DatabaseOrder"/>
+  <input type="hidden" name="TableColumns[@(Model.DatabaseOrder - 1)].Id" value="@Model.Id"/>
 </tr>

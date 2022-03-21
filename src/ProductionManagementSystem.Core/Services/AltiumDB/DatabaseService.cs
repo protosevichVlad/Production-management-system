@@ -142,6 +142,21 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                     _tableHelper.AddColumn(newTable, newColumn);
                     columnsForAdd.Add(newColumn);
                 }
+                else
+                {
+                    int indexForRename = table.TableColumns.FindIndex(x =>
+                        x.Id == newColumn.Id && 
+                        (x.ColumnName != newColumn.ColumnName || x.Display != newColumn.Display ||
+                         x.DatabaseOrder != newColumn.DatabaseOrder));
+                    if (indexForRename != -1)
+                    {
+                        if (table.TableColumns[indexForRename].ColumnName != newColumn.ColumnName)
+                            _tableHelper.RenameColumn(table, table.TableColumns[indexForRename], newColumn);
+                        table.TableColumns[indexForRename].ColumnName = newColumn.ColumnName;
+                        table.TableColumns[indexForRename].Display = newColumn.Display;
+                        table.TableColumns[indexForRename].DatabaseOrder = newColumn.DatabaseOrder;
+                    }
+                }
             }
             
             foreach (var column in table.TableColumns)

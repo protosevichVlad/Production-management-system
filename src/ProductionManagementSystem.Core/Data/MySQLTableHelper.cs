@@ -21,6 +21,7 @@ namespace ProductionManagementSystem.Core.Data
         BaseAltiumDbEntity GetEntityByPartNumber(DatabaseTable table, string partNumber);
         void DeleteEntity(DatabaseTable table, string partNumber);
         void UpdateLibraryPropertyInTable(DatabaseTable table, string propertyName, string value);
+        void RenameColumn(DatabaseTable table, TableColumn oldColumn, TableColumn newColumn);
     }
     
     public class MySqlTableHelper : IMySqlTableHelper
@@ -265,6 +266,27 @@ namespace ProductionManagementSystem.Core.Data
                 cmd.CommandText =
                     $"UPDATE `{table.TableName}` SET `{propertyName}` = @value";
                 cmd.Parameters.Add("value", DbType.String).Value = value;
+                cmd.ExecuteNonQuery();
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                conn.Close(); 
+            }
+        }
+
+        public void RenameColumn(DatabaseTable table, TableColumn oldColumn, TableColumn newColumn)
+        {
+            try
+            {
+                conn.Open();
+                
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText =
+                    $"ALTER TABLE `{table.TableName}` RENAME COLUMN `{oldColumn.ColumnName}` TO `{newColumn.ColumnName}`;";
                 cmd.ExecuteNonQuery();
             }
             catch(MySqlException ex)
