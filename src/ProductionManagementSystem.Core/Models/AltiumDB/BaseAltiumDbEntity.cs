@@ -12,6 +12,9 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             {
                 this[columnName] = "";
             }
+
+            this.FootprintPath = table.FootprintPath;
+            this.LibraryPath = table.LibraryPath;
         }
         
         public BaseAltiumDbEntity()

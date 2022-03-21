@@ -137,7 +137,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             var columnsForAdd = new List<TableColumn>();
             foreach (var newColumn in newTable.TableColumns)
             {
-                if (table.TableColumns.All(x => x.ColumnName != newColumn.ColumnName))
+                if (table.TableColumns.All(x => x.Id != newColumn.Id))
                 {
                     _tableHelper.AddColumn(newTable, newColumn);
                     columnsForAdd.Add(newColumn);
@@ -146,7 +146,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             
             foreach (var column in table.TableColumns)
             {
-                if (newTable.TableColumns.All(x => x.ColumnName != column.ColumnName))
+                if (newTable.TableColumns.All(x => x.Id != column.Id))
                 {
                     _tableHelper.DeleteColumn(newTable, column);
                     columnsForDelete.Add(column);
@@ -158,7 +158,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
 
             foreach (var column in table.TableColumns)
             {
-                var newTableColumn = newTable.TableColumns.FirstOrDefault(x => x.ColumnName == column.ColumnName);
+                var newTableColumn = newTable.TableColumns.FirstOrDefault(x => x.Id == column.Id);
                 if (newTableColumn != null)
                 {
                     column.Display = newTableColumn.Display;
@@ -167,6 +167,16 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
 
             table.DirectoryId = newTable.DirectoryId;
             table.DisplayName = newTable.DisplayName;
+            if (table.FootprintPath != newTable.FootprintPath)
+            {
+                table.FootprintPath = newTable.FootprintPath;
+                _tableHelper.UpdateLibraryPropertyInTable(table, "Footprint Path", newTable.FootprintPath);
+            }
+            if (table.LibraryPath != newTable.LibraryPath)
+            {
+                table.LibraryPath = newTable.LibraryPath;
+                _tableHelper.UpdateLibraryPropertyInTable(table, "Library Path", newTable.LibraryPath);
+            }
             await base.UpdateAsync(table);
         }
     }

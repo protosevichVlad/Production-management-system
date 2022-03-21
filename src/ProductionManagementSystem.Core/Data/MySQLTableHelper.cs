@@ -20,6 +20,7 @@ namespace ProductionManagementSystem.Core.Data
         void UpdateDataInTable(DatabaseTable table, string partNumber, BaseAltiumDbEntity data);
         BaseAltiumDbEntity GetEntityByPartNumber(DatabaseTable table, string partNumber);
         void DeleteEntity(DatabaseTable table, string partNumber);
+        void UpdateLibraryPropertyInTable(DatabaseTable table, string propertyName, string value);
     }
     
     public class MySqlTableHelper : IMySqlTableHelper
@@ -242,6 +243,28 @@ namespace ProductionManagementSystem.Core.Data
                 MySqlCommand cmd = conn.CreateCommand();
                 cmd.CommandText = $"DELETE FROM `{table.TableName}` WHERE `Part Number` = @PartNumber;";
                 cmd.Parameters.Add("@PartNumber", DbType.String).Value = partNumber;
+                cmd.ExecuteNonQuery();
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                conn.Close(); 
+            }
+        }
+
+        public void UpdateLibraryPropertyInTable(DatabaseTable table, string propertyName, string value)
+        {
+            try
+            {
+                conn.Open();
+                
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText =
+                    $"UPDATE `{table.TableName}` SET `{propertyName}` = @value";
+                cmd.Parameters.Add("value", DbType.String).Value = value;
                 cmd.ExecuteNonQuery();
             }
             catch(MySqlException ex)
