@@ -113,6 +113,11 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         {
             "Item", "Manufacturer", "HelpURL", "Description"
         };
+        
+        public static List<string> DefaultDisplayFalse { get; } = new List<string>()
+        {
+            "ImageLink", "Library Path", "HelpURL", "Footprint Path"
+        };
 
         public List<string> NoImportantFields => Fields
             .Where(x => !ImportantFields.Contains(x) && x != "Part Number" && x != "ImageLink").Concat(OtherFields).ToList();

@@ -33,7 +33,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             {
                 ColumnName = x,
                 DatabaseOrder = i,
-                Display = true,
+                Display = BaseAltiumDbEntity.DefaultDisplayFalse.All(y => y != x),
             }).ToList();
         }
 
