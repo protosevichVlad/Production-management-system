@@ -4,18 +4,18 @@
             <p class="w-50 h-25">
                 Количество на странице:
             </p>
-            <select class="form-select w-25" name="pageSize" id="pageSize" onchange="this.options[this.selectedIndex].value && (window.location = `?pageSize=${this.options[this.selectedIndex].value}`+'&page=@ViewBag.Page&searchString=@ViewData["CurrentFilter"]&sortOrder=@ViewData["sortOrder"]');" asp-items="ViewBag.PageSizes">
+            <select class="form-select w-25" name="pageSize" id="pageSize" onchange="this.options[this.selectedIndex].value && (window.location = `?pageSize=${this.options[this.selectedIndex].value}`+'&page=@ViewBag.Page&searchString=@ViewData["CurrentFilter"]&sortOrder=@ViewData["sortOrder"]&typeName=@(((SelectList)ViewBag.TypeNames).FirstOrDefault(x => x.Selected)?.Text)&deviceId=@(((SelectList)ViewBag.Devices).FirstOrDefault(x => x.Selected)?.Text)');" asp-items="ViewBag.PageSizes">
             </select>
         </div>
         <li class="page-item @(ViewBag.Page == 1 ? "disabled" : "")">
-            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page - 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]" tabindex="-1">Предыдущая</a>
+            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page - 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]" asp-route-deviceId="@(((SelectList)ViewBag.Devices).FirstOrDefault(x => x.Selected)?.Text)" asp-route-typeName="@(((SelectList)ViewBag.TypeNames).FirstOrDefault(x => x.Selected)?.Text)" tabindex="-1">Предыдущая</a>
         </li>
         @if (ViewBag.MaxPage < 8)
         {
             @for (int numberPage = 1; numberPage <= ViewBag.MaxPage; numberPage++)
             {
                 <li class="page-item @(numberPage == ViewBag.Page ? "active" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@numberPage" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]">@numberPage</a>
+                    <a class="page-link" asp-action="Index" asp-route-page="@numberPage" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]" asp-route-deviceId="@(((SelectList)ViewBag.Devices).FirstOrDefault(x => x.Selected)?.Text)" asp-route-typeName="@(((SelectList)ViewBag.TypeNames).FirstOrDefault(x => x.Selected)?.Text)">@numberPage</a>
                 </li>
             }
         }
@@ -34,14 +34,14 @@
                 }
                 
                 <li class="page-item @(numberPage == ViewBag.Page ? "active" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@numberPage" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]">@numberPage</a>
+                    <a class="page-link" asp-action="Index" asp-route-page="@numberPage" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]" asp-route-deviceId="@(((SelectList)ViewBag.Devices).FirstOrDefault(x => x.Selected)?.Text)" asp-route-typeName="@(((SelectList)ViewBag.TypeNames).FirstOrDefault(x => x.Selected)?.Text)">@numberPage</a>
                 </li>
                 previous = numberPage;
             }
         }
        
         <li class="page-item @(ViewBag.Page == ViewBag.MaxPage ? "disabled" : "")">
-            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page + 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]">Cледующая</a>
+            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page + 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["sortOrder"]" asp-route-deviceId="@(((SelectList)ViewBag.Devices).FirstOrDefault(x => x.Selected)?.Text)" asp-route-typeName="@(((SelectList)ViewBag.TypeNames).FirstOrDefault(x => x.Selected)?.Text)">Cледующая</a>
         </li>
     </ul>
 </nav>

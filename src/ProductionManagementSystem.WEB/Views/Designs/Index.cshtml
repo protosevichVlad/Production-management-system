@@ -32,6 +32,26 @@
         }
     </div>
 </div>
+<form action="" method="get">
+    <div class="row row-cols-lg-auto g-3 align-items-center">
+        <div class="col-12">
+            Фильтр:
+        </div>
+        <div class="col-12">
+            <select name="typeName" id="typeName" asp-items="ViewBag.TypeNames" class="form-select form-select-sm" readonly>
+                <option value="">Конструктивная единица</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <select name="deviceId" id="deviceId" asp-items="ViewBag.Devices" class="form-select form-select-sm" readonly>
+                <option value="">Прибор</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary btn-sm">Принять</button>
+        </div>
+    </div>
+</form>
 <div class="table-responsive-xl">
     <table class="table table-sm">
         <thead>
