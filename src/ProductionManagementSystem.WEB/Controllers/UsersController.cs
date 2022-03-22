@@ -119,5 +119,41 @@ namespace ProductionManagementSystem.WEB.Controllers
             // If we got this far, something failed, redisplay form
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword(string userName)
+        {
+            return View(new ChangePasswordViewModel(){Login = userName});
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model, string userName)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await _userManager.FindByNameAsync(userName);
+                if (user != null)
+                {
+                    IdentityResult result = 
+                        await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                    if(result.Succeeded)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Пользователь не найден");
+                }
+            }
+            return View(model);
+        }
     }
 }
