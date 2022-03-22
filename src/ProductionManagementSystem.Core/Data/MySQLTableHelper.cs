@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
 using System.Linq;
+using System.Text;
 using MySqlConnector;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 
@@ -22,6 +23,8 @@ namespace ProductionManagementSystem.Core.Data
         void DeleteEntity(DatabaseTable table, string partNumber);
         void UpdateLibraryPropertyInTable(DatabaseTable table, string propertyName, string value);
         void RenameColumn(DatabaseTable table, TableColumn oldColumn, TableColumn newColumn);
+        List<string> GetFiledFromAllTables(List<DatabaseTable> tables, string filed);
+        List<string> GetFiledTable(DatabaseTable table, string filed);
     }
     
     public class MySqlTableHelper : IMySqlTableHelper
@@ -288,6 +291,69 @@ namespace ProductionManagementSystem.Core.Data
                 cmd.CommandText =
                     $"ALTER TABLE `{table.TableName}` RENAME COLUMN `{oldColumn.ColumnName}` TO `{newColumn.ColumnName}`;";
                 cmd.ExecuteNonQuery();
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                conn.Close(); 
+            }
+        }
+
+        public List<string> GetFiledFromAllTables(List<DatabaseTable> tables, string filed)
+        {
+            try
+            {
+                conn.Open();
+                
+                MySqlCommand cmd = conn.CreateCommand();
+                StringBuilder command = new StringBuilder("");
+                foreach (var table in tables)
+                {
+                    command.Append($"SELECT DISTINCT `{filed}` FROM `{table.TableName}` UNION DISTINCT ");
+                }
+
+                command.Remove(command.Length - 15, 15);
+                cmd.CommandText = command.ToString();
+                MySqlDataReader reader = cmd.ExecuteReader();
+                List<string> result = new List<string>();
+                while (reader.Read())
+                {
+                    result.Add(reader.GetString(0));
+                }
+                
+                reader.Close();
+                return result;
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                conn.Close(); 
+            }
+        }
+
+        public List<string> GetFiledTable(DatabaseTable table, string filed)
+        {
+            try
+            {
+                conn.Open();
+                
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = $"SELECT DISTINCT `{filed}` FROM `{table.TableName}`";
+                MySqlDataReader reader = cmd.ExecuteReader();
+                List<string> result = new List<string>();
+                while (reader.Read())
+                {
+                    result.Add(reader.GetString(0));
+                }
+                
+                reader.Close();
+                return result;
             }
             catch(MySqlException ex)
             {

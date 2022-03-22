@@ -27,40 +27,76 @@
       <div class="bx--col-lg-3">
         <label for="text-input-Manufacturer" class="bx--label">Manufacturer</label>
         <input id="text-input-Manufacturer" type="text"
-               class="bx--text-input"
+               class="bx--text-input" list="text-input-Manufacturer-datalist"
                placeholder="Manufacturer" asp-for="Manufacturer">
+        <datalist id="text-input-Manufacturer-datalist">
+          @foreach (var manufacture in ViewBag.Manufacturers)
+          {
+            <option value="@manufacture"/>
+          }
+        </datalist>
       </div>
       <div class="bx--col-lg-3">
         <label for="text-input-Category" class="bx--label">Category</label>
         <input id="text-input-Category" type="text"
-               class="bx--text-input"
+               class="bx--text-input" list="text-input-category-datalist"
                placeholder="Category" asp-for="Category">
+        <datalist id="text-input-category-datalist">
+          @foreach (var category in ViewBag.Categories)
+          {
+            <option value="@category"/>
+          }
+        </datalist>
       </div>
       <div class="bx--col-lg-3">
         <label for="text-input-Supplier" class="bx--label">Supplier</label>
         <input id="text-input-Supplier" type="text"
-               class="bx--text-input"
+               class="bx--text-input" list="text-input-supplier-datalist"
                placeholder="Supplier" asp-for="Supplier">
+        <datalist id="text-input-supplier-datalist">
+          @foreach (var supplier in ViewBag.Suppliers)
+          {
+            <option value="@supplier"/>
+          }
+        </datalist>
       </div>
       <div class="bx--col-lg-3">
         <label for="text-input-Case" class="bx--label">Case</label>
         <input id="text-input-Case" type="text"
-               class="bx--text-input"
+               class="bx--text-input" list="text-input-case-datalist"
                placeholder="Case" asp-for="Case">
+        <datalist id="text-input-case-datalist">
+          @foreach (var Case in ViewBag.Cases)
+          {
+            <option value="@Case"/>
+          }
+        </datalist>
       </div>
     </div>
     <div class="bx--row bx--row-padding">
       <div class="bx--col-lg-3">
         <label for="text-input-LibraryRef" class="bx--label">Library Ref</label>
         <input id="text-input-LibraryRef" type="text"
-               class="bx--text-input"
-               placeholder="Library Ref" name="Library Ref"  value="@Model.LibraryRef">
+               class="bx--text-input" list="text-input-libraryRef-datalist"
+               placeholder="Library Ref" name="Library Ref" value="@Model.LibraryRef">
+        <datalist id="text-input-libraryRef-datalist">
+          @foreach (var libraryRef in ViewBag.LibraryRefs)
+          {
+            <option value="@libraryRef"/>
+          }
+        </datalist>
       </div>
       <div class="bx--col-lg-3">
         <label for="text-input-part-number" class="bx--label">Footprint Ref</label>
         <input id="text-input-FootprintRef" type="text"
-               class="bx--text-input"
+               class="bx--text-input" list="text-input-footprintRef-datalist"
                placeholder="Footprint Ref" name="Footprint Ref" value="@Model.FootprintRef">
+        <datalist id="text-input-footprintRef-datalist">
+          @foreach (var footprintRef in ViewBag.FootprintRefs)
+          {
+            <option value="@footprintRef"/>
+          }
+        </datalist>
       </div>
     </div>
     <div class="bx--row bx--row-padding">

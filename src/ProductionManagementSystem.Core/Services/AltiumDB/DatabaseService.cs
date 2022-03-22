@@ -23,6 +23,8 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         Task<BaseAltiumDbEntity> GetEntityByPartNumber(string tableName, string partNumber);
         Task DeleteEntityById(string tableName, string partNumber);
         Task ImportFromFile(string tableName, StreamReader stream, IDataImporter importer);
+        Task<List<string>> GetFiledTable(string tableName, string filed);
+        Task<List<string>> GetFiledFromAllTables(string filed);
     }
 
     public class DatabaseService : BaseService<DatabaseTable>, IDatabaseService
@@ -128,6 +130,16 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                 }
                 
             }
+        }
+
+        public async Task<List<string>> GetFiledFromAllTables(string filed)
+        {
+            return _tableHelper.GetFiledFromAllTables(await GetAllAsync(), filed);
+        }
+
+        public async Task<List<string>> GetFiledTable(string tableName, string filed)
+        {
+            return _tableHelper.GetFiledTable(await GetTableByNameAsync(tableName), filed);
         }
 
         public override async Task UpdateAsync(DatabaseTable newTable)
