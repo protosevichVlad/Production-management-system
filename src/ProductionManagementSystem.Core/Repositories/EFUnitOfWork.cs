@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using ProductionManagementSystem.Core.Data.EF;
 using ProductionManagementSystem.Core.Models.AltiumDB;
