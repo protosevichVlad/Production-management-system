@@ -77,6 +77,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Explanation)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Devices)
+            </th>
             <th class="td-with-buttons">
             </th>
         </tr>
@@ -103,6 +106,11 @@
                 <td>
                     <div class="overflow-hidden text-truncate description">
                         @Html.DisplayFor(modelItem => item.Explanation)
+                    </div>
+                </td>
+                <td>
+                    <div class="overflow-hidden text-truncate description">
+                        @(String.Join(", ", item.Devices.Select(x => x.Name)))
                     </div>
                 </td>
                 <td class="td-with-buttons">

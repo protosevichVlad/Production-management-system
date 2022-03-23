@@ -114,6 +114,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             ViewBag.AllDesigns = designs.Select(d => d.Name).Distinct();
             designs = designs.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            await _componentBaseService.UsingInDevice(designs);
             return View(designs);
         }
 

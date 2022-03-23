@@ -128,6 +128,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewBag.AllComponents = components;
             ViewBag.Page = page;
             components = components.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            await _componentBaseService.UsingInDevice(components);
             return View(components);
         }
 
