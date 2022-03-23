@@ -123,7 +123,7 @@ tr:hover .password {
 }
 
 .td-with-buttons {
-    width: 315px;
+    width: 20px;
     text-align: center;
 }
 
@@ -177,4 +177,18 @@ tr:hover .password {
 
 .sticky-top {
     z-index: 999;
+}
+
+.btn-three-dots-vertical{
+    visibility: hidden;
+    color: #000000;
+}
+
+.btn-three-dots-vertical:hover{
+    visibility: hidden;
+    color: grey;
+}
+
+tr:hover .btn-three-dots-vertical{
+    visibility: visible;
 }

@@ -50,10 +50,13 @@
         <div class="col-12">
             <button class="btn btn-primary btn-sm">Принять</button>
         </div>
+        <div class="col-12 offset-sm-6">
+            <a class="btn btn-primary btn-sm" asp-action="Create">Создать новый</a>
+        </div>
     </div>
 </form>
 <div class="table-responsive-xl">
-    <table class="table table-sm">
+    <table class="table table-sm table-hover">
         <thead>
         <tr>
             <th>
@@ -69,13 +72,12 @@
                 @Html.DisplayNameFor(model => model.ShortDescription)
             </th>
             <th class="td-with-buttons">
-                <a class="btn btn-primary btn-sm" asp-action="Create">Создать новый</a>
             </th>
         </tr>
         </thead>
         <tbody>
         @foreach (var item in Model) {
-            <tr>
+            <tr  onclick="location.href = '/Designs/Details/@item.Id'">
                 <td>
                     @Html.DisplayFor(modelItem => item.Type)
                 </td>
@@ -91,9 +93,18 @@
                     </div>
                 </td>
                 <td>
-                    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@item.Id">Подробности</a>
-                    <a class="btn btn-light btn-sm" asp-action="Add" asp-route-id="@item.Id">Добавить</a>
-                    <a class="btn btn-light btn-sm" asp-action="Receive" asp-route-id="@item.Id">Получить</a>
+                    <div class="btn-group">
+                        <button class="btn btn-link btn-sm btn-three-dots-vertical" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                              <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                            </svg>
+                        </button>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">Подробности</a></li>
+                        <li><a class="dropdown-item" asp-action="Add" asp-route-id="@item.Id">Добавить</a></li>
+                        <li><a class="dropdown-item" asp-action="Receive" asp-route-id="@item.Id">Получить</a></li>
+                      </ul>
+                    </div>
                 </td>
             </tr>
         }

@@ -3,8 +3,13 @@
     ViewData["Title"] = "Заказы";
 }
 <h2>Cписок заказов</h2>
+<div class="row">
+    <div class="col-12 offset-sm-10">
+        <a class="btn btn-primary btn-sm m-1" asp-action="Create">Новый заказ</a>
+    </div>
+</div>
 <div class="table-responsive">
-    <table class="table table-sm">
+    <table class="table table-sm table-hover">
         <thead>
         <tr>
             <th>
@@ -25,15 +30,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-            <th class="td-with-buttons">
-                <a class="btn btn-primary btn-sm m-1" asp-action="Create">Новый заказ</a>
-            </th>
         </tr>
         </thead>
         <tbody>
         @foreach (var order in Model)
         {
-            <tr>
+            <tr onclick="location.href = '/Orders/Details/@order.Id'">
                 <td>
                     @order.Id
                 </td>
@@ -53,9 +55,6 @@
                     <div class="overflow-hidden text-truncate description">
                         @order.Description
                     </div>
-                </td>
-                <td>
-                    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@order.Id">Подробности</a>
                 </td>
             </tr>
         }
