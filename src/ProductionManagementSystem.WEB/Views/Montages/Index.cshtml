@@ -1,0 +1,135 @@
+﻿@model IEnumerable<ProductionManagementSystem.Core.Models.Components.Montage>
+
+@{
+    ViewData["Title"] = "Монтаж";
+}
+
+<h2>Cписок монтажа</h2>
+<div class="row">
+    <div class="col">
+        <form asp-action="Index" method="get">
+            <div class="input-group mb-3 col-4">
+                <input type="text" name="SearchString" class="form-control" placeholder="" list="datalistNameMontages" aria-describedby="button-addon1" autocomplete="off" value="@ViewData["CurrentFilter"]"/>
+                <button type="submit" class="btn btn-outline-secondary" id="button-addon1">Поиск</button>
+                <datalist id="datalistNameMontages">
+                    @foreach (var name in ViewBag.AllComponents)
+                    {
+                        <option value="@name"/>
+                    }
+                </datalist>
+            </div>
+        </form>
+    </div>
+    <div class="col-8 d-flex align-items-center justify-content-end">
+        @if (@ViewData["CurrentFilter"] == null)
+        {
+            <p class="d-flex">На складе @ViewBag.CountComponents наименований конструктива</p>
+        }
+        else
+        {
+            <p class="d-flex">Было найдено @ViewBag.CountComponents наименований конструктива | <a asp-action="Index"> Вернуться к полному списку</a></p>
+                
+        }
+    </div>
+</div>
+<form action="" method="get">
+    <div class="row row-cols-lg-auto g-3 align-items-center">
+        <div class="col-12">
+            Фильтр:
+        </div>
+        <div class="col-12">
+            <select name="typeName" id="typeName" asp-items="ViewBag.TypeNames" class="form-select form-select-sm" readonly>
+                <option value="">Конструктивная единица</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <select name="deviceId" id="deviceId" asp-items="ViewBag.Devices" class="form-select form-select-sm" readonly>
+                <option value="">Прибор</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary btn-sm">Принять</button>
+        </div>
+         <div class="col-12 offset-sm-6">
+            <a class="btn btn-primary btn-sm" asp-action="Create">Создать новый</a>
+        </div>
+    </div>
+</form>
+<div class="table-responsive-xl">
+    <table class="table table-sm table-hover">
+        <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["TypeSortParm"]">@Html.DisplayNameFor(model => model.Type)</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.Name)</a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nominal)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Corpus)
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-pageSize="@ViewBag.PageSize" asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-sortOrder="@ViewData["QuantitySortParm"]">@Html.DisplayNameFor(model => model.Quantity)</a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Explanation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Devices)
+            </th>
+            <th class="td-with-buttons">
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href = '/Montages/Details/@item.Id'">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nominal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Corpus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    <div class="overflow-hidden text-truncate description">
+                        @Html.DisplayFor(modelItem => item.Explanation)
+                    </div>
+                </td>
+                <td>
+                    <div class="overflow-hidden text-truncate description">
+                        @(String.Join(", ", item.Devices.Select(x => x.Name)))
+                    </div>
+                </td>
+                <td class="td-with-buttons">
+                    <div class="btn-group">
+                       <button class="btn btn-link btn-sm btn-three-dots-vertical" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                             <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                           </svg>
+                       </button>
+                     <ul class="dropdown-menu">
+                       <li><a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">Подробности</a></li>
+                       <li><a class="dropdown-item" asp-action="Add" asp-route-id="@item.Id">Добавить</a></li>
+                       <li><a class="dropdown-item" asp-action="Receive" asp-route-id="@item.Id">Получить</a></li>
+                     </ul>
+                   </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <partial name="Partail/_Pagination" />
+</div>

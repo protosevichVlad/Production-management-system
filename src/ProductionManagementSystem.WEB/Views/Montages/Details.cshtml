@@ -1,0 +1,68 @@
+﻿@model ProductionManagementSystem.Core.Models.Components.Montage;
+
+@{
+    ViewData["Title"] = "Подробная информация";
+}
+
+<div class="row">
+    <div class="col">
+        <h4>Подробная информация</h4>
+    </div>
+    <div class="col d-flex justify-content-md-end">
+        <a class="btn btn-light btn-sm m-1"  asp-action="Add" asp-route-id="@Model.Id">Добавить</a>
+        <a class="btn btn-light btn-sm m-1" asp-action="Receive" asp-route-id="@Model.Id">Получить</a>
+        <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-montageId="@Model.Id">Логи</a>
+        <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+        <a class="btn btn-danger btn-sm m-1" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+    </div>
+</div>
+<div class="alert alert-info" role="alert">
+    Здесь вы можете узнать подробную информацию или совершить дополнительные действие с @Model.Name.
+</div>
+<hr />
+<div>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Nominal)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Nominal)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Corpus)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Corpus)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Explanation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Explanation)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Manufacturer)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Manufacturer)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+    </dl>
+</div>

@@ -2,75 +2,63 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductionManagementSystem.BLL.DTO;
-using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Interfaces;
-using ProductionManagementSystem.DAL.Enums;
-using ProductionManagementSystem.WEB.Models;
+using ProductionManagementSystem.Core.Infrastructure;
+using ProductionManagementSystem.Core.Models.Logs;
+using ProductionManagementSystem.Core.Models.Users;
+using ProductionManagementSystem.Core.Services;
 
-namespace ProductionManagementSystem.Controllers
+namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize(Roles = RoleEnum.Admin)]
     public class LogsController : Controller
     {
         private readonly ILogService _logService;
-        private readonly IMapper _mapper;
 
         public LogsController(ILogService service)
         {
             _logService = service;
-            _mapper = new MapperConfiguration(cnf =>
-            {
-                cnf.CreateMap<LogDTO, LogViewModel>();
-                cnf.CreateMap<LogViewModel, LogDTO>();
-            }).CreateMapper();
         }
 
-        public async Task<IActionResult> Index(string userName, int? deviceId, int? componentId, int? designId, int? taskId, int? orderId)
+        public async Task<IActionResult> Index(string userName, 
+            int? deviceId, int? montageId, int? designId, int? taskId, int? orderId,
+            int? designSupplyRequestId, int? montageSupplyRequestId)
         {
-            var logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(await _logService.GetLogsAsync());
+            IEnumerable<Log> logs = await _logService.GetAllAsync();
 
             if (userName != null)
-            {
-                logs = logs.Where(l => l.UserLogin == userName);
-            }
+                logs = logs.Where(l => l.User.UserName == userName);
             
             if (deviceId != null)
-            {
                 logs = logs.Where(l => l.DesignId == deviceId);
-            }
             
-            if (componentId != null)
-            {
-                logs = logs.Where(l => l.ComponentId == componentId);
-            }
+            if (montageId != null)
+                logs = logs.Where(l => l.MontageId == montageId);
             
             if (designId != null)
-            {
                 logs = logs.Where(l => l.DesignId == designId);
-            }
             
             if (taskId != null)
-            {
                 logs = logs.Where(l => l.TaskId == taskId);
-            }
             
             if (orderId != null)
-            {
                 logs = logs.Where(l => l.OrderId == orderId);
-            }
+            
+            if (montageSupplyRequestId != null)
+                logs = logs.Where(l => l.MontageSupplyRequestId == montageSupplyRequestId);
+            
+            if (designSupplyRequestId != null)
+                logs = logs.Where(l => l.DesignSupplyRequestId == designSupplyRequestId);
             
             return View(logs);
         }
         
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             try
             {
-                return View(_mapper.Map<LogDTO, LogViewModel>(await _logService.GetLogAsync(id)));
+                return View(await _logService.GetByIdAsync(id));
             }
             catch (PageNotFoundException)
             {

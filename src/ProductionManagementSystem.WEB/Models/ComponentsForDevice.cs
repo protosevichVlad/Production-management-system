@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ProductionManagementSystem.WEB.Models
+﻿namespace ProductionManagementSystem.WEB.Models
 {
     public class ComponentsForDevice
     {

@@ -1,4 +1,6 @@
-﻿@model ProductionManagementSystem.WEB.Models.DeviceViewModel;
+﻿@using ProductionManagementSystem.WEB.Models.Device
+@using ProductionManagementSystem.Core.Models.Components
+@model ProductionManagementSystem.Core.Models.Devices.Device;
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -11,6 +13,7 @@
 </div>
 <hr/>
 <form method="post" action="">
+    <input asp-for="Id" hidden/>
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
@@ -47,41 +50,19 @@
                     <th class="border-0"></th>
                 </tr>
                 </thead>
-                @for (int i = 0; i < Model.ComponentNames.Length; i++)
+                @for (int i = 0; i < Model.Montages.Count(); i++)
                 {
-                    <tr id="comTr@(i + 1)">
-                        <td class="ComponentIds">
-                            @(i + 1)
-                        </td>
-                        <td class="td-with-name">
-                            <select class="ComponentSelect align-top width-100 form-select js-example-basic-single" name="ComponentIds">
-                                @foreach (var c in ViewBag.Components)
-                                {
-                                    @if (c.Id == Model.ComponentIds[i])
-                                    {
-                                        <option value="@c.Id" selected>@c.ToString()</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@c.Id">@c.ToString()</option>
-                                    }
-                                }
-                            </select>
-                        </td>
-                        <td>
-                            <input class="ComponentInput align-top form-control" name="ComponentQuantity" type="number" value="@Model.ComponentQuantity[i]" required autocomplete="off" min="0"/>
-                        </td>
-                        <td class="td-with-description">
-                            <textarea class="align-top w-100 form-control" name="ComponentDescriptions">@Model.ComponentDescriptions[i]</textarea>
-                        </td>
-                        <td class="border-0">
-                            <button type="button" class="btn-close" aria-label="Close" onclick="removeComponent(@(i + 1))"></button>
-                        </td>
-                    </tr>
+                    @Html.Partial("Partail/Device/Montageitem", new DeviceItem<Montage>()
+                    {
+                        Id = i,
+                        Component = Model.Montages[i],
+                        AllComponents = ViewBag.Montages,
+                        SelectedComponentId = Model.Montages[i].ComponentId
+                    });
                 }
-                <tr id="comTr0"></tr>
+                 <tr id="@(nameof(Montage))Tr0"></tr>
             </table>
-            <button type="button" onclick="createComponent()" class="btn btn-link" id="buttonCreateComponent">
+            <button type="button" onclick="createDeviceItem('@nameof(Montage)')" class="btn btn-link" id="buttonCreateMontage">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
                 Добавить монтаж
             </button>
@@ -104,41 +85,19 @@
                     <th class="border-0"></th>
                 </tr>
                 </thead>
-                @for (int i = 0; i < Model.DesignNames.Length; i++)
+                @for (int i = 0; i < Model.Designs.Count(); i++)
                 {
-                    <tr id="desTr@(i + 1)">
-                        <td class="DesignIds">
-                            @(i + 1)
-                        </td>
-                        <td class="td-with-name">
-                            <select class="DesignSelect align-top width-100 form-select js-example-basic-single" name="DesignIds">
-                                @foreach (var d in ViewBag.Designs)
-                                {
-                                    @if (Model.DesignIds[i] == d.Id)
-                                    {
-                                        <option value="@d.Id" selected>@d.ToString()</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@d.Id">@d.ToString()</option>
-                                    }
-                                }
-                            </select>
-                        </td>
-                        <td>
-                            <input class="DesignInput align-top form-control" name="DesignQuantity" type="number" required value="@Model.DesignQuantity[i]" autocomplete="off" min="0"/>
-                        </td>
-                        <td class="td-with-description">
-                            <textarea class="align-top w-100 form-control" name="DesignDescriptions">@Model.DesignDescriptions[i]</textarea>
-                        </td>
-                        <td class="border-0">
-                            <button type="button" class="btn-close" aria-label="Close" onclick="removeDesign(@(i + 1))"></button>
-                        </td>
-                    </tr>
+                    @Html.Partial("Partail/Device/DesignItem", new DeviceItem<Design>()
+                    {
+                        Id = i,
+                        Component = Model.Designs[i],
+                        AllComponents = ViewBag.Designs,
+                        SelectedComponentId = Model.Designs[i].ComponentId
+                    });
                 }
-                <tr id="desTr0"></tr>
+                <tr id="@(nameof(Design))Tr0"></tr>
             </table>
-            <button type="button" onclick="createDesign()" class="btn btn-link" id="buttonCreateDesign">
+            <button type="button" onclick="createDeviceItem('@nameof(Design)')" class="btn btn-link" id="buttonCreateDesign">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
                 Добавить конструктив
             </button>

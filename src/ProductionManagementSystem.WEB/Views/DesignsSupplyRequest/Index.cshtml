@@ -1,13 +1,10 @@
-﻿@model System.Collections.Generic.IEnumerable<ProductionManagementSystem.WEB.Models.DesignsSupplyRequestViewModel>
+﻿@model System.Collections.Generic.IEnumerable<ProductionManagementSystem.Core.Models.SupplyRequests.DesignSupplyRequest>
 
 @{
     ViewBag.Title = "Список заявок на снабжение конструктива";
 }
 
 <h2>Cписок</h2>
-<p>
-    <a asp-action="Create">Создать новую заявку</a>
-</p>
 <div class="table-responsive-xl">
     <table class="table table-sm">
         <thead>
@@ -33,7 +30,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.StatusSupply)
             </th>
-            <th></th>
+            <th class="td-with-buttons">
+                <a class="btn btn-primary btn-sm" asp-action="Create">Создать новую</a>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -44,7 +43,7 @@
                     @Html.DisplayFor(modelItem => item.Id)
                 </td>
                 <td>
-                    @item.Design.ToString()
+                    <a asp-controller="Designs" asp-action="Details" asp-route-id="@item.Design.Id">@item.Design.ToString()</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.TaskId)

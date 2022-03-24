@@ -7,13 +7,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ProductionManagementSystem.BLL.Interfaces;
-using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.DAL.EF;
-using ProductionManagementSystem.DAL.Entities;
-using ProductionManagementSystem.DAL.Repositories;
+using ProductionManagementSystem.Core.Data.EF;
+using ProductionManagementSystem.Core.Models.SupplyRequests;
+using ProductionManagementSystem.Core.Models.Users;
+using ProductionManagementSystem.Core.Repositories;
+using ProductionManagementSystem.Core.Services;
+using ProductionManagementSystem.Core.Services.AltiumDB;
+using ProductionManagementSystem.Core.Services.SupplyRequestServices;
 
-namespace ProductionManagementSystem
+namespace ProductionManagementSystem.WEB
 {
     public class Startup
     {
@@ -34,7 +36,7 @@ namespace ProductionManagementSystem
             );
             
 
-            services.AddIdentity<ProductionManagementSystemUser, IdentityRole>(options =>
+            services.AddIdentity<User, IdentityRole>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = true;
                     options.Password.RequireDigit = false;
@@ -54,20 +56,34 @@ namespace ProductionManagementSystem
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
 
-            var uow = new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection"));
-            services.AddSingleton<IComponentService>(_ => new ComponentService(uow));
-            services.AddSingleton<IDesignService>(_ => new DesignService(uow));
-            services.AddSingleton<IDeviceService>(_ => new DeviceService(uow));
-            services.AddSingleton<ITaskService>(_ => new TaskService(uow));
-            services.AddSingleton<IOrderService>(_ => new OrderService(uow));
-            services.AddSingleton<ILogService>(_ => new LogService(uow));
-            services.AddSingleton<IComponentsSupplyRequestService>(_ => new ComponentsSupplyRequestService(uow));
-            services.AddSingleton<IDesignsSupplyRequestService>(_ => new DesignsSupplyRequestService(uow));
+            services.AddScoped<IUnitOfWork>(_ => new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IMontageService, MontageService>();
+            services.AddScoped<IDesignService, DesignService>();
+            services.AddScoped<IDeviceService, DeviceService>();
+            services.AddScoped<ITaskService, TaskService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ILogService, LogService>();
+            services.AddScoped<IMontageSupplyRequestService, MontageSupplyRequestService>();
+            services.AddScoped<IDesignSupplyRequestService, DesignSupplyRequestService>();
+            services.AddScoped<ISupplyRequestService<SupplyRequest>, SupplyRequestService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IDirectoryService, DirectoryService>();
+            services.AddScoped<IDatabaseService>(_ =>
+                new DatabaseService(Configuration.GetConnectionString("DefaultConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope())
+            {
+                if (serviceScope != null)
+                {
+                    var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationContext>();
+                    context.Database.Migrate();
+                }
+            }
+            
             var cultureInfo = new CultureInfo("ru-RU");
 
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
@@ -91,6 +107,8 @@ namespace ProductionManagementSystem
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseMiddleware<GetCurrentUserMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

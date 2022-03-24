@@ -2,47 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductionManagementSystem.BLL.DTO;
-using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Interfaces;
-using ProductionManagementSystem.DAL.Enums;
-using ProductionManagementSystem.WEB.Models;
+using ProductionManagementSystem.Core.Infrastructure;
+using ProductionManagementSystem.Core.Models.Orders;
+using ProductionManagementSystem.Core.Models.Users;
+using ProductionManagementSystem.Core.Services;
+using ProductionManagementSystem.WEB.Models.Order;
+using Task = ProductionManagementSystem.Core.Models.Tasks.Task;
 
-namespace ProductionManagementSystem.Controllers
+namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize(Roles = RoleEnum.Admin)]
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
-        private readonly IMapper _mapper;
+        private readonly IDeviceService _deviceService;
+        private readonly ITaskService _taskService;
         
-        
-        public OrdersController(IOrderService orderService, ITaskService taskService)
+        public OrdersController(IOrderService orderService, IDeviceService deviceService, ITaskService taskService)
         {
             _orderService = orderService;
-            _mapper = new MapperConfiguration(cfg =>
-                {
-                    cfg.CreateMap<OrderDTO, OrderViewModel>();
-                    cfg.CreateMap<TaskDTO, TaskViewModel>()
-                        .ForMember(
-                        task => task.Status, 
-                        opt => opt.MapFrom(
-                            src => taskService.GetTaskStatusName(src.Status)
-                        )
-                    );
-                    cfg.CreateMap<DeviceDTO, DeviceViewModel>();
-                    cfg.CreateMap<OrderViewModel, OrderDTO>();
-                    cfg.CreateMap<TaskViewModel, TaskDTO>();
-                    cfg.CreateMap<DeviceViewModel, DeviceDTO>();
-                    cfg.CreateMap<ObtainedDesign, ObtainedDesignDTO>();
-                    cfg.CreateMap<ObtainedDesignDTO, ObtainedDesign>();
-                    cfg.CreateMap<ObtainedComponent, ObtainedComponentDTO>();
-                    cfg.CreateMap<ObtainedComponentDTO, ObtainedComponent>();
-                })
-                .CreateMapper();
+            _deviceService = deviceService;
+            _taskService = taskService;
         }
 
         public async Task<IActionResult> Index(string sortOrder)
@@ -53,8 +35,8 @@ namespace ProductionManagementSystem.Controllers
             ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
             ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
             
-            var ordersViewModel = _mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(await _orderService.GetOrdersAsync());
-            ordersViewModel = SortingOrders(ordersViewModel, sortOrder);
+            var ordersViewModel = await _orderService.GetAllAsync();
+            ordersViewModel = SortingOrders(ordersViewModel, sortOrder).ToList();
             return View(ordersViewModel);
         }
         
@@ -65,19 +47,33 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(OrderViewModel orderModel)
+        public async Task<IActionResult> Create(Order orderModel, int[] DeviceQuantity)
         {
             if (ModelState.IsValid)
             {
-                var orderDto = _mapper.Map<OrderViewModel, OrderDTO>(orderModel);
-                await _orderService.CreateOrderAsync(orderDto); 
+                var tasks = new List<Task>();
+                for (int i = 0; i < DeviceQuantity.Length; i++)
+                {
+                    for (int j = 0; j < DeviceQuantity[i]; j++)
+                    {
+                        tasks.Add(new Task()
+                        {
+                            Deadline = orderModel.Deadline,
+                            DeviceId = orderModel.Tasks[i].DeviceId,
+                            Description = orderModel.Tasks[i].Description
+                        });
+                    }
+                }
+
+                orderModel.Tasks = tasks;
+                await _orderService.CreateAsync(orderModel);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(orderModel);
         }
 
-        public async Task<IActionResult> Details(int? id, string sortOrder)
+        public async Task<IActionResult> Details(int id, string sortOrder)
         {
             try
             {
@@ -86,10 +82,14 @@ namespace ProductionManagementSystem.Controllers
                 ViewData["StartDateSortParm"] = sortOrder == "StartDate" ? "startdate_desc" : "StartDate";
                 ViewData["StatusSortParm"] = sortOrder == "Status" ? "status_desc" : "Status";
                 ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
-                
-                var orderViewModel = _mapper.Map<OrderDTO, OrderViewModel>(await _orderService.GetOrderAsync(id));
 
-                orderViewModel.Tasks = SortingTasks(orderViewModel.Tasks, sortOrder).ToList();
+                var orderViewModel = await _orderService.GetByIdAsync(id);
+                var tasks = (await _orderService.GetTasksByOrderIdAsync(orderViewModel.Id)).ToList().Select(async t =>
+                {
+                    t.Device = await _deviceService.GetByIdAsync(t.DeviceId);
+                    return t;
+                }).Select(t => t.Result).Where(t => t != null).ToList();
+                orderViewModel.Tasks = SortingTasks(tasks, sortOrder).ToList();
                 return View(orderViewModel);
             }
             catch (PageNotFoundException)
@@ -98,11 +98,16 @@ namespace ProductionManagementSystem.Controllers
             }
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var orderViewModel = _mapper.Map<OrderDTO, OrderViewModel>(await _orderService.GetOrderAsync(id));
+                var orderViewModel = await _orderService.GetByIdAsync(id);
+                var tasks = (await _orderService.GetTasksByOrderIdAsync(orderViewModel.Id)).ToList().Select(async t =>
+                {
+                    t.Device = await _deviceService.GetByIdAsync(t.DeviceId);
+                    return t;
+                }).Select(t => t.Result).Where(t => t != null).ToList();
                 return View(orderViewModel);
             }
             catch (PageNotFoundException)
@@ -113,11 +118,11 @@ namespace ProductionManagementSystem.Controllers
 
         [HttpPost]
         [ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirm(int? id)
+        public async Task<IActionResult> DeleteConfirm(int id)
         {
             try
             {
-                await _orderService.DeleteOrderAsync(id);
+                await _orderService.DeleteByIdAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (PageNotFoundException)
@@ -126,7 +131,7 @@ namespace ProductionManagementSystem.Controllers
             }       
         }
         
-        private static IEnumerable<TaskViewModel> SortingTasks(IEnumerable<TaskViewModel> items, string sortOrder)
+        private static IEnumerable<Task> SortingTasks(IEnumerable<Task> items, string sortOrder)
         {
             switch (sortOrder)
             {
@@ -171,7 +176,16 @@ namespace ProductionManagementSystem.Controllers
             return items;
         }
         
-        private static IEnumerable<OrderViewModel> SortingOrders(IEnumerable<OrderViewModel> items, string sortOrder)
+        public async Task<IActionResult> GetOrderItem(int index)
+        {
+            return PartialView("Partail/Order/OrderItem", new OrderItem()
+            {
+                Index = index,
+                AllDevices = await _deviceService.GetAllAsync()
+            });
+        }
+
+        private static IEnumerable<Order> SortingOrders(IEnumerable<Order> items, string sortOrder)
         {
             switch (sortOrder)
             {

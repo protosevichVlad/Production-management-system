@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using ProductionManagementSystem.DAL.Entities
+@using ProductionManagementSystem.Core.Models.Users
 
-@inject SignInManager<ProductionManagementSystemUser> SignInManager
-@inject UserManager<ProductionManagementSystemUser> UserManager
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 <ul class="navbar-nav ml-auto">
 @if (SignInManager.IsSignedIn(User))

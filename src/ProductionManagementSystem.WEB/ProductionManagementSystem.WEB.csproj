@@ -81,11 +81,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProductionManagementSystem.BLL\ProductionManagementSystem.BLL.csproj" />
+    <ProjectReference Include="..\ProductionManagementSystem.Core\ProductionManagementSystem.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Новая папка\**" />
+    <Compile Remove="Models\Reports\ReportByElement.cs" />
+    <Compile Remove="Models\AltiumDB\CreateEditTableViewModel.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -99,6 +101,11 @@
 
   <ItemGroup>
     <Content Remove="Новая папка\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\AltiumDB\Tables" />
+    <Folder Include="Pages" />
   </ItemGroup>
 
 </Project>

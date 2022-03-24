@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductionManagementSystem.DAL.Entities.ProductionManagementSystemUser>
+﻿@model IEnumerable<ProductionManagementSystem.Core.Models.Users.User>
 @{
     ViewBag.Title = "Список пользователей";
 }
@@ -13,6 +13,7 @@
             <td>@user.UserName</td>
             <td>
                 <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Index" asp-route-userName="@user.UserName">Логи</a>
+                <a class="btn btn-light btn-sm" asp-controller="Users" asp-action="ChangePassword" asp-route-userName="@user.UserName">Изменить пароль</a>
                 @if (user.UserName != "admin")
                 {
                     <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-username="@user.UserName">Удалить</a>

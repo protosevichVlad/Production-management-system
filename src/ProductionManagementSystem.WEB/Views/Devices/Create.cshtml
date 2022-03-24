@@ -1,4 +1,5 @@
-﻿@model ProductionManagementSystem.WEB.Models.DeviceViewModel;
+﻿@using ProductionManagementSystem.Core.Models.Components
+@model ProductionManagementSystem.Core.Models.Devices.Device;
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -47,10 +48,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr id="comTr0"></tr>
+                    <tr id="@(nameof(Montage))Tr0"></tr>
                 </tbody>
             </table>
-            <button type="button" onclick="createComponent()" class="btn btn-link" id="buttonCreateComponent">
+            <button type="button" onclick="createDeviceItem('@nameof(Montage)')" class="btn btn-link" id="buttonCreateMontage">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
                 Добавить монтаж
             </button>
@@ -73,10 +74,10 @@
                     <th class="border-0"></th>
                 </tr>
                 </thead>
-                <tr id="desTr0">
+                <tr id="@(nameof(Design))Tr0">
                 </tr>
             </table>
-            <button type="button" onclick="createDesign()" class="btn btn-link" id="buttonCreateDesign">
+            <button type="button" onclick="createDeviceItem('@nameof(Design)')" class="btn btn-link" id="buttonCreateDesign">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
                 Добавить конструктив
             </button>

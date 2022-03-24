@@ -1,0 +1,62 @@
+﻿@using ProductionManagementSystem.Core.Models.Infrastructure
+@model IEnumerable<ProductionManagementSystem.Core.Models.Tasks.Task>
+
+<div class="table-responsive">
+    <table class="table table-sm table-hover">
+        <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NumSortParm"]">№</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DeviceSortParm"]">Прибор</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StartDateSortParm"]">Дата начала</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DeadlineSortParm"]">Срок</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StatusSortParm"]">Статус</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["OrderIdSortParm"]">№ заказа</a>
+            </th>
+            <th>
+                Описание
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var t in Model)
+        {
+            <tr onclick="location.href = '/Tasks/Details/@t.Id'">
+                <td>
+                    @t.Id
+                </td>
+                <td>
+                    @t.Device.ToString()
+                </td>
+                <td>
+                    @t.StartTime.ToString("dd.MM.yyyy")
+                </td>
+                <td>
+                    @t.Deadline.ToString("dd.MM.yyyy")
+                </td>
+                <td>
+                    @t.Status.GetTasksStatusName()
+                </td>
+                <td>
+                    @t.OrderId
+                </td>
+                <td>
+                    <div class="overflow-hidden text-truncate description">
+                        @t.Description
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

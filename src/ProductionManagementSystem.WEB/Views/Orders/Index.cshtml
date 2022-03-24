@@ -1,14 +1,15 @@
-﻿@model IEnumerable<ProductionManagementSystem.WEB.Models.OrderViewModel>
+﻿@model IEnumerable<ProductionManagementSystem.Core.Models.Orders.Order>
 @{
     ViewData["Title"] = "Заказы";
 }
 <h2>Cписок заказов</h2>
-
-<p>
-    <a asp-action="Create">Новый заказ</a>
-</p>
+<div class="row">
+    <div class="col-12 offset-sm-10">
+        <a class="btn btn-primary btn-sm m-1" asp-action="Create">Новый заказ</a>
+    </div>
+</div>
 <div class="table-responsive">
-    <table class="table table-sm">
+    <table class="table table-sm table-hover">
         <thead>
         <tr>
             <th>
@@ -29,13 +30,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-            <th></th>
         </tr>
         </thead>
         <tbody>
         @foreach (var order in Model)
         {
-            <tr>
+            <tr onclick="location.href = '/Orders/Details/@order.Id'">
                 <td>
                     @order.Id
                 </td>
@@ -43,10 +43,10 @@
                     @order.Customer
                 </td>
                 <td>
-                    @order.DateStart.Date
+                    @order.DateStart.ToString("dd.MM.yyyy")
                 </td>
                 <td>
-                    @order.Deadline.Date
+                    @order.Deadline.ToString("dd.MM.yyyy")
                 </td>
                 <td>
                     @order.Status
@@ -55,9 +55,6 @@
                     <div class="overflow-hidden text-truncate description">
                         @order.Description
                     </div>
-                </td>
-                <td>
-                    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@order.Id">Подробности</a>
                 </td>
             </tr>
         }

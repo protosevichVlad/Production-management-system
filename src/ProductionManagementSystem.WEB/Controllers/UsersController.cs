@@ -6,19 +6,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ProductionManagementSystem.DAL.Entities;
-using ProductionManagementSystem.DAL.Enums;
+using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.WEB.Models.UserViewModels;
 
-namespace ProductionManagementSystem.Controllers
+namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize(Roles=RoleEnum.Admin)]
     public class UsersController : Controller
     {
-        private readonly UserManager<ProductionManagementSystemUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UsersController(UserManager<ProductionManagementSystemUser> userManager, RoleManager<IdentityRole> roleManager)
+        public UsersController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -103,7 +102,7 @@ namespace ProductionManagementSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ProductionManagementSystemUser { UserName = createUserViewModel.UserName, EmailConfirmed = true };
+                var user = new User() { UserName = createUserViewModel.UserName, EmailConfirmed = true };
                 var result = await _userManager.CreateAsync(user, createUserViewModel.Password);
                 if (result.Succeeded)
                 {
@@ -119,6 +118,42 @@ namespace ProductionManagementSystem.Controllers
 
             // If we got this far, something failed, redisplay form
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword(string userName)
+        {
+            return View(new ChangePasswordViewModel(){Login = userName});
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model, string userName)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await _userManager.FindByNameAsync(userName);
+                if (user != null)
+                {
+                    IdentityResult result = 
+                        await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                    if(result.Succeeded)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Пользователь не найден");
+                }
+            }
+            return View(model);
         }
     }
 }

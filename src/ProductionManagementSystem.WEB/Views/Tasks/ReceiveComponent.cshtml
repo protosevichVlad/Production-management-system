@@ -1,38 +1,45 @@
-﻿@{
+﻿@model ProductionManagementSystem.Core.Models.Tasks.Task
+
+@{
     ViewBag.Title = "Получение монтажа";
 }
-<a class="btn btn-light" asp-action="Details" asp-route-id="@ViewBag.TaskId">Перейти к задаче</a>
+<a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@Model.Id">Перейти к задаче</a>
+<button class="btn btn-sm btn-primary" onclick="receiveAll()">Получить всё</button>
 <form action="" method="post">
-    <input hidden value="@ViewBag.TaskId" name="taskId">
-    <table class="table">
+    <input hidden value="@Model.Id" name="taskId">
+    <table class="table table-sm">
         <thead>
         <tr>
             <td>Наименование</td>
-            <td>Количество в задании</td>
+            <td>Количество в задаче</td>
             <td>Количество на складе</td>
             <td>Получено</td>
             <td>Получить</td>
         </tr>
         </thead>
-        @foreach (var comp in ViewBag.Components)
+        @foreach (var obtainedComp in Model.ObtainedMontages )
         {
-            var obtainedComp = ((IEnumerable<dynamic>) ViewBag.ObtainedComponents).FirstOrDefault(c => comp.Component.Id == c.Component.Id);
-            if (obtainedComp == null)
-            {
+            var comp = Model.Device.Montages.FirstOrDefault(om => obtainedComp.ComponentId == om.ComponentId);
+            if (comp == null)
+            {   
                 continue;
             }
             
-            <tr @if (comp.Quantity <= obtainedComp.Obtained) 
+            <tr @if (obtainedComp.Obtained + comp.Montage.Quantity < comp.Quantity) 
                 { 
-                    @:class="table-success" 
+                    @: class="table-danger"
+                } 
+                else if (comp.Quantity <= obtainedComp.Obtained) 
+                { 
+                    @: class="table-success"
                 }> 
-                <td>@comp.Component.ToString()</td>
+                <td>@comp.Montage.ToString()</td>
                 <td>@comp.Quantity</td>
-                <td>@comp.Component.Quantity</td>
+                <td>@comp.Montage.Quantity</td>
                 <td>@obtainedComp.Obtained</td>
-                <td><input type="number" name="componentObt" autocomplete="off" required min="-@obtainedComp.Obtained" max="@comp.Component.Quantity" value="0"></td>
+                <td><input type="number" name="componentObt" autocomplete="off" required min="-@obtainedComp.Obtained" max="@comp.Montage.Quantity"  style="width:100px;" value="0"></td>
             </tr>
-            <input type="number" name="componentIds" hidden value="@comp.Component.Id"/>
+            <input type="number" name="obtainedCompIds" hidden value="@obtainedComp.Id"/>
         }
     </table>
     <button class="btn btn-primary">Получить</button>

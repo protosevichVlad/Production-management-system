@@ -1,38 +1,46 @@
-﻿@{
+﻿@model ProductionManagementSystem.Core.Models.Tasks.Task;
+
+@{
     ViewBag.Title = "Получение конструктива";
 }
-<a class="btn btn-light" asp-action="Details" asp-route-id="@ViewBag.TaskId">Перейти к задаче</a>
+<a class="btn btn-light" asp-action="Details" asp-route-id="@Model.Id">Перейти к задаче</a>
+<button class="btn btn-sm btn-primary" onclick="receiveAll()">Получить всё</button>
 <form action="" method="post">
-    <input hidden value="@ViewBag.TaskId" name="taskId">
-    <table class="table">
+    <input hidden value="@Model.Id" name="taskId">
+    <table class="table table-sm">
         <thead>
         <tr>
             <td>Наименование</td>
-            <td>Количество в задании</td>
+            <td>Количество в задаче</td>
             <td>Количество на складе</td>
             <td>Получено</td>
             <td>Получить</td>
         </tr>
         </thead>
-        @foreach (var des in ViewBag.Designs)
+        @foreach (var obtainedDes in Model.ObtainedDesigns)
         {
-            var obtainedDes = ((IEnumerable<dynamic>) ViewBag.ObtainedDesigns).FirstOrDefault(d => des.Design.Id == d.Design.Id);
-            if (obtainedDes == null)
+            
+            var des = Model.Device.Designs.FirstOrDefault(d => obtainedDes.ComponentId == d.ComponentId);
+            if (des == null)
             {
                 continue;
             }
             
-            <tr @if (des.Quantity <= obtainedDes.Obtained) 
+            <tr @if (obtainedDes.Obtained + des.Design.Quantity < des.Quantity) 
                 { 
-                    @:class="table-success" 
-                }> 
+                    @: class="table-danger"
+                } 
+                else if (des.Quantity <= obtainedDes.Obtained) 
+                { 
+                    @: class="table-success"
+                } > 
                 <td>@des.Design.ToString()</td>
                 <td>@des.Quantity</td>
                 <td>@des.Design.Quantity</td>
                 <td>@obtainedDes.Obtained</td>
-                <td><input type="number" name="designObt" autocomplete="off" required min="-@obtainedDes.Obtained" max="@des.Design.Quantity" value="0"></td>
+                <td><input type="number" name="designObt" autocomplete="off" required min="-@obtainedDes.Obtained" max="@des.Design.Quantity" style="width:100px;" value="0"></td>
             </tr>
-            <input type="number" name="designIds" hidden value="@des.Design.Id"/>
+            <input type="number" name="obtainedCompIds" hidden value="@obtainedDes.Id"/>
         }
     </table>
     <button class="btn btn-primary">Получить</button>

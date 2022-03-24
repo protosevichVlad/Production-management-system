@@ -2,56 +2,74 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProductionManagementSystem.BLL.DTO;
-using ProductionManagementSystem.BLL.Infrastructure;
-using ProductionManagementSystem.BLL.Interfaces;
-using ProductionManagementSystem.BLL.Services;
-using ProductionManagementSystem.DAL.Entities;
-using ProductionManagementSystem.DAL.Enums;
+using ProductionManagementSystem.Core.Infrastructure;
+using ProductionManagementSystem.Core.Models.Components;
+using ProductionManagementSystem.Core.Models.Users;
+using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.WEB.Models;
 
-namespace ProductionManagementSystem.Controllers
+namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize(Roles = RoleEnum.OrderPicker)]
-    public class DesignsController : Controller
+    public class DesignsController : ComponentBaseAbstractController<Design>
     {
-        private readonly IDesignService _designService;
-        private readonly IDeviceService _deviceService;
-        private readonly IMapper _mapper;
-        
-        
-        public DesignsController(IDesignService service, IDeviceService deviceService)
+        public DesignsController(IDesignService service, IDeviceService deviceService) : base(service, deviceService)
         {
-            _deviceService = deviceService;
-            _designService = service;
-            _mapper = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<DesignDTO, DesignViewModel>();
-                cfg.CreateMap<DesignViewModel, DesignDTO>();
-                cfg.CreateMap<DesignDTO, Design>();
-            })
-                .CreateMapper();
         }
 
         // GET: Designs
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder, string searchString, int page=1, int pageSize = 50)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, int? deviceId, string typeName, int page=1, int pageSize = 50)
         {
+            var selectListDevice = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
+            var selectListTypes = new SelectList(await _componentBaseService.GetTypesAsync());
+
+            List<Design> designs = new List<Design>();
+            if (deviceId != null)
+            {
+                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
+                if (device != null)
+                    device.Selected = true;
+                
+                designs = await _componentBaseService.GetByDeviceId(deviceId.Value);
+            }
+            else
+            {
+                designs = await _componentBaseService.GetAllAsync();
+            }
+
+            if (designs == null)
+            {
+                throw new NotImplementedException();
+            }
+
+            if (typeName != null)
+            {
+                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
+                if (type != null)
+                {
+                    type.Selected = true;
+                }
+                
+                designs = designs.Where(c => c.Type == typeName).ToList();
+            }
+            ViewBag.TypeNames = selectListTypes;
+            ViewBag.Devices = selectListDevice;
+            
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
             ViewData["CurrentFilter"] = searchString;
-            var designs = await _designService.GetDesignsAsync();
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                designs = designs.Where(d => (d.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
-                                             || (d.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
-                                             || (d.ShortDescription?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false));
+                designs = designs
+                    .Where(d => (d.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                 || (d.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                 || (d.ShortDescription?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
             }
             
             ViewBag.PageSize = pageSize;
@@ -75,52 +93,42 @@ namespace ProductionManagementSystem.Controllers
             switch (sortOrder)
             {
                 case "name_desc":
-                    designs = designsDto.OrderByDescending(d => d.Name);
+                    designs = designsDto.OrderByDescending(d => d.Name).ToList();
                     break;
                 case "Type":
-                    designs = designsDto.OrderBy(d => d.Type);
+                    designs = designsDto.OrderBy(d => d.Type).ToList();
                     break;
                 case "type_desc":
-                    designs = designsDto.OrderByDescending(d => d.Type);
+                    designs = designsDto.OrderByDescending(d => d.Type).ToList();
                     break;
                 case "Quantity":
-                    designs = designsDto.OrderBy(d => d.Quantity);
+                    designs = designsDto.OrderBy(d => d.Quantity).ToList();
                     break;
                 case "quantity_desc":
-                    designs = designsDto.OrderByDescending(d => d.Quantity);
+                    designs = designsDto.OrderByDescending(d => d.Quantity).ToList();
                     break;
                 default:
-                    designs = designsDto.OrderBy(d => d.Name);
+                    designs = designsDto.OrderBy(d => d.Name).ToList();
                     break;
             }
 
-            designs = designs.Skip((page - 1) * pageSize).Take(pageSize);
-            var designsViewModule = _mapper.Map<IEnumerable<DesignDTO>, IEnumerable<DesignViewModel>>(designs);
-            ViewBag.AllDesigns = (await _designService.GetDesignsAsync()).Select(d => d.Name).Distinct();
-            return View(designsViewModule);
+            ViewBag.AllDesigns = designs.Select(d => d.Name).Distinct();
+            designs = designs.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            await _componentBaseService.UsingInDevice(designs);
+            return View(designs);
         }
 
         // GET: Designs/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            try
-            {
-                var design = await _designService.GetDesignAsync(id);
-                var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
-                return View(designViewModel);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return View(await _componentBaseService.GetByIdAsync(id));
         }
 
         // GET: Designs/Create
         public async Task<IActionResult> Create()
         {
-            ViewBag.AllTypes = await _designService.GetTypesAsync();
-            ViewBag.AllDesigns = (await _designService.GetDesignsAsync()).Select(d => d.Name).Distinct();
+            ViewBag.AllTypes = await _componentBaseService.GetTypesAsync();
+            ViewBag.AllDesigns = (await _componentBaseService.GetAllAsync()).Select(d => d.Name).Distinct();
             return View();
         }
         
@@ -129,66 +137,43 @@ namespace ProductionManagementSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Type,Name,Quantity,ShortDescription,Description")] DesignViewModel designViewModel)
+        public async Task<IActionResult> Create([Bind("Id,Type,Name,Quantity,ShortDescription,Description")] Design design)
         {
             if (ModelState.IsValid)
             {
-                var design = _mapper.Map<DesignViewModel, DesignDTO>(designViewModel);
-                LogService.UserName = User.Identity?.Name;
-                await _designService.CreateDesignAsync(design);
-                return RedirectToAction(nameof(Index));
+                await _componentBaseService.CreateAsync(design);
+                return RedirectToAction(nameof(Details), new {id = design.Id});
             }
-            return View(designViewModel);
+            return View(design);
         }
 
         // GET: Designs/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var design = await _designService.GetDesignAsync(id);
-            var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
-            
-            ViewBag.AllTypes = await _designService.GetTypesAsync();
-            return View(designViewModel);
+            var design = await _componentBaseService.GetByIdAsync(id);
+            ViewBag.AllTypes = await _componentBaseService.GetTypesAsync();
+            return View(design);
         }
 
         // POST: Designs/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Name,Quantity,ShortDescription,Description")] DesignViewModel designViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Type,Name,Quantity,ShortDescription,Description")] Design design)
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    var design = _mapper.Map<DesignViewModel, DesignDTO>(designViewModel);
-                    LogService.UserName = User.Identity?.Name;
-                    await _designService.UpdateDesignAsync(design);
-                    return RedirectToAction(nameof(Details), new {id = designViewModel.Id});
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
+                await _componentBaseService.UpdateAsync(design);
+                return RedirectToAction(nameof(Details), new {id = design.Id});
             }
-            return View(designViewModel);
+            return View(design);
         }
 
         // GET: Designs/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var design = await _designService.GetDesignAsync(id);
-                var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
-                return View(designViewModel);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var design = await _componentBaseService.GetByIdAsync(id);
+            return View(design);
         }
 
         // POST: Designs/Delete/5
@@ -197,221 +182,91 @@ namespace ProductionManagementSystem.Controllers
         {
             try
             {
-                LogService.UserName = User.Identity?.Name;
-                await _designService.DeleteDesignAsync(id);
+                await _componentBaseService.DeleteByIdAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (IntersectionOfEntitiesException e)
             {
                 ViewBag.ErrorMessage = e.Message;
                 ViewBag.ErrorHeader = e.Header;
-                return View(
-                    _mapper.Map<DesignDTO, DesignViewModel>(await _designService.GetDesignAsync(id)));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
+                return View(await _componentBaseService.GetByIdAsync(id));
             }
         }
 
         [HttpGet]
         public async Task<JsonResult> GetAllDesigns()
         {
-            IEnumerable<DesignDTO> designs = await _designService.GetDesignsAsync();
-            foreach (var des in designs)
-            {
-                des.Name = des.ToString();
-            }
-            
-            return Json(designs);
+            return Json((await _componentBaseService.GetAllAsync()).Select(d => d.ToString()));
         }
         
         [HttpGet]
-        public async Task<IActionResult> Add(int? id)
+        public async Task<IActionResult> Add(int id)
         {
-            var design = await _designService.GetDesignAsync(id);
-            var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
-            return View(designViewModel);
+            return View(await _componentBaseService.GetByIdAsync(id));
         }
         
         [HttpPost]
         public async Task<IActionResult> Add(int designId, int quantity)
         {
-
-            try
-            {
-                LogService.UserName = User.Identity?.Name;
-                await _designService.AddDesignAsync(designId, quantity);
-                return RedirectToAction(nameof(Details), new { id = designId });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            await _componentBaseService.IncreaseQuantityAsync(designId, quantity);
+            return RedirectToAction(nameof(Details), new { id = designId });
         }
         
         [HttpGet]
         public async Task<IActionResult> Receive(int id)
         {
 
-            var design = await _designService.GetDesignAsync(id);
-            var designViewModel = _mapper.Map<DesignDTO, DesignViewModel>(design);
-            return View(designViewModel);
+            return View(await _componentBaseService.GetByIdAsync(id));
         }
         [HttpPost]
         public async Task<IActionResult> Receive(int designId, int quantity)
         {
 
-            try
-            {
-                await _designService.AddDesignAsync(designId, -quantity);
-                return RedirectToAction(nameof(Details), new { id = designId });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            await _componentBaseService.DecreaseQuantityAsync(designId, quantity);
+            return RedirectToAction(nameof(Details), new { id = designId });
         }
         
         public async Task<IActionResult> AddMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
-            var selectListTypes = new SelectList(await _designService.GetTypesAsync());
-
-            var components = new ComponentsForDevice();
-            List<Design> componentsInDevice = new List<Design>();
-            if (deviceId != null)
-            {
-                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
-                if (device != null)
-                {
-                    device.Selected = true;
-                }
-                
-                componentsInDevice.AddRange((await _deviceService.GetDesignTemplatesAsync((int) deviceId)).Select(c => c.Design).ToArray());
-            }
-            else
-            {
-                componentsInDevice.AddRange(_mapper.Map<IEnumerable<DesignDTO>, IEnumerable<Design>>(await _designService.GetDesignsAsync()));
-            }
-
-            if (typeName != null)
-            {
-                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
-                if (type != null)
-                {
-                    type.Selected = true;
-                }
-                
-                componentsInDevice = componentsInDevice.Where(c => c.Type == typeName).ToList();
-            }
-
-            ViewBag.TypeNames = selectListTypes;
-            ViewBag.Devices = selectListDevice;
-
-            var length = componentsInDevice.Count;
-            components.ComponentId = new int[length];
-            components.ComponentName = new string[length];
-            components.QuantityInStock = new int[length];
-            for (var index = 0; index < length; index++)
-            {
-                var componentInDevice = componentsInDevice[index];
-                components.ComponentName[index] = componentInDevice.ToString();
-                components.ComponentId[index] = componentInDevice.Id;
-                components.QuantityInStock[index] = componentInDevice.Quantity;
-            }
-
-            return View(components);
+            return View(await GetMultipleComponents(deviceId, typeName));
         }
         
         [HttpPost]
-        public async Task<IActionResult> AddMultiple(ComponentsForDevice components)
+        public async Task<IActionResult> AddMultiple(int? deviceId, string typeName, ComponentsForDevice components)
         {
             if (components == null)
             {
                 throw new Exception("Device not found.");
             }
 
-            LogService.UserName = User.Identity?.Name;
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                await _designService.AddDesignAsync(components.ComponentId[index], components.Quantity[index]);
+                await _componentBaseService.IncreaseQuantityAsync(components.ComponentId[index], components.Quantity[index]);
             }
             
-            return RedirectToAction(nameof(AddMultiple));
+            return RedirectToAction(nameof(AddMultiple), new {deviceId, typeName});
         }
         
         [HttpGet]
         public async Task<IActionResult> ReceiveMultiple(int? deviceId, string typeName)
         {
-            var selectListDevice = new SelectList(await _deviceService.GetDevicesAsync(), "Id", "Name");
-            var selectListTypes = new SelectList(await _designService.GetTypesAsync());
-
-            var components = new ComponentsForDevice();
-            List<Design> componentsInDevice = new List<Design>();
-            if (deviceId != null)
-            {
-                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
-                if (device != null)
-                {
-                    device.Selected = true;
-                }
-                
-                componentsInDevice.AddRange((await _deviceService.GetDesignTemplatesAsync((int) deviceId)).Select(c => c.Design).ToArray());
-            }
-            else
-            {
-                componentsInDevice.AddRange(_mapper.Map<IEnumerable<DesignDTO>, IEnumerable<Design>>(await _designService.GetDesignsAsync()));
-            }
-
-
-            if (typeName != null)
-            {
-                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
-                if (type != null)
-                {
-                    type.Selected = true;
-                }
-                
-                componentsInDevice = componentsInDevice.Where(c => c.Type == typeName).ToList();
-            }
-
-            var length = componentsInDevice.Count;
-            components.ComponentId = new int[length];
-            components.ComponentName = new string[length];
-            components.Quantity = new int[length];
-            components.QuantityInStock = new int[length];
-            for (var index = 0; index < length; index++)
-            {
-                var componentInDevice = componentsInDevice[index];
-                components.ComponentName[index] = componentInDevice.ToString();
-                components.ComponentId[index] = componentInDevice.Id;
-                components.QuantityInStock[index] = componentInDevice.Quantity;
-            }
-
-            ViewBag.TypeNames = selectListTypes;
-            ViewBag.Devices = selectListDevice;
-            return View(components);
+            return View(await GetMultipleComponents(deviceId, typeName));
         }
         
         [HttpPost]
-        public async Task<IActionResult> ReceiveMultiple(ComponentsForDevice components)
+        public async Task<IActionResult> ReceiveMultiple(int? deviceId, string typeName, ComponentsForDevice components)
         {
             if (components == null)
             {
                 throw new Exception("Device not found.");
             }
 
-            LogService.UserName = User.Identity?.Name;
             for (var index = 0; index < components.ComponentId.Length; index++)
             {
-                await _designService.AddDesignAsync(components.ComponentId[index], -components.Quantity[index]);
+                await _componentBaseService.DecreaseQuantityAsync(components.ComponentId[index], components.Quantity[index]);
             }
             
-            return RedirectToAction(nameof(ReceiveMultiple));
+            return RedirectToAction(nameof(ReceiveMultiple), new {deviceId, typeName});
         }
     }
 }

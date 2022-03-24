@@ -1,0 +1,52 @@
+﻿@model ProductionManagementSystem.WEB.Models.ComponentsForDevice;
+
+@{
+    ViewBag.Title = "Добавить несколько";
+}
+
+<form action="" method="get">
+    <div class="row row-cols-lg-auto g-3 align-items-center">
+        <div class="col-12">
+            Фильтр:
+        </div>
+        <div class="col-12">
+            <select name="typeName" id="typeName" asp-items="ViewBag.TypeNames" class="form-select form-select-sm" readonly>
+                <option value="">Конструктивная единица</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <select name="deviceId" id="deviceId" asp-items="ViewBag.Devices" class="form-select form-select-sm" readonly>
+                <option value="">Прибор</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary btn-sm">Принять</button>
+        </div>
+    </div>
+</form>
+<form action="" method="post">
+    <table class="table table-sm align-middle">
+            <thead class="sticky-top table-light">
+            <tr>
+                <th class="sticky-top text-center">Наименование</th>
+                <th class="sticky-top text-center" style="width: 120px">Количество на складе</th>
+                <th class="sticky-top text-center" style="width: 140px">Количество для добавления</th>
+                <th class="sticky-top text-center" style="width: 100px">
+                    <button class="btn btn-primary btn-sm">Добавить на склад</button>
+                </th>
+            </tr>
+        </thead>
+        @for (int i = 0; i < Model.ComponentName.Length; i++)
+        {
+            <tr>
+                <input asp-for="ComponentId[i]" hidden>
+                <input asp-for="ComponentName[i]" hidden>
+                <td>@Model.ComponentName[i]</td>
+                <td class="text-center">@Model.QuantityInStock[i]</td>
+                <td class="text-center">
+                    <input type="number" class="w-75" asp-for="Quantity[i]" autocomplete="off" required min="0" value="0">
+                </td>
+            </tr>
+        }
+    </table>
+</form>

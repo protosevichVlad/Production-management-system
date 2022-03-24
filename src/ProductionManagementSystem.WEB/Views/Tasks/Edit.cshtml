@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.WEB.Models.TaskViewModel;
+﻿@model ProductionManagementSystem.Core.Models.Tasks.Task;
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -12,11 +12,13 @@
 <hr/>
 <form method="post" action="">
     <input asp-for="Id" hidden/>
+    <input asp-for="Status" hidden/>
+    <input asp-for="StartTime" hidden/>
     <div class="col-md-4">
         <div class="form-group">
             <div class="form-group">
                 <label asp-for="Deadline" class="control-label"></label>
-                <input asp-for="Deadline" class="form-control"/>
+                <input asp-for="Deadline" class="form-control datepicker" placeholder="dd.MM.yyyy"/>
             </div>
         </div>
         <div class="form-group">

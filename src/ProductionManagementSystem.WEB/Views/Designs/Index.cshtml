@@ -1,46 +1,62 @@
-﻿@model IEnumerable<ProductionManagementSystem.WEB.Models.DesignViewModel>;
+﻿@model IEnumerable<ProductionManagementSystem.Core.Models.Components.Design>;
 
 @{
     ViewData["Title"] = "Конструктив";
 }
 
 <h2>Cписок конструктива</h2>
-<p>
-    <a asp-action="Create">Создать новый</a>
-</p>
 <div class="row">
     <div class="col">
         <form asp-action="Index" method="get">
-            <p>
-                Поиск: <input type="text" name="SearchString" list="datalistNameDesigns" autocomplete="off" value="@ViewData["CurrentFilter"]"/>
+            <div class="input-group mb-3 col-4">
+                <input type="text" name="SearchString" class="form-control" placeholder="" list="datalistNameDesigns" aria-describedby="button-addon1" autocomplete="off" value="@ViewData["CurrentFilter"]"/>
+                <button type="submit" class="btn btn-outline-secondary" id="button-addon1">Поиск</button>
                 <datalist id="datalistNameDesigns">
                     @foreach (var name in ViewBag.AllDesigns)
                     {
                         <option value="@name"/>
                     }
                 </datalist>
-                <input type="submit" value="Поиск" class="btn btn-primary" autocomplete="off"/>
-                @if (@ViewData["CurrentFilter"] != null)
-                {
-                    <text>|</text>
-                    <a asp-action="Index">Вернуться к полному списку</a>
-                }
-            </p>
+            </div>
         </form>
     </div>
-    <div class="col d-flex align-items-center justify-content-end">
+    <div class="col-8 d-flex align-items-center justify-content-end">
         @if (@ViewData["CurrentFilter"] == null)
         {
             <p class="d-flex">На складе @ViewBag.CountComponents наименований конструктива</p>
         }
         else
         {
-            <p class="d-flex">Было найдено @ViewBag.CountComponents наименований конструктива</p>
+            <p class="d-flex">Было найдено @ViewBag.CountComponents наименований конструктива | <a asp-action="Index"> Вернуться к полному списку</a></p>
+                
         }
     </div>
 </div>
+<form action="" method="get">
+    <div class="row row-cols-lg-auto g-3 align-items-center">
+        <div class="col-12">
+            Фильтр:
+        </div>
+        <div class="col-12">
+            <select name="typeName" id="typeName" asp-items="ViewBag.TypeNames" class="form-select form-select-sm" readonly>
+                <option value="">Конструктивная единица</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <select name="deviceId" id="deviceId" asp-items="ViewBag.Devices" class="form-select form-select-sm" readonly>
+                <option value="">Прибор</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary btn-sm">Принять</button>
+        </div>
+        <div class="col-12 offset-sm-6">
+            <a class="btn btn-primary btn-sm" asp-action="Create">Создать новый</a>
+        </div>
+    </div>
+</form>
 <div class="table-responsive-xl">
-    <table class="table table-sm">
+    <table class="table table-sm table-hover">
         <thead>
         <tr>
             <th>
@@ -55,12 +71,16 @@
             <th>
                 @Html.DisplayNameFor(model => model.ShortDescription)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Devices)
+            </th>
+            <th class="td-with-buttons">
+            </th>
         </tr>
         </thead>
         <tbody>
         @foreach (var item in Model) {
-            <tr>
+            <tr  onclick="location.href = '/Designs/Details/@item.Id'">
                 <td>
                     @Html.DisplayFor(modelItem => item.Type)
                 </td>
@@ -75,10 +95,24 @@
                         @Html.DisplayFor(modelItem => item.ShortDescription)
                     </div>
                 </td>
-                <td class="td-with-buttons">
-                    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@item.Id">Подробности</a>
-                    <a class="btn btn-light btn-sm" asp-action="Add" asp-route-id="@item.Id">Добавить</a>
-                    <a class="btn btn-light btn-sm" asp-action="Receive" asp-route-id="@item.Id">Получить</a>
+                <td>
+                    <div class="overflow-hidden text-truncate description">
+                        @(String.Join(", ", item.Devices.Select(x => x.Name)))
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-link btn-sm btn-three-dots-vertical" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                              <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                            </svg>
+                        </button>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">Подробности</a></li>
+                        <li><a class="dropdown-item" asp-action="Add" asp-route-id="@item.Id">Добавить</a></li>
+                        <li><a class="dropdown-item" asp-action="Receive" asp-route-id="@item.Id">Получить</a></li>
+                      </ul>
+                    </div>
                 </td>
             </tr>
         }

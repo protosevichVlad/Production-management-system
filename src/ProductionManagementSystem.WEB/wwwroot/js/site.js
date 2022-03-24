@@ -3,93 +3,52 @@
 
 // Write your JavaScript code.
 
+$('.datepicker').datepicker({
+    format: "dd.mm.yyyy",
+    language: "ru",
+    autoclose: true
+});
 
-async function createComponent() {
-    disableButton('#buttonCreateComponent');
-    let component_selects = [...document.getElementsByClassName('ComponentSelect')];
-    let length = component_selects.length + 1;
-    let str = await createTextComponent(length);
-
-    let lastTr = document.querySelector(`#comTr0`);
-    lastTr.insertAdjacentHTML('beforeBegin', str);
-    updateIndex('ComponentIds');
-    undisableButton('#buttonCreateComponent');
-
-    $('.js-example-basic-single').select2();
-}
-
-async function createDesign() {
-    disableButton('#buttonCreateDesign');
-    let design_selects = [...document.getElementsByClassName('DesignSelect')];
-    let length = design_selects.length + 1;
-    let str = await createTextDesign(length);
-
-    let lastTr = document.querySelector(`#desTr0`);
-    lastTr.insertAdjacentHTML('beforeBegin', str);
-    updateIndex('DesignIds');
-    undisableButton('#buttonCreateDesign');
-
-    $('.js-example-basic-single').select2();
-}
-
-async function createTextComponent(id) {
-    let str = `<tr id="comTr${id}"><td class="ComponentIds"></td><td><select class="ComponentSelect align-top width-100 form-select js-example-basic-single" name="ComponentIds">`;
-
-    let r = await new Request('/Components/GetAllComponents');
-    let componentsJson = await fetch(r).then(c => c.json());
-
-    for (let i = 0; i < componentsJson.length; i++) {
-        let c = componentsJson[i]
-        str += `<option value="${c.id}">${c.name}</option>`;
-    }
-    str += `</select></td><td><input class="ComponentInput align-top form-control" name="ComponentQuantity" type="number" required autocomplete="off" min="0" />`;
-    str += `</td><td><textarea name="ComponentDescriptions" class="align-top form-control w-100"></textarea></td>`;
-    str += `<td class="border-0"><button type="button" class="btn-close" aria-label="Close" onclick="removeComponent(${id})"></button></td></tr>`;
-    return str;
-}
-
-async function createTextDesign(id) {
-    let str = `<tr id="desTr${id}"><td class="DesignIds"></td><td><select class="DesignSelect align-top width-100 form-select js-example-basic-single" name="DesignIds">`;
-
-    let r = await new Request('/Designs/GetAllDesigns');
-    let componentsJson = await fetch(r).then(c => c.json());
-
-    for (let i = 0; i < componentsJson.length; i++) {
-        let c = componentsJson[i]
-        str += `<option value="${c.id}">${c.name}</option>`;
-    }
-    str += `</select></td><td><input class="DesignInput align-top form-control" name="DesignQuantity" type="number" required autocomplete="off" min="0" />`;
-    str += `</td><td><textarea name="DesignDescriptions" class="align-top form-control w-100"></textarea></td>`;
-    str += `<td class="border-0"><button type="button" class="btn-close" aria-label="Close" onclick="removeDesign(${id})"></button></td></tr>`;
-    return str;
-}
-
-function removeComponent(index) {
-    let component_selects = [...document.getElementsByClassName('ComponentSelect')];
+async function createDeviceItem(type)
+{
+    disableButton(`#buttonCreate${type}`);
+    let component_selects = [...document.getElementsByClassName(`${type}sSelect`)];
     let length = component_selects.length;
+    $.get(`/devices/GetPartialViewForDeviceItem?type=${type}&index=${length}`, function(data) {
+        $(`#${type}Tr0`).before(data)
+        $('.js-example-basic-single').select2();
+        undisableButton(`#buttonCreate${type}`);
+    });
 
-    if (length === 0)
-    {
-        return;
-    }
-    
-    let tr = document.querySelector(`#comTr${index}`);
-    tr.remove();
-    updateIndex('ComponentIds');
+    updateIndex(`${type}sIds`);
 }
 
-function removeDesign(index) {
-    let design_selects = [...document.getElementsByClassName('DesignSelect')];
-    let length = design_selects.length;
+function removeDeviceItem(type,index)
+{
+    let deviceItems = [...document.querySelectorAll(`.${type}Tr`)];
+    let length = deviceItems.length;
 
     if (length === 0)
     {
         return;
     }
     
-    let tr = document.querySelector(`#desTr${index}`);
+    for (let i = index - 1; i < length - 1; i++)
+    {
+        document.getElementsByName(`${type}[${i}].ComponentId`)[0].value =
+            document.getElementsByName(`${type}[${i + 1}].ComponentId`)[0].value
+        document.getElementsByName(`${type}[${i}].Quantity`)[0].value =
+            document.getElementsByName(`${type}[${i + 1}].Quantity`)[0].value
+        document.getElementsByName(`${type}[${i}].Descriptions`)[0].value =
+            document.getElementsByName(`${type}[${i + 1}].Descriptions`)[0].value
+        $('select[name="${type}[${i + 1}].ComponentId"]').val(
+            document.getElementsByName(`${type}[${i + 1}].ComponentId`)[0].value);
+    }
+
+    let tr = document.querySelector(`#${type}Tr${length}`);
     tr.remove();
-    updateIndex('DesignIds');
+    $('.js-example-basic-single').select2();
+    updateIndex(`${type}Ids`);
 }
 
 function disableButton(selector)
@@ -115,11 +74,12 @@ function updateIndex(selector)
 async function createDevice() {
     disableButton('#buttonCreateDevice');
     let component_selects = [...document.getElementsByClassName('DeviceSelect')];
-    let length = component_selects.length + 1;
-    let str = await createTextDevice(length);
-
-    let lastTr = document.querySelector(`#devTr${length - 1}`);
-    lastTr.insertAdjacentHTML('afterEnd', str);
+    let length = component_selects.length;
+    $.get(`/orders/getOrderItem?index=${length}`, function(data) {
+        $(`#devTr0`).before(data)
+        $('.js-example-basic-single').select2();
+    });
+    
     updateIndex('DeviceIds');
     undisableButton('#buttonCreateDevice');
 }
@@ -148,9 +108,23 @@ function removeDevice(index) {
     {
         return;
     }
+
+    let type = 'Tasks'
+    for (let i = index - 1; i < length - 1; i++)
+    {
+        document.getElementsByName(`${type}[${i}].DeviceId`)[0].value =
+            document.getElementsByName(`${type}[${i + 1}].DeviceId`)[0].value
+        document.getElementsByName(`${type}[${i}].Description`)[0].value =
+            document.getElementsByName(`${type}[${i + 1}].Description`)[0].value
+        document.getElementsByName(`DeviceQuantity[${i}]`)[0].value =
+            document.getElementsByName(`DeviceQuantity[${i + 1}]`)[0].value
+        $('select[name="${type}[${i + 1}].DeviceId"]').val(
+            document.getElementsByName(`${type}[${i + 1}].DeviceId`)[0].value);
+    }
     
-    let tr = document.querySelector(`#devTr${index}`);
+    let tr = document.querySelector(`#devTr${length}`);
     tr.remove();
+    $('.js-example-basic-single').select2();
     updateIndex('DeviceIds');
 }
 
@@ -168,3 +142,32 @@ function changeStateTransfer()
     }
 }
 
+function receiveAll(){
+    let trs = document.querySelectorAll('table tbody tr')
+    for (let i = 0; i < trs.length; i++)
+    {
+        let inDevice = getQuantityInDevice(trs[i]);
+        let qt = getQuantity(trs[i]);
+        let obt = getObtained(trs[i]);
+        let value = ((inDevice - obt) < qt ? (inDevice - obt) : qt);
+        if (value < 0) value = 0;
+        setObtained(trs[i], value)
+    }
+}
+function getQuantityInDevice(tr)
+{
+    return Number(tr.children[1].innerText);
+}
+function getQuantity(tr)
+{
+    return Number(tr.children[2].innerText);
+}
+function getObtained(tr)
+{
+    return Number(tr.children[3].innerText);
+}
+
+function setObtained(tr, value)
+{
+    return tr.children[4].children[0].value = value;
+}

@@ -1,0 +1,43 @@
+﻿@using ProductionManagementSystem.Core.Models.Users
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ProductionManagementSystem</title>
+    <link rel="stylesheet" href="~/css/bootstrap-datepicker3.css"></link>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    @await RenderSectionAsync("Head", required: false)
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+<partial name="_HeaderPartial"/>
+    @RenderBody()
+<footer class="border-top footer text-muted d-print-none">
+    <div class="container-xxl">
+        &copy; 2020-2021 - ProductionManagementSystem
+    </div>
+</footer>
+    
+    
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="~/js/bootstrap-datepicker.min.js"></script>
+<script src="~/locales/bootstrap-datepicker.ru.min.js"></script>
+<script src="~/js/site.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+@if (ViewBag.ErrorMessage != null)
+{
+    <partial name="Partail/PartialError" />
+    <script>
+        let errorModal = new bootstrap.Modal(document.getElementById('errorModal'), 
+        {
+            keyboard: false
+        })
+        errorModal.show();
+    </script>
+}
+</body>
+</html>

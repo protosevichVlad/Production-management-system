@@ -1,7 +1,7 @@
-﻿@model ProductionManagementSystem.WEB.Models.OrderViewModel
+﻿@model ProductionManagementSystem.Core.Models.Orders.Order
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Новый заказ";
     Layout = "_Layout";
 }
 
@@ -18,7 +18,7 @@
         </div>
         <div class="form-group">
             <label asp-for="Deadline" class="control-label"></label>
-            <input asp-for="Deadline" class="form-control"/>
+            <input asp-for="Deadline" type="text" class="form-control datepicker" placeholder="dd.MM.yyyy"/>
         </div>
         <div class="form-group">
             <label asp-for="Description" class="control-label">Описание:</label>

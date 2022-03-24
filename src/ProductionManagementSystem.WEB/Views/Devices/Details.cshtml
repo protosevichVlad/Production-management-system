@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.WEB.Models.DeviceViewModel;
+﻿@model ProductionManagementSystem.Core.Models.Devices.Device;
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -6,85 +6,19 @@
     ViewData["Title"] = "Прибор: " + Model.Name;
 }
 
-<div class="row">
+<div class="row d-print-none">
     <div class="col">
         <h4>Подробная информация</h4>
     </div>
     <div class="col d-flex justify-content-md-end">
-        <button class="btn btn-link float-right" type="button" onclick="window.print()">Распечатать(Сохранить)</button>
-        <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
-        <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Index" asp-route-deviceId="@Model.Id">Логи</a>
-        <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+        <button class="btn btn-link float-right m-1" type="button" onclick="window.print()">Распечатать(Сохранить)</button>
+        <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-deviceId="@Model.Id">Логи</a>
+        <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+        <a class="btn btn-danger btn-sm m-1" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
     </div>
 </div>
-<div class="alert alert-info" role="alert">
+<div class="alert alert-info d-print-none" role="alert">
     Здесь вы можете узнать подробную информацию о @Model.Name.
 </div>
 <hr/>
-<div class="container">
-    <dl class='row'>
-        <dt class='col-sm-4'>Наименование</dt>
-        <dd class='col-sm-10'>@Model.Name</dd>
-        <dt class='col-sm-4'>Количество на складе:</dt>
-        <dd class='col-sm-10'>@Model.Quantity</dd>
-        <dt class='col-sm-4'>Описание</dt>
-        <dd class='col-sm-10'>@Model.Description</dd>
-    </dl>
-    <div class='row'>
-        <div class='col'>
-            <h3>Монтаж</h3>
-        </div>
-    </div>
-    <div class='row'>
-        <div class='col table-responsive' id='Components'>
-            <table class='table table-sm' style='width:100%;'>
-                <thead>
-                <tr>
-                    <th class="td-with-name">Наименование</th>
-                    <th>Количество в приборе</th>
-                    <th class="td-with-description">Примечание</th>
-                </tr>
-                </thead>
-                <tbody>
-                @for (int i = 0; i < Model.ComponentNames.Length; i++)
-                {
-                    <tr>
-                        <td class="td-with-name">@Model.ComponentNames[i]</td>
-                        <td>@Model.ComponentQuantity[i]</td>
-                        <td class="td-with-description">@Model.ComponentDescriptions[i]</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <br/>
-    <div class='row'>
-        <div class='col'>
-            <h3>Конструктив</h3>
-        </div>
-    </div>
-    <div class='row'>
-        <div class='col table-responsive' id='Designs'>
-            <table class='table table-sm' style='width:100%;'>
-                <thead>
-                <tr>
-                    <th class="td-with-name">Наименование</th>
-                    <th>Количество в приборе</th>
-                    <th class="td-with-description">Примечание</th>
-                </tr>
-                </thead>
-                <tbody>
-                @for (int i = 0; i < Model.DesignNames.Length; i++)
-                {
-                    <tr>
-                        <td class="td-with-name">@Model.DesignNames[i]</td>
-                        <td>@Model.DesignQuantity[i]</td>
-                        <td class="td-with-description">@Model.DesignDescriptions[i]</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<partial name="Partail/Device/DeviceDetails" model="@Model"/>

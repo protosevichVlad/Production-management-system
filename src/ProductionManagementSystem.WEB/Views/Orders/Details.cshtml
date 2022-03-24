@@ -1,90 +1,19 @@
-﻿@model ProductionManagementSystem.WEB.Models.OrderViewModel
+﻿@model ProductionManagementSystem.Core.Models.Orders.Order
 @{
     ViewData["Title"] = "Заказ №" + Model.Id;
 }
 
-<div class="row">
+<div class="row d-print-none">
     <div class="col">
         <h4>Подробная информация</h4>
     </div>
     <div class="col d-flex justify-content-end">
-        <a class="btn btn-light" asp-controller="Logs" asp-action="Index" asp-route-orderId="@Model.Id">Логи</a>
-        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Удалить</a>
+        <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-orderId="@Model.Id">Логи</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-sm m-1">Удалить</a>
     </div>
 </div>
-<div class="alert alert-info" role="alert">
+<div class="alert alert-info d-print-none" role="alert">
     Здесь вы можете узнать подробную информацию о заказе №@Model.Id.
 </div>
 <hr/>
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <h4>Заказ №@Model.Id</h4>
-            <h4>Заказчик: @Model.Customer</h4>
-            <h4>Срок: @Model.Deadline.ToString("dd.MM.yyyy")</h4>
-            <h4>Описание:</h4>
-            <p>@Model.Description</p>
-        </div>
-    </div>
-    <hr/>
-    <div class="row">
-        <h3>Cписок задач</h3>
-        <div class="table-responsive">
-            <table class="table table-sm">
-                <thead>
-                <tr>
-                    <th>
-                        <a asp-action="Details" asp-route-sortOrder="@ViewData["NumSortParm"]">№</a>
-                    </th>
-                    <th>
-                        <a asp-action="Details" asp-route-sortOrder="@ViewData["DeviceSortParm"]">Прибор</a>
-                    </th>
-                    <th>
-                        <a asp-action="Details" asp-route-sortOrder="@ViewData["StartDateSortParm"]">Дата начала</a>
-                    </th>
-                    <th>
-                        <a asp-action="Details" asp-route-sortOrder="@ViewData["DeadlineSortParm"]">Срок</a>
-                    </th>
-                    <th>
-                        <a asp-action="Details" asp-route-sortOrder="@ViewData["StatusSortParm"]">Статус</a>
-                    </th>
-                    <th>
-                        Описание
-                    </th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var t in Model.Tasks)
-                {
-                    <tr>
-                        <td>
-                            @t.Id
-                        </td>
-                        <td>
-                            @t.Device.ToString()
-                        </td>
-                        <td>
-                            @t.StartTime.Date
-                        </td>
-                        <td>
-                            @t.Deadline.Date
-                        </td>
-                        <td>
-                            @t.Status
-                        </td>
-                        <td>
-                            <div class="overflow-hidden text-truncate description">
-                                @t.Description
-                            </div>
-                        </td>
-                        <td>
-                            <a class="btn btn-light btn-sm" asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">Подробности</a>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<partial name="Partail/Order/OrderDetails" model="@Model"/>

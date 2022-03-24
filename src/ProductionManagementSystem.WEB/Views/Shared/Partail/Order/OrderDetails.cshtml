@@ -1,0 +1,18 @@
+﻿@model ProductionManagementSystem.Core.Models.Orders.Order
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h4>Заказ №@Model.Id</h4>
+            <h4>Заказчик: @Model.Customer</h4>
+            <h4>Срок: @Model.Deadline.ToString("dd.MM.yyyy")</h4>
+            <h4>Описание:</h4>
+            <p>@Model.Description</p>
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <h3>Cписок задач</h3>
+        <partial name="Partail/Task/TasksTable" model="@Model.Tasks"/>
+    </div>
+</div>

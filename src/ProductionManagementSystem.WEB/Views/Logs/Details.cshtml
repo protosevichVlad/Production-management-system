@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.WEB.Models.LogViewModel
+﻿@model ProductionManagementSystem.Core.Models.Logs.Log;
 
 @{
     ViewData["Title"] = "Подробная информация";
@@ -21,10 +21,10 @@
     </dl>
     <dl class="row">
         <dt class="col-2">
-            @Html.DisplayNameFor(model => model.UserLogin)
+            @Html.DisplayNameFor(model => model.User.UserName)
         </dt>
         <dd class="col-6">
-            @Html.DisplayFor(model => model.UserLogin)
+            @Html.DisplayFor(model => model.User.UserName)
         </dd>
     </dl>
     <dl class="row">
@@ -42,9 +42,9 @@
     {
         <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="Details" asp-route-id="@Model.DesignId">Перейти к конструктиву</a>
     }
-    @if (Model.ComponentId != null)
+    @if (Model.MontageId != null)
     {
-        <a class="btn btn-light btn-sm" asp-controller="Components" asp-action="Details" asp-route-id="@Model.ComponentId">Перейти к монтажу</a>
+        <a class="btn btn-light btn-sm" asp-controller="Montages" asp-action="Details" asp-route-id="@Model.MontageId">Перейти к монтажу</a>
     }
     @if (Model.DeviceId != null)
     {

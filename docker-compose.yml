@@ -2,12 +2,14 @@ version: '3.4'
 
 services:
   production-management-system:
-    image: protosevich2001/production-management-system
+    depends_on:
+      - db
     build:
       context: .
       dockerfile: src/ProductionManagementSystem.WEB/Dockerfile
+    image: protosevich2001/production-management-system
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Password=123PassWord123
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
