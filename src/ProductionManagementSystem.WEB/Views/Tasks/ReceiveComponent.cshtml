@@ -3,7 +3,8 @@
 @{
     ViewBag.Title = "Получение монтажа";
 }
-<a class="btn btn-light" asp-action="Details" asp-route-id="@Model.Id">Перейти к задаче</a>
+<a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@Model.Id">Перейти к задаче</a>
+<button class="btn btn-sm btn-primary" onclick="receiveAll()">Получить всё</button>
 <form action="" method="post">
     <input hidden value="@Model.Id" name="taskId">
     <table class="table table-sm">

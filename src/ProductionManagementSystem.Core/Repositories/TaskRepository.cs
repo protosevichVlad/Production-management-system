@@ -36,7 +36,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return task;
         }
 
-        public override async System.Threading.Tasks.Task<List<Task>> FindAsync(Func<Task, bool> predicate)
+        public override async System.Threading.Tasks.Task<List<Task>> FindAsync(Func<Task, bool> predicate, string includeProperty=null)
         {
             var tasks = (await base.FindAsync(predicate)).ToList();
             foreach (var task in tasks)

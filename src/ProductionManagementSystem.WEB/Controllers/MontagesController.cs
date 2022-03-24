@@ -31,15 +31,49 @@ namespace ProductionManagementSystem.WEB.Controllers
         /// <param name="pageSize"></param>
         /// <returns>A page with all components sorted by parameter <paramref name="sortOrder"/> and satisfying <paramref name="searchString"/></returns>
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder, string searchString, int page=1, int pageSize = 50)
+        public async Task<IActionResult> Index(string sortOrder, string searchString,  int? deviceId, string typeName, int page=1, int pageSize = 50)
         {
+            var selectListDevice = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
+            var selectListTypes = new SelectList(await _componentBaseService.GetTypesAsync());
+
+            List<Montage> components = new List<Montage>();
+            if (deviceId != null)
+            {
+                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
+                if (device != null)
+                    device.Selected = true;
+                
+                components = await _componentBaseService.GetByDeviceId(deviceId.Value);
+            }
+            else
+            {
+                components = await _componentBaseService.GetAllAsync();
+            }
+
+            if (components == null)
+            {
+                throw new NotImplementedException();
+            }
+
+            if (typeName != null)
+            {
+                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
+                if (type != null)
+                {
+                    type.Selected = true;
+                }
+                
+                components = components.Where(c => c.Type == typeName).ToList();
+            }
+            ViewBag.TypeNames = selectListTypes;
+            ViewBag.Devices = selectListDevice;
+            
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
             ViewData["sortOrder"] = sortOrder;
             ViewData["CurrentFilter"] = searchString;
 
-            var components = await _componentBaseService.GetAllAsync();
             
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -94,6 +128,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewBag.AllComponents = components;
             ViewBag.Page = page;
             components = components.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            await _componentBaseService.UsingInDevice(components);
             return View(components);
         }
 

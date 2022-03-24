@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Models.Components;
 using ProductionManagementSystem.Core.Models.Devices;
 using ProductionManagementSystem.Core.Models.ElementsDifference;
@@ -30,6 +31,8 @@ namespace ProductionManagementSystem.Core.Data.EF
         public DbSet<DesignSupplyRequest> DesignSupplyRequests { get; set; }
         
         public DbSet<ElementDifference> ElementDifferences { get; set; }
+        public DbSet<DatabaseTable> DatabaseTables { get; set; }
+        public DbSet<TableColumn> TableColumns { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {

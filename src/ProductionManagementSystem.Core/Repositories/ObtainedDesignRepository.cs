@@ -37,7 +37,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return obtainedDesign;
         }
 
-        public override async Task<List<ObtainedDesign>> FindAsync(Func<ObtainedDesign, bool> predicate)
+        public override async Task<List<ObtainedDesign>> FindAsync(Func<ObtainedDesign, bool> predicate, string includeProperty=null)
         {
             var obtainedDesigns = (await base.FindAsync(predicate)).ToList();
             foreach (var obtainedDesign in obtainedDesigns)

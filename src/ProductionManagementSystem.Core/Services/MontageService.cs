@@ -112,8 +112,22 @@ namespace ProductionManagementSystem.Core.Services
         {
             await DeleteAsync(new Montage {Id = id});
         }
-        
-         
+
+        public async Task UsingInDevice(List<Montage> components)
+        {
+            foreach (var component in components)
+            {
+                var deviceIds = (await _db.MontageInDeviceRepository.FindAsync(x => x.ComponentId == component.Id)).Select(x =>
+                    x.DeviceId);
+                component.Devices = new List<Device>();
+                foreach (var deviceId in deviceIds)
+                {
+                    component.Devices.Add(await _db.DeviceRepository.GetByIdAsync(deviceId));
+                }
+            }
+        }
+
+
         protected override async Task CreateLogForCreatingAsync(Montage item)
         {
             await _db.LogRepository.CreateAsync(new Log { Message = "Был создан монтаж " + item, MontageId = item.Id });

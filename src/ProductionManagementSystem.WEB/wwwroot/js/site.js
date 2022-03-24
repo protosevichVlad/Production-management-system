@@ -142,3 +142,32 @@ function changeStateTransfer()
     }
 }
 
+function receiveAll(){
+    let trs = document.querySelectorAll('table tbody tr')
+    for (let i = 0; i < trs.length; i++)
+    {
+        let inDevice = getQuantityInDevice(trs[i]);
+        let qt = getQuantity(trs[i]);
+        let obt = getObtained(trs[i]);
+        let value = ((inDevice - obt) < qt ? (inDevice - obt) : qt);
+        if (value < 0) value = 0;
+        setObtained(trs[i], value)
+    }
+}
+function getQuantityInDevice(tr)
+{
+    return Number(tr.children[1].innerText);
+}
+function getQuantity(tr)
+{
+    return Number(tr.children[2].innerText);
+}
+function getObtained(tr)
+{
+    return Number(tr.children[3].innerText);
+}
+
+function setObtained(tr, value)
+{
+    return tr.children[4].children[0].value = value;
+}

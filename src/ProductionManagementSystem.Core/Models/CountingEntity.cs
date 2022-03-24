@@ -9,7 +9,7 @@ namespace ProductionManagementSystem.Core.Models
         [Required]
         public string Name { get; set; }
         
-        [Display(Name = "Количество")]
+        [Display(Name = "Кол-во")]
         [Range(0, Int32.MaxValue, ErrorMessage = "Количество должно быть больше 0")]
         [Required]
         public int Quantity { get; set; }

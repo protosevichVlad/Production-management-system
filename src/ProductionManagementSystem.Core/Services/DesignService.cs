@@ -20,6 +20,7 @@ namespace ProductionManagementSystem.Core.Services
         Task DecreaseQuantityAsync(int id, int quantity);
         Task<List<KeyValuePair<int, string>>> GetListForSelectAsync();
         Task DeleteByIdAsync(int id);
+        Task UsingInDevice(List<T> components);
     }
 
     public interface IDesignService : IComponentBaseService<Design>
@@ -48,6 +49,20 @@ namespace ProductionManagementSystem.Core.Services
         public async Task DeleteByIdAsync(int id)
         {
             await DeleteAsync(new Design {Id = id});
+        }
+
+        public async Task UsingInDevice(List<Design> components)
+        {
+            foreach (var component in components)
+            {
+                var deviceIds = (await _db.DesignInDeviceRepository.FindAsync(x => x.ComponentId == component.Id)).Select(x =>
+                        x.DeviceId);
+                component.Devices = new List<Device>();
+                foreach (var deviceId in deviceIds)
+                {
+                    component.Devices.Add(await _db.DeviceRepository.GetByIdAsync(deviceId));
+                }
+            }
         }
 
         public async Task<List<string>> GetTypesAsync()

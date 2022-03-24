@@ -145,6 +145,76 @@ namespace ProductionManagementSystem.Core.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.DatabaseTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DirectoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FootprintPath")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LibraryPath")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TableName")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DirectoryId");
+
+                    b.ToTable("DatabaseTables");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.Directory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("DirectoryName")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("ParentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AltiumDB_Directories");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.TableColumn", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("ColumnName")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("DatabaseOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DatabaseTableId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Display")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DatabaseTableId");
+
+                    b.ToTable("TableColumns");
+                });
+
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.Components.Design", b =>
                 {
                     b.Property<int>("Id")
@@ -670,6 +740,26 @@ namespace ProductionManagementSystem.Core.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.DatabaseTable", b =>
+                {
+                    b.HasOne("ProductionManagementSystem.Core.Models.AltiumDB.Directory", "Directory")
+                        .WithMany("Tables")
+                        .HasForeignKey("DirectoryId");
+
+                    b.Navigation("Directory");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.TableColumn", b =>
+                {
+                    b.HasOne("ProductionManagementSystem.Core.Models.AltiumDB.DatabaseTable", "DatabaseTable")
+                        .WithMany("TableColumns")
+                        .HasForeignKey("DatabaseTableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DatabaseTable");
+                });
+
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.Devices.DesignInDevice", b =>
                 {
                     b.HasOne("ProductionManagementSystem.Core.Models.Components.Design", "Design")
@@ -788,6 +878,16 @@ namespace ProductionManagementSystem.Core.Migrations
                     b.Navigation("Device");
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.DatabaseTable", b =>
+                {
+                    b.Navigation("TableColumns");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.Directory", b =>
+                {
+                    b.Navigation("Tables");
                 });
 
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.Orders.Order", b =>

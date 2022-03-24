@@ -2,7 +2,7 @@
 @model IEnumerable<ProductionManagementSystem.Core.Models.Tasks.Task>
 
 <div class="table-responsive">
-    <table class="table table-sm">
+    <table class="table table-sm table-hover">
         <thead>
         <tr>
             <th>
@@ -26,15 +26,12 @@
             <th>
                 Описание
             </th>
-            <th class="td-with-buttons">
-                    <a class="btn btn-primary btn-sm m-1" asp-action="Create">Создать новую задачу</a>
-            </th>
         </tr>
         </thead>
         <tbody>
         @foreach (var t in Model)
         {
-            <tr>
+            <tr onclick="location.href = '/Tasks/Details/@t.Id'">
                 <td>
                     @t.Id
                 </td>
@@ -57,9 +54,6 @@
                     <div class="overflow-hidden text-truncate description">
                         @t.Description
                     </div>
-                </td>
-                <td>
-                    <a class="btn btn-light btn-sm" asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">Подробности</a>
                 </td>
             </tr>
         }

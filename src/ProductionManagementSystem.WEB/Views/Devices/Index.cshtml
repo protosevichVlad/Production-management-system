@@ -4,7 +4,7 @@
 }
 <h2>Cписок приборов</h2>
 <div class="table-responsive">
-    <table class="table table-sm">
+    <table class="table table-sm table-hover">
         <thead>
         <tr>
             <th>
@@ -19,15 +19,12 @@
             <th>
                 Описание
             </th>
-            <th class="td-with-buttons">
-                <a class="btn btn-primary btn-sm" asp-action="Create">Создать новый прибор</a>
-            </th>
         </tr>
         </thead>
         <tbody>
         @foreach (var d in Model)
         {
-            <tr>
+            <tr onclick="location.href = '/Devices/Details/@d.Id'">
                 <td>
                     @d.Id
                 </td>
@@ -41,9 +38,6 @@
                     <div class="overflow-hidden text-truncate description">
                         @d.Description
                     </div>
-                </td>
-                <td>
-                    <a class="btn btn-light btn-sm" asp-action="Details" asp-route-id="@d.Id">Подробности</a>
                 </td>
             </tr>
         }

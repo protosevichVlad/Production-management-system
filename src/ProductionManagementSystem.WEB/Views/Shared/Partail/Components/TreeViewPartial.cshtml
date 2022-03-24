@@ -1,0 +1,25 @@
+﻿@model ProductionManagementSystem.WEB.Models.Components.TreeViewViewModel
+
+<input type="hidden" id="SelectedDirectoryId" name="DirectoryId" value="@Model.SelectedId"/>
+<input type="hidden" id="SelectedDatabaseId" name="SelectedDatabaseId"/>
+@if (Model.ShowPath)
+{
+  <strong>Path: <span id="fullPath"></span></strong>
+}
+
+<ul class="bx--list">
+  @foreach (var node in Model.Tree.Nodes)
+  {
+    <li class="bx--list__item"><span class="caret" id="@node.Id">@node.Title</span>
+      <partial name="Partail/Components/TreeViewNodePartial" model="@node"/>
+    </li>
+  }
+    @foreach (var tuple in Model.Tree.Leaves)
+    {
+      <li class="bx--list__item">
+        <span class="leaves" id="@tuple.Item1">
+          @tuple.Item2
+        </span>
+      </li>
+    }
+</ul>

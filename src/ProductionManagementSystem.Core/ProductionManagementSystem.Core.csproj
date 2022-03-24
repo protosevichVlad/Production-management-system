@@ -5,6 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="EPPlus" Version="5.8.7" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.10" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.10">
         <PrivateAssets>all</PrivateAssets>
@@ -15,7 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data" />
       <Folder Include="Data\Migrations" />
       <Folder Include="Infrastructure\Helpers" />
       <Folder Include="Models\Charts" />

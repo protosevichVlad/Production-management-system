@@ -42,7 +42,7 @@ namespace ProductionManagementSystem.Core.Repositories
             return log;
         }
         
-        public override async Task<List<Log>> FindAsync(Func<Log, bool> predicate)
+        public override async Task<List<Log>> FindAsync(Func<Log, bool> predicate, string includeProperty=null)
         {
             var logs = (await base.FindAsync(predicate)).ToList();
             foreach (var log in logs)

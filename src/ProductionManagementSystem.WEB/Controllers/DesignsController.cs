@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -21,19 +22,54 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         // GET: Designs
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder, string searchString, int page=1, int pageSize = 50)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, int? deviceId, string typeName, int page=1, int pageSize = 50)
         {
+            var selectListDevice = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
+            var selectListTypes = new SelectList(await _componentBaseService.GetTypesAsync());
+
+            List<Design> designs = new List<Design>();
+            if (deviceId != null)
+            {
+                var device = selectListDevice.FirstOrDefault(l => l.Value == deviceId.ToString());
+                if (device != null)
+                    device.Selected = true;
+                
+                designs = await _componentBaseService.GetByDeviceId(deviceId.Value);
+            }
+            else
+            {
+                designs = await _componentBaseService.GetAllAsync();
+            }
+
+            if (designs == null)
+            {
+                throw new NotImplementedException();
+            }
+
+            if (typeName != null)
+            {
+                var type = selectListTypes.FirstOrDefault(l => l.Text == typeName);
+                if (type != null)
+                {
+                    type.Selected = true;
+                }
+                
+                designs = designs.Where(c => c.Type == typeName).ToList();
+            }
+            ViewBag.TypeNames = selectListTypes;
+            ViewBag.Devices = selectListDevice;
+            
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TypeSortParm"] = sortOrder == "Type" ? "type_desc" : "Type";
             ViewData["QuantitySortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
             ViewData["CurrentFilter"] = searchString;
-            var designs = await _componentBaseService.GetAllAsync();
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                designs = designs.Where(d => (d.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
-                                             || (d.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
-                                             || (d.ShortDescription?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
+                designs = designs
+                    .Where(d => (d.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                 || (d.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                 || (d.ShortDescription?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
             }
             
             ViewBag.PageSize = pageSize;
@@ -78,6 +114,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             ViewBag.AllDesigns = designs.Select(d => d.Name).Distinct();
             designs = designs.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            await _componentBaseService.UsingInDevice(designs);
             return View(designs);
         }
 

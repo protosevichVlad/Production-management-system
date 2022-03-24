@@ -84,7 +84,7 @@ namespace ProductionManagementSystem.Core.Repositories
             base.Delete(device);
         }
 
-        public override async Task<List<Device>> FindAsync(Func<Device, bool> predicate)
+        public override async Task<List<Device>> FindAsync(Func<Device, bool> predicate, string includeProperty=null)
         {
             List<Device> devices = (await base.FindAsync(predicate)).ToList();
             foreach (var device in devices)

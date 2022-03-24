@@ -11,7 +11,7 @@ namespace ProductionManagementSystem.Core.Repositories
     {
         public Task<List<TItem>> GetAllAsync();
         public Task<TItem> GetByIdAsync(int id);
-        public Task<List<TItem>> FindAsync(Func<TItem, bool> predicate);
+        public Task<List<TItem>> FindAsync(Func<TItem, bool> predicate, string includeProperty=null);
         public Task CreateAsync(TItem item);
         public Task UpdateAsync(TItem item);
         Task UpdateRangeAsync(List<TItem> items);
@@ -41,9 +41,11 @@ namespace ProductionManagementSystem.Core.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public virtual async Task<List<TItem>> FindAsync(Func<TItem, bool> predicate)
+        public virtual async Task<List<TItem>> FindAsync(Func<TItem, bool> predicate, string includeProperty=null)
         {
-            return _dbSet.Where(predicate).ToList();
+            if (string.IsNullOrEmpty(includeProperty))
+                return _dbSet.Where(predicate).ToList();
+            return _dbSet.Include(includeProperty).Where(predicate).ToList();
         }
 
         public virtual async Task CreateAsync(TItem item)
