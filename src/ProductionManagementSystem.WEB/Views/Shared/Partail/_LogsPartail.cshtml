@@ -8,7 +8,7 @@
                 @Html.DisplayNameFor(model => model.DateTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User.UserName)
+                @Html.DisplayNameFor(model => model.User)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Message)
@@ -24,7 +24,7 @@
                     @log.DateTime
                 </td>
                 <td>
-                    @log.User.UserName
+                    @(log.User?.UserName ?? "Пользователь удалён")
                 </td>
                 <td>
                     @log.Message

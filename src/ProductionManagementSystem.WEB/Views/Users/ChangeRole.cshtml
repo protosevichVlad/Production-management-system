@@ -1,4 +1,5 @@
-﻿@model ProductionManagementSystem.WEB.Models.UserViewModels.ChangeRoleViewModel
+﻿@using ProductionManagementSystem.Core.Models.Users
+@model ProductionManagementSystem.WEB.Models.UserViewModels.ChangeRoleViewModel
 
 <h2>Изменение ролей для пользователя @Model.UserName</h2>
  
@@ -10,7 +11,11 @@
         {
             <div class="form-check">
                 <input class="form-check-input" name="roles" type="checkbox" value="@role.Name" id="flexCheckDefault@(i)"
-                       @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") >
+                       @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") @(User.Identity.Name == @Model.UserName && role.Name == RoleEnum.Admin ? "disabled=\"disabled\"" : "")>
+                @if (User.Identity.Name == @Model.UserName && role.Name == RoleEnum.Admin)
+                {
+                    <input type="hidden" name="roles" @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") value="@role.Name">
+                }
                 <label class="form-check-label" for="flexCheckDefault@(i)">
                     @role.Name
                 </label>

@@ -15,6 +15,7 @@ namespace ProductionManagementSystem.Core.Models.Logs
         [Display(Name = "Сообщение")]
         public string Message { get; set; }
         
+        [Display(Name = "Пользователь")]
         public User User { get; set; }        
         public string UserId { get; set; }
         

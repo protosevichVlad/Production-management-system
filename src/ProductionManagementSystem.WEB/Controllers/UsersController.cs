@@ -53,7 +53,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         public async Task<ActionResult> ChangeRole(string userName)
         {
-            if (userName == null || userName == "admin")
+            if (userName == null)
             {
                 throw new Exception("Страница не найдена.");
             }
@@ -68,6 +68,12 @@ namespace ProductionManagementSystem.WEB.Controllers
             };
             
             return View(changeRoleViewModel);
+        }
+
+        public async Task<IActionResult> AddRole(string role)
+        {
+            await _roleManager.CreateAsync(new IdentityRole(role));
+            return Ok();
         }
         
         [HttpPost]
