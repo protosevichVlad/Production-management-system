@@ -50,7 +50,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         [HttpGet]
         [Route("[controller]/Tables/{tableName}")]
-        public async Task<IActionResult> GetDataFromTable(string tableName, Dictionary<string, List<string>> filter)
+        public async Task<IActionResult> GetDataFromTable(string tableName, string orderBy, Dictionary<string, List<string>> filter)
         {
             var data = await _databaseService.GetDataFromTableAsync(tableName);
             var table = await _databaseService.GetTableByNameAsync(tableName);
@@ -68,6 +68,18 @@ namespace ProductionManagementSystem.WEB.Controllers
                 if (filters[^1].Values.Count < 2)
                     filters.Remove(filters[^1]);
             }
+
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                if (orderBy.EndsWith("_desc"))
+                {
+                    data = data.OrderByDescending(x => x[orderBy.Substring(0, orderBy.Length - "_desc".Length)]).ToList();
+                }
+                else
+                {
+                    data = data.OrderBy(x => x[orderBy]).ToList();
+                }
+            }
             
             DataListViewModel vm = new DataListViewModel()
             {
@@ -77,7 +89,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             };
             return View("GetDataFromTable", vm);
         }
-        
+
         [HttpGet]
         [Route("[controller]/EditTable/{tableName}")]
         public async Task<IActionResult> EditTable(string tableName)
