@@ -48,36 +48,36 @@
   <div class="bx--row">
     <div class="bx--col-lg-8">
       <div class="bx--grid">
-        <div class="bx--row">
-          <div class="bx--col-lg-12">
+        <div class="bx--row bx--row-padding">
+          <div class="bx--col-sm-4">
             <strong>Part Number: </strong>
             @Model.PartNumber
           </div>
         </div>
         <div class="bx--row">
-          <div class="bx--col-lg-4">
-            <img src="@Model.ImageLink" style="width: 100%"/>
+          <div class="bx--col-md-2">
+            <img src="@Model.ImageLink" class="altiumdb--entity--image"/>
           </div>
-          <div class="bx--col-lg-8">
+          <div class="bx--col-md-6">
             <div class="bx--grid">
               @foreach (var field in BaseAltiumDbEntity.ImportantFields)
               {
                 <div class="bx--row">
                   @if (field == "HelpURL")
                   {
-                    <div class="bx--col-lg-4">
+                    <div class="bx--col-md-2">
                       <strong>Datasheet</strong>
                     </div>
-                    <div class="bx--col-lg-8">
-                      <a href="@Model[field]">@Model.PartNumber Datasheet</a>
+                    <div class="bx--col-md-6">
+                      <a href="@Model[field]" target="_blank">@Model.PartNumber Datasheet</a>
                     </div>
                   }
                   else
                   {
-                    <div class="bx--col-lg-4">
+                    <div class="bx--col-md-2">
                       <strong>@field</strong>
                     </div>
-                    <div class="bx--col-lg-8">
+                    <div class="bx--col-md-6">
                       <span style="white-space: pre-line">@Model[field]</span>
                     </div>
                   }
@@ -91,15 +91,15 @@
       <div class="bx--grid">
         <div class="bx--row" style="height: 20px"></div>
         <div class="bx--row">
-          <div class="bx--col-lg-12">
+          <div class="bx--col-sm-4">
             <div class="bx--grid">
               @foreach (var field in Model.NoImportantFields)
               {
                 <div class="bx--row">
-                  <div class="bx--col-lg-4">
+                  <div class="bx--col-sm-1">
                     <strong>@field</strong>
                   </div>
-                  <div class="bx--col-lg-8">
+                  <div class="bx--col-sm-3">
                     <span style="white-space: pre-line">@Model[field]</span>
                   </div>
                 </div>
@@ -112,7 +112,7 @@
     </div>
     <div class="bx--col-lg-4">
       <div class="bx--grid">
-        <div class="bx--row">
+        <div class="bx--row bx--row-padding">
           <div class="bx--col--auto">
             <strong>Pricing (EUR)</strong>
           </div>

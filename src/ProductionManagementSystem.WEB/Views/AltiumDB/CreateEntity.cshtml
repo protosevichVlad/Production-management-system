@@ -19,7 +19,7 @@
       <div class="bx--col-lg-6">
         <label for="text-input-part-number" class="bx--label">Part Number</label>
         <input id="text-input-part-number" type="text"
-               class="bx--text-input"
+               class="bx--text-input" required
                placeholder="Part Number" name="Part Number" value="@Model.PartNumber">
       </div>
     </div>
@@ -125,14 +125,30 @@
       </div>
     </div>
     <div class="bx--row bx--row-padding">
-      <div class="bx--col-lg-12">
+      <div class="bx--col-lg-6">
         <label for="text-area-Description" class="bx--label">Description</label>
         <textarea id="text-area-Description" class="bx--text-area"
             rows="4" placeholder="Placeholder text." asp-for="Description"></textarea>
       </div>
+      <div class="bx--col-lg-6">
+        <div class="bx--grid">
+          <div class="bx--row bx--row-padding">
+            <div class="bx--col-lg-8">Image on details page:</div>
+            <div class="bx--col-lg-4">Image in table:</div>
+          </div>
+          <div class="bx--row bx--row-padding">
+            <div class="bx--col-lg-8">
+              <img src="@Model.ImageLink" class="altiumdb--entity--image test-entity-image"/>
+            </div>
+            <div class="bx--col-lg-4">
+              <img src="@Model.ImageLink" class="altiumdb--entity-table--image test-entity-image"/>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="bx--row bx--row-padding">
-      <div class="bx--col-lg-1">
+      <div class="bx--col-lg-1 bx--offset-lg-11">
         <div class="bx--form-item">
           <button class="bx--btn bx--btn--primary" type="submit">Save</button>
         </div>
@@ -140,3 +156,10 @@
     </div>
   </form>
 </div>
+
+<script>
+document.querySelector('#text-input-part-ImageLink').addEventListener('change', (event) => {
+    let value = event.target.value;
+    document.querySelectorAll('.test-entity-image').forEach(x=>x.src=value)
+})
+</script>

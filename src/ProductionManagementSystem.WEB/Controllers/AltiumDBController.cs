@@ -106,7 +106,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewBag.Manufacturers = await _databaseService.GetFiledFromAllTables("Manufacturer");
             ViewBag.Categories = await _databaseService.GetFiledTable(tableName, "Category");
             ViewBag.Suppliers = await _databaseService.GetFiledFromAllTables("Supplier");
-            ViewBag.Cases = await _databaseService.GetFiledFromAllTables("Case");
+            ViewBag.Cases = await _databaseService.GetFiledTable(tableName, "Case");
             ViewBag.LibraryRefs = await _databaseService.GetFiledTable(tableName, "Library Ref");
             ViewBag.FootprintRefs = await _databaseService.GetFiledTable(tableName, "Footprint Ref");
             return View("CreateEntity", new BaseAltiumDbEntity(table));
@@ -129,7 +129,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             ViewBag.Manufacturers = await _databaseService.GetFiledFromAllTables("Manufacturer");
             ViewBag.Categories = await _databaseService.GetFiledTable(tableName, "Category");
             ViewBag.Suppliers = await _databaseService.GetFiledFromAllTables("Supplier");
-            ViewBag.Cases = await _databaseService.GetFiledFromAllTables("Case");
+            ViewBag.Cases = await _databaseService.GetFiledTable(tableName, "Case");
             ViewBag.LibraryRefs = await _databaseService.GetFiledTable(tableName, "Library Ref");
             ViewBag.FootprintRefs = await _databaseService.GetFiledTable(tableName, "Footprint Ref");
             return View("CreateEntity", data);
