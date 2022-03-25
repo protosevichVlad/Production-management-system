@@ -134,12 +134,12 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
 
         public async Task<List<string>> GetFiledFromAllTables(string filed)
         {
-            return _tableHelper.GetFiledFromAllTables(await GetAllAsync(), filed);
+            return _tableHelper.GetFiledFromAllTables(await GetAllAsync(), filed).OrderBy(x => x).ToList();
         }
 
         public async Task<List<string>> GetFiledTable(string tableName, string filed)
         {
-            return _tableHelper.GetFiledTable(await GetTableByNameAsync(tableName), filed);
+            return _tableHelper.GetFiledTable(await GetTableByNameAsync(tableName), filed).OrderBy(x => x).ToList();
         }
 
         public override async Task UpdateAsync(DatabaseTable newTable)

@@ -5,6 +5,7 @@ namespace ProductionManagementSystem.WEB.Models.AltiumDB
 {
     public class DataListViewModel
     {
+        public List<FilterViewModel> Filters { get; set; }
         public DatabaseTable DatabaseTable { get; set; }
         public List<BaseAltiumDbEntity> Data { get; set; }
     }

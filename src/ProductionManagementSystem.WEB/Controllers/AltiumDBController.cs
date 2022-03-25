@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MySqlConnector;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 using ProductionManagementSystem.WEB.Models.AltiumDB;
@@ -51,12 +50,30 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         [HttpGet]
         [Route("[controller]/Tables/{tableName}")]
-        public async Task<IActionResult> GetDataFromTable(string tableName)
+        public async Task<IActionResult> GetDataFromTable(string tableName, Dictionary<string, List<string>> filter)
         {
+            var data = await _databaseService.GetDataFromTableAsync(tableName);
+            var table = await _databaseService.GetTableByNameAsync(tableName);
+            List<FilterViewModel> filters = new List<FilterViewModel>();
+            foreach (var column in table.TableColumns.Where(x => BaseAltiumDbEntity.NotFilterFields.All(y => y != x.ColumnName)))
+            {
+                data = data.Where(x => !filter.ContainsKey(column.ColumnName) || filter[column.ColumnName].Contains(x[column.ColumnName])).ToList();
+                filters.Add(new FilterViewModel()
+                {
+                    FilterName = column.ColumnName,
+                    Values = (await _databaseService.GetFiledTable(tableName, column.ColumnName)).Where(x => !string.IsNullOrEmpty(x))
+                        .Select(x => ( x, filter.ContainsKey(column.ColumnName) && filter[column.ColumnName].Contains(x)))
+                        .ToList()
+                });
+                if (filters[^1].Values.Count < 2)
+                    filters.Remove(filters[^1]);
+            }
+            
             DataListViewModel vm = new DataListViewModel()
             {
-                DatabaseTable = await _databaseService.GetTableByNameAsync(tableName),
-                Data = await _databaseService.GetDataFromTableAsync(tableName)
+                DatabaseTable = table,
+                Data = data,
+                Filters = filters
             };
             return View("GetDataFromTable", vm);
         }
@@ -103,12 +120,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> CreateEntity([FromRoute]string tableName)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
-            ViewBag.Manufacturers = await _databaseService.GetFiledFromAllTables("Manufacturer");
-            ViewBag.Categories = await _databaseService.GetFiledTable(tableName, "Category");
-            ViewBag.Suppliers = await _databaseService.GetFiledFromAllTables("Supplier");
-            ViewBag.Cases = await _databaseService.GetFiledTable(tableName, "Case");
-            ViewBag.LibraryRefs = await _databaseService.GetFiledTable(tableName, "Library Ref");
-            ViewBag.FootprintRefs = await _databaseService.GetFiledTable(tableName, "Footprint Ref");
+            await AddEntityHintsAsync(tableName);
             return View("CreateEntity", new BaseAltiumDbEntity(table));
         }
         
@@ -126,15 +138,20 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
             var data = await _databaseService.GetEntityByPartNumber(tableName, partNumber);
+            await AddEntityHintsAsync(tableName);
+            return View("CreateEntity", data);
+        }
+
+        private async Task AddEntityHintsAsync(string tableName)
+        {
             ViewBag.Manufacturers = await _databaseService.GetFiledFromAllTables("Manufacturer");
             ViewBag.Categories = await _databaseService.GetFiledTable(tableName, "Category");
             ViewBag.Suppliers = await _databaseService.GetFiledFromAllTables("Supplier");
             ViewBag.Cases = await _databaseService.GetFiledTable(tableName, "Case");
             ViewBag.LibraryRefs = await _databaseService.GetFiledTable(tableName, "Library Ref");
             ViewBag.FootprintRefs = await _databaseService.GetFiledTable(tableName, "Footprint Ref");
-            return View("CreateEntity", data);
         }
-        
+
         [HttpPost]
         [Route("AltiumDB/Tables/{tableName}/EditEntity/{partNumber}")]
         public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]string partNumber, BaseAltiumDbEntity data)

@@ -1,31 +1,35 @@
-﻿let toggler = document.getElementsByClassName("caret");
-let leaves = document.getElementsByClassName("leaves");
+﻿
+function initTreeView()
+{
+    let toggler = document.getElementsByClassName("caret");
+    let leaves = document.getElementsByClassName("leaves");
 
-for (let i = 0; i < toggler.length; i++) {
-    toggler[i].addEventListener("click", function(event) {
-        this.parentElement.querySelector(".nested").classList.toggle("active");
-        this.classList.toggle("caret-down");
-        document.querySelector("#SelectedDirectoryId").value = event.target.id;
+    for (let i = 0; i < toggler.length; i++) {
+        toggler[i].addEventListener("click", function(event) {
+            this.parentElement.querySelector(".nested").classList.toggle("active");
+            this.classList.toggle("caret-down");
+            document.querySelector("#SelectedDirectoryId").value = event.target.id;
 
-        getPathToDirectory(event.target.id).then(r =>
-        {
-            document.querySelector("#fullPath").innerHTML = r;
-        })
-    });
+            getPathToDirectory(event.target.id).then(r =>
+            {
+                document.querySelector("#fullPath").innerHTML = r;
+            })
+        });
+    }
+
+    for (let i = 0; i < leaves.length; i++) {
+        leaves[i].addEventListener("click", function(event) {
+            document.querySelector("#SelectedDatabaseId").value = event.target.id;
+
+            getPathToTable(event.target.id).then(r =>
+            {
+                document.querySelector("#fullPath").innerHTML = r;
+            })
+        });
+    }
+
+    openDirectory(document.querySelector("#SelectedDirectoryId").value);
 }
-
-for (let i = 0; i < leaves.length; i++) {
-    leaves[i].addEventListener("click", function(event) {
-        document.querySelector("#SelectedDatabaseId").value = event.target.id;
-
-        getPathToTable(event.target.id).then(r =>
-        {
-            document.querySelector("#fullPath").innerHTML = r;
-        })
-    });
-}
-
-openDirectory(document.querySelector("#SelectedDirectoryId").value);
 
 async function getPathToTable(id)
 {

@@ -114,6 +114,12 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             "Item", "Manufacturer", "HelpURL", "Description"
         };
         
+        public static List<string> NotFilterFields { get; } = new List<string>()
+        {
+            "Item", "Part Number", "Library Ref", "Footprint Ref", "Library Path", "Footprint Path",
+            "HelpURL", "Description", "ImageLink"
+        };
+
         public static List<string> DefaultDisplayFalse { get; } = new List<string>()
         {
             "ImageLink", "Library Path", "HelpURL", "Footprint Path"
