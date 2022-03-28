@@ -88,3 +88,27 @@ function deleteEntityFromTable(tableName, id)
         }
     })
 }
+
+function markNoteAsCompleted(id)
+{
+    return fetch(`/api/AltiumDB/to-do/${id}/completed`, {
+        method: 'POST',
+    }).then(response => {
+        if (response.ok)
+        {
+            location.reload();
+        }
+    })
+}
+
+function getDateTime()
+{
+    var date = new Date();
+    var day = date.getDate();       
+    var month = date.getMonth() + 1;    
+    var year = date.getFullYear();  
+    var hour = date.getHours();     
+    var minute = date.getMinutes(); 
+    var second = date.getSeconds();
+    return (day < 10 ? '0' + day: day) + "/" + (month < 10 ? '0' + month: month) + "/" + year + "_" + (hour < 10 ? '0' + hour: hour) + ':' + (minute < 10 ? '0' + minute: minute) + ':' + (second < 10 ? '0' + second: second);
+}

@@ -30,6 +30,7 @@ namespace ProductionManagementSystem.Core.Repositories
         ILogRepository LogRepository { get; }
         IElementDifferenceRepository ElementDifferenceRepository { get; }
         IDatabaseTableRepository DatabaseTableRepository { get; }
+        IToDoNoteRepository ToDoNoteRepository { get; }
         IDirectoryRepository DirectoryRepository { get; }
     }
 
@@ -95,6 +96,7 @@ namespace ProductionManagementSystem.Core.Repositories
         private IDesignsSupplyRequestRepository _designsSupplyRequestRepository;
         private IElementDifferenceRepository _elementDifferenceRepository;
         private DatabaseTableRepository _databaseTableRepository;
+        private IToDoNoteRepository _toDoNoteRepository;
         private DirectoryRepository _directoryRepository;
 
         public EFUnitOfWork(string connectionString) : base(connectionString)
@@ -136,6 +138,9 @@ namespace ProductionManagementSystem.Core.Repositories
         
         public IDatabaseTableRepository DatabaseTableRepository =>
             _databaseTableRepository ??= new DatabaseTableRepository(_db);
+
+        public IToDoNoteRepository ToDoNoteRepository =>
+            _toDoNoteRepository ??= new ToDoNoteRepository(_db);
         public IDirectoryRepository DirectoryRepository => _directoryRepository ??= new DirectoryRepository(_db);
     }
 }

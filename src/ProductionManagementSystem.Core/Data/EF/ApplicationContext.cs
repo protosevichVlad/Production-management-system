@@ -33,6 +33,7 @@ namespace ProductionManagementSystem.Core.Data.EF
         public DbSet<ElementDifference> ElementDifferences { get; set; }
         public DbSet<DatabaseTable> DatabaseTables { get; set; }
         public DbSet<TableColumn> TableColumns { get; set; }
+        public DbSet<ToDoNote> ToDoNotes { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {

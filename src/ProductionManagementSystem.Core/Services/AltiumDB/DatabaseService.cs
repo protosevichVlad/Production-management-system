@@ -84,6 +84,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         {
             var table = await GetTableByNameAsync(tableName);
             if (table == null) throw new NotImplementedException();
+            await AddToToDoNotes(table, data);
             _tableHelper.InsertIntoTable(table, data);
         }
 
@@ -91,7 +92,35 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         {
             var table = await GetTableByNameAsync(tableName);
             if (table == null) throw new NotImplementedException();
+            await AddToToDoNotes(table, data);
             _tableHelper.UpdateDataInTable(table, partNumber, data);
+        }
+
+        private async Task AddToToDoNotes(DatabaseTable table, BaseAltiumDbEntity data)
+        {
+            if (_tableHelper.GetFiledTable(table, "Library Ref").Count(x => data.LibraryRef == x) == 0)
+            {
+                await _db.ToDoNoteRepository.CreateAsync(new ToDoNote()
+                {
+                    Completed = false,
+                    Created = DateTime.Now,
+                    Description = "",
+                    Title = $"Create Library Ref: '{data.LibraryRef}' for {table.DisplayName} table",
+                });
+            }
+            
+            if (_tableHelper.GetFiledTable(table, "Footprint Ref").Count(x => data.FootprintRef == x) == 0)
+            {
+                await _db.ToDoNoteRepository.CreateAsync(new ToDoNote()
+                {
+                    Completed = false,
+                    Created = DateTime.Now,
+                    Description = "",
+                    Title = $"Create Footprint Ref: '{data.FootprintRef}' for {table.DisplayName} table",
+                });
+            }
+
+            await _db.SaveAsync();
         }
 
         public async Task<BaseAltiumDbEntity> GetEntityByPartNumber(string tableName, string partNumber)

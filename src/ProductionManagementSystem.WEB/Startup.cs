@@ -14,6 +14,7 @@ using ProductionManagementSystem.Core.Repositories;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 using ProductionManagementSystem.Core.Services.SupplyRequestServices;
+using ProductionManagementSystem.WEB.Filters;
 
 namespace ProductionManagementSystem.WEB
 {
@@ -29,7 +30,10 @@ namespace ProductionManagementSystem.WEB
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(op =>
+            {
+                op.Filters.Add<ToDoActionFilter>();
+            });
 
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 24)))
@@ -68,6 +72,7 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<ISupplyRequestService<SupplyRequest>, SupplyRequestService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IDirectoryService, DirectoryService>();
+            services.AddScoped<IToDoNoteService, ToDoNoteService>();
             services.AddScoped<IDatabaseService>(_ =>
                 new DatabaseService(Configuration.GetConnectionString("DefaultConnection")));
         }
