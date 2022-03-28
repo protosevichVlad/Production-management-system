@@ -11,7 +11,7 @@ using ProductionManagementSystem.WEB.Models.UserViewModels;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
-    [Authorize(Roles=RoleEnum.Admin)]
+    [Authorize(Roles=RoleEnum.SuperAdmin)]
     public class UsersController : Controller
     {
         private readonly UserManager<User> _userManager;

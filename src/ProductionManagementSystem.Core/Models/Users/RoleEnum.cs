@@ -10,7 +10,7 @@
         public const string Validating = "Поверитель";
         public const string Shipper = "Отгрузчик";
         public const string SuperAdmin = "Супер админ";
-        public const string AltiumDBTablesAdmin = "AltiumDB Tables Admin";
-        public const string AltiumDBEntities = "AltiumDB Entities Admin";
+        public const string AltiumDBTablesAdmin = "AltiumDB_TabelsAdmin";
+        public const string AltiumDBEntitiesAdmin = "AltiumDB_EntitiesAdmin";
     }
 }

@@ -1,4 +1,5 @@
 ﻿@using ProductionManagementSystem.Core.Models.AltiumDB
+@using ProductionManagementSystem.Core.Models.Users
 @model ProductionManagementSystem.Core.Models.AltiumDB.BaseAltiumDbEntity
 
 @{
@@ -6,6 +7,8 @@
   Layout = "Shared/_AltiumDBLayout";
 }
 <div class="bx--grid">
+  @if (User.IsInRole(RoleEnum.AltiumDBEntitiesAdmin))
+  {
   <div class="bx--row bx--row-padding">
     <div class="bx--offset-lg-11"></div>
     <div class="bx--col-lg-1">
@@ -20,7 +23,7 @@
         <div class="bx--overflow-menu-options bx--overflow-menu--flip" tabindex="-1"
              data-floating-menu-direction="bottom" role="menu" aria-labelledby="example-zyub0566err-trigger"
              id="example-zyub0566err">
-          <ul  class="bx--overflow-menu-options__content">
+          <ul class="bx--overflow-menu-options__content">
             <li class="bx--overflow-menu-options__option">
               <button class="bx--overflow-menu-options__btn" onclick="location.href='EditEntity/@Model.PartNumber'">
                 <div class="bx--overflow-menu-options__option-content">
@@ -31,7 +34,7 @@
               </button>
             </li>
             <li class="bx--overflow-menu-options__option">
-              <button class="bx--overflow-menu-options__btn" data-modal-target="#modal-danger"  onclick="showDeleteModal('Deleting an entity', 'Do you really want to delete this entity', () => deleteEntityFromTable('', ''))">
+              <button class="bx--overflow-menu-options__btn" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting an entity', 'Do you really want to delete this entity', () => deleteEntityFromTable('', ''))">
                 <div class="bx--overflow-menu-options__option-content">
                   <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                     <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
@@ -45,6 +48,7 @@
       </div>
     </div>
   </div>
+  }
   <div class="bx--row">
     <div class="bx--col-lg-8">
       <div class="bx--grid">
@@ -55,29 +59,29 @@
           </div>
         </div>
         <div class="bx--row">
-          <div class="bx--col-md-2">
+          <div class="bx--col-md-3">
             <img src="@Model.ImageLink" class="altiumdb--entity--image"/>
           </div>
-          <div class="bx--col-md-6">
+          <div class="bx--col-md-5">
             <div class="bx--grid">
               @foreach (var field in BaseAltiumDbEntity.ImportantFields)
               {
                 <div class="bx--row">
                   @if (field == "HelpURL")
                   {
-                    <div class="bx--col-md-2">
+                    <div class="bx--col-lg-5">
                       <strong>Datasheet</strong>
                     </div>
-                    <div class="bx--col-md-6">
+                    <div class="bx--col-lg-7">
                       <a href="@Model[field]" target="_blank">@Model.PartNumber Datasheet</a>
                     </div>
                   }
                   else
                   {
-                    <div class="bx--col-md-2">
+                    <div class="bx--col-lg-5">
                       <strong>@field</strong>
                     </div>
-                    <div class="bx--col-md-6">
+                    <div class="bx--col-lg-7">
                       <span style="white-space: pre-line">@Model[field]</span>
                     </div>
                   }

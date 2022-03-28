@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Core.Models.AltiumDB;
+using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 using ProductionManagementSystem.WEB.Models.AltiumDB;
 using ProductionManagementSystem.WEB.Models.Components;
@@ -33,6 +35,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             return View(await _databaseService.GetAllAsync());
         }
 
+        [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
         public async Task<ViewResult> CreateTable()
         {
             var table = new DatabaseTable();
@@ -42,6 +45,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
         public async Task<IActionResult> CreateTable(DatabaseTable table)
         {
             await _databaseService.CreateAsync(table);
@@ -92,6 +96,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         [HttpGet]
         [Route("[controller]/EditTable/{tableName}")]
+        [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
         public async Task<IActionResult> EditTable(string tableName)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
@@ -105,12 +110,14 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpPost]
         [Route("[controller]/EditTable/{tableName}")]
+        [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
         public async Task<IActionResult> EditTable(DatabaseTable table)
         {
             await _databaseService.UpdateAsync(table);
             return RedirectToAction(nameof(GetDataFromTable), new {tableName = table.TableName});
         }
         
+        [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
         public async Task<IActionResult> GetPartialViewForTableColumn(int index)
         {
             return PartialView("Shared/Table/TableColumn", new TableColumn()
@@ -120,6 +127,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
         [Route("AltiumDB/Tables/{tableName}")]
         public async Task<IActionResult> Tables([FromRoute]string tableName)
         {
@@ -128,6 +136,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpGet]
+        [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
         [Route("AltiumDB/Tables/{tableName}/CreateEntity")]
         public async Task<IActionResult> CreateEntity([FromRoute]string tableName)
         {
@@ -137,6 +146,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
         [Route("AltiumDB/Tables/{tableName}/CreateEntity")]
         public async Task<IActionResult> CreateEntity([FromRoute]string tableName, BaseAltiumDbEntity data)
         {
@@ -145,6 +155,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpGet]
+        [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
         [Route("AltiumDB/Tables/{tableName}/EditEntity/{partNumber}")]
         public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]string partNumber)
         {
@@ -165,6 +176,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
         [Route("AltiumDB/Tables/{tableName}/EditEntity/{partNumber}")]
         public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]string partNumber, BaseAltiumDbEntity data)
         {
@@ -173,6 +185,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpDelete]
+        [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
         [Route("AltiumDB/Tables/{tableName}/{partNumber}")]
         public async Task<IActionResult> Tables([FromRoute]string tableName, [FromRoute]string partNumber)
         {
@@ -181,6 +194,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
         [Route("AltiumDB/ImportTables")]
         public async Task<IActionResult> ImportTables()
         {
@@ -188,6 +202,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
         [Route("AltiumDB/ImportTables")]
         public async Task<IActionResult> ImportTables(IFormFile file)
         {
