@@ -173,8 +173,8 @@ namespace ProductionManagementSystem.Core.Services
 
         public override async System.Threading.Tasks.Task DeleteAsync(Task item)
         {
-            if ((await _db.ObtainedDesignRepository.FindAsync(o => o.TaskId == item.Id)).Count > 0
-                || (await _db.ObtainedMontageRepository.FindAsync(o => o.TaskId == item.Id)).Count > 0)
+            if ((await _db.MontageSupplyRequestRepository.FindAsync(o => o.TaskId == item.Id)).Count > 0
+                || (await _db.DesignsSupplyRequestRepository.FindAsync(o => o.TaskId == item.Id)).Count > 0)
             {
                 throw new IntersectionOfEntitiesException($"Не удалось удалить задачу №{item.Id}",
                     $"Задача №{item.Id} не может быть удалена, поскольку для этой задачи есть заявки на снабжение. Чтобы удалить задачу, сначала удалите все заявки снабжение для этой задачи.");
