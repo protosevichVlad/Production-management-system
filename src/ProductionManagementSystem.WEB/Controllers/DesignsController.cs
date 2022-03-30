@@ -69,7 +69,8 @@ namespace ProductionManagementSystem.WEB.Controllers
                 designs = designs
                     .Where(d => (d.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
                                  || (d.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
-                                 || (d.ShortDescription?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
+                                 || (d.ShortDescription?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                 || (d?.ToString()?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
             }
             
             ViewBag.PageSize = pageSize;
@@ -112,7 +113,7 @@ namespace ProductionManagementSystem.WEB.Controllers
                     break;
             }
 
-            ViewBag.AllDesigns = designs.Select(d => d.Name).Distinct();
+            ViewBag.AllDesigns = (await _componentBaseService.GetAllAsync()).Select(d => d.Name).Distinct();
             designs = designs.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             await _componentBaseService.UsingInDevice(designs);
             return View(designs);

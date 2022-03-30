@@ -82,7 +82,8 @@ namespace ProductionManagementSystem.WEB.Controllers
                                                     || (c.Explanation?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
                                                     || (c.Nominal?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
                                                     || (c.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
-                                                    || (c.Manufacturer?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
+                                                    || (c.Manufacturer?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+                                                    || (c.ToString()?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
             }
 
             ViewBag.PageSize = pageSize;
@@ -125,7 +126,7 @@ namespace ProductionManagementSystem.WEB.Controllers
                     break;
             }
 
-            ViewBag.AllComponents = components;
+            ViewBag.AllComponents = (await _componentBaseService.GetAllAsync()).Distinct();;
             ViewBag.Page = page;
             components = components.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             await _componentBaseService.UsingInDevice(components);
