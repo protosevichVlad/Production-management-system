@@ -12,13 +12,11 @@
 <html lang="ru">
 <head>
   <title>@ViewData["Title"] - AltiumDB</title>
-  <script type="text/javascript" src="~/js/vue.global.js"></script>
   <script src="~/lib/jquery/dist/jquery.min.js"></script>
   <script type="text/javascript" src="~/js/carbon-components.min.js"></script>
   <link rel="stylesheet" href="~/css/carbon-components.min.css"/>
   <link rel="stylesheet" href="~/css/AltiumDB/site.css"/>
   <link rel="stylesheet" href="/components/TreeView/treeViewComponent.css"/>
-  <script type="text/javascript" src="~/js/AltiumDB/site.js"></script>
   @RenderSection("Stylesheet", required: false);
 </head>
 <body>
@@ -44,6 +42,7 @@
     </ul>
   </nav>
   <div class="bx--header__global">
+    <partial name="Partail/GlobalSearch"/>
     <button class="bx--header__menu-trigger bx--header__action" aria-label="Action 1" title="Action 1" data-navigation-menu-panel-label-expand="Action 1" data-navigation-menu-panel-label-collapse="Close menu" data-product-switcher-target="#switcher-bqavcareoq" onclick="document.cookie = `AltiumDB_Notifications_LastOpened=${getDateTime()}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT;`">
       @if (ViewBag.ToDos != null && (ViewBag.ToDos as List<ToDoNote>)?.Count > 0 && lastOpened <= (ViewBag.ToDos as List<ToDoNote>)?[0].Created ?? false)
       {
@@ -157,6 +156,7 @@
   <span tabindex="0"></span>
 </div>
 <script src="/components/TreeView/treeViewComponent.js"></script>
+<script type="text/javascript" src="~/js/AltiumDB/site.js"></script>
 @await RenderSectionAsync("Scripts", false)
 </body>
 </html>

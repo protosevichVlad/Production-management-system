@@ -327,7 +327,8 @@ namespace ProductionManagementSystem.Core.Data
                 List<string> result = new List<string>();
                 while (reader.Read())
                 {
-                    result.Add(reader.GetString(0));
+                    if (!reader.IsDBNull(0))
+                        result.Add( reader.GetString(0));
                 }
                 
                 reader.Close();
@@ -355,7 +356,8 @@ namespace ProductionManagementSystem.Core.Data
                 List<string> result = new List<string>();
                 while (reader.Read())
                 {
-                    result.Add(reader.GetString(0));
+                    if (!reader.IsDBNull(0))
+                        result.Add( reader.GetString(0));
                 }
                 
                 reader.Close();

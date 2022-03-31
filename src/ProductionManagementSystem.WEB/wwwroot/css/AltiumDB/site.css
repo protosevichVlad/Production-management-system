@@ -15,3 +15,68 @@
     height: 50px;
     object-fit: cover;
 }
+
+.altiumdb--global-search
+{
+    display: flex;
+    width: 400px;
+}
+
+.altiumdb--global-search--input
+{
+    color: #ffffff;
+    background-color: #262626;
+}
+
+.altiumdb--global-search--close
+{
+    fill: #c6c6c6;
+}
+
+.altiumdb--global-search--input:focus~
+.altiumdb--global-search--close:hover{
+    outline: 2px solid #ffffff;!important;
+    outline-offset: -2px;!important;
+}
+
+.altiumdb--global-search--close:focus,
+.altiumdb--global-search--close:hover{
+    outline: 2px solid #ffffff;!important;
+    outline-offset: -2px;!important;
+}
+
+.altiumdb--global-search--close:focus::before
+{
+    background-color: #ffffff;
+}
+
+.altiumdb--global-search--close:hover
+{
+    background-color: #393939;
+}
+
+.altiumdb--global-search--close:before
+{
+    background-color: #262626;
+}
+
+.altiumdb--global-search--input:focus
+{
+    outline: 2px solid #ffffff;
+    outline-offset: -2px;
+}
+
+.altiumdb--global-search--input::placeholder {
+    color: #6f6f6f;
+}
+
+.altiumdb--global-search--hints
+{
+    background-color: #262626;
+    color: #c6c6c6;
+}
+
+.altiumdb--global-search--hints--divider
+{
+    background-color: #393939;
+}

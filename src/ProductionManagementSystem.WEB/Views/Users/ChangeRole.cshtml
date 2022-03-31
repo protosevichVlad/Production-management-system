@@ -11,8 +11,8 @@
         {
             <div class="form-check">
                 <input class="form-check-input" name="roles" type="checkbox" value="@role.Name" id="flexCheckDefault@(i)"
-                       @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") @(User.Identity.Name == @Model.UserName && role.Name == RoleEnum.Admin ? "disabled=\"disabled\"" : "")>
-                @if (User.Identity.Name == @Model.UserName && role.Name == RoleEnum.Admin)
+                       @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") @(User.Identity.Name == @Model.UserName && role.Name == RoleEnum.SuperAdmin ? "disabled=\"disabled\"" : "")>
+                @if (User.Identity.Name == @Model.UserName && role.Name == RoleEnum.SuperAdmin)
                 {
                     <input type="hidden" name="roles" @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") value="@role.Name">
                 }
