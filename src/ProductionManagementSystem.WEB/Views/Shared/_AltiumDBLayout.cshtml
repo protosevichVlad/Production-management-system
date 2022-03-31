@@ -44,9 +44,8 @@
     </ul>
   </nav>
   <div class="bx--header__global">
-    
     <button class="bx--header__menu-trigger bx--header__action" aria-label="Action 1" title="Action 1" data-navigation-menu-panel-label-expand="Action 1" data-navigation-menu-panel-label-collapse="Close menu" data-product-switcher-target="#switcher-bqavcareoq" onclick="document.cookie = `AltiumDB_Notifications_LastOpened=${getDateTime()}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT;`">
-      @if (ViewBag.ToDos != null && lastOpened <= ViewBag.ToDos[0].Created)
+      @if (ViewBag.ToDos != null && (ViewBag.ToDos as List<ToDoNote>)?.Count > 0 && lastOpened <= (ViewBag.ToDos as List<ToDoNote>)?[0].Created ?? false)
       {
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="bx--navigation-menu-panel-expand-icon" width="20" height="20" viewBox="0 0 32 32">
           <defs>
@@ -79,7 +78,7 @@
 </header>
 <aside class="bx--panel--overlay" id="switcher-bqavcareoq" data-product-switcher="" tabindex="-1">
   <div class="bx--product-switcher">
-    <p class="bx--product-switcher__subheader">To-Do</p>
+    <p class="bx--product-switcher__subheader">To Do</p>
     <ul class="bx--product-switcher__product-list">
       @foreach (var toDo in (ViewBag.ToDos as List<ToDoNote>)?.Where(x => User.IsInRole(RoleEnum.AltiumDBTablesAdmin) || x.Completed == false) ?? new List<ToDoNote>())
       {

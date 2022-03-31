@@ -151,7 +151,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                     //TODO: write sql query for insert list dictionary
                     foreach (var d in data)
                     {
-                        if (await GetEntityByPartNumber(table.TableName, d.PartNumber) == null)
+                        if (string.IsNullOrWhiteSpace((await GetEntityByPartNumber(table.TableName, d.PartNumber)).PartNumber))
                             await InsertIntoTableByTableNameAsync(table.TableName, d);
                         else
                             await UpdateEntityAsync(table.TableName, d.PartNumber, d);
