@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,11 @@ namespace ProductionManagementSystem.Core.Data
         public MySqlTableHelper(string connectionString)
         {
             this.conn = new MySqlConnection(connectionString);
+        }
+        
+        public MySqlTableHelper(DbConnection connection)
+        {
+            this.conn = (MySqlConnection) connection;
         }
 
         public void CreateTable(DatabaseTable table)

@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Repositories;
+using ProductionManagementSystem.Core.Repositories.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Services.AltiumDB
 {
@@ -12,11 +13,11 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         Task<string> GetPathByTableIdAsync(int id);
     }
     
-    public class DirectoryService : BaseService<Directory>, IDirectoryService
+    public class DirectoryService : BaseService<Directory, IAltiumDBUnitOfWork>, IDirectoryService
     {
-        public DirectoryService(IUnitOfWork db) : base(db)
+        public DirectoryService(IAltiumDBUnitOfWork db) : base(db)
         {
-            _currentRepository = _db.DirectoryRepository;
+            _currentRepository = _db.Directories;
         }
 
         public async Task<string> GetPathByDirectoryIdAsync(int id)
@@ -36,7 +37,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         public async Task<string> GetPathByTableIdAsync(int id)
         {
             StringBuilder result = new StringBuilder();
-            var table = await _db.DatabaseTableRepository.GetByIdAsync(id);
+            var table = await _db.DatabaseTables.GetByIdAsync(id);
             if (table == null || !table.DirectoryId.HasValue)
                 return "";
             

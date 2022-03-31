@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Core.Models.AltiumDB;
+using ProductionManagementSystem.Core.Models.AltiumDB.Projects;
 using ProductionManagementSystem.Core.Models.Components;
 using ProductionManagementSystem.Core.Models.Devices;
 using ProductionManagementSystem.Core.Models.ElementsDifference;
@@ -34,6 +35,8 @@ namespace ProductionManagementSystem.Core.Data.EF
         public DbSet<DatabaseTable> DatabaseTables { get; set; }
         public DbSet<TableColumn> TableColumns { get; set; }
         public DbSet<ToDoNote> ToDoNotes { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<EntityInProject> EntityInProjects { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {

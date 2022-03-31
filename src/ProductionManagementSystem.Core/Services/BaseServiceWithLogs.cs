@@ -8,7 +8,7 @@ using ProductionManagementSystem.Core.Repositories;
 
 namespace ProductionManagementSystem.Core.Services
 {
-    public abstract class BaseServiceWithLogs<TItem> : BaseService<TItem>, IBaseService<TItem>
+    public abstract class BaseServiceWithLogs<TItem> : BaseService<TItem, IUnitOfWork>, IBaseService<TItem>
         where TItem : BaseEntity
     {
         protected BaseServiceWithLogs(IUnitOfWork db) : base(db)

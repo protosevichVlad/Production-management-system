@@ -8,6 +8,7 @@ using MySqlConnector;
 using ProductionManagementSystem.Core.Data;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Repositories;
+using ProductionManagementSystem.Core.Repositories.AltiumDB;
 using Directory = ProductionManagementSystem.Core.Models.AltiumDB.Directory;
 
 namespace ProductionManagementSystem.Core.Services.AltiumDB
@@ -27,14 +28,14 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         Task<List<string>> GetFiledFromAllTables(string filed);
     }
 
-    public class DatabaseService : BaseService<DatabaseTable>, IDatabaseService
+    public class DatabaseService : BaseService<DatabaseTable, IAltiumDBUnitOfWork>, IDatabaseService
     {
         private IMySqlTableHelper _tableHelper;
             
-        public DatabaseService(string connectionString) : base(new EFUnitOfWork(connectionString))
+        public DatabaseService(string connectionString) : base(new EF_AltiumDBUnitOfWork(connectionString))
         {
             _tableHelper = new MySqlTableHelper(connectionString);
-            _currentRepository = _db.DatabaseTableRepository;
+            _currentRepository = _db.DatabaseTables;
         }
 
         public override async Task CreateAsync(DatabaseTable item)
@@ -53,13 +54,13 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
 
         public async Task<bool> TableIsExistsAsync(string tableName)
         {
-            var tables = await _db.DatabaseTableRepository.FindAsync(x => x.TableName == tableName);
+            var tables = await _db.DatabaseTables.FindAsync(x => x.TableName == tableName);
             return tables.Count > 0;
         }
 
         public async Task<DatabaseTable> GetTableByNameAsync(string tableName)
         {
-            var table = (await _db.DatabaseTableRepository.FindAsync(x => x.TableName == tableName, "TableColumns")).FirstOrDefault();
+            var table = (await _db.DatabaseTables.FindAsync(x => x.TableName == tableName, "TableColumns")).FirstOrDefault();
             if (table == null) throw new NotImplementedException();
             table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
             return table;
@@ -100,7 +101,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         {
             if (_tableHelper.GetFiledTable(table, "Library Ref").Count(x => data.LibraryRef == x) == 0)
             {
-                await _db.ToDoNoteRepository.CreateAsync(new ToDoNote()
+                await _db.ToDoNotes.CreateAsync(new ToDoNote()
                 {
                     Completed = false,
                     Created = DateTime.Now,
@@ -111,7 +112,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             
             if (_tableHelper.GetFiledTable(table, "Footprint Ref").Count(x => data.FootprintRef == x) == 0)
             {
-                await _db.ToDoNoteRepository.CreateAsync(new ToDoNote()
+                await _db.ToDoNotes.CreateAsync(new ToDoNote()
                 {
                     Completed = false,
                     Created = DateTime.Now,
@@ -145,11 +146,15 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
 
                 try
                 {
-                    await CreateAsync(table);
+                    if (await GetTableByNameAsync(table.TableName) == null)
+                        await CreateAsync(table);
                     //TODO: write sql query for insert list dictionary
                     foreach (var d in data)
                     {
-                        await InsertIntoTableByTableNameAsync(table.TableName, d);
+                        if (await GetEntityByPartNumber(table.TableName, d.PartNumber) == null)
+                            await InsertIntoTableByTableNameAsync(table.TableName, d);
+                        else
+                            await UpdateEntityAsync(table.TableName, d.PartNumber, d);
                     }
                 }
                 catch (Exception e)

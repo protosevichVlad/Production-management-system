@@ -15,7 +15,7 @@ namespace ProductionManagementSystem.Core.Services
         Task<List<Log>> GetByTaskIdAsync(int taskId);
     }
     
-    public class LogService : BaseService<Log>, ILogService
+    public class LogService : BaseService<Log, IUnitOfWork>, ILogService
     {
         private readonly UserManager<User> _userManager;
         private User _user;

@@ -16,12 +16,13 @@ namespace ProductionManagementSystem.Core.Services
         public Task DeleteAsync(TItem item);
     }
     
-    public abstract class BaseService<TItem> : IBaseService<TItem>
+    public abstract class BaseService<TItem, TIUnitOfWork> : IBaseService<TItem>
+        where TIUnitOfWork : IBaseUnitOfWork
     {
-        protected IUnitOfWork _db;
+        protected TIUnitOfWork _db;
         protected IRepository<TItem> _currentRepository;
 
-        protected BaseService(IUnitOfWork db)
+        protected BaseService(TIUnitOfWork db)
         {
             _db = db;
         }

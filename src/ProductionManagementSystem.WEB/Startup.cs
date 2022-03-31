@@ -11,6 +11,7 @@ using ProductionManagementSystem.Core.Data.EF;
 using ProductionManagementSystem.Core.Models.SupplyRequests;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Repositories;
+using ProductionManagementSystem.Core.Repositories.AltiumDB;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 using ProductionManagementSystem.Core.Services.SupplyRequestServices;
@@ -61,6 +62,7 @@ namespace ProductionManagementSystem.WEB
             });
 
             services.AddScoped<IUnitOfWork>(_ => new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IAltiumDBUnitOfWork>(_ => new EF_AltiumDBUnitOfWork(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IMontageService, MontageService>();
             services.AddScoped<IDesignService, DesignService>();
             services.AddScoped<IDeviceService, DeviceService>();
@@ -73,6 +75,8 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IDirectoryService, DirectoryService>();
             services.AddScoped<IToDoNoteService, ToDoNoteService>();
+            services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IEntityService, EntityService>();
             services.AddScoped<IDatabaseService>(_ =>
                 new DatabaseService(Configuration.GetConnectionString("DefaultConnection")));
         }
@@ -117,6 +121,9 @@ namespace ProductionManagementSystem.WEB
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name: "area",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

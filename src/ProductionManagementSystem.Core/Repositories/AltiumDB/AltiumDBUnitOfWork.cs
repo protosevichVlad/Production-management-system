@@ -1,4 +1,5 @@
-﻿using ProductionManagementSystem.Core.Data.EF;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductionManagementSystem.Core.Data.EF;
 
 namespace ProductionManagementSystem.Core.Repositories.AltiumDB
 {
@@ -6,13 +7,22 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
     {
         public DatabaseTableRepository DatabaseTables { get; }
         public DirectoryRepository Directories { get; }
+        public IProjectRepository Projects { get; }
+        IToDoNoteRepository ToDoNotes { get; }
+        IEntityInProjectRepository EntityInProjects { get; }
+        IAltiumDBEntityRepository AltiumDbEntityRepository { get; }
+        
     }
     
     public class EF_AltiumDBUnitOfWork : EF_BaseUnitOfWork, IAltiumDBUnitOfWork
     {
         private DatabaseTableRepository _databaseTableRepository;
         private DirectoryRepository _directoryRepository;
-
+        private IProjectRepository _projectRepository;
+        private IToDoNoteRepository _toDoNoteRepository;
+        private IEntityInProjectRepository _entityInProject;
+        private IAltiumDBEntityRepository _altiumDbEntityRepository;
+        
         public EF_AltiumDBUnitOfWork(string connectionString) : base(connectionString)
         {
         }
@@ -24,5 +34,13 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
         public DatabaseTableRepository DatabaseTables =>
             _databaseTableRepository ??= new DatabaseTableRepository(_db);
         public DirectoryRepository Directories => _directoryRepository ??= new DirectoryRepository(_db);
+        public IProjectRepository Projects => _projectRepository ??= new ProjectRepository(_db);
+        public IToDoNoteRepository ToDoNotes =>
+            _toDoNoteRepository ??= new ToDoNoteRepository(_db);
+        public IEntityInProjectRepository EntityInProjects =>
+            _entityInProject ??= new EntityInProjectRepository(_db);
+
+        public IAltiumDBEntityRepository AltiumDbEntityRepository =>
+            _altiumDbEntityRepository ?? new AltiumDBEntityRepository(_db);
     }
 }

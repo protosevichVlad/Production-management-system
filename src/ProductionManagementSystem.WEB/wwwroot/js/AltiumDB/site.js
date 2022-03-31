@@ -89,6 +89,18 @@ function deleteEntityFromTable(tableName, id)
     })
 }
 
+function deleteProject(id)
+{
+    return fetch(`/AltiumDB/Projects/${id}`, {
+        method: 'DELETE',
+    }).then(response => {
+        if (response.ok)
+        {
+            location.reload();
+        }
+    })
+}
+
 function markNoteAsCompleted(id)
 {
     return fetch(`/api/AltiumDB/to-do/${id}/completed`, {
