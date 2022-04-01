@@ -17,6 +17,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         Task<Project> ImportProjectAsync(Stream bom, Stream image, Stream circuitDiagram,
             Stream assemblyDrawing, Stream threeDModel);
 
+        Task<List<Project>> GetProjectsWithEntityAsync(string partNumber);
         Task DeleteByIdAsync(int id);
     }
     public class ProjectService : BaseService<Project, IAltiumDBUnitOfWork>, IProjectService
@@ -99,6 +100,11 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             } 
             
             return project;
+        }
+
+        public async Task<List<Project>> GetProjectsWithEntityAsync(string partNumber)
+        {
+            return await _db.Projects.GetProjectsWithEntityAsync(partNumber);
         }
 
         public async Task DeleteByIdAsync(int id)

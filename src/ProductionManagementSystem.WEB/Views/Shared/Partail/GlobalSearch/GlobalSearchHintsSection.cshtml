@@ -1,0 +1,20 @@
+﻿@model ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch.GlobalSearchHintsSectionViewModel
+
+@if (Model.Rows.Count > 0)
+{
+  <div class="bx--row" style="height: 10px"></div>
+  <div class="bx--row">
+    <div class="bx--col--auto">
+      @Model.Name
+    </div>
+  </div>
+  <div class="bx--row" style="height: 5px"></div>
+  <div class="bx--row">
+    <div class="bx--menu-divider altiumdb--global-search--hints--divider"></div>
+  </div>
+@foreach (var row in Model.Rows)
+{
+  <partial name="Partail\GlobalSearch\GlobalSearchHintsSectionRow" model="row"/>
+}
+  <div class="bx--row" style="height: 15px"></div>
+}

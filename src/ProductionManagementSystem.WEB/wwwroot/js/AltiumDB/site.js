@@ -125,18 +125,31 @@ function getDateTime()
     return (day < 10 ? '0' + day: day) + "/" + (month < 10 ? '0' + month: month) + "/" + year + "_" + (hour < 10 ? '0' + hour: hour) + ':' + (minute < 10 ? '0' + minute: minute) + ':' + (second < 10 ? '0' + second: second);
 }
 
-document.querySelector('#globalSearchIcon').addEventListener('click', (event) =>
-{
-    let globalSearch = document.querySelector('#globalSearch');
-    let globalSearchInput = document.querySelector('#globalSearchInput');
-    let globalSearchIcon = document.querySelector('#globalSearchIcon');
+let globalSearch = document.querySelector('#globalSearch');
+let globalSearchInput = document.querySelector('#globalSearchInput');
+let globalSearchIcon = document.querySelector('#globalSearchIcon');
 
-    event.currentTarget.style.display = 'none';
+globalSearchIcon.addEventListener('click', (event) =>
+{
+    globalSearchIcon.style.display = 'none';
     globalSearch.style.display = 'flex';
     globalSearchInput.focus();
-    globalSearch.addEventListener('focusout',(event)=> {
-        // event.currentTarget.style.display = 'none';
-        // globalSearchIcon.style.display = 'block';
-        // globalSearchInput.value = '';
-    })
+})
+
+globalSearch.addEventListener('focusout',(event)=> {
+    event.currentTarget.style.display = 'none';
+    globalSearchIcon.style.display = 'block';
+    globalSearchInput.value = '';
+    $('#global-search--hints').remove();
+})
+
+globalSearchInput.addEventListener('change', () =>{
+    console.log(globalSearchInput.value);
+})
+
+globalSearchInput.addEventListener('input', () =>{
+    $.get(`/AltiumDB/search?q=${globalSearchInput.value}`, function(data) {
+        $('#global-search--hints').remove();
+        $(`#global-search--close-button`).after(data);
+    });
 })

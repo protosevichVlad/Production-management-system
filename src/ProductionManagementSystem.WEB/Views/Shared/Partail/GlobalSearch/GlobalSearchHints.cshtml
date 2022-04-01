@@ -1,0 +1,8 @@
+﻿@model List<ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch.GlobalSearchHintsSectionViewModel>
+
+<div id="global-search--hints" class="bx--grid altiumdb--global-search--hints" style="width: calc(100% - 15px); position: absolute; top: 48px; left:15px">
+  @foreach (var section in Model)
+  {
+    <partial name="Partail\GlobalSearch\GlobalSearchHintsSection" model="section"/>
+  }
+</div>

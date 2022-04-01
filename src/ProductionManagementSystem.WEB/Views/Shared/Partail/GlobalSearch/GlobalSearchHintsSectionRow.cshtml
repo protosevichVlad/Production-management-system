@@ -1,0 +1,53 @@
+﻿@using ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch
+@using ProductionManagementSystem.Core.Models.AltiumDB
+@using ProductionManagementSystem.Core.Models.AltiumDB.Projects
+@model ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch.GlobalSearchHintsSectionRowViewModel
+
+<div class="bx--row" style="height: 5px"></div>
+<div class="bx--row">
+  @switch (Model.Type)
+  {
+    case HintsSectionRowType.Text:
+      @Model.Content.ToString()
+      break;
+      
+    case HintsSectionRowType.BaseEntity:
+      var baseEntity = @Model.Content as BaseAltiumDbEntity;
+      if (baseEntity == null)
+        break;
+      
+      <div class="bx--col-sm-1">
+        <img src="@baseEntity.ImageLink" class="altiumdb--entity-table--image">
+      </div>
+      <div class="bx--col-sm-3">
+        <div class="bx--grid">
+          <div class="bx--row"><a href="/AltiumDB/Tables/@baseEntity["tableName"]/@baseEntity.PartNumber" style="color: #78a9ff">@baseEntity.Item</a> </div>
+          <div class="bx--row" style="height: 4px"></div>
+          <div class="bx--row">@baseEntity.PartNumber</div>
+          <div class="bx--row" style="height: 4px"></div>
+          <div class="bx--row">@baseEntity.Category</div>
+        </div>
+      </div>
+      
+      break;
+      
+    case HintsSectionRowType.Project:
+      var project = @Model.Content as Project;
+      if (project == null)
+        break;
+      
+      <div class="bx--col-sm-1">
+        <img src="@project.ImagePath" class="altiumdb--entity-table--image">
+      </div>
+      <div class="bx--col-sm-3">
+        <div class="bx--grid">
+          <div class="bx--row">@project.Name</div>
+          <div class="bx--row" style="height: 4px"></div>
+          <div class="bx--row">@project.Variant</div>
+          <div class="bx--row" style="height: 4px"></div>
+          <div class="bx--row">@project.ReportDate.ToString("dd.MM.yyyy")</div>
+        </div>
+      </div>
+      break;
+  }
+</div>
