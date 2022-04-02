@@ -10,6 +10,7 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
     public interface IProjectRepository : IRepository<Project>
     {
         Task<List<Project>> GetProjectsWithEntityAsync(string partNumber);
+        Task<List<Project>> SearchByKeyWordAsync(string keyWord);
     }
     
     public class ProjectRepository : Repository<Project>, IProjectRepository
@@ -22,6 +23,13 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
         {
             return await _dbSet.Include(x => x.Entities).Where(x => x.Entities.Count(x => x.PartNumber == partNumber) > 0)
                 .ToListAsync();
+        }
+
+        public async Task<List<Project>> SearchByKeyWordAsync(string keyWord)
+        {
+            if (string.IsNullOrEmpty(keyWord))
+                return new List<Project>();
+            return await _dbSet.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(keyWord)).ToListAsync();
         }
     }
 }

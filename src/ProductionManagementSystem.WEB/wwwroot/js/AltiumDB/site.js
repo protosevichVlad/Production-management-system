@@ -136,17 +136,14 @@ globalSearchIcon.addEventListener('click', (event) =>
     globalSearchInput.focus();
 })
 
-globalSearch.addEventListener('focusout',(event)=> {
-    setTimeout(() => {
+window.addEventListener('click',(event)=> {
+    let hints = document.querySelector('.altiumdb--global-search--hints');
+    if (hints && !hints.contains(event.target)) {
         globalSearch.style.display = 'none';
         globalSearchIcon.style.display = 'block';
         globalSearchInput.value = '';
         $('#global-search--hints').remove();
-    }, 100);
-})
-
-globalSearchInput.addEventListener('change', () =>{
-    console.log(globalSearchInput.value);
+    }
 })
 
 globalSearchInput.addEventListener('input', () =>{

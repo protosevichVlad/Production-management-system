@@ -18,6 +18,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             Stream assemblyDrawing, Stream threeDModel);
 
         Task<List<Project>> GetProjectsWithEntityAsync(string partNumber);
+        Task<List<Project>> SearchByKeyWordAsync(string keyWord);
         Task DeleteByIdAsync(int id);
     }
     public class ProjectService : BaseService<Project, IAltiumDBUnitOfWork>, IProjectService
@@ -105,6 +106,13 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         public async Task<List<Project>> GetProjectsWithEntityAsync(string partNumber)
         {
             return await _db.Projects.GetProjectsWithEntityAsync(partNumber);
+        }
+
+        public async Task<List<Project>> SearchByKeyWordAsync(string keyWord)
+        {
+            if (string.IsNullOrEmpty(keyWord)) 
+                return new List<Project>();
+            return await _db.Projects.SearchByKeyWordAsync(keyWord);
         }
 
         public async Task DeleteByIdAsync(int id)

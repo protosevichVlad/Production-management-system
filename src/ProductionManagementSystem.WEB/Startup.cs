@@ -77,6 +77,7 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<IToDoNoteService, ToDoNoteService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IEntityService, EntityService>();
+            services.AddScoped<ITableService, TableService>();
             services.AddScoped<IDatabaseService>(_ =>
                 new DatabaseService(Configuration.GetConnectionString("DefaultConnection")));
         }

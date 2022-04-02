@@ -46,7 +46,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
 
         public async Task<List<BaseAltiumDbEntity>> SearchByKeyWordAsync(string keyWord)
         {
-            throw new System.NotImplementedException();
+            return await _db.AltiumDbEntityRepository.SearchByKeyWordAsync(keyWord);
         }
     }
 }

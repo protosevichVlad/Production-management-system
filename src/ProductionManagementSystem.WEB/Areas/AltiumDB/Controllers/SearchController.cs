@@ -13,13 +13,14 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
         private readonly IProjectService _projectService;
         private readonly IDatabaseService _databaseService;
         private readonly IEntityService _entityService;
+        private readonly ITableService _tableService;
         
-
-        public SearchController(IProjectService projectService, IDatabaseService databaseService, IEntityService entityService)
+        public SearchController(IProjectService projectService, IDatabaseService databaseService, IEntityService entityService, ITableService tableService)
         {
             _projectService = projectService;
             _databaseService = databaseService;
             _entityService = entityService;
+            _tableService = tableService;
         }
 
         [Route("/AltiumDB/search")]
@@ -42,15 +43,49 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
                     }
                 });
             }
+            
             hints.Add(new GlobalSearchHintsSectionViewModel()
             {
                 Name = "Used in projects",
-                Rows = (await _projectService.GetProjectsWithEntityAsync(q)).Select(x => 
+                Rows = (await _projectService.GetProjectsWithEntityAsync(q)).Take(5).Select(x => 
                     new GlobalSearchHintsSectionRowViewModel() 
                     {
                      Type = HintsSectionRowType.Project,
                      Content = x
                 }).ToList()
+            });
+            
+            hints.Add(new GlobalSearchHintsSectionViewModel()
+            {
+                Name = "Entities",
+                Rows = (await _entityService.SearchByKeyWordAsync(q)).Take(5).Select(x => 
+                    new GlobalSearchHintsSectionRowViewModel() 
+                    {
+                        Type = HintsSectionRowType.BaseEntity,
+                        Content = x
+                    }).ToList()
+            });
+            
+            hints.Add(new GlobalSearchHintsSectionViewModel()
+            {
+                Name = "Projects",
+                Rows = (await _projectService.SearchByKeyWordAsync(q)).Take(5).Select(x => 
+                    new GlobalSearchHintsSectionRowViewModel() 
+                    {
+                        Type = HintsSectionRowType.Project,
+                        Content = x
+                    }).ToList()
+            });
+            
+            hints.Add(new GlobalSearchHintsSectionViewModel()
+            {
+                Name = "Tables",
+                Rows = (await _tableService.SearchByKeyWordAsync(q)).Take(5).Select(x => 
+                    new GlobalSearchHintsSectionRowViewModel() 
+                    {
+                        Type = HintsSectionRowType.Table,
+                        Content = x
+                    }).ToList()
             });
             return PartialView("Partail/GlobalSearch/GlobalSearchHints", hints);
         }

@@ -20,6 +20,7 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
         Task<BaseAltiumDbEntity> GetByPartNumber(string partNumber);
 
         Task<List<BaseAltiumDbEntity>> SearchByKeyWordAsync(DatabaseTable table, string keyWord);
+        Task<List<BaseAltiumDbEntity>> SearchByKeyWordAsync(string keyWord);
     }
 
     public class AltiumDBEntityRepository : IAltiumDBEntityRepository
@@ -174,7 +175,8 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
                     {
                         row[table.TableColumns[i].ColumnName] = reader[i].ToString();
                     }
-                    
+
+                    row["tableName"] = table.TableName;
                     result.Add(row);
                 }
                 
@@ -189,6 +191,19 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
             {  
                 await conn.CloseAsync(); 
             }
+        }
+
+        public async Task<List<BaseAltiumDbEntity>> SearchByKeyWordAsync(string keyWord)
+        {
+            List<BaseAltiumDbEntity> result = new List<BaseAltiumDbEntity>();
+            var tables = _context.DatabaseTables.Include(x => x.TableColumns).ToList();
+            foreach (var table in tables)
+            {
+                table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
+                result.AddRange(await SearchByKeyWordAsync(table, keyWord));
+            }
+            
+            return result;
         }
 
         public async Task UpdateAsync(BaseAltiumDbEntity item)

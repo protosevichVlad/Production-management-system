@@ -90,3 +90,16 @@
     position: relative;
     left: 1.5rem;
 }
+
+.altiumdb--global-search--hints--row
+{
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.altiumdb--global-search--hints--row:hover
+{
+    background-color: #393939;
+    outline: 2px solid #ffffff;
+    outline-offset: -2px;
+}

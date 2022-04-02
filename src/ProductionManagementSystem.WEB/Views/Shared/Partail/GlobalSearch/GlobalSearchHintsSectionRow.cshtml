@@ -4,38 +4,41 @@
 @model ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch.GlobalSearchHintsSectionRowViewModel
 
 <div class="bx--row" style="height: 5px"></div>
-<div class="bx--row">
-  @switch (Model.Type)
-  {
-    case HintsSectionRowType.Text:
+@switch (Model.Type)
+{
+  case HintsSectionRowType.Text:
+    <div class="bx--row">
       @Model.Content.ToString()
+    </div>
+    break;
+
+  case HintsSectionRowType.BaseEntity:
+    var baseEntity = @Model.Content as BaseAltiumDbEntity;
+    if (baseEntity == null)
       break;
-      
-    case HintsSectionRowType.BaseEntity:
-      var baseEntity = @Model.Content as BaseAltiumDbEntity;
-      if (baseEntity == null)
-        break;
-      
+    
+    <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/AltiumDB/Tables/@baseEntity["tableName"]/@baseEntity.PartNumber'">
       <div class="bx--col-sm-1">
         <img src="@baseEntity.ImageLink" class="altiumdb--entity-table--image">
       </div>
       <div class="bx--col-sm-3">
         <div class="bx--grid">
-          <div class="bx--row"><a href="/AltiumDB/Tables/@baseEntity["tableName"]/@baseEntity.PartNumber" style="color: #78a9ff">@baseEntity.Item</a> </div>
+          <div class="bx--row">@baseEntity.Item</div>
           <div class="bx--row" style="height: 4px"></div>
           <div class="bx--row">@baseEntity.PartNumber</div>
           <div class="bx--row" style="height: 4px"></div>
           <div class="bx--row">@baseEntity.Category</div>
         </div>
       </div>
-      
+    </div>
+    break;
+
+  case HintsSectionRowType.Project:
+    var project = @Model.Content as Project;
+    if (project == null)
       break;
-      
-    case HintsSectionRowType.Project:
-      var project = @Model.Content as Project;
-      if (project == null)
-        break;
-      
+
+    <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/AltiumDB/projects/details/@project.Id'">
       <div class="bx--col-sm-1">
         <img src="@project.ImagePath" class="altiumdb--entity-table--image">
       </div>
@@ -48,6 +51,16 @@
           <div class="bx--row">@project.ReportDate.ToString("dd.MM.yyyy")</div>
         </div>
       </div>
+    </div>
+    break;
+
+  case HintsSectionRowType.Table:
+    var table = @Model.Content as DatabaseTable;
+    if (table == null)
       break;
-  }
-</div>
+    
+    <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/AltiumDB/Tables/@table.TableName'">
+      @table.DisplayName
+    </div>
+    break;
+}
