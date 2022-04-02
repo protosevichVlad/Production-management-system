@@ -55,7 +55,7 @@ namespace ProductionManagementSystem.Core.Services
             return result;
         }
 
-        public override async Task<List<Log>> Find(Func<Log, bool> predicate)
+        public override async Task<List<Log>> Find(Func<Log, bool> predicate, string entities)
         {
             var result = await base.Find(predicate);
             result.Reverse();
