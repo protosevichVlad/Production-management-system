@@ -80,3 +80,13 @@
 {
     background-color: #393939;
 }
+
+.bx--search svg.bx--search-magnifier{
+    position: relative;
+    left: 2rem;
+}
+
+.bx--search--sm svg.bx--search-magnifier{
+    position: relative;
+    left: 1.5rem;
+}

@@ -18,7 +18,8 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
         Task UpdateAsync(DatabaseTable table, string partNumber, BaseAltiumDbEntity data);
         Task<BaseAltiumDbEntity> GetByPartNumber(DatabaseTable table, string partNumber);
         Task<BaseAltiumDbEntity> GetByPartNumber(string partNumber);
-        
+
+        Task<List<BaseAltiumDbEntity>> SearchByKeyWordAsync(DatabaseTable table, string keyWord);
     }
 
     public class AltiumDBEntityRepository : IAltiumDBEntityRepository
@@ -153,6 +154,41 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
             }
             
             return result;
+        }
+
+        public async Task<List<BaseAltiumDbEntity>> SearchByKeyWordAsync(DatabaseTable table, string keyWord)
+        {
+            try
+            {
+                var result = new List<BaseAltiumDbEntity>();
+                conn.Open();
+                
+                MySqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = $"SELECT * FROM `{table.TableName}` WHERE {string.Join(" OR ", table.TableColumns.Select(x => $"`{x.ColumnName}` LIKE @KeyWordExpression"))}";
+                cmd.Parameters.Add("@KeyWordExpression", DbType.String).Value = "%" + keyWord + "%";
+                MySqlDataReader reader = await cmd.ExecuteReaderAsync();
+                while (reader.Read())
+                {
+                    var row = new BaseAltiumDbEntity();
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        row[table.TableColumns[i].ColumnName] = reader[i].ToString();
+                    }
+                    
+                    result.Add(row);
+                }
+                
+                reader.Close();
+                return result;
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                await conn.CloseAsync(); 
+            }
         }
 
         public async Task UpdateAsync(BaseAltiumDbEntity item)

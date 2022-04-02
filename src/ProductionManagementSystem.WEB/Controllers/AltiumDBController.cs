@@ -18,11 +18,13 @@ namespace ProductionManagementSystem.WEB.Controllers
     {
         private IDatabaseService _databaseService;
         private IDirectoryService _directoryService;
+        private readonly IEntityService _entityService;
 
-        public AltiumDBController(IDatabaseService databaseService, IDirectoryService directoryService)
+        public AltiumDBController(IDatabaseService databaseService, IDirectoryService directoryService, IEntityService entityService)
         {
             _databaseService = databaseService;
             _directoryService = directoryService;
+            _entityService = entityService;
         }
 
         public IActionResult Index()
@@ -54,9 +56,9 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         [HttpGet]
         [Route("[controller]/Tables/{tableName}")]
-        public async Task<IActionResult> GetDataFromTable(string tableName, string orderBy, Dictionary<string, List<string>> filter)
+        public async Task<IActionResult> GetDataFromTable(string tableName, string orderBy, Dictionary<string, List<string>> filter, string q)
         {
-            var data = await _databaseService.GetDataFromTableAsync(tableName);
+            var data = string.IsNullOrEmpty(q) ? await _databaseService.GetDataFromTableAsync(tableName) : await _entityService.SearchByKeyWordAsync(q, tableName);
             var table = await _databaseService.GetTableByNameAsync(tableName);
             List<FilterViewModel> filters = new List<FilterViewModel>();
             foreach (var column in table.TableColumns.Where(x => BaseAltiumDbEntity.NotFilterFields.All(y => y != x.ColumnName)))
