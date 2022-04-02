@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Core.Models.AltiumDB;
@@ -32,9 +33,39 @@ namespace ProductionManagementSystem.WEB.Controllers
             return View();
         }
         
-        public async Task<ViewResult> Tables()
+        public async Task<ViewResult> Tables([FromQuery]string orderBy, [FromQuery]string q, string sad)
         {
-            return View(await _databaseService.GetAllAsync());
+            var data = await _databaseService.GetAllAsync();
+            if (!string.IsNullOrEmpty(q))
+                data = data.Where(x =>
+                    (!string.IsNullOrEmpty(x.DisplayName) && x.DisplayName.Contains(q, StringComparison.InvariantCultureIgnoreCase)) 
+                    || (!string.IsNullOrEmpty(x.TableName) && x.TableName.Contains(q, StringComparison.InvariantCultureIgnoreCase))
+                    || (!string.IsNullOrEmpty(x.FootprintPath) &&  x.FootprintPath.Contains(q, StringComparison.InvariantCultureIgnoreCase)) 
+                    || (!string.IsNullOrEmpty(x.LibraryPath) && x.LibraryPath.Contains(q, StringComparison.InvariantCultureIgnoreCase))).ToList();
+            
+            
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                Func<DatabaseTable, string> keySelector =
+                    (orderBy.EndsWith("_desc") ? orderBy.Substring(0, orderBy.Length - "_desc".Length) : orderBy) switch
+                    {
+                        "Name in database" => (table) => table.TableName,
+                        "Display name" => (table) => table.DisplayName,
+                        "Footprint Path" => (table) => table.FootprintPath,
+                        "Library Path" => (table) => table.LibraryPath,
+                    };
+                
+                if (orderBy.EndsWith("_desc"))
+                {
+                    data = data.OrderByDescending(keySelector).ToList();
+                }
+                else
+                {
+                    data = data.OrderBy(keySelector).ToList();
+                }
+            }
+            
+            return View(data);
         }
 
         [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
@@ -55,7 +86,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpGet]
-        [Route("[controller]/Tables/{tableName}")]
+        [Microsoft.AspNetCore.Mvc.Route("[controller]/Tables/{tableName}")]
         public async Task<IActionResult> GetDataFromTable(string tableName, string orderBy, Dictionary<string, List<string>> filter, string q)
         {
             var data = string.IsNullOrEmpty(q) ? await _databaseService.GetDataFromTableAsync(tableName) : await _entityService.SearchByKeyWordAsync(q, tableName);
@@ -97,7 +128,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpGet]
-        [Route("[controller]/EditTable/{tableName}")]
+        [Microsoft.AspNetCore.Mvc.Route("[controller]/EditTable/{tableName}")]
         [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
         public async Task<IActionResult> EditTable(string tableName)
         {
@@ -111,7 +142,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
-        [Route("[controller]/EditTable/{tableName}")]
+        [Microsoft.AspNetCore.Mvc.Route("[controller]/EditTable/{tableName}")]
         [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
         public async Task<IActionResult> EditTable(DatabaseTable table)
         {
@@ -130,7 +161,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         [HttpDelete]
         [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
-        [Route("AltiumDB/Tables/{tableName}")]
+        [Microsoft.AspNetCore.Mvc.Route("AltiumDB/Tables/{tableName}")]
         public async Task<IActionResult> Tables([FromRoute]string tableName)
         {
             await _databaseService.DeleteByTableNameAsync(tableName);
@@ -139,7 +170,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpGet]
         [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
-        [Route("AltiumDB/Tables/{tableName}/CreateEntity")]
+        [Microsoft.AspNetCore.Mvc.Route("AltiumDB/Tables/{tableName}/CreateEntity")]
         public async Task<IActionResult> CreateEntity([FromRoute]string tableName)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
@@ -149,7 +180,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpPost]
         [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
-        [Route("AltiumDB/Tables/{tableName}/CreateEntity")]
+        [Microsoft.AspNetCore.Mvc.Route("AltiumDB/Tables/{tableName}/CreateEntity")]
         public async Task<IActionResult> CreateEntity([FromRoute]string tableName, BaseAltiumDbEntity data)
         {
             await _databaseService.InsertIntoTableByTableNameAsync(tableName, data);
@@ -158,7 +189,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpGet]
         [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
-        [Route("AltiumDB/Tables/{tableName}/EditEntity/{partNumber}")]
+        [Microsoft.AspNetCore.Mvc.Route("AltiumDB/Tables/{tableName}/EditEntity/{partNumber}")]
         public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]string partNumber)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
@@ -179,7 +210,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         [HttpPost]
         [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
-        [Route("AltiumDB/Tables/{tableName}/EditEntity/{partNumber}")]
+        [Microsoft.AspNetCore.Mvc.Route("AltiumDB/Tables/{tableName}/EditEntity/{partNumber}")]
         public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]string partNumber, BaseAltiumDbEntity data)
         {
             await _databaseService.UpdateEntityAsync(tableName, partNumber,data);
@@ -188,7 +219,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpDelete]
         [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
-        [Route("AltiumDB/Tables/{tableName}/{partNumber}")]
+        [Microsoft.AspNetCore.Mvc.Route("AltiumDB/Tables/{tableName}/{partNumber}")]
         public async Task<IActionResult> Tables([FromRoute]string tableName, [FromRoute]string partNumber)
         {
             await _databaseService.DeleteEntityById(tableName, partNumber);
@@ -197,7 +228,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         [HttpGet]
         [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
-        [Route("AltiumDB/ImportTables")]
+        [Microsoft.AspNetCore.Mvc.Route("AltiumDB/ImportTables")]
         public async Task<IActionResult> ImportTables()
         {
             return View();
@@ -205,7 +236,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpPost]
         [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
-        [Route("AltiumDB/ImportTables")]
+        [Microsoft.AspNetCore.Mvc.Route("AltiumDB/ImportTables")]
         public async Task<IActionResult> ImportTables(IFormFile file)
         {
             var tableName = file.FileName.Split('.')[0];
@@ -228,7 +259,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpGet]
-        [Route("AltiumDB/Tables/{tableName}/{partNumber}")]
+        [Microsoft.AspNetCore.Mvc.Route("AltiumDB/Tables/{tableName}/{partNumber}")]
         public async Task<IActionResult> EntityDetails([FromRoute]string tableName, [FromRoute]string partNumber)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
@@ -237,7 +268,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpGet]
-        [Route("AltiumDB/Directories")]
+        [Microsoft.AspNetCore.Mvc.Route("AltiumDB/Directories")]
         public async Task<IActionResult> Directories()
         {
             return View(new TreeViewViewModel(await _directoryService.GetByIdAsync(0), true){ ShowPath = true});

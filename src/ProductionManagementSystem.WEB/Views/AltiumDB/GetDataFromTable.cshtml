@@ -7,7 +7,7 @@
 }
 
 <div class="bx--data-table-container " data-table>
-  <form method="get" action="">
+  <form method="get" action="" id="tableFiltersForm">
     <div class="bx--data-table-header">
       <div class="bx--grid--full-width">
         <div class="bx--row">
@@ -56,7 +56,6 @@
     </div>
 
     <section class="bx--table-toolbar  bx--table-toolbar--small ">
-
       <div class="bx--toolbar-content">
         <partial name="Partail/CarbonUIComponents/SearchInTableSm"></partial>
         @if (User.IsInRole(RoleEnum.AltiumDBEntitiesAdmin))
