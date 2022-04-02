@@ -137,10 +137,12 @@ globalSearchIcon.addEventListener('click', (event) =>
 })
 
 globalSearch.addEventListener('focusout',(event)=> {
-    event.currentTarget.style.display = 'none';
-    globalSearchIcon.style.display = 'block';
-    globalSearchInput.value = '';
-    $('#global-search--hints').remove();
+    setTimeout(() => {
+        globalSearch.style.display = 'none';
+        globalSearchIcon.style.display = 'block';
+        globalSearchInput.value = '';
+        $('#global-search--hints').remove();
+    }, 100);
 })
 
 globalSearchInput.addEventListener('change', () =>{
