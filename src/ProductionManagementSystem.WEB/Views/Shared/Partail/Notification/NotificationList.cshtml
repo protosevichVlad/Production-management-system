@@ -8,7 +8,7 @@
       @foreach (var toDo in (ViewBag.ToDos as List<ToDoNote>)?.Where(x => User.IsInRole(RoleEnum.AltiumDBTablesAdmin) || x.Completed == false) ?? new List<ToDoNote>())
       {
         <li class="bx--product-list__item">
-          <a class="bx--product-link" tabindex="0" href="javascript:void(0)">
+          <div class="bx--product-link" tabindex="0">
             @if (toDo.Completed)
             {
               <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" fill="#42be65" class="bx--product-switcher__icon bx--navigation-menu-panel-expand-icon" width="32" height="32" viewBox="0 0 32 32">
@@ -33,8 +33,25 @@
                 </svg>
               </div>
             }
-            <span class="bx--product-link__name">@toDo.Title</span>
-          </a>
+            <div class="bx--grid">
+              <div class="bx--row">
+                <span class="bx--product-link__name">@toDo.Title</span>
+              </div>
+              @if (toDo?.CreatedBy?.UserName != null)
+              {
+                <div class="bx--row altiumdb--notes-list--date">
+                  Created by @toDo.CreatedBy.UserName (@toDo.CreatedDateTime.ToString("dd.MM.yyyy"))
+                </div>
+              }
+              @if (toDo?.CompletedBy?.UserName != null)
+              {
+                <div class="bx--row altiumdb--notes-list--date">
+                  Complited by @toDo.CompletedBy.UserName (@toDo.CompletedDateTime.ToString("dd.MM.yyyy"))
+                </div>
+              }
+            </div>
+            
+          </div>
           @if (User.IsInRole(RoleEnum.AltiumDBTablesAdmin) && !toDo.Completed)
           {
             <div data-overflow-menu="" tabindex="0" aria-label="Overflow menu description" class="bx--overflow-menu">

@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic;
-using MySqlConnector;
 using ProductionManagementSystem.Core.Data;
 using ProductionManagementSystem.Core.Models.AltiumDB;
-using ProductionManagementSystem.Core.Repositories;
 using ProductionManagementSystem.Core.Repositories.AltiumDB;
-using Directory = ProductionManagementSystem.Core.Models.AltiumDB.Directory;
 
 namespace ProductionManagementSystem.Core.Services.AltiumDB
 {
@@ -31,10 +27,12 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
     public class DatabaseService : BaseService<DatabaseTable, IAltiumDBUnitOfWork>, IDatabaseService
     {
         private IMySqlTableHelper _tableHelper;
+        private IToDoNoteService _toDoNoteService;
             
-        public DatabaseService(string connectionString) : base(new EF_AltiumDBUnitOfWork(connectionString))
+        public DatabaseService(IAltiumDBUnitOfWork db, IMySqlTableHelper helper, IToDoNoteService toDoNoteService) : base(db)
         {
-            _tableHelper = new MySqlTableHelper(connectionString);
+            _tableHelper = helper;
+            _toDoNoteService = toDoNoteService;
             _currentRepository = _db.DatabaseTables;
         }
 
@@ -101,10 +99,10 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         {
             if (_tableHelper.GetFiledTable(table, "Library Ref").Count(x => data.LibraryRef == x) == 0)
             {
-                await _db.ToDoNotes.CreateAsync(new ToDoNote()
+                await _toDoNoteService.CreateAsync(new ToDoNote()
                 {
                     Completed = false,
-                    Created = DateTime.Now,
+                    CreatedDateTime = DateTime.Now,
                     Description = "",
                     Title = $"Create Library Ref: '{data.LibraryRef}' for {table.DisplayName} table",
                 });
@@ -112,10 +110,10 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             
             if (_tableHelper.GetFiledTable(table, "Footprint Ref").Count(x => data.FootprintRef == x) == 0)
             {
-                await _db.ToDoNotes.CreateAsync(new ToDoNote()
+                await _toDoNoteService.CreateAsync(new ToDoNote()
                 {
                     Completed = false,
-                    Created = DateTime.Now,
+                    CreatedDateTime = DateTime.Now,
                     Description = "",
                     Title = $"Create Footprint Ref: '{data.FootprintRef}' for {table.DisplayName} table",
                 });

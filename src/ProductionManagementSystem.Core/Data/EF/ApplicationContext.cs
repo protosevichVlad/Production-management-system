@@ -55,6 +55,8 @@ namespace ProductionManagementSystem.Core.Data.EF
         {
             base.OnModelCreating(builder);
             builder.Entity<User>().HasMany<Log>().WithOne(x => x.User).OnDelete(DeleteBehavior.SetNull);
+            builder.Entity<User>().HasMany<ToDoNote>().WithOne(x => x.CompletedBy).HasForeignKey(x => x.CompletedById).OnDelete(DeleteBehavior.SetNull);
+            builder.Entity<User>().HasMany<ToDoNote>().WithOne(x => x.CreatedBy).HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

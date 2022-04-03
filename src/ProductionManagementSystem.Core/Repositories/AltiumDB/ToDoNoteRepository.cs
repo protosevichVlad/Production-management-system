@@ -18,6 +18,14 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
         {
         }
 
+        public override async Task<List<ToDoNote>> GetAllAsync()
+        {
+            return await _db.ToDoNotes
+                .Include(x => x.CompletedBy)
+                .Include(x => x.CreatedBy)
+                .ToListAsync();
+        }
+
         public async Task<List<ToDoNote>> GetNotCompletedAsync()
         {
             return await _dbSet.Where(x => x.Completed == false).ToListAsync();

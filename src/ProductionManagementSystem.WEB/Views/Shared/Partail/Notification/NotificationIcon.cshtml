@@ -5,8 +5,8 @@
   DateTime lastOpened = DateTime.Now;
   DateTime.TryParseExact(Context.Request.Cookies["AltiumDB_Notifications_LastOpened"], "dd/MM/yyyy_HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out lastOpened);
 }
-<button class="bx--header__menu-trigger bx--header__action" aria-label="Action 1" title="Action 1" data-navigation-menu-panel-label-expand="Action 1" data-navigation-menu-panel-label-collapse="Close menu" data-product-switcher-target="#switcher-bqavcareoq" onclick="document.cookie = `AltiumDB_Notifications_LastOpened=${getDateTime()}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT;`">
-  @if (ViewBag.ToDos != null && (ViewBag.ToDos as List<ToDoNote>)?.Count > 0 && lastOpened <= (ViewBag.ToDos as List<ToDoNote>)?[0].Created ?? false)
+<button class="bx--header__menu-trigger bx--header__action" aria-label="Notifications" title="Notifications" data-navigation-menu-panel-label-expand="Notifications" data-navigation-menu-panel-label-collapse="Close menu" data-product-switcher-target="#switcher-bqavcareoq" onclick="document.cookie = `AltiumDB_Notifications_LastOpened=${getDateTime()}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT;`">
+  @if (ViewBag.ToDos != null && (ViewBag.ToDos as List<ToDoNote>)?.Count > 0 && lastOpened <= (ViewBag.ToDos as List<ToDoNote>)?[0].CreatedDateTime ?? false)
   {
     <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="bx--navigation-menu-panel-expand-icon" width="20" height="20" viewBox="0 0 32 32">
       <defs>

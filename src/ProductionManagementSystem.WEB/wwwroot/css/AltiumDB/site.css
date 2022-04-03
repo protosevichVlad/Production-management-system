@@ -103,3 +103,24 @@
     outline: 2px solid #ffffff;
     outline-offset: -2px;
 }
+
+.altiumdb--notes-list--date
+{
+    font-size: 0.75rem;
+    color: #c6c6c6;
+    font-weight: 300;
+    float: right;
+}
+
+.bx--product-list__item:hover
+{
+    background-color: #393939;
+}
+
+.bx--panel--overlay {
+    width: 24rem;
+}
+
+.bx--product-switcher__product-list .bx--overflow-menu:hover {
+    background-color: #393939;
+}

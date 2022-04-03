@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProductionManagementSystem.Core.Data;
 using ProductionManagementSystem.Core.Data.EF;
 using ProductionManagementSystem.Core.Models.SupplyRequests;
 using ProductionManagementSystem.Core.Models.Users;
@@ -34,12 +35,14 @@ namespace ProductionManagementSystem.WEB
             services.AddControllersWithViews(op =>
             {
                 op.Filters.Add<ToDoActionFilter>();
+                op.Filters.Add<UserFilter>();
             });
 
             services.AddDbContext<ApplicationContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 24)))
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
+                    new MySqlServerVersion(new Version(8, 0, 24)))
             );
-            
+
 
             services.AddIdentity<User, IdentityRole>(options =>
                 {
@@ -48,7 +51,7 @@ namespace ProductionManagementSystem.WEB
                     options.Password.RequireLowercase = false;
                     options.Password.RequireUppercase = false;
                     options.Password.RequireNonAlphanumeric = false;
-                    
+
                     options.User.RequireUniqueEmail = false;
                 })
                 .AddEntityFrameworkStores<ApplicationContext>()
@@ -61,8 +64,11 @@ namespace ProductionManagementSystem.WEB
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
 
-            services.AddScoped<IUnitOfWork>(_ => new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<IAltiumDBUnitOfWork>(_ => new EF_AltiumDBUnitOfWork(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IUnitOfWork>(_ =>
+                new EFUnitOfWork(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IAltiumDBUnitOfWork>(_ =>
+                new EF_AltiumDBUnitOfWork(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IMySqlTableHelper>(_ => new MySqlTableHelper(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IMontageService, MontageService>();
             services.AddScoped<IDesignService, DesignService>();
             services.AddScoped<IDeviceService, DeviceService>();
@@ -78,8 +84,8 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IEntityService, EntityService>();
             services.AddScoped<ITableService, TableService>();
-            services.AddScoped<IDatabaseService>(_ =>
-                new DatabaseService(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IDatabaseService, DatabaseService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
