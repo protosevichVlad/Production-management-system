@@ -101,8 +101,6 @@
 
   <ItemGroup>
     <Content Remove="Новая папка\**" />
-    <Content Remove="wwwroot\css\carbon-components.css" />
-    <Content Remove="wwwroot\css\carbon-components.min.css" />
   </ItemGroup>
 
   <ItemGroup>
