@@ -78,6 +78,9 @@
     <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\Manage\_ManageNav.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\Manage\_StatusMessage.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\Manage\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="vue-project\package-lock.json" />
+    <_ContentIncludedByDefault Remove="vue-project\package.json" />
+    <_ContentIncludedByDefault Remove="vue-project\jsconfig.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -97,10 +100,42 @@
   <ItemGroup>
     <None Remove="Новая папка\**" />
     <None Remove="..\.dockerignore" />
+    <None Remove="vue-project\vue.config.js" />
+    <None Remove="vue-project\src\main.js" />
+    <None Remove="vue-project\src\App.vue" />
+    <None Remove="vue-project\public\index.html" />
+    <None Remove="vue-project\babel.config.js" />
+    <None Remove="vue-project\README.md" />
+    <None Remove="vue-project\.gitignore" />
+    <None Remove="vue-project\dist\js\chunk-vendors.ae49c94d.js.map" />
+    <None Remove="vue-project\dist\js\chunk-vendors.ae49c94d.js" />
+    <None Remove="vue-project\dist\js\chunk-vendors-legacy.10a925ba.js.map" />
+    <None Remove="vue-project\dist\js\chunk-vendors-legacy.10a925ba.js" />
+    <None Remove="vue-project\dist\js\app.4c8fc8a9.js.map" />
+    <None Remove="vue-project\dist\js\app.4c8fc8a9.js" />
+    <None Remove="vue-project\dist\js\app-legacy.169b1a32.js.map" />
+    <None Remove="vue-project\dist\index.html" />
+    <None Remove="vue-project\dist\favicon.ico" />
+    <None Remove="vue-project\dist\css\chunk-vendors.6d7f044e.css" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="Новая папка\**" />
+    <Content Remove="wwwroot\js\chunk-vendors.ae49c94d.js.map" />
+    <Content Remove="wwwroot\js\chunk-vendors.ae49c94d.js" />
+    <Content Remove="wwwroot\js\chunk-vendors-legacy.10a925ba.js.map" />
+    <Content Remove="wwwroot\js\chunk-vendors-legacy.10a925ba.js" />
+    <Content Remove="wwwroot\js\app.4c8fc8a9.js.map" />
+    <Content Remove="wwwroot\js\app.4c8fc8a9.js" />
+    <Content Remove="wwwroot\js\app-legacy.169b1a32.js.map" />
+    <Content Remove="wwwroot\js\app-legacy.169b1a32.js" />
+    <Content Remove="wwwroot\css\chunk-vendors.6d7f044e.css" />
+    <Content Remove="wwwroot\css\app.35667023.css" />
+    <Content Remove="vue-project\package.json" />
+    <Content Remove="vue-project\package-lock.json" />
+    <Content Remove="vue-project\jsconfig.json" />
+    <Content Remove="package.json" />
+    <Content Remove="package-lock.json" />
   </ItemGroup>
 
   <ItemGroup>
