@@ -2,16 +2,9 @@
 <html lang="ru">
 <head>
   <title>@ViewData["Title"] - AltiumDB</title>
-  <script type="text/javascript" src="~/js/carbon-components.min.js"></script>
   <link rel="stylesheet" href="~/css/carbon-components.min.css"/>
   <link rel="stylesheet" href="~/css/AltiumDB/site.css"/>
   <link rel="stylesheet" href="/components/TreeView/treeViewComponent.css"/>
-  <script defer="defer" type="module" src="/js/chunk-vendors.ae49c94d.js"></script>
-  <script defer="defer" type="module" src="/js/app.4c8fc8a9.js"></script>
-  <link href="/css/chunk-vendors.6d7f044e.css" rel="stylesheet">
-  <link href="/css/app.35667023.css" rel="stylesheet">
-  <script defer="defer" src="/js/chunk-vendors-legacy.10a925ba.js" nomodule></script>
-  <script defer="defer" src="/js/app-legacy.169b1a32.js" nomodule></script>
   @RenderSection("Stylesheet", required: false);
 </head>
 <body>
@@ -44,6 +37,7 @@
 <script src="/components/TreeView/treeViewComponent.js"></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="~/js/AltiumDB/site.js"></script>
+  <script type="text/javascript" src="~/js/carbon-components.min.js"></script>
 @await RenderSectionAsync("Scripts", false)
 </body>
 </html>
