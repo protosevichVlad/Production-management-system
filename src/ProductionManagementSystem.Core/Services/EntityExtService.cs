@@ -17,7 +17,7 @@ namespace ProductionManagementSystem.Core.Services
         {
             _currentRepository = _db.EntityExtRepository;
         }
-
+        
         public async Task<List<EntityExt>> GetFromTable(int tableId)
         {
             return await _db.EntityExtRepository.GetAllByTableId(tableId);

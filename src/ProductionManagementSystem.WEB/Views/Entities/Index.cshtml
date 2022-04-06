@@ -102,7 +102,7 @@
             @if (columnName == "Part Number")
             {
               // <a href="/AltiumDB/Tables/@Model.Ex.TableName/@Model.Data[i]["Part Number"]">@Model[i][columnName]</a>
-              <a href="#">@Model[i][columnName]</a>
+              <a asp-action="Details" asp-route-id="@Model[i].KeyId">@Model[i][columnName]</a>
             }
             else
             {

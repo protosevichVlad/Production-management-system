@@ -1,4 +1,5 @@
-﻿using ProductionManagementSystem.Core.Models.AltiumDB;
+﻿using System.Linq;
+using ProductionManagementSystem.Core.Models.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Models
 {
@@ -6,6 +7,19 @@ namespace ProductionManagementSystem.Core.Models
     {
         public EntityExt(Table table) : base(table)
         {
+        }
+        
+        public EntityExt(AltiumDbEntity altiumDbEntity, Entity entity)
+        {
+            this.Quantity = entity.Quantity;
+            this.Table = entity.Table;
+            this.KeyId = entity.KeyId;
+            this.ImageUrl = entity.ImageUrl;
+            this.TableId = entity.TableId;
+            foreach (var pair in altiumDbEntity)
+            {
+                this[pair.Key] = pair.Value;
+            }
         }
 
         public EntityExt()

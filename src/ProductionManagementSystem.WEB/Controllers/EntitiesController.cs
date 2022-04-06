@@ -26,6 +26,12 @@ namespace ProductionManagementSystem.WEB.Controllers
             return View(await _entityExtService.GetAllAsync());
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var entityExt =  await _entityExtService.GetByIdAsync(id);
+            return View(entityExt);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Import()
         {

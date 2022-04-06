@@ -74,7 +74,10 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public async Task<EntityExt> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var entity = await _context.Entities.FirstOrDefaultAsync(x => x.KeyId == id);
+            if (entity == null) return null;
+            var altiumDbEntity = await GetByPartNumber(entity.PartNumber, entity.TableId);
+            return new EntityExt(altiumDbEntity ,entity);
         }
 
         public async Task<List<EntityExt>> FindAsync(Func<EntityExt, bool> predicate, string includeProperty = null)
@@ -193,6 +196,40 @@ namespace ProductionManagementSystem.Core.Repositories
             if (entities == null || entities.Count == 0) return null;
             if (entities.Count != 1) throw new NotImplementedException();
             return entities.FirstOrDefault();
+        }
+        
+        public async Task<AltiumDbEntity> GetByPartNumber(string partNumber, int tableId)
+        {
+            var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.Id == tableId);
+            table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
+            try
+            {
+                await _conn.OpenAsync();
+                
+                var cmd = _conn.CreateCommand();
+                cmd.CommandText = $"SELECT * FROM `{table.TableName}` WHERE `Part Number`= @PartNumber;";
+                AddParameterToCmd(cmd, "@PartNumber", partNumber);
+                var reader = await cmd.ExecuteReaderAsync();
+                var row = new EntityExt();
+                while (reader.Read())
+                {
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        row[table.TableColumns[i].ColumnName] = reader[i].ToString();
+                    }
+                }
+                
+                await reader.CloseAsync();
+                return row;
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                await _conn.CloseAsync(); 
+            }
         }
 
         private async Task<List<EntityExt>> GetAllByTableAsync(Table table)
