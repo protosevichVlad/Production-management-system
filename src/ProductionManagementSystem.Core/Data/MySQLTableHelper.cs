@@ -6,26 +6,22 @@ using System.Dynamic;
 using System.Linq;
 using System.Text;
 using MySqlConnector;
+using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Data
 {
     public interface IMySqlTableHelper
     {
-        void CreateTable(DatabaseTable table);
-        void DeleteTable(DatabaseTable table);
-        void AddColumn(DatabaseTable table, TableColumn column);
-        void DeleteColumn(DatabaseTable table, TableColumn column);
-        List<BaseAltiumDbEntity> GetDataFromTable(DatabaseTable table);
-        void InsertIntoTable(DatabaseTable table, BaseAltiumDbEntity data);
-        void InsertListIntoTable(DatabaseTable table, List<BaseAltiumDbEntity> data);
-        void UpdateDataInTable(DatabaseTable table, string partNumber, BaseAltiumDbEntity data);
-        BaseAltiumDbEntity GetEntityByPartNumber(DatabaseTable table, string partNumber);
-        void DeleteEntity(DatabaseTable table, string partNumber);
-        void UpdateLibraryPropertyInTable(DatabaseTable table, string propertyName, string value);
-        void RenameColumn(DatabaseTable table, TableColumn oldColumn, TableColumn newColumn);
-        List<string> GetFiledFromAllTables(List<DatabaseTable> tables, string filed);
-        List<string> GetFiledTable(DatabaseTable table, string filed);
+        void CreateTable(Table table);
+        void DeleteTable(Table table);
+        void AddColumn(Table table, TableColumn column);
+        void DeleteColumn(Table table, TableColumn column);
+        AltiumDbEntity GetEntityByPartNumber(Table table, string partNumber);
+        void UpdateLibraryPropertyInTable(Table table, string propertyName, string value);
+        void RenameColumn(Table table, TableColumn oldColumn, TableColumn newColumn);
+        List<string> GetFiledFromAllTables(List<Table> tables, string filed);
+        List<string> GetFiledTable(Table table, string filed);
     }
     
     public class MySqlTableHelper : IMySqlTableHelper
@@ -42,7 +38,7 @@ namespace ProductionManagementSystem.Core.Data
             this.conn = (MySqlConnection) connection;
         }
 
-        public void CreateTable(DatabaseTable table)
+        public void CreateTable(Table table)
         {
             try
             {
@@ -61,7 +57,7 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public void DeleteTable(DatabaseTable table)
+        public void DeleteTable(Table table)
         {
             try
             {
@@ -81,7 +77,7 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public void AddColumn(DatabaseTable table, TableColumn column)
+        public void AddColumn(Table table, TableColumn column)
         {
             try
             {
@@ -101,7 +97,7 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public void DeleteColumn(DatabaseTable table, TableColumn column)
+        public void DeleteColumn(Table table, TableColumn column)
         {
             try
             {
@@ -120,99 +116,8 @@ namespace ProductionManagementSystem.Core.Data
                 conn.Close(); 
             }
         }
-        public List<BaseAltiumDbEntity> GetDataFromTable(DatabaseTable table)
-        {
-            try
-            {
-                List<BaseAltiumDbEntity> result = new List<BaseAltiumDbEntity>();
-                conn.Open();
-                
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = $"SELECT * FROM `{table.TableName}`;";
-                MySqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    var row = new BaseAltiumDbEntity();
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        row[table.TableColumns[i].ColumnName] = reader[i].ToString();
-                    }
-                    
-                    result.Add(row);
-                }
-                
-                reader.Close();
-                return result;
-            }
-            catch(MySqlException ex)
-            {
-                throw ex;
-            }
-            finally
-            {  
-                conn.Close(); 
-            }
-        }
 
-        public void InsertIntoTable(DatabaseTable table, BaseAltiumDbEntity data)
-        {
-            try
-            {
-                conn.Open();
-                
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText =
-                    $"INSERT INTO `{table.TableName}` ({table.GetColumns()}) VALUES ({table.GenerateValueBinding()})";
-                foreach (var column in table.TableColumns)
-                {
-                    cmd.Parameters.Add(column.ParameterName, MySqlDbType.String).Value = data[column.ColumnName];
-                }
-
-                cmd.ExecuteNonQuery();
-            }
-            catch(MySqlException ex)
-            {
-                throw ex;
-            }
-            finally
-            {  
-                conn.Close(); 
-            }
-        }
-
-        public void InsertListIntoTable(DatabaseTable table, List<BaseAltiumDbEntity> data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateDataInTable(DatabaseTable table, string partNumber,  BaseAltiumDbEntity data)
-        {
-            try
-            {
-                conn.Open();
-                
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText =
-                    $"UPDATE `{table.TableName}` SET {table.GenerateUpdateBinding()} WHERE `Part Number` = @WherePartNumber";
-                cmd.Parameters.Add("@WherePartNumber", DbType.String).Value = partNumber;
-                foreach (var column in table.TableColumns)
-                {
-                    cmd.Parameters.Add(column.ParameterName, MySqlDbType.String).Value = data[column.ColumnName];
-                }
-
-                cmd.ExecuteNonQuery();
-            }
-            catch(MySqlException ex)
-            {
-                throw ex;
-            }
-            finally
-            {  
-                conn.Close(); 
-            }
-        }
-
-        public BaseAltiumDbEntity GetEntityByPartNumber(DatabaseTable table, string partNumber)
+        public AltiumDbEntity GetEntityByPartNumber(Table table, string partNumber)
         {
             try
             {
@@ -222,7 +127,7 @@ namespace ProductionManagementSystem.Core.Data
                 cmd.CommandText = $"SELECT * FROM `{table.TableName}` WHERE `Part Number`= @PartNumber;";
                 cmd.Parameters.Add("@PartNumber", DbType.String).Value = partNumber;
                 MySqlDataReader reader = cmd.ExecuteReader();
-                var row = new BaseAltiumDbEntity();
+                var row = new AltiumDbEntity();
                 while (reader.Read())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
@@ -243,29 +148,8 @@ namespace ProductionManagementSystem.Core.Data
                 conn.Close(); 
             }
         }
-
-        public void DeleteEntity(DatabaseTable table, string partNumber)
-        {
-            try
-            {
-                conn.Open();
-                
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = $"DELETE FROM `{table.TableName}` WHERE `Part Number` = @PartNumber;";
-                cmd.Parameters.Add("@PartNumber", DbType.String).Value = partNumber;
-                cmd.ExecuteNonQuery();
-            }
-            catch(MySqlException ex)
-            {
-                throw ex;
-            }
-            finally
-            {  
-                conn.Close(); 
-            }
-        }
-
-        public void UpdateLibraryPropertyInTable(DatabaseTable table, string propertyName, string value)
+        
+        public void UpdateLibraryPropertyInTable(Table table, string propertyName, string value)
         {
             try
             {
@@ -287,7 +171,7 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public void RenameColumn(DatabaseTable table, TableColumn oldColumn, TableColumn newColumn)
+        public void RenameColumn(Table table, TableColumn oldColumn, TableColumn newColumn)
         {
             try
             {
@@ -308,7 +192,7 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public List<string> GetFiledFromAllTables(List<DatabaseTable> tables, string filed)
+        public List<string> GetFiledFromAllTables(List<Table> tables, string filed)
         {
             try
             {
@@ -344,7 +228,7 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public List<string> GetFiledTable(DatabaseTable table, string filed)
+        public List<string> GetFiledTable(Table table, string filed)
         {
             try
             {

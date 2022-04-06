@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductionManagementSystem.Core.Data.EF;
 
 namespace ProductionManagementSystem.Core.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220405175255_AddEntityExt")]
+    partial class AddEntityExt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -225,7 +227,7 @@ namespace ProductionManagementSystem.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tables");
+                    b.ToTable("DatabaseTables");
                 });
 
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.TableColumn", b =>
@@ -240,10 +242,13 @@ namespace ProductionManagementSystem.Core.Migrations
                     b.Property<int>("DatabaseOrder")
                         .HasColumnType("int");
 
+                    b.Property<int>("DatabaseTableId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Display")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("TableId")
+                    b.Property<int?>("TableId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -854,9 +859,7 @@ namespace ProductionManagementSystem.Core.Migrations
                 {
                     b.HasOne("ProductionManagementSystem.Core.Models.AltiumDB.Table", "Table")
                         .WithMany("TableColumns")
-                        .HasForeignKey("TableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TableId");
 
                     b.Navigation("Table");
                 });

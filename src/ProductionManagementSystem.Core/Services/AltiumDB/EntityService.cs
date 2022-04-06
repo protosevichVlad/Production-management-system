@@ -6,15 +6,15 @@ using ProductionManagementSystem.Core.Repositories.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Services.AltiumDB
 {
-    public interface IEntityService : IBaseService<BaseAltiumDbEntity>
+    public interface IEntityService : IBaseService<AltiumDbEntity>
     {
-        Task<BaseAltiumDbEntity> SearchByPartNumber(string partNumber);
-        Task<BaseAltiumDbEntity> SearchByPartNumber(string partNumber, string tableName);
-        Task<List<BaseAltiumDbEntity>> SearchByKeyWordAsync(string keyWord, string tableName);
-        Task<List<BaseAltiumDbEntity>> SearchByKeyWordAsync(string keyWord);
+        Task<AltiumDbEntity> SearchByPartNumber(string partNumber);
+        Task<AltiumDbEntity> SearchByPartNumber(string partNumber, string tableName);
+        Task<List<AltiumDbEntity>> SearchByKeyWordAsync(string keyWord, string tableName);
+        Task<List<AltiumDbEntity>> SearchByKeyWordAsync(string keyWord);
     }
     
-    public class EntityService : BaseService<BaseAltiumDbEntity, IAltiumDBUnitOfWork>, IEntityService
+    public class EntityService : BaseService<AltiumDbEntity, IAltiumDBUnitOfWork>, IEntityService
     {
         private IEntityService _entityServiceImplementation;
 
@@ -23,12 +23,12 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             _currentRepository = _db.AltiumDbEntityRepository;
         }
 
-        public async Task<BaseAltiumDbEntity> SearchByPartNumber(string partNumber)
+        public async Task<AltiumDbEntity> SearchByPartNumber(string partNumber)
         {
             return await _db.AltiumDbEntityRepository.GetByPartNumber(partNumber);
         }
 
-        public async Task<BaseAltiumDbEntity> SearchByPartNumber(string partNumber, string tableName)
+        public async Task<AltiumDbEntity> SearchByPartNumber(string partNumber, string tableName)
         {
             var table = (await _db.DatabaseTables.FindAsync(x => x.TableName == tableName, "TableColumns")).FirstOrDefault();
             if (table == null)
@@ -36,7 +36,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             return await _db.AltiumDbEntityRepository.GetByPartNumber(table, partNumber);
         }
 
-        public async Task<List<BaseAltiumDbEntity>> SearchByKeyWordAsync(string keyWord, string tableName)
+        public async Task<List<AltiumDbEntity>> SearchByKeyWordAsync(string keyWord, string tableName)
         {
             var table = (await _db.DatabaseTables.FindAsync(x => x.TableName == tableName, "TableColumns")).FirstOrDefault();
             if (table == null)
@@ -44,7 +44,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             return await _db.AltiumDbEntityRepository.SearchByKeyWordAsync(table, keyWord);
         }
 
-        public async Task<List<BaseAltiumDbEntity>> SearchByKeyWordAsync(string keyWord)
+        public async Task<List<AltiumDbEntity>> SearchByKeyWordAsync(string keyWord)
         {
             return await _db.AltiumDbEntityRepository.SearchByKeyWordAsync(keyWord);
         }

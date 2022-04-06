@@ -15,6 +15,6 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         public int ProjectId { get; set; }
         
         [NotMapped]
-        public BaseAltiumDbEntity Entity { get; set; }
+        public AltiumDbEntity Entity { get; set; }
     }
 }

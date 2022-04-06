@@ -81,6 +81,8 @@
     <_ContentIncludedByDefault Remove="vue-project\package-lock.json" />
     <_ContentIncludedByDefault Remove="vue-project\package.json" />
     <_ContentIncludedByDefault Remove="vue-project\jsconfig.json" />
+    <_ContentIncludedByDefault Remove="Views\Shared\Partail\Components\TreeViewNodePartial.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\Partail\Components\TreeViewPartial.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -136,11 +138,13 @@
     <Content Remove="vue-project\jsconfig.json" />
     <Content Remove="package.json" />
     <Content Remove="package-lock.json" />
+    <Content Remove="test\package.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Models\AltiumDB\Tables" />
     <Folder Include="Pages" />
+    <Folder Include="test" />
   </ItemGroup>
 
 </Project>

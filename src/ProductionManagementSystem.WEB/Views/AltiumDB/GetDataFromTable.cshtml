@@ -2,7 +2,7 @@
 @model ProductionManagementSystem.WEB.Models.AltiumDB.DataListViewModel
 
 @{
-  ViewBag.Title = @Model.DatabaseTable.DisplayName;
+  ViewBag.Title = @Model.Table.DisplayName;
   Layout = "_AltiumDBLayout";
 }
 
@@ -12,7 +12,7 @@
       <div class="bx--grid--full-width">
         <div class="bx--row">
           <div class="bx--col-lg-2">
-            <h4 class="bx--data-table-header__title">@Model.DatabaseTable.DisplayName</h4>
+            <h4 class="bx--data-table-header__title">@Model.Table.DisplayName</h4>
             <p class="bx--data-table-header__description">Optional Helper Text</p>
           </div>
           <div class="bx--col-lg-10">
@@ -39,7 +39,7 @@
                 <div class="bx--col-sm-1 bx--offset-sm-3 bx--tooltip--align-end">
                   <button
                     class="bx--btn bx--btn--tertiary bx--btn--sm"
-                    type="button" onclick="location.href ='@Model.DatabaseTable.TableName'">
+                    type="button" onclick="location.href ='@Model.Table.TableName'">
                     Reset All
                   </button>
                   <button
@@ -68,7 +68,7 @@
             </svg>
             <ul class="bx--overflow-menu-options bx--overflow-menu--flip" tabindex="-1" role="menu" aria-label="Overflow" data-floating-menu-direction="bottom">
               <li class="bx--overflow-menu-options__option " role="presentation">
-                <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="location.href='/AltiumDB/EditTable/@Model.DatabaseTable.TableName'">
+                <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="location.href='/AltiumDB/EditTable/@Model.Table.TableName'">
                   <div class="bx--overflow-menu-options__option-content">
                     Edit table
                   </div>
@@ -78,7 +78,7 @@
           </div>
 
           <!--  Toolbar primary button -->
-          <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" onclick="location.href='@Model.DatabaseTable.TableName/CreateEntity'">
+          <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" onclick="location.href='@Model.Table.TableName/CreateEntity'">
             Add entity
             <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
               <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
@@ -95,7 +95,7 @@
     <thead>
     <tr>
       <th></th>
-      @foreach (var columnName in Model.DatabaseTable.TableColumns.Where(x => x.Display).Select(x => x.ColumnName))
+      @foreach (var columnName in Model.Table.TableColumns.Where(x => x.Display).Select(x => x.ColumnName))
       {
           <partial name="Partail/CarbonUIComponents/SortableTh" model="columnName"/>
       }
@@ -110,15 +110,15 @@
     {
       <tr >
         <td>
-          <img src="@Model.Data[i].ImageLink" class="altiumdb--entity-table--image"/>
+          <img src="@Model.Data[i].ImageUrl" class="altiumdb--entity-table--image"/>
         </td>
 
-        @foreach (var columnName in Model.DatabaseTable.TableColumns.Where(x => x.Display).Select(x => x.ColumnName))
+        @foreach (var columnName in Model.Table.TableColumns.Where(x => x.Display).Select(x => x.ColumnName))
         {
           <td>
             @if (columnName == "Part Number")
             {
-              <a href="/AltiumDB/Tables/@Model.DatabaseTable.TableName/@Model.Data[i]["Part Number"]">@Model.Data[i][columnName]</a>
+              <a href="/AltiumDB/Tables/@Model.Table.TableName/@Model.Data[i]["Part Number"]">@Model.Data[i][columnName]</a>
             }
             else if (columnName == "ImageLink")
             {
@@ -139,7 +139,7 @@
               </svg>
               <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
                 <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                  <button class="bx--overflow-menu-options__btn" onclick="location.href='/AltiumDB/Tables/@Model.DatabaseTable.TableName/EditEntity/@Model.Data[i]["Part Number"]'">
+                  <button class="bx--overflow-menu-options__btn" onclick="location.href='/AltiumDB/Tables/@Model.Table.TableName/EditEntity/@Model.Data[i]["Part Number"]'">
                     <div class="bx--overflow-menu-options__option-content">
                       <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M1 13H15V14H1zM12.7 4.5c.4-.4.4-1 0-1.4 0 0 0 0 0 0l-1.8-1.8c-.4-.4-1-.4-1.4 0 0 0 0 0 0 0L2 8.8V12h3.2L12.7 4.5zM10.2 2L12 3.8l-1.5 1.5L8.7 3.5 10.2 2zM3 11V9.2l5-5L9.8 6l-5 5H3z"></path>
@@ -148,7 +148,7 @@
                   </button>
                 </li>
                 <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                  <button class="bx--overflow-menu-options__btn" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting an entity', 'Do you really want to delete this entity', () => deleteEntityFromTable('@Model.DatabaseTable.TableName', '@Model.Data[i]["Part Number"]'))">
+                  <button class="bx--overflow-menu-options__btn" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting an entity', 'Do you really want to delete this entity', () => deleteEntityFromTable('@Model.Table.TableName', '@Model.Data[i]["Part Number"]'))">
                     <div class="bx--overflow-menu-options__option-content">
                       <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>

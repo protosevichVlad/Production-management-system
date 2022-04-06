@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.Core.Models.AltiumDB.BaseAltiumDbEntity
+﻿@model ProductionManagementSystem.Core.Models.EntityExt
 
 @{
   ViewBag.Title = "Create entity";
@@ -121,7 +121,7 @@
         <label for="text-input-part-ImageLink" class="bx--label">ImageLink</label>
         <input id="text-input-part-ImageLink" type="text"
                class="bx--text-input"
-               placeholder="ImageLink" asp-for="ImageLink">
+               placeholder="ImageLink" asp-for="ImageUrl">
       </div>
     </div>
     <div class="bx--row bx--row-padding">
@@ -138,10 +138,10 @@
           </div>
           <div class="bx--row bx--row-padding">
             <div class="bx--col-lg-8">
-              <img src="@Model.ImageLink" class="altiumdb--entity--image test-entity-image"/>
+              <img src="@Model.ImageUrl" class="altiumdb--entity--image test-entity-image"/>
             </div>
             <div class="bx--col-lg-4">
-              <img src="@Model.ImageLink" class="altiumdb--entity-table--image test-entity-image"/>
+              <img src="@Model.ImageUrl" class="altiumdb--entity-table--image test-entity-image"/>
             </div>
           </div>
         </div>

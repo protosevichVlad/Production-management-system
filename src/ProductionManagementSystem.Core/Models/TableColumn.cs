@@ -12,8 +12,8 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         public int Id { get; set; }
         public string ColumnName { get; set; }
         public bool Display { get; set; }
-        public int DatabaseTableId { get; set; }
-        public DatabaseTable DatabaseTable { get; set; }
+        public int TableId { get; set; }
+        public Table Table { get; set; }
         public int DatabaseOrder { get; set; }
 
 

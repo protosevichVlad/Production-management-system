@@ -1,0 +1,24 @@
+﻿@{
+  ViewBag.Title = "Import data";
+  Layout = "_AltiumDBLayout";
+}
+<form method="post" enctype="multipart/form-data">
+  <div class="bx--form-item">
+    <strong class="bx--file--label">Upload xlsx or csv file</strong>
+    <p class="bx--label-description"></p>
+    <div class="bx--file" data-file data-file-demo-state-manager>
+      <label for="file-uploader" class="bx--file-browse-btn" role="button" tabindex="0">
+        <div data-file-drop-container class="bx--file__drop-container">
+          Drag and drop file here or upload
+          <input type="file" class="bx--file-input" id="file-uploader" data-file-uploader
+                 data-target="[data-file-container]" multiple name="file"/>
+        </div>
+      </label>
+      <div data-file-container class="bx--file-container">
+      </div>
+    </div>
+  </div>
+  <div class="bx--form-item">
+    <button class="bx--btn bx--btn--primary" type="submit">Import</button>
+  </div>
+</form>

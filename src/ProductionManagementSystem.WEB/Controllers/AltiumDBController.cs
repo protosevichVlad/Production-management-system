@@ -4,27 +4,24 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 using ProductionManagementSystem.WEB.Models.AltiumDB;
-using ProductionManagementSystem.WEB.Models.Components;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
     public class AltiumDBController : Controller
     {
         private IDatabaseService _databaseService;
-        private IDirectoryService _directoryService;
         private readonly IEntityService _entityService;
 
-        public AltiumDBController(IDatabaseService databaseService, IDirectoryService directoryService, IEntityService entityService)
+        public AltiumDBController(IDatabaseService databaseService, IEntityService entityService)
         {
             _databaseService = databaseService;
-            _directoryService = directoryService;
             _entityService = entityService;
         }
 
@@ -46,7 +43,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             
             if (!string.IsNullOrEmpty(orderBy))
             {
-                Func<DatabaseTable, string> keySelector =
+                Func<Table, string> keySelector =
                     (orderBy.EndsWith("_desc") ? orderBy.Substring(0, orderBy.Length - "_desc".Length) : orderBy) switch
                     {
                         "Name in database" => (table) => table.TableName,
@@ -71,15 +68,14 @@ namespace ProductionManagementSystem.WEB.Controllers
         [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
         public async Task<ViewResult> CreateTable()
         {
-            var table = new DatabaseTable();
+            var table = new Table();
             table.InitAltiumDB("");
-            ViewBag.DirectoriesTree = new TreeViewViewModel(await _directoryService.GetByIdAsync(0), false) { ShowPath = true};
             return View(table);
         }
 
         [HttpPost]
         [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
-        public async Task<IActionResult> CreateTable(DatabaseTable table)
+        public async Task<IActionResult> CreateTable(Table table)
         {
             await _databaseService.CreateAsync(table);
             return RedirectToAction(nameof(GetDataFromTable), new {tableName = table.TableName});
@@ -92,7 +88,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             var data = string.IsNullOrEmpty(q) ? await _databaseService.GetDataFromTableAsync(tableName) : await _entityService.SearchByKeyWordAsync(q, tableName);
             var table = await _databaseService.GetTableByNameAsync(tableName);
             List<FilterViewModel> filters = new List<FilterViewModel>();
-            foreach (var column in table.TableColumns.Where(x => BaseAltiumDbEntity.NotFilterFields.All(y => y != x.ColumnName)))
+            foreach (var column in table.TableColumns.Where(x => AltiumDbEntity.NotFilterFields.All(y => y != x.ColumnName)))
             {
                 data = data.Where(x => !filter.ContainsKey(column.ColumnName) || filter[column.ColumnName].Contains(x[column.ColumnName])).ToList();
                 filters.Add(new FilterViewModel()
@@ -120,8 +116,8 @@ namespace ProductionManagementSystem.WEB.Controllers
             
             DataListViewModel vm = new DataListViewModel()
             {
-                DatabaseTable = table,
-                Data = data,
+                Table = table,
+                Data = data.Select(x => (EntityExt)x).ToList(),
                 Filters = filters
             };
             return View("GetDataFromTable", vm);
@@ -133,18 +129,13 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> EditTable(string tableName)
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
-            ViewBag.DirectoriesTree = new TreeViewViewModel(await _directoryService.GetByIdAsync(0), false)
-            {
-                ShowPath = true,
-                SelectedId = table.DirectoryId ?? 0,
-            };
             return View("CreateTable", table);
         }
         
         [HttpPost]
         [Microsoft.AspNetCore.Mvc.Route("[controller]/EditTable/{tableName}")]
         [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
-        public async Task<IActionResult> EditTable(DatabaseTable table)
+        public async Task<IActionResult> EditTable(Table table)
         {
             await _databaseService.UpdateAsync(table);
             return RedirectToAction(nameof(GetDataFromTable), new {tableName = table.TableName});
@@ -175,13 +166,13 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
             await AddEntityHintsAsync(tableName);
-            return View("CreateEntity", new BaseAltiumDbEntity(table));
+            return View("CreateEntity", new EntityExt(table));
         }
         
         [HttpPost]
         [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
         [Microsoft.AspNetCore.Mvc.Route("AltiumDB/Tables/{tableName}/CreateEntity")]
-        public async Task<IActionResult> CreateEntity([FromRoute]string tableName, BaseAltiumDbEntity data)
+        public async Task<IActionResult> CreateEntity([FromRoute]string tableName, AltiumDbEntity data)
         {
             await _databaseService.InsertIntoTableByTableNameAsync(tableName, data);
             return RedirectToAction(nameof(GetDataFromTable), new {tableName = tableName});
@@ -195,7 +186,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             var table = await _databaseService.GetTableByNameAsync(tableName);
             var data = await _databaseService.GetEntityByPartNumber(tableName, partNumber);
             await AddEntityHintsAsync(tableName);
-            return View("CreateEntity", data);
+            return View("CreateEntity", (EntityExt)data);
         }
 
         private async Task AddEntityHintsAsync(string tableName)
@@ -211,7 +202,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpPost]
         [Authorize(Roles = RoleEnum.AltiumDBEntitiesAdmin)]
         [Microsoft.AspNetCore.Mvc.Route("AltiumDB/Tables/{tableName}/EditEntity/{partNumber}")]
-        public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]string partNumber, BaseAltiumDbEntity data)
+        public async Task<IActionResult> EditEntity([FromRoute]string tableName, [FromRoute]string partNumber, AltiumDbEntity data)
         {
             await _databaseService.UpdateEntityAsync(tableName, partNumber,data);
             return RedirectToAction(nameof(GetDataFromTable), new {tableName = tableName});
@@ -264,14 +255,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             var table = await _databaseService.GetTableByNameAsync(tableName);
             var data = await _databaseService.GetEntityByPartNumber(tableName, partNumber);
-            return View(data);
-        }
-        
-        [HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("AltiumDB/Directories")]
-        public async Task<IActionResult> Directories()
-        {
-            return View(new TreeViewViewModel(await _directoryService.GetByIdAsync(0), true){ ShowPath = true});
+            return View((EntityExt)data);
         }
     }
 }

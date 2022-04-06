@@ -31,7 +31,7 @@ namespace ProductionManagementSystem.Core.Repositories
         IElementDifferenceRepository ElementDifferenceRepository { get; }
         IDatabaseTableRepository DatabaseTableRepository { get; }
         IToDoNoteRepository ToDoNoteRepository { get; }
-        IDirectoryRepository DirectoryRepository { get; }
+        IEntityExtRepository EntityExtRepository { get; }
     }
 
     public class EF_BaseUnitOfWork : IBaseUnitOfWork
@@ -97,7 +97,7 @@ namespace ProductionManagementSystem.Core.Repositories
         private IElementDifferenceRepository _elementDifferenceRepository;
         private DatabaseTableRepository _databaseTableRepository;
         private IToDoNoteRepository _toDoNoteRepository;
-        private DirectoryRepository _directoryRepository;
+        private IEntityExtRepository _entityExtRepository;
 
         public EFUnitOfWork(string connectionString) : base(connectionString)
         {
@@ -141,6 +141,7 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public IToDoNoteRepository ToDoNoteRepository =>
             _toDoNoteRepository ??= new ToDoNoteRepository(_db);
-        public IDirectoryRepository DirectoryRepository => _directoryRepository ??= new DirectoryRepository(_db);
+
+        public IEntityExtRepository EntityExtRepository => _entityExtRepository ??= new EntityExtRepository(_db);
     }
 }

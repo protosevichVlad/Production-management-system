@@ -4,9 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace ProductionManagementSystem.Core.Models.AltiumDB
 {
-    public class BaseAltiumDbEntity : Dictionary<string, string>
+    public class AltiumDbEntity : Dictionary<string, string>
     {
-        public BaseAltiumDbEntity(DatabaseTable table)
+        public AltiumDbEntity(Table table)
         {
             foreach (var columnName in table.TableColumns.Select(x => x.ColumnName))
             {
@@ -17,7 +17,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             this.LibraryPath = table.LibraryPath;
         }
         
-        public BaseAltiumDbEntity()
+        public AltiumDbEntity()
         {
             foreach (var columnName in Fields)
             {
@@ -96,17 +96,12 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             get => this["Category"];
             set => this["Category"] = value;
         }
-
-        public string ImageLink
-        {
-            get => this["ImageLink"];
-            set => this["ImageLink"] = value;
-        }
+        
 
         public static List<string> Fields { get; } = new List<string>()
         {
             "Item", "Part Number", "Library Ref", "Footprint Ref", "Library Path", "Footprint Path", "Supplier",
-            "Case", "Manufacturer", "HelpURL", "Description", "Category", "ImageLink"
+            "Case", "Manufacturer", "HelpURL", "Description", "Category"
         };
 
         public static List<string> ImportantFields { get; } = new List<string>()
@@ -117,7 +112,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         public static List<string> NotFilterFields { get; } = new List<string>()
         {
             "Item", "Part Number", "Library Ref", "Footprint Ref", "Library Path", "Footprint Path",
-            "HelpURL", "Description", "ImageLink"
+            "HelpURL", "Description"
         };
 
         public static List<string> DefaultDisplayFalse { get; } = new List<string>()
@@ -126,7 +121,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         };
 
         public List<string> NoImportantFields => Fields
-            .Where(x => !ImportantFields.Contains(x) && x != "Part Number" && x != "ImageLink").Concat(OtherFields).ToList();
+            .Where(x => !ImportantFields.Contains(x) && x != "Part Number").Concat(OtherFields).ToList();
 
         public List<string> OtherFields => this.Keys.Except(Fields).ToList();
     }

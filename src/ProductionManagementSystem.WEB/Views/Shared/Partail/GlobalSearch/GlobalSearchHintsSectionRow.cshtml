@@ -1,6 +1,7 @@
 ﻿@using ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch
 @using ProductionManagementSystem.Core.Models.AltiumDB
 @using ProductionManagementSystem.Core.Models.AltiumDB.Projects
+@using ProductionManagementSystem.Core.Models
 @model ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch.GlobalSearchHintsSectionRowViewModel
 
 <div class="bx--row" style="height: 5px"></div>
@@ -13,13 +14,13 @@
     break;
 
   case HintsSectionRowType.BaseEntity:
-    var baseEntity = @Model.Content as BaseAltiumDbEntity;
+    var baseEntity = @Model.Content as EntityExt;
     if (baseEntity == null)
       break;
     
     <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/AltiumDB/Tables/@baseEntity["tableName"]/@baseEntity.PartNumber'">
       <div class="bx--col-sm-1">
-        <img src="@baseEntity.ImageLink" class="altiumdb--entity-table--image">
+        <img src="@baseEntity.ImageUrl" class="altiumdb--entity-table--image">
       </div>
       <div class="bx--col-sm-3">
         <div class="bx--grid">
@@ -55,7 +56,7 @@
     break;
 
   case HintsSectionRowType.Table:
-    var table = @Model.Content as DatabaseTable;
+    var table = @Model.Content as Table;
     if (table == null)
       break;
     

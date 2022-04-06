@@ -5,21 +5,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using MySqlConnector;
 using OfficeOpenXml;
+using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Services.AltiumDB
 {
     public interface IDataImporter
     {
-        IAsyncEnumerable<DatabaseTable> GetDatabaseTables(string tableName, StreamReader streamReader);
-        Task<List<BaseAltiumDbEntity>> GetData(StreamReader streamReader, DatabaseTable table);
+        IAsyncEnumerable<Table> GetDatabaseTables(string tableName, StreamReader streamReader);
+        Task<List<EntityExt>> GetData(StreamReader streamReader, Table table);
     }
 
     public class CsvDataImporter : IDataImporter
     {
-        public async IAsyncEnumerable<DatabaseTable> GetDatabaseTables(string tableName, StreamReader streamReader)
+        public async IAsyncEnumerable<Table> GetDatabaseTables(string tableName, StreamReader streamReader)
         {
-            DatabaseTable table = new DatabaseTable();
+            Table table = new Table();
             table.InitAltiumDB(tableName);
             
             var line = await streamReader.ReadLineAsync();
@@ -45,15 +46,15 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             yield return table;
         }
 
-        public async Task<List<BaseAltiumDbEntity>> GetData(StreamReader streamReader, DatabaseTable table)
+        public async Task<List<EntityExt>> GetData(StreamReader streamReader, Table table)
         {
-            List<BaseAltiumDbEntity> data = new List<BaseAltiumDbEntity>();
+            List<EntityExt> data = new List<EntityExt>();
             table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
             while (true)
             {
                 var line = await streamReader.ReadLineAsync();
                 if (line == null) break;
-                data.Add(new BaseAltiumDbEntity());
+                data.Add(new EntityExt());
                 var values = line.Split(',');
                 for (int i = 1; i < table.TableColumns.Count; i++)
                 {
@@ -67,7 +68,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
 
     public class ExcelImporter : IDataImporter
     {
-        public async IAsyncEnumerable<DatabaseTable> GetDatabaseTables(string tableName, StreamReader streamReader)
+        public async IAsyncEnumerable<Table> GetDatabaseTables(string tableName, StreamReader streamReader)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
     
@@ -76,7 +77,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                 foreach (var worksheet in package.Workbook.Worksheets)
                 {
                     tableName = worksheet.Name;
-                    DatabaseTable table = new DatabaseTable();
+                    Table table = new Table();
                     table.InitAltiumDB(tableName);
                     
                     int i = 1;
@@ -101,17 +102,17 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             }
         }
 
-        public async Task<List<BaseAltiumDbEntity>> GetData(StreamReader streamReader, DatabaseTable table)
+        public async Task<List<EntityExt>> GetData(StreamReader streamReader, Table table)
         {
             table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using(var package = new ExcelPackage(streamReader.BaseStream))
             {
-                List<BaseAltiumDbEntity> data = new List<BaseAltiumDbEntity>();
+                List<EntityExt> data = new List<EntityExt>();
                 var worksheet = package.Workbook.Worksheets[table.DisplayName];
                 for (int rowIndex = 2;; rowIndex++)
                 {
-                    var rowData = new BaseAltiumDbEntity();
+                    var rowData = new EntityExt();
                     for (int i = 0; i < table.TableColumns.Count; i++)
                     {
                         rowData[worksheet.Cells[1, i+1].Text] = worksheet.Cells[rowIndex, i+1].Text;

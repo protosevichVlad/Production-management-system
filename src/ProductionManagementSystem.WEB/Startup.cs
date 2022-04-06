@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProductionManagementSystem.Core.Data;
 using ProductionManagementSystem.Core.Data.EF;
+using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.SupplyRequests;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Repositories;
@@ -79,13 +80,14 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<IDesignSupplyRequestService, DesignSupplyRequestService>();
             services.AddScoped<ISupplyRequestService<SupplyRequest>, SupplyRequestService>();
             services.AddScoped<IReportService, ReportService>();
-            services.AddScoped<IDirectoryService, DirectoryService>();
             services.AddScoped<IToDoNoteService, ToDoNoteService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IEntityService, EntityService>();
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDatabaseService, DatabaseService>();
+            services.AddScoped<IEntityExtService, EntityExtService>();
+            services.AddScoped<IImportService, ImportService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

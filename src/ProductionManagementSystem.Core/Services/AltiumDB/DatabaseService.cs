@@ -4,27 +4,28 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Data;
+using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Repositories.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Services.AltiumDB
 {
-    public interface IDatabaseService : IBaseService<DatabaseTable>
+    public interface IDatabaseService : IBaseService<Table>
     {
         Task<bool> TableIsExistsAsync(string tableName);
-        Task<DatabaseTable> GetTableByNameAsync(string tableName);
-        Task<List<BaseAltiumDbEntity>> GetDataFromTableAsync(string tableName);
+        Task<Table> GetTableByNameAsync(string tableName);
+        Task<List<AltiumDbEntity>> GetDataFromTableAsync(string tableName);
         Task DeleteByTableNameAsync(string tableName);
-        Task InsertIntoTableByTableNameAsync(string tableName, BaseAltiumDbEntity data);
-        Task UpdateEntityAsync(string tableName, string partNumber, BaseAltiumDbEntity data);
-        Task<BaseAltiumDbEntity> GetEntityByPartNumber(string tableName, string partNumber);
+        Task InsertIntoTableByTableNameAsync(string tableName, AltiumDbEntity data);
+        Task UpdateEntityAsync(string tableName, string partNumber, AltiumDbEntity data);
+        Task<AltiumDbEntity> GetEntityByPartNumber(string tableName, string partNumber);
         Task DeleteEntityById(string tableName, string partNumber);
         Task ImportFromFile(string tableName, StreamReader stream, IDataImporter importer);
         Task<List<string>> GetFiledTable(string tableName, string filed);
         Task<List<string>> GetFiledFromAllTables(string filed);
     }
 
-    public class DatabaseService : BaseService<DatabaseTable, IAltiumDBUnitOfWork>, IDatabaseService
+    public class DatabaseService : BaseService<Table, IAltiumDBUnitOfWork>, IDatabaseService
     {
         private IMySqlTableHelper _tableHelper;
         private IToDoNoteService _toDoNoteService;
@@ -36,14 +37,14 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             _currentRepository = _db.DatabaseTables;
         }
 
-        public override async Task CreateAsync(DatabaseTable item)
+        public override async Task CreateAsync(Table item)
         {
             if (await this.TableIsExistsAsync(item.TableName)) throw new NotImplementedException();
             _tableHelper.CreateTable(item);
             await base.CreateAsync(item);
         }
 
-        public override async Task DeleteAsync(DatabaseTable item)
+        public override async Task DeleteAsync(Table item)
         {
             if (!await this.TableIsExistsAsync(item.TableName)) throw new NotImplementedException();
             _tableHelper.DeleteTable(item);
@@ -56,19 +57,20 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             return tables.Count > 0;
         }
 
-        public async Task<DatabaseTable> GetTableByNameAsync(string tableName)
+        public async Task<Table> GetTableByNameAsync(string tableName)
         {
             var table = (await _db.DatabaseTables.FindAsync(x => x.TableName == tableName, "TableColumns")).FirstOrDefault();
-            if (table == null) throw new NotImplementedException();
+            if (table == null) 
+                return null;
             table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
             return table;
         }
 
-        public async Task<List<BaseAltiumDbEntity>> GetDataFromTableAsync(string tableName)
+        public async Task<List<AltiumDbEntity>> GetDataFromTableAsync(string tableName)
         {
             var table = await GetTableByNameAsync(tableName);
-            if (table == null) return new List<BaseAltiumDbEntity>();
-            return _tableHelper.GetDataFromTable(table);
+            if (table == null) return new List<AltiumDbEntity>();
+            return new List<AltiumDbEntity>();
         }
 
         public async Task DeleteByTableNameAsync(string tableName)
@@ -79,23 +81,23 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             await base.DeleteAsync(table);
         }
 
-        public async Task InsertIntoTableByTableNameAsync(string tableName, BaseAltiumDbEntity data)
+        public async Task InsertIntoTableByTableNameAsync(string tableName, AltiumDbEntity data)
         {
             var table = await GetTableByNameAsync(tableName);
             if (table == null) throw new NotImplementedException();
             await AddToToDoNotes(table, data);
-            _tableHelper.InsertIntoTable(table, data);
+            // _tableHelper.InsertIntoTable(table, data);
         }
 
-        public async Task UpdateEntityAsync(string tableName, string partNumber, BaseAltiumDbEntity data)
+        public async Task UpdateEntityAsync(string tableName, string partNumber, AltiumDbEntity data)
         {
             var table = await GetTableByNameAsync(tableName);
             if (table == null) throw new NotImplementedException();
             await AddToToDoNotes(table, data);
-            _tableHelper.UpdateDataInTable(table, partNumber, data);
+            // _tableHelper.UpdateDataInTable(table, partNumber, data);
         }
 
-        private async Task AddToToDoNotes(DatabaseTable table, BaseAltiumDbEntity data)
+        private async Task AddToToDoNotes(Table table, AltiumDbEntity data)
         {
             if (_tableHelper.GetFiledTable(table, "Library Ref").Count(x => data.LibraryRef == x) == 0)
             {
@@ -122,7 +124,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             await _db.SaveAsync();
         }
 
-        public async Task<BaseAltiumDbEntity> GetEntityByPartNumber(string tableName, string partNumber)
+        public async Task<AltiumDbEntity> GetEntityByPartNumber(string tableName, string partNumber)
         {
             var table = await GetTableByNameAsync(tableName);
             if (table == null) throw new NotImplementedException();
@@ -133,7 +135,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         {
             var table = await GetTableByNameAsync(tableName);
             if (table == null) throw new NotImplementedException();
-            _tableHelper.DeleteEntity(table, partNumber);
+            // _tableHelper.DeleteEntity(table, partNumber);
         }
 
         public async Task ImportFromFile(string tableName, StreamReader stream, IDataImporter importer)
@@ -174,7 +176,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             return _tableHelper.GetFiledTable(await GetTableByNameAsync(tableName), filed).OrderBy(x => x).ToList();
         }
 
-        public override async Task UpdateAsync(DatabaseTable newTable)
+        public override async Task UpdateAsync(Table newTable)
         {
             var table = await GetTableByNameAsync(newTable.TableName);
             var columnsForDelete = new List<TableColumn>();
@@ -224,7 +226,6 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                 }
             }
 
-            table.DirectoryId = newTable.DirectoryId;
             table.DisplayName = newTable.DisplayName;
             if (table.FootprintPath != newTable.FootprintPath)
             {

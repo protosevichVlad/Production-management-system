@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Models.AltiumDB.Projects;
 using ProductionManagementSystem.Core.Models.Components;
@@ -32,11 +33,12 @@ namespace ProductionManagementSystem.Core.Data.EF
         public DbSet<DesignSupplyRequest> DesignSupplyRequests { get; set; }
         
         public DbSet<ElementDifference> ElementDifferences { get; set; }
-        public DbSet<DatabaseTable> DatabaseTables { get; set; }
+        public DbSet<Table> Tables { get; set; }
         public DbSet<TableColumn> TableColumns { get; set; }
         public DbSet<ToDoNote> ToDoNotes { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<EntityInProject> EntityInProjects { get; set; }
+        public DbSet<Entity> Entities { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {

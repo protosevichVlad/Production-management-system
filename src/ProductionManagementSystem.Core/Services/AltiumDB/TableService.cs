@@ -1,29 +1,36 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Repositories;
 using ProductionManagementSystem.Core.Repositories.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Services.AltiumDB
 {
-    public interface ITableService : IBaseService<DatabaseTable>
+    public interface ITableService : IBaseService<Table>
     {
-        Task<List<DatabaseTable>> SearchByKeyWordAsync(string keyWord);
+        Task<List<Table>> SearchByKeyWordAsync(string keyWord);
+        Task<Table> GetTableByNameAsync(string tableName);
     }
 
-    public class TableService : BaseService<DatabaseTable, IAltiumDBUnitOfWork>, ITableService
+    public class TableService : BaseService<Table, IUnitOfWork>, ITableService
     {
-        public TableService(IAltiumDBUnitOfWork db) : base(db)
+        public TableService(IUnitOfWork db) : base(db)
         {
-            _currentRepository = _db.DatabaseTables;
+            _currentRepository = _db.DatabaseTableRepository;
         }
 
-        public async Task<List<DatabaseTable>> SearchByKeyWordAsync(string keyWord)
+        public async Task<List<Table>> SearchByKeyWordAsync(string keyWord)
         {
             if (string.IsNullOrEmpty(keyWord))
-                return new List<DatabaseTable>();
-            return await _db.DatabaseTables.FindAsync(x =>
+                return new List<Table>();
+            return await _db.DatabaseTableRepository.FindAsync(x =>
                 !string.IsNullOrEmpty(x.DisplayName) && x.DisplayName.Contains(keyWord));
+        }
+
+        public async Task<Table> GetTableByNameAsync(string tableName)
+        {
+            return await _db.DatabaseTableRepository.GetTableByNameAsync(tableName);
         }
     }
 }
