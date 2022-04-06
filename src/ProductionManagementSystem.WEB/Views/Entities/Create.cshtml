@@ -1,0 +1,216 @@
+﻿@using ProductionManagementSystem.Core.Models
+@model ProductionManagementSystem.Core.Models.EntityExt
+
+@{
+  ViewBag.Title = "Create entity";
+  Layout = "_AltiumDBLayout";
+}
+
+@if (@Model == null)
+{
+  <form method="get">
+    <fieldset class="bx--fieldset">
+      <legend class="bx--label">Select table</legend>
+      <div class="bx--form-item">
+        <div class="bx--radio-button-group  bx--radio-button-group--vertical ">
+          @foreach (var item in ViewBag.Tabels)
+          {
+            var table = item as Table;
+            if (table != null)
+            {
+              <div class="bx--radio-button-wrapper">
+                <input id="radio-button-@table.Id" class="bx--radio-button" type="radio" value="@table.Id" name="tableId" tabindex="0">
+                <label for="radio-button-@table.Id" class="bx--radio-button__label">
+                  <span class="bx--radio-button__appearance"></span>
+                  <span class="bx--radio-button__label-text">@table.DisplayName</span>
+                </label>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    </fieldset>
+    <button type="submit" class="bx--btn bx--btn--primary">Select</button>
+  </form>
+}
+else
+{
+<div class="bx--grid">
+  <form method="post">
+    <input type="hidden" asp-for="KeyId">
+    <input type="hidden" asp-for="TableId">
+    <input type="hidden" name="Footprint Path" value="@Model.FootprintPath">
+    <input type="hidden" name="Library Path" value="@Model.LibraryPath">
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-6">
+        <label for="text-input-item" class="bx--label">Item</label>
+        <input id="text-input-item" type="text"
+               class="bx--text-input"
+               placeholder="Item" asp-for="Item">
+      </div>
+      <div class="bx--col-lg-6">
+        <label for="text-input-part-number" class="bx--label">Part Number</label>
+        <input id="text-input-part-number" type="text"
+               class="bx--text-input" required
+               placeholder="Part Number" name="Part Number" value="@Model.PartNumber">
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-3">
+        <label for="text-input-Manufacturer" class="bx--label">Manufacturer</label>
+        <input id="text-input-Manufacturer" type="text"
+               class="bx--text-input" list="text-input-Manufacturer-datalist"
+               placeholder="Manufacturer" asp-for="Manufacturer">
+        <datalist id="text-input-Manufacturer-datalist">
+          @foreach (var manufacture in ViewBag.Manufacturers)
+          {
+            <option value="@manufacture"/>
+          }
+        </datalist>
+      </div>
+      <div class="bx--col-lg-3">
+        <label for="text-input-Category" class="bx--label">Category</label>
+        <input id="text-input-Category" type="text"
+               class="bx--text-input" list="text-input-category-datalist"
+               placeholder="Category" asp-for="Category">
+        <datalist id="text-input-category-datalist">
+          @foreach (var category in ViewBag.Categories)
+          {
+            <option value="@category"/>
+          }
+        </datalist>
+      </div>
+      <div class="bx--col-lg-3">
+        <label for="text-input-Supplier" class="bx--label">Supplier</label>
+        <input id="text-input-Supplier" type="text"
+               class="bx--text-input" list="text-input-supplier-datalist"
+               placeholder="Supplier" asp-for="Supplier">
+        <datalist id="text-input-supplier-datalist">
+          @foreach (var supplier in ViewBag.Suppliers)
+          {
+            <option value="@supplier"/>
+          }
+        </datalist>
+      </div>
+      <div class="bx--col-lg-3">
+        <label for="text-input-Case" class="bx--label">Case</label>
+        <input id="text-input-Case" type="text"
+               class="bx--text-input" list="text-input-case-datalist"
+               placeholder="Case" asp-for="Case">
+        <datalist id="text-input-case-datalist">
+          @foreach (var Case in ViewBag.Cases)
+          {
+            <option value="@Case"/>
+          }
+        </datalist>
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-3">
+        <label for="text-input-LibraryRef" class="bx--label">Library Ref</label>
+        <input id="text-input-LibraryRef" type="text"
+               class="bx--text-input" list="text-input-libraryRef-datalist"
+               placeholder="Library Ref" name="Library Ref" value="@Model.LibraryRef">
+        <datalist id="text-input-libraryRef-datalist">
+          @foreach (var libraryRef in ViewBag.LibraryRefs)
+          {
+            <option value="@libraryRef"/>
+          }
+        </datalist>
+      </div>
+      <div class="bx--col-lg-3">
+        <label for="text-input-part-number" class="bx--label">Footprint Ref</label>
+        <input id="text-input-FootprintRef" type="text"
+               class="bx--text-input" list="text-input-footprintRef-datalist"
+               placeholder="Footprint Ref" name="Footprint Ref" value="@Model.FootprintRef">
+        <datalist id="text-input-footprintRef-datalist">
+          @foreach (var footprintRef in ViewBag.FootprintRefs)
+          {
+            <option value="@footprintRef"/>
+          }
+        </datalist>
+      </div>
+      <div class="bx--col-lg-3">
+        <div class="bx--form-item">
+          <div data-numberinput class="bx--number">
+            <label for="number-Quantity" class="bx--label">Quantity</label>
+            <div class="bx--number__input-wrapper">
+              <input id="number-Quantity" asp-for="Quantity" type="number" min="0" value="1">
+              <div class="bx--number__controls">
+                <button aria-label="increase number input" class="bx--number__control-btn up-icon" type="button" aria-live="polite" aria-atomic="true">
+                  <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true"><path d="M0 4L4 0 8 4z"></path></svg>
+                </button>
+                <button aria-label="decrease number input" class="bx--number__control-btn down-icon" type="button" aria-live="polite" aria-atomic="true">
+                  <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true"><path d="M8 0L4 4 0 0z"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      @foreach (var key in Model.OtherFields.Except(new List<string>() {"KeyId", "Quantity", "ImageUrl", "TableId"}))
+      {
+        <div class="bx--col-lg-3">
+          <label for="text-input-@key" class="bx--label">@key</label>
+          <input id="text-input-@key" type="text"
+                 class="bx--text-input"
+                 placeholder="@key" name="@key" value="@(Model[key] == null ? "" : Model[key])">
+        </div>
+      }
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-6">
+        <label for="text-input-HelpURL" class="bx--label">HelpURL</label>
+        <input id="text-input-HelpURL" type="text"
+               class="bx--text-input"
+               placeholder="HelpURL" asp-for="HelpURL">
+      </div>
+      <div class="bx--col-lg-6">
+        <label for="text-input-part-ImageUrl" class="bx--label">ImageUrl</label>
+        <input id="text-input-part-ImageUrl" type="text"
+               class="bx--text-input"
+               placeholder="ImageUrl" asp-for="ImageUrl">
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-6">
+        <label for="text-area-Description" class="bx--label">Description</label>
+        <textarea id="text-area-Description" class="bx--text-area"
+            rows="4" placeholder="Placeholder text." asp-for="Description"></textarea>
+      </div>
+      <div class="bx--col-lg-6">
+        <div class="bx--grid">
+          <div class="bx--row bx--row-padding">
+            <div class="bx--col-lg-8">Image on details page:</div>
+            <div class="bx--col-lg-4">Image in table:</div>
+          </div>
+          <div class="bx--row bx--row-padding">
+            <div class="bx--col-lg-8">
+              <img src="@Model.ImageUrl" class="altiumdb--entity--image test-entity-image"/>
+            </div>
+            <div class="bx--col-lg-4">
+              <img src="@Model.ImageUrl" class="altiumdb--entity-table--image test-entity-image"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-1 bx--offset-lg-11">
+        <div class="bx--form-item">
+          <button class="bx--btn bx--btn--primary" type="submit">Save</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+document.querySelector('#text-input-part-ImageUrl').addEventListener('change', (event) => {
+    let value = event.target.value;
+    document.querySelectorAll('.test-entity-image').forEach(x=>x.src=value)
+})
+</script>
+}

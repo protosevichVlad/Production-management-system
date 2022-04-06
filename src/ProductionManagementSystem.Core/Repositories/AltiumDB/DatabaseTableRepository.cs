@@ -29,6 +29,11 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
             return await _dbSet.FirstOrDefaultAsync(x => x.TableName == tableName);
         }
 
+        public override async Task<Table> GetByIdAsync(int id)
+        {
+            return await _dbSet.Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public override async Task CreateAsync(Table item)
         {
             if (await this.TableIsExistsAsync(item.TableName)) throw new NotImplementedException();

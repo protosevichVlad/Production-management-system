@@ -17,7 +17,6 @@ namespace ProductionManagementSystem.Core.Data
         void DeleteTable(Table table);
         void AddColumn(Table table, TableColumn column);
         void DeleteColumn(Table table, TableColumn column);
-        AltiumDbEntity GetEntityByPartNumber(Table table, string partNumber);
         void UpdateLibraryPropertyInTable(Table table, string propertyName, string value);
         void RenameColumn(Table table, TableColumn oldColumn, TableColumn newColumn);
         List<string> GetFiledFromAllTables(List<Table> tables, string filed);
@@ -117,38 +116,6 @@ namespace ProductionManagementSystem.Core.Data
             }
         }
 
-        public AltiumDbEntity GetEntityByPartNumber(Table table, string partNumber)
-        {
-            try
-            {
-                conn.Open();
-                
-                MySqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = $"SELECT * FROM `{table.TableName}` WHERE `Part Number`= @PartNumber;";
-                cmd.Parameters.Add("@PartNumber", DbType.String).Value = partNumber;
-                MySqlDataReader reader = cmd.ExecuteReader();
-                var row = new AltiumDbEntity();
-                while (reader.Read())
-                {
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        row[table.TableColumns[i].ColumnName] = reader[i].ToString();
-                    }
-                }
-                
-                reader.Close();
-                return row;
-            }
-            catch(MySqlException ex)
-            {
-                throw ex;
-            }
-            finally
-            {  
-                conn.Close(); 
-            }
-        }
-        
         public void UpdateLibraryPropertyInTable(Table table, string propertyName, string value)
         {
             try

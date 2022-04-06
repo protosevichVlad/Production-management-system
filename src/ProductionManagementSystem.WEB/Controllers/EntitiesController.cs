@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 
@@ -12,11 +13,13 @@ namespace ProductionManagementSystem.WEB.Controllers
     {
         private readonly IEntityExtService _entityExtService;
         private readonly IImportService _importService;
+        private readonly ITableService _tableService;
 
-        public EntitiesController(IEntityExtService entityExtService, IImportService importService)
+        public EntitiesController(IEntityExtService entityExtService, IImportService importService, ITableService tableService)
         {
             _entityExtService = entityExtService;
             _importService = importService;
+            _tableService = tableService;
         }
 
         public async Task<IActionResult> Index(int? tableId)
@@ -30,6 +33,39 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             var entityExt =  await _entityExtService.GetByIdAsync(id);
             return View(entityExt);
+        }
+        
+        public async Task<IActionResult> Create(int? tableId)
+        {
+            if (tableId.HasValue)
+            {
+                var table = await _tableService.GetByIdAsync(tableId.Value);
+                await AddEntityHintsAsync(table.TableName);
+                return View(new EntityExt(table)
+                {
+                    TableId = table.Id
+                });
+            }
+
+            ViewBag.Tabels = await _tableService.GetAllAsync();
+            return View();
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> Create(EntityExt entityExt)
+        {
+            await _entityExtService.CreateAsync(entityExt);
+            return RedirectToAction(nameof(Details), new {id = entityExt.KeyId});
+        }
+        
+        private async Task AddEntityHintsAsync(string tableName)
+        {
+            ViewBag.Manufacturers = await _entityExtService.GetValues("Manufacturer");
+            ViewBag.Categories = await _entityExtService.GetValues("Category", tableName);
+            ViewBag.Suppliers = await _entityExtService.GetValues("Supplier");
+            ViewBag.Cases = await _entityExtService.GetValues("Case", tableName);
+            ViewBag.LibraryRefs = await _entityExtService.GetValues("Library Ref", tableName);
+            ViewBag.FootprintRefs = await _entityExtService.GetValues("Footprint Ref", tableName);
         }
 
         [HttpGet]

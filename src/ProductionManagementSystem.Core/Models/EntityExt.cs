@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Models
@@ -7,6 +8,11 @@ namespace ProductionManagementSystem.Core.Models
     {
         public EntityExt(Table table) : base(table)
         {
+            Table = table;
+            TableId = table.Id;
+            KeyId = 0;
+            Quantity = 0;
+            ImageUrl = "";
         }
         
         public EntityExt(AltiumDbEntity altiumDbEntity, Entity entity)
@@ -26,11 +32,31 @@ namespace ProductionManagementSystem.Core.Models
         {
         }
 
-        public int KeyId { get; set; }
-        public int Quantity { get; set; }
-        public string ImageUrl { get; set; }
-        public int TableId { get; set; }
+        public int KeyId 
+        {
+            get => int.Parse(this["KeyId"]);
+            set => this["KeyId"] = value.ToString();
+        }
+
+        public int Quantity
+        {
+            get => int.Parse(this["Quantity"]);
+            set => this["Quantity"] = value.ToString();
+        }
+
+        public string ImageUrl
+        {
+            get => this["ImageUrl"];
+            set => this["ImageUrl"] = value;
+        }
+        public int TableId 
+        { 
+            get => int.Parse(this["TableId"]);
+            set => this["TableId"] = value.ToString(); }
+        
         public Table Table { get; set; }
+        
+        
 
         public AltiumDbEntity GetAltiumDbEntity()
         {
@@ -45,7 +71,8 @@ namespace ProductionManagementSystem.Core.Models
                 Quantity = Quantity,
                 TableId = TableId,
                 PartNumber = PartNumber,
-                Table = Table
+                Table = Table,
+                ImageUrl = ImageUrl
             };
         }
     }

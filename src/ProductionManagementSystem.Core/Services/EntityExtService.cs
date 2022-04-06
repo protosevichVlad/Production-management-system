@@ -9,6 +9,8 @@ namespace ProductionManagementSystem.Core.Services
     {
         Task<List<EntityExt>> GetFromTable(int tableId);
         Task<EntityExt> GetEntityExtByPartNumber(string partNumber);
+        Task<List<string>> GetValues(string column);
+        Task<List<string>> GetValues(string column, string tableName);
     }
 
     public class EntityExtService : BaseService<EntityExt, IUnitOfWork>, IEntityExtService
@@ -26,6 +28,16 @@ namespace ProductionManagementSystem.Core.Services
         public async Task<EntityExt> GetEntityExtByPartNumber(string partNumber)
         {
             return await _db.EntityExtRepository.GetByPartNumber(partNumber);
+        }
+
+        public async Task<List<string>> GetValues(string column)
+        {
+            return await _db.EntityExtRepository.GetValues(column);
+        }
+
+        public async Task<List<string>> GetValues(string column, string tableName)
+        {
+            return await _db.EntityExtRepository.GetValues(column, tableName);
         }
     }
 }

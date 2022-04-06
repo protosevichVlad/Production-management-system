@@ -128,7 +128,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         {
             var table = await GetTableByNameAsync(tableName);
             if (table == null) throw new NotImplementedException();
-            return _tableHelper.GetEntityByPartNumber(table, partNumber);
+            return new AltiumDbEntity();
         }
 
         public async Task DeleteEntityById(string tableName, string partNumber)

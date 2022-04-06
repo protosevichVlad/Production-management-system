@@ -15,6 +15,8 @@ namespace ProductionManagementSystem.Core.Repositories
     {
         Task<List<EntityExt>> GetAllByTableId(int id);
         Task<EntityExt> GetByPartNumber(string partNumber);
+        Task<List<string>> GetValues(string column);
+        Task<List<string>> GetValues(string column, string tableName);
     }
 
     public class EntityExtRepository : IEntityExtRepository
@@ -58,7 +60,7 @@ namespace ProductionManagementSystem.Core.Repositories
                 var row = new EntityExt();
                 foreach (var column in AltiumDbEntity.Fields)
                 {
-                    row[column] = (string) reader[column];
+                    row[column] = reader[column] as string;
                 }
 
                 row.Quantity = (int) reader["Quantity"];
@@ -89,7 +91,7 @@ namespace ProductionManagementSystem.Core.Repositories
         {
             var altiumDbEntity = item.GetAltiumDbEntity();
             var entity = item.GetEntity();
-            var table = await _context.Tables.FindAsync(item.TableId);
+            var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x=> x.Id == entity.TableId);
             try
             {
                 await _conn.OpenAsync();
@@ -105,6 +107,7 @@ namespace ProductionManagementSystem.Core.Repositories
 
                 await _context.Entities.AddAsync(entity);
                 await _context.SaveChangesAsync();
+                item.KeyId = entity.KeyId;
             }
             catch(MySqlException ex)
             {
@@ -120,7 +123,7 @@ namespace ProductionManagementSystem.Core.Repositories
         {
             var altiumDbEntity = item.GetAltiumDbEntity();
             var entity = item.GetEntity();
-            var table = await _context.Tables.FindAsync(item.TableId);
+            var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x=> x.Id == entity.TableId);
             try
             {
                 await _conn.OpenAsync();
@@ -186,7 +189,7 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public async Task<List<EntityExt>> GetAllByTableId(int id)
         {
-            var table = await _context.Tables.FindAsync(id);
+            var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.Id == id);
             return await GetAllByTableAsync(table);
         }
 
@@ -197,7 +200,68 @@ namespace ProductionManagementSystem.Core.Repositories
             if (entities.Count != 1) throw new NotImplementedException();
             return entities.FirstOrDefault();
         }
-        
+
+        public async Task<List<string>> GetValues(string column)
+        {
+            var tables = await _context.Tables.ToListAsync();
+            try
+            {
+                await _conn.OpenAsync();
+                
+                var cmd = _conn.CreateCommand();
+                cmd.CommandText = string.Join(" UNION DISTINCT ",
+                    tables.Select(table => $"SELECT DISTINCT `{column}` FROM `{table.TableName}`"));
+                var reader = await cmd.ExecuteReaderAsync();
+                List<string> result = new List<string>();
+                while (await reader.ReadAsync())
+                {
+                    if (!reader.IsDBNull(0))
+                        result.Add( reader.GetString(0));
+                }
+                
+                await reader.CloseAsync();
+                return result;
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                await _conn.CloseAsync(); 
+            }
+        }
+
+        public async Task<List<string>> GetValues(string column, string tableName)
+        {
+            var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.TableName == tableName);
+            try
+            {
+                await _conn.OpenAsync();
+                
+                var cmd = _conn.CreateCommand();
+                cmd.CommandText = $"SELECT DISTINCT `{column}` FROM `{table.TableName}`";
+                var reader = await cmd.ExecuteReaderAsync();
+                List<string> result = new List<string>();
+                while (await reader.ReadAsync())
+                {
+                    if (!reader.IsDBNull(0))
+                        result.Add( reader.GetString(0));
+                }
+                
+                await reader.CloseAsync();
+                return result;
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                await _conn.CloseAsync(); 
+            }
+        }
+
         public async Task<AltiumDbEntity> GetByPartNumber(string partNumber, int tableId)
         {
             var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.Id == tableId);
