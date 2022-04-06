@@ -58,6 +58,29 @@ namespace ProductionManagementSystem.WEB.Controllers
             return RedirectToAction(nameof(Details), new {id = entityExt.KeyId});
         }
         
+        public async Task<IActionResult> Edit(int id)
+        {
+            EntityExt entityExt = await _entityExtService.GetByIdAsync(id);
+            var table = await _tableService.GetByIdAsync(entityExt.TableId);
+            await AddEntityHintsAsync(table.TableName);
+            return View("Create", entityExt);
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> Edit(EntityExt entityExt)
+        {
+            await _entityExtService.UpdateAsync(entityExt);
+            return RedirectToAction(nameof(Details), new {id = entityExt.KeyId});
+        }
+
+        [HttpDelete]
+        [Route("/Entities/{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute]int id)
+        {
+            await _entityExtService.DeleteByIdAsync(id);
+            return Ok();
+        }
+        
         private async Task AddEntityHintsAsync(string tableName)
         {
             ViewBag.Manufacturers = await _entityExtService.GetValues("Manufacturer");

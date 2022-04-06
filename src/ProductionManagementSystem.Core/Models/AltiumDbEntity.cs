@@ -106,7 +106,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
 
         public static List<string> ImportantFields { get; } = new List<string>()
         {
-            "Item", "Manufacturer", "HelpURL", "Description"
+            "Item", "Manufacturer", "Part Number", "HelpURL", "Description"
         };
         
         public static List<string> NotFilterFields { get; } = new List<string>()

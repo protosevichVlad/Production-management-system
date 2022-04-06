@@ -76,7 +76,7 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public async Task<EntityExt> GetByIdAsync(int id)
         {
-            var entity = await _context.Entities.FirstOrDefaultAsync(x => x.KeyId == id);
+            var entity = await _context.Entities.AsNoTracking().FirstOrDefaultAsync(x => x.KeyId == id);
             if (entity == null) return null;
             var altiumDbEntity = await GetByPartNumber(entity.PartNumber, entity.TableId);
             return new EntityExt(altiumDbEntity ,entity);

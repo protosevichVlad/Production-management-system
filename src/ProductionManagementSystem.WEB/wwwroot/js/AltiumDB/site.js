@@ -77,14 +77,19 @@ function deleteTableByName(tableName)
     })
 }
 
-function deleteEntityFromTable(tableName, id)
+function deleteEntity(id, action)
 {
-    return fetch(`/AltiumDB/Tables/${tableName}/${id}`, {
+    return fetch(`/Entities/${id}`, {
         method: 'DELETE',
     }).then(response => {
         if (response.ok)
         {
-            location.reload();
+            if (action == null) {
+                location.reload();
+            }
+            else {
+                action();
+            }
         }
     })
 }

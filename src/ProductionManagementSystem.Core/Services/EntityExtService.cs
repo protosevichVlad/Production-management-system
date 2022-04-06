@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Repositories;
@@ -11,6 +12,7 @@ namespace ProductionManagementSystem.Core.Services
         Task<EntityExt> GetEntityExtByPartNumber(string partNumber);
         Task<List<string>> GetValues(string column);
         Task<List<string>> GetValues(string column, string tableName);
+        Task DeleteByIdAsync(int id);
     }
 
     public class EntityExtService : BaseService<EntityExt, IUnitOfWork>, IEntityExtService
@@ -38,6 +40,13 @@ namespace ProductionManagementSystem.Core.Services
         public async Task<List<string>> GetValues(string column, string tableName)
         {
             return await _db.EntityExtRepository.GetValues(column, tableName);
+        }
+
+        public async Task DeleteByIdAsync(int id)
+        {
+            var entity = await _db.EntityExtRepository.GetByIdAsync(id);
+            if (entity == null) throw new NotImplementedException();
+            _db.EntityExtRepository.Delete(entity);
         }
     }
 }

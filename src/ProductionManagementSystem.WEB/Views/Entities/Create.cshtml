@@ -2,7 +2,8 @@
 @model ProductionManagementSystem.Core.Models.EntityExt
 
 @{
-  ViewBag.Title = "Create entity";
+  var isEditMode = Model != null && !string.IsNullOrEmpty(Model.PartNumber);
+  ViewBag.Title = isEditMode ? $"Edit {Model.Item}" : "Create entity";
   Layout = "_AltiumDBLayout";
 }
 
@@ -37,6 +38,10 @@ else
 {
 <div class="bx--grid">
   <form method="post">
+    @if (isEditMode)
+    {
+      <input type="hidden" name="Part Number" value="@Model.PartNumber">
+    }
     <input type="hidden" asp-for="KeyId">
     <input type="hidden" asp-for="TableId">
     <input type="hidden" name="Footprint Path" value="@Model.FootprintPath">
@@ -49,9 +54,9 @@ else
                placeholder="Item" asp-for="Item">
       </div>
       <div class="bx--col-lg-6">
-        <label for="text-input-part-number" class="bx--label">Part Number</label>
+        <label for="text-input-part-number" class="bx--label @(!isEditMode ? "" : "bx--label--disabled")">Part Number</label>
         <input id="text-input-part-number" type="text"
-               class="bx--text-input" required
+               class="bx--text-input" required @(!isEditMode ? "" : "disabled")
                placeholder="Part Number" name="Part Number" value="@Model.PartNumber">
       </div>
     </div>

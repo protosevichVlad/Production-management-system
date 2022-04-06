@@ -10,8 +10,12 @@
   @if (User.IsInRole(RoleEnum.AltiumDBEntitiesAdmin))
   {
   <div class="bx--row bx--row-padding">
-    <div class="bx--offset-lg-11"></div>
-    <div class="bx--col-lg-1">
+    <div class="bx--col-sm-3">
+      <h1>
+        @Model.Category @Model.Item
+      </h1>
+    </div>
+    <div class="bx--col-sm-1" style="display: flex; justify-content: end;">
       <div data-overflow-menu class="bx--overflow-menu">
         <button
           class="bx--overflow-menu__trigger bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--align-start"
@@ -25,7 +29,7 @@
              id="example-zyub0566err">
           <ul class="bx--overflow-menu-options__content">
             <li class="bx--overflow-menu-options__option">
-              <button class="bx--overflow-menu-options__btn" onclick="location.href='EditEntity/@Model.PartNumber'">
+              <button class="bx--overflow-menu-options__btn" onclick="location.href='/Entities/Edit/@Model.KeyId'">
                 <div class="bx--overflow-menu-options__option-content">
                   <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                     <path d="M1 13H15V14H1zM12.7 4.5c.4-.4.4-1 0-1.4 0 0 0 0 0 0l-1.8-1.8c-.4-.4-1-.4-1.4 0 0 0 0 0 0 0L2 8.8V12h3.2L12.7 4.5zM10.2 2L12 3.8l-1.5 1.5L8.7 3.5 10.2 2zM3 11V9.2l5-5L9.8 6l-5 5H3z"></path>
@@ -34,7 +38,7 @@
               </button>
             </li>
             <li class="bx--overflow-menu-options__option">
-              <button class="bx--overflow-menu-options__btn" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting an entity', 'Do you really want to delete this entity', () => deleteEntityFromTable('', ''))">
+              <button class="bx--overflow-menu-options__btn" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting an entity', 'Do you really want to delete this entity', () => deleteEntity(@Model.KeyId, () => location.href='/Entities'));">
                 <div class="bx--overflow-menu-options__option-content">
                   <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                     <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
@@ -52,12 +56,6 @@
   <div class="bx--row">
     <div class="bx--col-lg-8">
       <div class="bx--grid">
-        <div class="bx--row bx--row-padding">
-          <div class="bx--col-sm-4">
-            <strong>Part Number: </strong>
-            @Model.PartNumber
-          </div>
-        </div>
         <div class="bx--row">
           <div class="bx--col-md-3">
             <img src="@Model.ImageUrl" class="altiumdb--entity--image"/>
@@ -88,6 +86,15 @@
                 </div>
                 <div class="bx--row" style="height: 10px"></div>
               }
+              <div class="bx--row">
+                  <div class="bx--col-lg-5">
+                    <strong>Quantity</strong>
+                  </div>
+                  <div class="bx--col-lg-7">
+                    <span style="white-space: pre-line">@Model.Quantity</span>
+                  </div>
+              </div>
+              <div class="bx--row" style="height: 10px"></div>
             </div>
           </div>
         </div>
@@ -97,7 +104,7 @@
         <div class="bx--row">
           <div class="bx--col-sm-4">
             <div class="bx--grid">
-              @foreach (var field in Model.NoImportantFields)
+              @foreach (var field in Model.NoImportantFields.Except(new List<string>() {"Quantity", "KeyId", "ImageUrl", "TableId"}))
               {
                 <div class="bx--row">
                   <div class="bx--col-sm-1">
