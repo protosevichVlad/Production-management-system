@@ -11,6 +11,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
     {
         Task<List<Table>> SearchByKeyWordAsync(string keyWord);
         Task<Table> GetTableByNameAsync(string tableName);
+        Task DeleteByIdAsync(int id);
     }
 
     public class TableService : BaseService<Table, IUnitOfWork>, ITableService
@@ -31,6 +32,13 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
         public async Task<Table> GetTableByNameAsync(string tableName)
         {
             return await _db.DatabaseTableRepository.GetTableByNameAsync(tableName);
+        }
+
+        public async Task DeleteByIdAsync(int id)
+        {
+            var table = await _currentRepository.GetByIdAsync(id);
+            _currentRepository.Delete(table);
+            await _db.SaveAsync();
         }
     }
 }

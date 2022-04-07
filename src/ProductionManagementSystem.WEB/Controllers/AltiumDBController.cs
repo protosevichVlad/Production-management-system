@@ -140,15 +140,6 @@ namespace ProductionManagementSystem.WEB.Controllers
             await _databaseService.UpdateAsync(table);
             return RedirectToAction(nameof(GetDataFromTable), new {tableName = table.TableName});
         }
-        
-        [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]
-        public async Task<IActionResult> GetPartialViewForTableColumn(int index)
-        {
-            return PartialView("Shared/Table/TableColumn", new TableColumn()
-            {
-                DatabaseOrder = index,
-            });
-        }
 
         [HttpDelete]
         [Authorize(Roles = RoleEnum.AltiumDBTablesAdmin)]

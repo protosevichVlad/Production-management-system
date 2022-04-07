@@ -1,0 +1,88 @@
+﻿@using MySqlConnector
+@model ProductionManagementSystem.Core.Models.Table
+
+@{
+  ViewBag.Title = "Create table";
+  Layout = "_AltiumDBLayout";
+}
+<form method="post">
+  <div class="bx--grid">
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-3">
+        <div class="bx--form-item bx--text-input-wrapper">
+          <label for="text-input-1" class="bx--label">@Html.LabelFor(x => x.TableName)</label>
+          <input id="text-input-1" type="text" class="bx--text-input" asp-for="TableName">
+        </div>
+      </div>
+      <div class="bx--col-lg-3">
+        <div class="bx--form-item bx--text-input-wrapper">
+          <label for="text-input-2" class="bx--label">@Html.LabelFor(x => x.DisplayName)</label>
+          <input id="text-input-2" type="text" class="bx--text-input" asp-for="DisplayName">
+        </div>
+      </div>
+      <div class="bx--col-lg-3">
+        <div class="bx--form-item bx--text-input-wrapper">
+          <label for="text-input-3" class="bx--label">@Html.LabelFor(x => x.FootprintPath)</label>
+          <input id="text-input-3" type="text" class="bx--text-input" asp-for="FootprintPath">
+        </div>
+      </div>
+      <div class="bx--col-lg-3">
+        <div class="bx--form-item bx--text-input-wrapper">
+          <label for="text-input-4" class="bx--label">@Html.LabelFor(x => x.LibraryPath)</label>
+          <input id="text-input-4" type="text" class="bx--text-input" asp-for="LibraryPath">
+        </div>
+      </div>
+      @* <div class="bx--col-lg-4"> *@
+      @*   <partial name="Partail/Components/TreeViewPartial" model="ViewBag.DirectoriesTree"/> *@
+      @* </div> *@
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-lg-12">
+        <div class="bx--data-table-container " data-table>
+          <section class="bx--table-toolbar  bx--table-toolbar--small ">
+            <div class="bx--toolbar-content">
+              <button class="bx--btn bx--btn--sm bx--btn--primary" type="button" id="buttonCreateTableColumn" onclick="createTableColumn()">
+                Add column
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+                  <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
+                </svg>
+              </button>
+            </div>
+          </section>
+          <!-- End Toolbar Content -->
+        </div>
+
+        <table class="bx--data-table bx--data-table--compact">
+          <thead>
+          <tr>
+            <th style="width: 30px"></th>
+            <th >
+              <span class="bx--table-header-label">Column name</span>
+            </th>
+            <th >
+              <span class="bx--table-header-label">Display in table</span>
+            </th>
+            <th style="width: 30px"></th>
+          </tr>
+          </thead>
+          <tbody>
+          @for (int i = 0; i < Model.TableColumns.Count; i++)
+          {
+            Model.TableColumns[i].DatabaseOrder = i + 1;
+            <partial name="Table/TableColumn" model="Model.TableColumns[i]"/>
+          }
+          <tr id="Tr0">
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="bx--row-padding" style="display: flex; justify-content: end">
+          <div class="bx--form-item">
+            <button class="bx--btn bx--btn--primary" type="submit">Save</button>
+          </div>
+      </div>
+    </div>
+  </div>
+</form>

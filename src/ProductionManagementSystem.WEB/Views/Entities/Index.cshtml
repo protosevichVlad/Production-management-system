@@ -1,57 +1,63 @@
 ﻿@using ProductionManagementSystem.Core.Models.Users
 @using ProductionManagementSystem.Core.Models.AltiumDB
-@model List<ProductionManagementSystem.Core.Models.EntityExt>
+@model ProductionManagementSystem.WEB.Models.AltiumDB.DataListViewModel
 
 @{
   ViewBag.Title = "All entities";
   Layout = "_AltiumDBLayout";
+  var fields = Model.Table?.TableColumns?.Where(x => x.Display)?.Select(x => x.ColumnName) ?? AltiumDbEntity.Fields;
 }
 
 <div class="bx--data-table-container " data-table>
   <form method="get" action="" id="tableFiltersForm">
+    @if (Model.Table != null)
+    {
+      <input type="hidden" name="tableId" value="@(Model.Table.Id)">
+    }
     <div class="bx--data-table-header">
-      <div class="bx--grid--full-width">
-        <div class="bx--row">
-          <div class="bx--col-lg-2">
-            <h4 class="bx--data-table-header__title">All entities</h4>
-            <p class="bx--data-table-header__description">Optional Helper Text</p>
+      <div class="bx--grid bx--grid--full-width">
+        <div class="bx--row bx--row-padding">
+          <div class="bx--col-lg-12">
+            <h4 class="bx--data-table-header__title">@(Model.Table?.DisplayName ?? "All entities")</h4>
           </div>
-          @* <div class="bx--col-lg-10"> *@
-          @*   <div class="bx--grid"> *@
-          @*     <div class="bx--row"> *@
-          @*       @foreach (var filter in Model.Filters) *@
-          @*       { *@
-          @*         <div class="bx--col-lg-2"> *@
-          @*           <fieldset class="bx--fieldset" style="max-height: 200px; overflow: auto"> *@
-          @*             <legend class="bx--label">@filter.FilterName</legend> *@
-          @*             @foreach (var value in filter.Values) *@
-          @*             { *@
-          @*               <div class="bx--form-item bx--checkbox-wrapper"> *@
-          @*                 <input id="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox" type="checkbox" value="@value.value" *@
-          @*                        name="@filter.FilterName" @(value.selected ? "checked" : "")> *@
-          @*                 <label for="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox-label">@value.value</label> *@
-          @*               </div> *@
-          @*             } *@
-          @*           </fieldset> *@
-          @*         </div> *@
-          @*       } *@
-          @*     </div> *@
-          @*     <div class="bx--row"> *@
-          @*       <div class="bx--col-sm-1 bx--offset-sm-3 bx--tooltip--align-end"> *@
-          @*         <button *@
-          @*           class="bx--btn bx--btn--tertiary bx--btn--sm" *@
-          @*           type="reset" onclick="location.href =''"> *@
-          @*           Reset All *@
-          @*         </button> *@
-          @*         <button *@
-          @*           class="bx--btn bx--btn--tertiary bx--btn--sm" *@
-          @*           type="submit"> *@
-          @*           Apply filters *@
-          @*         </button> *@
-          @*       </div> *@
-          @*     </div> *@
-          @*   </div> *@
-          @* </div> *@
+        </div>
+        <div class="bx--row">
+          <div class="bx--col-lg-12">
+            <div class="bx--grid">
+              <div class="bx--row">
+                @foreach (var filter in Model.Filters)
+                {
+                  <div class="bx--col-lg-2">
+                    <fieldset class="bx--fieldset" style="max-height: 200px; overflow: auto">
+                      <legend class="bx--label">@filter.FilterName</legend>
+                      @foreach (var value in filter.Values)
+                      {
+                        <div class="bx--form-item bx--checkbox-wrapper">
+                          <input id="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox" type="checkbox" value="@value.value"
+                                 name="@filter.FilterName" @(value.selected ? "checked" : "")>
+                          <label for="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox-label">@value.value</label>
+                        </div>
+                      }
+                    </fieldset>
+                  </div>
+                }
+              </div>
+              <div class="bx--row">
+                <div class="bx--col--auto" style="display: flex; justify-content: end">
+                  <button
+                    class="bx--btn bx--btn--tertiary bx--btn--sm"
+                    type="reset" onclick="location.href ='/Entities@(Model.Table != null ? $"?tableId={Model.Table.Id}":"")'">
+                    Reset All
+                  </button>
+                  <button
+                    class="bx--btn bx--btn--tertiary bx--btn--sm"
+                    type="submit">
+                    Apply filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -78,7 +84,7 @@
     <thead>
     <tr>
       <th></th>
-      @foreach (var columnName in AltiumDbEntity.Fields.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x)))
+      @foreach (var columnName in fields.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x)))
       {
           <partial name="Partail/CarbonUIComponents/SortableTh" model="columnName"/>
       }
@@ -89,24 +95,24 @@
     </tr>
     </thead>
     <tbody>
-    @for (int i = 0; i < Model.Count; i++)
+    @for (int i = 0; i < Model.Data.Count; i++)
     {
       <tr >
         <td>
-          <img src="@Model[i].ImageUrl" class="altiumdb--entity-table--image"/>
+          <img src="@Model.Data[i].ImageUrl" class="altiumdb--entity-table--image"/>
         </td>
-
-        @foreach (var columnName in AltiumDbEntity.Fields.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x)))
+  
+        @foreach (var columnName in fields.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x)))
         {
           <td>
             @if (columnName == "Part Number")
             {
               // <a href="/AltiumDB/Tables/@Model.Ex.TableName/@Model.Data[i]["Part Number"]">@Model[i][columnName]</a>
-              <a asp-action="Details" asp-route-id="@Model[i].KeyId">@Model[i][columnName]</a>
+              <a asp-action="Details" asp-route-id="@Model.Data[i].KeyId">@Model.Data[i][columnName]</a>
             }
             else
             {
-              <span style="white-space: pre-line">@Model[i][columnName]</span>
+              <span style="white-space: pre-line">@Model.Data[i][columnName]</span>
             }
           </td>
         }
@@ -119,7 +125,7 @@
               </svg>
               <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
                 <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                  <button class="bx--overflow-menu-options__btn" onclick="location.href='/Entities/Edit/@Model[i].KeyId'">
+                  <button class="bx--overflow-menu-options__btn" onclick="location.href='/Entities/Edit/@Model.Data[i].KeyId'">
                     <div class="bx--overflow-menu-options__option-content">
                       <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M1 13H15V14H1zM12.7 4.5c.4-.4.4-1 0-1.4 0 0 0 0 0 0l-1.8-1.8c-.4-.4-1-.4-1.4 0 0 0 0 0 0 0L2 8.8V12h3.2L12.7 4.5zM10.2 2L12 3.8l-1.5 1.5L8.7 3.5 10.2 2zM3 11V9.2l5-5L9.8 6l-5 5H3z"></path>
@@ -128,7 +134,7 @@
                   </button>
                 </li>
                 <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                  <button class="bx--overflow-menu-options__btn" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting an entity', 'Do you really want to delete this entity', () => deleteEntity(@Model[i].KeyId))">
+                  <button class="bx--overflow-menu-options__btn" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting an entity', 'Do you really want to delete this entity', () => deleteEntity(@Model.Data[i].KeyId))">
                     <div class="bx--overflow-menu-options__option-content">
                       <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>

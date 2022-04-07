@@ -142,9 +142,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\AltiumDB\Tables" />
     <Folder Include="Pages" />
     <Folder Include="test" />
+    <Folder Include="Views\AltiumDB\Shared" />
   </ItemGroup>
 
 </Project>

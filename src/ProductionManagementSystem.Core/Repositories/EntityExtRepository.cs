@@ -15,8 +15,9 @@ namespace ProductionManagementSystem.Core.Repositories
     {
         Task<List<EntityExt>> GetAllByTableId(int id);
         Task<EntityExt> GetByPartNumber(string partNumber);
-        Task<List<string>> GetValues(string column);
         Task<List<string>> GetValues(string column, string tableName);
+        Task<List<string>> GetValues(string column, int? tableId=null);
+        Task<List<EntityExt>> SearchByKeyWordAsync(string s, int? tableId=null);
     }
 
     public class EntityExtRepository : IEntityExtRepository
@@ -38,7 +39,7 @@ namespace ProductionManagementSystem.Core.Repositories
                 await _conn.OpenAsync();
                 
                 var cmd = _conn.CreateCommand();
-                cmd.CommandText = string.Join(" UNION ", tables.Select(GetSqlSelectAllColumnsEntityExt));
+                cmd.CommandText = string.Join(" UNION ", tables.Select((x) => GetSqlSelectAllColumnsEntityExt(x)));
                 return await GetListEntityExt(cmd);
             }
             catch(MySqlException ex)
@@ -51,14 +52,15 @@ namespace ProductionManagementSystem.Core.Repositories
             }
         }
 
-        private async Task<List<EntityExt>> GetListEntityExt(DbCommand cmd)
+        private async Task<List<EntityExt>> GetListEntityExt(DbCommand cmd, Table table=null)
         {
             List<EntityExt> result = new List<EntityExt>();
             var reader = await cmd.ExecuteReaderAsync();
+            var fields = table?.TableColumns.Select(x => x.ColumnName) ?? AltiumDbEntity.Fields;
             while (await reader.ReadAsync())
             {
                 var row = new EntityExt();
-                foreach (var column in AltiumDbEntity.Fields)
+                foreach (var column in fields)
                 {
                     row[column] = reader[column] as string;
                 }
@@ -92,6 +94,8 @@ namespace ProductionManagementSystem.Core.Repositories
             var altiumDbEntity = item.GetAltiumDbEntity();
             var entity = item.GetEntity();
             var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x=> x.Id == entity.TableId);
+            altiumDbEntity.LibraryPath = table.FootprintPath;
+            altiumDbEntity.FootprintPath = table.FootprintPath;
             try
             {
                 await _conn.OpenAsync();
@@ -201,16 +205,16 @@ namespace ProductionManagementSystem.Core.Repositories
             return entities.FirstOrDefault();
         }
 
-        public async Task<List<string>> GetValues(string column)
+        public async Task<List<string>> GetValues(string column, int? tableId=null)
         {
-            var tables = await _context.Tables.ToListAsync();
+            var tables = await _context.Tables.Where(x => !tableId.HasValue || x.Id == tableId).ToListAsync();
             try
             {
                 await _conn.OpenAsync();
                 
                 var cmd = _conn.CreateCommand();
                 cmd.CommandText = string.Join(" UNION DISTINCT ",
-                    tables.Select(table => $"SELECT DISTINCT `{column}` FROM `{table.TableName}`"));
+                    tables.Select(table => $"SELECT DISTINCT `{column}` FROM `{table.TableName}` WHERE `{column}` IS NOT NUll"));
                 var reader = await cmd.ExecuteReaderAsync();
                 List<string> result = new List<string>();
                 while (await reader.ReadAsync())
@@ -221,6 +225,28 @@ namespace ProductionManagementSystem.Core.Repositories
                 
                 await reader.CloseAsync();
                 return result;
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                await _conn.CloseAsync(); 
+            }
+        }
+
+        public async Task<List<EntityExt>> SearchByKeyWordAsync(string s, int? tableId = null)
+        {
+            var tables = await _context.Tables.Include(x => x.TableColumns).Where(x => !tableId.HasValue || x.Id == tableId).ToListAsync();
+            try
+            {
+                await _conn.OpenAsync();
+                
+                var cmd = _conn.CreateCommand();
+                cmd.CommandText = string.Join(" UNION ",
+                    tables.Select(table => $"{GetSqlSelectAllColumnsEntityExt(table, tableId.HasValue)} WHERE {string.Join(" OR ", table.TableColumns.Select(x => $"`{x.ColumnName}` LIKE '%{s}%'"))}"));
+                return await GetListEntityExt(cmd, tableId.HasValue ? tables[0]:null);
             }
             catch(MySqlException ex)
             {
@@ -275,7 +301,7 @@ namespace ProductionManagementSystem.Core.Repositories
                 AddParameterToCmd(cmd, "@PartNumber", partNumber);
                 var reader = await cmd.ExecuteReaderAsync();
                 var row = new EntityExt();
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
@@ -302,8 +328,8 @@ namespace ProductionManagementSystem.Core.Repositories
             {
                 await _conn.OpenAsync();
                 var cmd = _conn.CreateCommand();
-                cmd.CommandText = GetSqlSelectAllColumnsEntityExt(table);
-                return await GetListEntityExt(cmd);
+                cmd.CommandText = GetSqlSelectAllColumnsEntityExt(table, true);
+                return await GetListEntityExt(cmd, table);
             }
             catch(MySqlException ex)
             {
@@ -315,11 +341,12 @@ namespace ProductionManagementSystem.Core.Repositories
             }
         }
 
-        private string GetSqlSelectAllColumnsEntityExt(Table table)
+        private string GetSqlSelectAllColumnsEntityExt(Table table, bool full=false)
         {
             table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
+            var fields = full ? table?.TableColumns?.Select(x => x.ColumnName) : AltiumDbEntity.Fields;
             return
-                $"SELECT {string.Join(", ", AltiumDbEntity.Fields.Select(x => $"t.`{x}` as `{x}`"))}, " +
+                $"SELECT {string.Join(", ", fields.Select(x => $"t.`{x}` as `{x}`"))}, " +
                 $"e.Quantity, e.ImageUrl, e.KeyId, e.TableId " +
                 $"FROM `{table.TableName}` as t " +
                 $"INNER JOIN Entities as e ON e.PartNumber = t.`Part Number` AND e.TableId = {table.Id}";

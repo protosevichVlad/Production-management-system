@@ -3,7 +3,7 @@
     disableButton(`#buttonCreateTableColumn`);
     let component_selects = [...document.getElementsByClassName(`Ids`)];
     let length = component_selects.length + 1;
-    $.get(`/AltiumDB/GetPartialViewForTableColumn?index=${length}`, function(data) {
+    $.get(`/Tables/GetPartialViewForTableColumn?index=${length}`, function(data) {
         $(`#Tr0`).before(data)
         undisableButton(`#buttonCreateTableColumn`);
         updateIndex(`Ids`);
@@ -65,9 +65,9 @@ function showDeleteModal(heading, text, action)
     document.querySelector('#modal-danger-delete-button').addEventListener('click', listener, false);
 }
 
-function deleteTableByName(tableName)
+function deleteTable(id)
 {
-    return fetch(`/AltiumDB/Tables/${tableName}`, {
+    return fetch(`/Tables/${id}`, {
         method: 'DELETE',
     }).then(response => {
         if (response.ok)

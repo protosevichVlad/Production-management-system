@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Core.Models;
+using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.Core.Services.AltiumDB;
+using ProductionManagementSystem.WEB.Models.AltiumDB;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
@@ -22,11 +26,50 @@ namespace ProductionManagementSystem.WEB.Controllers
             _tableService = tableService;
         }
 
-        public async Task<IActionResult> Index(int? tableId)
+        public async Task<IActionResult> Index(string orderBy, Dictionary<string, List<string>> filter, string q, int? tableId)
         {
-            if (tableId.HasValue)
-                return View(await _entityExtService.GetFromTable(tableId.Value));
-            return View(await _entityExtService.GetAllAsync());
+            var table = tableId.HasValue ? await _tableService.GetByIdAsync(tableId.Value):null;
+            var data = string.IsNullOrEmpty(q) ? 
+                tableId.HasValue ? 
+                    await _entityExtService.GetFromTable(tableId.Value): 
+                    await _entityExtService.GetAllAsync()
+                : await _entityExtService.SearchByKeyWordAsync(q, tableId);
+            
+            List<FilterViewModel> filters = new List<FilterViewModel>();
+            var fields = table?.TableColumns?.Where(x => x.Display)?.Select(x => x.ColumnName) ?? AltiumDbEntity.Fields;
+            foreach (var column in fields.Where(x => AltiumDbEntity.NotFilterFields.All(y => y != x)))
+            {
+                data = data.Where(x => !filter.ContainsKey(column) || filter[column].Contains(x[column])).ToList();
+                filters.Add(new FilterViewModel()
+                {
+                    FilterName = column,
+                    Values = (await _entityExtService.GetValues(column, tableId)).OrderBy(x => x)
+                        .Select(x => ( x, filter.ContainsKey(column) && filter[column].Contains(x)))
+                        .ToList()
+                });
+                if (filters[^1].Values.Count < 2)
+                    filters.Remove(filters[^1]);
+            }
+
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                if (orderBy.EndsWith("_desc"))
+                {
+                    data = data.OrderByDescending(x => x[orderBy.Substring(0, orderBy.Length - "_desc".Length)]).ToList();
+                }
+                else
+                {
+                    data = data.OrderBy(x => x[orderBy]).ToList();
+                }
+            }
+            
+            DataListViewModel vm = new DataListViewModel()
+            {
+                Table = table,
+                Data = data.Select(x => (EntityExt)x).ToList(),
+                Filters = filters
+            };
+            return View(vm);
         }
 
         public async Task<IActionResult> Details(int id)
@@ -40,7 +83,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             if (tableId.HasValue)
             {
                 var table = await _tableService.GetByIdAsync(tableId.Value);
-                await AddEntityHintsAsync(table.TableName);
+                await AddEntityHintsAsync(tableId.Value);
                 return View(new EntityExt(table)
                 {
                     TableId = table.Id
@@ -61,8 +104,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             EntityExt entityExt = await _entityExtService.GetByIdAsync(id);
-            var table = await _tableService.GetByIdAsync(entityExt.TableId);
-            await AddEntityHintsAsync(table.TableName);
+            await AddEntityHintsAsync(entityExt.TableId);
             return View("Create", entityExt);
         }
         
@@ -81,14 +123,14 @@ namespace ProductionManagementSystem.WEB.Controllers
             return Ok();
         }
         
-        private async Task AddEntityHintsAsync(string tableName)
+        private async Task AddEntityHintsAsync(int tableId)
         {
             ViewBag.Manufacturers = await _entityExtService.GetValues("Manufacturer");
-            ViewBag.Categories = await _entityExtService.GetValues("Category", tableName);
+            ViewBag.Categories = await _entityExtService.GetValues("Category", tableId);
             ViewBag.Suppliers = await _entityExtService.GetValues("Supplier");
-            ViewBag.Cases = await _entityExtService.GetValues("Case", tableName);
-            ViewBag.LibraryRefs = await _entityExtService.GetValues("Library Ref", tableName);
-            ViewBag.FootprintRefs = await _entityExtService.GetValues("Footprint Ref", tableName);
+            ViewBag.Cases = await _entityExtService.GetValues("Case", tableId);
+            ViewBag.LibraryRefs = await _entityExtService.GetValues("Library Ref", tableId);
+            ViewBag.FootprintRefs = await _entityExtService.GetValues("Footprint Ref", tableId);
         }
 
         [HttpGet]
