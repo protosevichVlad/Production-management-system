@@ -82,10 +82,8 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IToDoNoteService, ToDoNoteService>();
             services.AddScoped<IProjectService, ProjectService>();
-            services.AddScoped<IEntityService, EntityService>();
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped<IEntityExtService, EntityExtService>();
             services.AddScoped<IImportService, ImportService>();
         }

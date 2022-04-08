@@ -28,33 +28,50 @@ namespace ProductionManagementSystem.Core.Services
             await foreach (var table in importer.GetDatabaseTables(tableName, stream))
             {
                 var data = await importer.GetData(stream, table);
-
+                int tableId = 0;
                 try
                 {
                     var tableFromDb = await _tableService.GetTableByNameAsync(table.TableName);
-                    int tableId = tableFromDb?.Id ?? 0;
+                    tableId = tableFromDb?.Id ?? 0;
                     if (tableFromDb == null)
                     {
                         await _tableService.CreateAsync(table);
                         tableId = table.Id;
                     }
-                    
-                    //TODO: write sql query for insert list dictionary
+
                     foreach (var d in data)
                     {
-                        d.TableId = tableId;
-                        if (_entityExtService.GetEntityExtByPartNumber(d.PartNumber) != null)
-                            await _entityExtService.CreateAsync(d);
-                        else
-                            await _entityExtService.UpdateAsync(d);
+                        try
+                        {
+                            d.TableId = tableId;
+                            var entityInDb = await _entityExtService.GetEntityExtByPartNumber(d.PartNumber);
+                            if (entityInDb == null)
+                            {
+                                d.KeyId = 0;
+                                d.Quantity = 0;
+                                d.ImageUrl = String.Empty;
+                                await _entityExtService.CreateAsync(d);
+                            }
+                            else
+                            {
+                                d.KeyId = entityInDb.KeyId;
+                                d.Quantity = entityInDb.Quantity;
+                                d.ImageUrl = entityInDb.ImageUrl;
+                                await _entityExtService.UpdateAsync(d);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine($"{table.DisplayName} {d.Category} {d.Item} {d.PartNumber}");
+                            Console.WriteLine(e.Message);
+                        }
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
                     Console.WriteLine(table.DisplayName);
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine(ex.Message);
                 }
-                
             }
         }
     }

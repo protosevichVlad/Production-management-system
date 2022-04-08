@@ -3,7 +3,7 @@
 @model ProductionManagementSystem.WEB.Models.AltiumDB.DataListViewModel
 
 @{
-  ViewBag.Title = "All entities";
+  ViewBag.Title = Model.Table?.DisplayName ?? "All entities";
   Layout = "_AltiumDBLayout";
   var fields = Model.Table?.TableColumns?.Where(x => x.Display)?.Select(x => x.ColumnName) ?? AltiumDbEntity.Fields;
 }
@@ -18,7 +18,7 @@
       <div class="bx--grid bx--grid--full-width">
         <div class="bx--row bx--row-padding">
           <div class="bx--col-lg-12">
-            <h4 class="bx--data-table-header__title">@(Model.Table?.DisplayName ?? "All entities")</h4>
+            <h4 class="bx--data-table-header__title">@ViewBag.Title</h4>
           </div>
         </div>
         <div class="bx--row">
@@ -35,7 +35,7 @@
                         <div class="bx--form-item bx--checkbox-wrapper">
                           <input id="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox" type="checkbox" value="@value.value"
                                  name="@filter.FilterName" @(value.selected ? "checked" : "")>
-                          <label for="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox-label">@value.value</label>
+                          <label for="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox-label">@value.text</label>
                         </div>
                       }
                     </fieldset>
@@ -108,7 +108,7 @@
             @if (columnName == "Part Number")
             {
               // <a href="/AltiumDB/Tables/@Model.Ex.TableName/@Model.Data[i]["Part Number"]">@Model[i][columnName]</a>
-              <a asp-action="Details" asp-route-id="@Model.Data[i].KeyId">@Model.Data[i][columnName]</a>
+              <a asp-action="Details" asp-route-id="@Model.Data[i].KeyId" target="_blank">@Model.Data[i][columnName]</a>
             }
             else
             {

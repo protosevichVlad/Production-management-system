@@ -21,7 +21,10 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
 
         public async Task<List<Project>> GetProjectsWithEntityAsync(string partNumber)
         {
-            return await _dbSet.Include(x => x.Entities).Where(x => x.Entities.Count(x => x.PartNumber == partNumber) > 0)
+            var entity = await _db.Entities.FirstOrDefaultAsync(x => x.PartNumber == partNumber);
+            if (entity == null) return new List<Project>();
+            return await _dbSet.Include(x => x.Entities)
+                .Where(x => x.Entities.Count(x => x.EntityId == entity.KeyId) > 0)
                 .ToListAsync();
         }
 

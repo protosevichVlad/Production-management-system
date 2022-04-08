@@ -6,6 +6,6 @@ namespace ProductionManagementSystem.WEB.Models.AltiumDB
     public class FilterViewModel
     {
         public string FilterName { get; set; }
-        public List<(string value, bool selected)> Values { get; set; }
+        public List<(string value, string text, bool selected)> Values { get; set; }
     }
 }

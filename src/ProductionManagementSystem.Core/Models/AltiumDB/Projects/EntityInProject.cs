@@ -7,7 +7,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
     public class EntityInProject
     {
         public int Id { get; set; }
-        public string PartNumber { get; set; }
+        public int EntityId { get; set; }
         public int Quantity { get; set; }
         public string Designator { get; set; }
         
@@ -15,6 +15,6 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
         public int ProjectId { get; set; }
         
         [NotMapped]
-        public AltiumDbEntity Entity { get; set; }
+        public EntityExt Entity { get; set; }
     }
 }

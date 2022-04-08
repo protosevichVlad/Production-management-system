@@ -16,17 +16,46 @@ namespace ProductionManagementSystem.WEB.Controllers
     public class EntitiesController : Controller
     {
         private readonly IEntityExtService _entityExtService;
+        private readonly IProjectService _projectService;
         private readonly IImportService _importService;
         private readonly ITableService _tableService;
+        private const string USING_IN_PROJECTS = "Using in projects";
+        
 
-        public EntitiesController(IEntityExtService entityExtService, IImportService importService, ITableService tableService)
+        public EntitiesController(IEntityExtService entityExtService, IImportService importService, ITableService tableService, IProjectService projectService)
         {
             _entityExtService = entityExtService;
             _importService = importService;
             _tableService = tableService;
+            _projectService = projectService;
         }
 
         public async Task<IActionResult> Index(string orderBy, Dictionary<string, List<string>> filter, string q, int? tableId)
+        {
+            return View(await GetEntities(orderBy, filter, q, tableId));
+        }
+
+        public async Task<IActionResult> ChangeQuantity(string orderBy, Dictionary<string, List<string>> filter,
+            string q, int? tableId)
+        {
+            return View(await GetEntities(orderBy, filter, q, tableId));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeQuantity(int[] id, int[] quantity, string type)
+        {
+            for (int i = 0; i < quantity.Length; i++)
+            {
+                if (type == "add")
+                    await _entityExtService.IncreaseQuantityAsync(id[i], quantity[i]);
+                else if (type == "get")
+                    await _entityExtService.DecreaseQuantityAsync(id[i], quantity[i]);
+            }
+            return Redirect(HttpContext.Request.Path + HttpContext.Request.QueryString);
+        }
+
+        private async Task<DataListViewModel> GetEntities(string orderBy, Dictionary<string, List<string>> filter,
+            string q, int? tableId)
         {
             var table = tableId.HasValue ? await _tableService.GetByIdAsync(tableId.Value):null;
             var data = string.IsNullOrEmpty(q) ? 
@@ -44,12 +73,29 @@ namespace ProductionManagementSystem.WEB.Controllers
                 {
                     FilterName = column,
                     Values = (await _entityExtService.GetValues(column, tableId)).OrderBy(x => x)
-                        .Select(x => ( x, filter.ContainsKey(column) && filter[column].Contains(x)))
+                        .Select(x => ( x, x, filter.ContainsKey(column) && filter[column].Contains(x)))
                         .ToList()
                 });
                 if (filters[^1].Values.Count < 2)
                     filters.Remove(filters[^1]);
             }
+            
+            data = data
+                .Where(x =>
+                {
+                    bool Predicate(string y) => _projectService.GetProjectsWithEntityAsync(x.PartNumber).Result.Any(p => p.Id == int.Parse(y));
+                    return !filter.ContainsKey(USING_IN_PROJECTS) ||
+                           filter[USING_IN_PROJECTS].Any(Predicate
+                           );
+                }).ToList();
+            
+            filters.Add(new FilterViewModel()
+            {
+                FilterName = USING_IN_PROJECTS,
+                Values = (await _projectService.GetAllAsync()).OrderBy(x => x)
+                    .Select(x => ( x.Id.ToString(), x.ToString(), filter.ContainsKey(USING_IN_PROJECTS) && filter[USING_IN_PROJECTS].Contains(x.Id.ToString())))
+                    .ToList()
+            });
 
             if (!string.IsNullOrEmpty(orderBy))
             {
@@ -63,13 +109,12 @@ namespace ProductionManagementSystem.WEB.Controllers
                 }
             }
             
-            DataListViewModel vm = new DataListViewModel()
+            return new DataListViewModel()
             {
                 Table = table,
                 Data = data.Select(x => (EntityExt)x).ToList(),
                 Filters = filters
             };
-            return View(vm);
         }
 
         public async Task<IActionResult> Details(int id)
@@ -159,5 +204,23 @@ namespace ProductionManagementSystem.WEB.Controllers
             
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        [Route("/api/entities/{id:int}/increase")]
+        public async Task<IActionResult> IncreaseQuantity([FromRoute]int id, [FromBody]int quantity)
+        {
+            await _entityExtService.IncreaseQuantityAsync(id, quantity);
+            return Ok();
+        }
+        
+        [HttpPost]
+        [Route("/api/entities/{id:int}/decrease")]
+        public async Task<IActionResult> DecreaseQuantity([FromRoute]int id, [FromBody]int quantity)
+        {
+            await _entityExtService.DecreaseQuantityAsync(id, quantity);
+            return Ok();
+        }
+        
+        
     }
 }

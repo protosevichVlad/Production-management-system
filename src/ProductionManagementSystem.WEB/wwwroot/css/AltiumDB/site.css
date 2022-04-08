@@ -124,3 +124,15 @@
 .bx--product-switcher__product-list .bx--overflow-menu:hover {
     background-color: #393939;
 }
+
+@media print {
+    .hidden-print {
+        display: none !important;
+    }
+}
+
+.bx--data-table thead{
+    position: sticky;
+    top: 3rem;
+    z-index: 10;
+}

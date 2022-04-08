@@ -27,7 +27,10 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
         
         public async Task<Table> GetTableByNameAsync(string tableName)
         {
-            var table = await _dbSet.Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.TableName == tableName);
+            var table = (await _dbSet
+                .Include(x => x.TableColumns)
+                .FirstOrDefaultAsync(x => x.TableName == tableName));
+            if (table == null) return null;
             table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
             return table;
         }

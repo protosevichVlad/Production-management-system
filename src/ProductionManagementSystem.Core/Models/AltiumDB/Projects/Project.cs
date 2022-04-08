@@ -18,5 +18,10 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB.Projects
         
         public DateTime ReportDate { get; set; }
         public string Variant { get; set; }
+
+        public override string ToString()
+        {
+            return $"{this.Name} {this.Variant}";
+        }
     }
 }

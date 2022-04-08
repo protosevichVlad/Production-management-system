@@ -16,7 +16,7 @@ namespace ProductionManagementSystem.WEB.Filters
     {
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
-            if (context.Controller is AltiumDBController || context.Controller is ProjectsController)
+            if (context.Controller is Controller)
             {
                 var controller = context.Controller as Controller;
                 var service = context.HttpContext.RequestServices.GetService<IToDoNoteService>();

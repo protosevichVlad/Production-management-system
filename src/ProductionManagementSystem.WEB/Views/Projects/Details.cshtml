@@ -14,14 +14,23 @@
     </div>
   </div>
   <div class="bx--row bx--row-padding">
-    <div class="bx--col-lg-4">
+    <div class="bx--col-md-3">
       <img src="@Model.ImagePath" class="altiumdb--entity--image"/>
     </div>
-    <div class="bx--col-lg-4">
+    <div class="bx--col-md-3">
       <div id="model" style="width: 400px; height: 400px"> </div>
     </div>
-    <div class="bx--col-lg-4">
+    <div class="bx--col-md-2 hidden-print">
       <div class="bx--grid">
+        <div class="bx--row">
+          <div class="bx--col-lg-5">
+            <strong>Print version</strong>
+          </div>
+          <div class="bx--col-lg-7">
+            <a asp-controller="Projects" asp-action="PrintVersion" asp-route-id="@Model.Id" target="_blank">Print version</a>
+          </div>
+        </div>
+        <div class="bx--row" style="height: 10px"></div>
         <div class="bx--row">
           <div class="bx--col-lg-5">
             <strong>Bill of matirial</strong>
@@ -53,79 +62,7 @@
     </div>
   </div>
   <div class="bx--row bx--row-padding">
-    <table class="bx--data-table  bx--data-table--compact  ">
-      <thead>
-      <tr>
-        <th >
-          <span class="bx--table-header-label">№</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Category</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Designator</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Item</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Part Number</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Supplier</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Case</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Manufacturer</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Quantity</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Description</span>
-        </th>
-      </tr>
-      </thead>
-      <tbody>
-      @for (int i = 0; i < Model.Entities.Count; i++)
-      {
-        <tr >
-          <td >
-            @(i + 1)
-          </td>
-          <td >
-            @Model.Entities[i].Entity.Category
-          </td>
-          <td >
-            @Model.Entities[i].Designator
-          </td>
-          <td >
-            @Model.Entities[i].Entity.Item
-          </td>
-          <td >
-            <a href="/AltiumDB/Tables/@Model.Entities[i].Entity["tableName"]/@Model.Entities[i].Entity.PartNumber">@Model.Entities[i].Entity.PartNumber</a>
-          </td>
-          <td >
-            @Model.Entities[i].Entity.Supplier
-          </td>
-          <td >
-            @Model.Entities[i].Entity.Case
-          </td>
-          <td >
-            @Model.Entities[i].Entity.Manufacturer
-          </td>
-          <td >
-            @Model.Entities[i].Quantity
-          </td>
-          <td >
-            <span style="white-space: pre-line">@Model.Entities[i].Entity.Description</span>
-          </td>
-        </tr>
-      }
-      </tbody>
-    </table>
+    <partial name="Partail/Projects/ProjectComponents" model="@Model"/>
   </div>
 </div>
 

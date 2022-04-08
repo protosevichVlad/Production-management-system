@@ -8,8 +8,8 @@
   @RenderSection("Stylesheet", required: false);
 </head>
 <body>
-<header class="bx--header" role="banner" aria-label="IBM Platform Name" data-header>
-  <a class="bx--header__menu-item" asp-area="" asp-controller="AltiumDB" asp-action="Index" tabindex="0">AltiumDB</a>
+<header class="bx--header hidden-print" role="banner" aria-label="IBM Platform Name" data-header>
+  <a class="bx--header__menu-item" asp-area="" asp-controller="Home" asp-action="Index" tabindex="0">CompDB</a>
   <nav class="bx--header__nav" aria-label="Platform Name" data-header-nav>
     <ul class="bx--header__menu-bar" aria-label="Platform Name">
       <li>
@@ -39,10 +39,11 @@
   @RenderBody()
 </div>
 <partial name="Partail/DangerModal"/>
+<partial name="Partail/Modals/ChangeQuantityPartialModal"/>
 <script src="/components/TreeView/treeViewComponent.js"></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="~/js/carbon-components.js"></script>
 <script type="text/javascript" src="~/js/AltiumDB/site.js"></script>
-  <script type="text/javascript" src="~/js/carbon-components.min.js"></script>
 @await RenderSectionAsync("Scripts", false)
 </body>
 </html>

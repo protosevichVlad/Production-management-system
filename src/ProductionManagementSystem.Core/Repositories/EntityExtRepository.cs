@@ -14,7 +14,7 @@ namespace ProductionManagementSystem.Core.Repositories
     public interface IEntityExtRepository : IRepository<EntityExt>
     {
         Task<List<EntityExt>> GetAllByTableId(int id);
-        Task<EntityExt> GetByPartNumber(string partNumber);
+        Task<EntityExt> GetByPartNumber(string partNumber, int? tableId=null);
         Task<List<string>> GetValues(string column, string tableName);
         Task<List<string>> GetValues(string column, int? tableId=null);
         Task<List<EntityExt>> SearchByKeyWordAsync(string s, int? tableId=null);
@@ -34,6 +34,7 @@ namespace ProductionManagementSystem.Core.Repositories
         public async Task<List<EntityExt>> GetAllAsync()
         {
             var tables = await _context.Tables.Include(x => x.TableColumns).ToListAsync();
+            if (tables.Count == 0) return new List<EntityExt>();
             try
             {
                 await _conn.OpenAsync();
@@ -81,6 +82,7 @@ namespace ProductionManagementSystem.Core.Repositories
             var entity = await _context.Entities.AsNoTracking().FirstOrDefaultAsync(x => x.KeyId == id);
             if (entity == null) return null;
             var altiumDbEntity = await GetByPartNumber(entity.PartNumber, entity.TableId);
+            if (altiumDbEntity == null) return null;
             return new EntityExt(altiumDbEntity ,entity);
         }
 
@@ -162,19 +164,15 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public void Delete(EntityExt item)
         {
-            var altiumDbEntity = item.GetAltiumDbEntity();
-            var entity = item.GetEntity();
             var table = _context.Tables.Find(item.TableId);
             try
             {
                 _conn.Open();
                 var cmd = _conn.CreateCommand();
                 cmd.CommandText = $"DELETE FROM `{table.TableName}` WHERE `Part Number` = @PartNumber;";
-                AddParameterToCmd(cmd, "@PartNumber", altiumDbEntity.PartNumber);
+                cmd.CommandText += $"DELETE FROM `Entities` WHERE `PartNumber` = @PartNumber;";
+                AddParameterToCmd(cmd, "@PartNumber", item.PartNumber);
                 cmd.ExecuteNonQuery();
-                
-                _context.Entities.Remove(entity);
-                _context.SaveChanges();
             }
             catch(MySqlException ex)
             {
@@ -197,24 +195,17 @@ namespace ProductionManagementSystem.Core.Repositories
             return await GetAllByTableAsync(table);
         }
 
-        public async Task<EntityExt> GetByPartNumber(string partNumber)
-        {
-            var entities = await this.FindAsync(x => x.PartNumber == partNumber, "Table");
-            if (entities == null || entities.Count == 0) return null;
-            if (entities.Count != 1) throw new NotImplementedException();
-            return entities.FirstOrDefault();
-        }
-
         public async Task<List<string>> GetValues(string column, int? tableId=null)
         {
             var tables = await _context.Tables.Where(x => !tableId.HasValue || x.Id == tableId).ToListAsync();
+            if (tables.Count == 0) return new List<string>();
             try
             {
                 await _conn.OpenAsync();
                 
                 var cmd = _conn.CreateCommand();
                 cmd.CommandText = string.Join(" UNION DISTINCT ",
-                    tables.Select(table => $"SELECT DISTINCT `{column}` FROM `{table.TableName}` WHERE `{column}` IS NOT NUll"));
+                    tables.Select(table => $"SELECT DISTINCT `{column}` FROM `{table.TableName}` WHERE `{column}` IS NOT NUll AND `{column}` <> ''"));
                 var reader = await cmd.ExecuteReaderAsync();
                 List<string> result = new List<string>();
                 while (await reader.ReadAsync())
@@ -239,6 +230,7 @@ namespace ProductionManagementSystem.Core.Repositories
         public async Task<List<EntityExt>> SearchByKeyWordAsync(string s, int? tableId = null)
         {
             var tables = await _context.Tables.Include(x => x.TableColumns).Where(x => !tableId.HasValue || x.Id == tableId).ToListAsync();
+            if (tables.Count == 0) return new List<EntityExt>();
             try
             {
                 await _conn.OpenAsync();
@@ -288,29 +280,17 @@ namespace ProductionManagementSystem.Core.Repositories
             }
         }
 
-        public async Task<AltiumDbEntity> GetByPartNumber(string partNumber, int tableId)
+        public async Task<EntityExt> GetByPartNumber(string partNumber, int? tableId=null)
         {
-            var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.Id == tableId);
-            table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
+            var tables = await _context.Tables.Include(x => x.TableColumns).Where(x => !tableId.HasValue || x.Id == tableId).ToListAsync();
+            if (tables.Count == 0) return null;
             try
             {
                 await _conn.OpenAsync();
-                
                 var cmd = _conn.CreateCommand();
-                cmd.CommandText = $"SELECT * FROM `{table.TableName}` WHERE `Part Number`= @PartNumber;";
-                AddParameterToCmd(cmd, "@PartNumber", partNumber);
-                var reader = await cmd.ExecuteReaderAsync();
-                var row = new EntityExt();
-                while (await reader.ReadAsync())
-                {
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        row[table.TableColumns[i].ColumnName] = reader[i].ToString();
-                    }
-                }
-                
-                await reader.CloseAsync();
-                return row;
+                cmd.CommandText = string.Join(" UNION ",
+                    tables.Select(table => $"{GetSqlSelectAllColumnsEntityExt(table, tableId.HasValue)} WHERE `Part Number`= '{partNumber}'"));
+                return (await GetListEntityExt(cmd, tableId.HasValue ? tables[0]:null)).FirstOrDefault();
             }
             catch(MySqlException ex)
             {

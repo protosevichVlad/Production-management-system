@@ -1,0 +1,90 @@
+﻿@model ProductionManagementSystem.Core.Models.AltiumDB.Projects.Project
+
+<table class="bx--data-table  bx--data-table--compact  ">
+      <thead>
+      <tr>
+        <th >
+          <span class="bx--table-header-label">№</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Category</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Designator</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Item</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Part Number</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Supplier</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Case</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Manufacturer</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Quantity</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label hidden-print">Description</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      @for (int i = 0; i < Model.Entities.Count; i++)
+      {
+        <tr >
+          <td >
+            @(i + 1)
+          </td>
+          @if (Model.Entities[i].Entity == null)
+          {
+            <td></td>
+            <td >
+              @Model.Entities[i].Designator
+            </td>
+            <td colspan="5">Item not found</td>
+            <td >
+              @Model.Entities[i].Quantity
+            </td>
+            <td class="hidden-print"></td>
+          }
+          else
+          {
+            <td >
+              @Model.Entities[i].Entity.Category
+            </td>
+            <td >
+              @Model.Entities[i].Designator
+            </td>
+            <td >
+              @Model.Entities[i].Entity.Item
+            </td>
+            <td >
+              <a href="/Entities/Details/@Model.Entities[i].Entity.KeyId">@Model.Entities[i].Entity.PartNumber</a>
+            </td>
+            <td >
+              @Model.Entities[i].Entity.Supplier
+            </td>
+            <td >
+              @Model.Entities[i].Entity.Case
+            </td>
+            <td >
+              @Model.Entities[i].Entity.Manufacturer
+            </td>
+            <td >
+              @Model.Entities[i].Quantity
+            </td>
+            <td class="hidden-print">
+              <span style="white-space: pre-line">@Model.Entities[i].Entity.Description</span>
+            </td>
+          }
+        </tr>
+      }
+      </tbody>
+    </table>

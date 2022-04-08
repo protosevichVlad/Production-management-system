@@ -83,6 +83,14 @@
     <_ContentIncludedByDefault Remove="vue-project\jsconfig.json" />
     <_ContentIncludedByDefault Remove="Views\Shared\Partail\Components\TreeViewNodePartial.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Shared\Partail\Components\TreeViewPartial.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\AltiumDB\Views\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\AltiumDB\CreateEntity.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\AltiumDB\CreateTable.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\AltiumDB\EntityDetails.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\AltiumDB\GetDataFromTable.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\AltiumDB\ImportTables.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\AltiumDB\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\AltiumDB\Tables.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -144,7 +152,7 @@
   <ItemGroup>
     <Folder Include="Pages" />
     <Folder Include="test" />
-    <Folder Include="Views\AltiumDB\Shared" />
+    <Folder Include="wwwroot\Uploads\Serial-Port-Programator" />
   </ItemGroup>
 
 </Project>

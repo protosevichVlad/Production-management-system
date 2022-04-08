@@ -23,12 +23,12 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
     }
     public class ProjectService : BaseService<Project, IAltiumDBUnitOfWork>, IProjectService
     {
-        private readonly EntityService _entityService;
+        private readonly IEntityExtService _entityExtService;
         
-        public ProjectService(IAltiumDBUnitOfWork db) : base(db)
+        public ProjectService(IAltiumDBUnitOfWork db, IEntityExtService entityService) : base(db)
         {
+            _entityExtService = entityService;
             _currentRepository = _db.Projects;
-            _entityService = new EntityService(_db);
         }
 
         public async Task<Project> ImportProjectAsync(Stream bom, Stream image, Stream circuitDiagram,
@@ -59,12 +59,14 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
                 int row = 10;
                 while (true)
                 {
+                    if (string.IsNullOrWhiteSpace(sheet.Cells[row, 6].Text))
+                        break;
+                    
                     EntityInProject entityInProject = new EntityInProject();
                     entityInProject.Designator = sheet.Cells[row, 4].Text;
-                    entityInProject.PartNumber = sheet.Cells[row, 6].Text;
+                    entityInProject.EntityId =
+                        (await _entityExtService.GetEntityExtByPartNumber(sheet.Cells[row, 6].Text))?.KeyId  ?? 0;
                     entityInProject.Quantity = int.Parse(sheet.Cells[row, 10].Text);
-                    if (string.IsNullOrWhiteSpace(entityInProject.PartNumber))
-                        break;
 
                     project.Entities.Add(entityInProject);
                     row++;
@@ -140,7 +142,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             
             foreach (var entity in result.Entities)
             {
-                entity.Entity = await _entityService.SearchByPartNumber(entity.PartNumber);
+                entity.Entity = await _entityExtService.GetByIdAsync(entity.EntityId);
             }
 
             result.Entities = result.Entities.OrderBy(x => x.Designator).ToList();

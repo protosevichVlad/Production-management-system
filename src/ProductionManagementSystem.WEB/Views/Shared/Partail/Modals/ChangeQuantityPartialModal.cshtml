@@ -1,0 +1,36 @@
+﻿<div data-modal id="modal-quantity" class="bx--modal " role="dialog"
+     aria-modal="true" aria-labelledby="modal-quantity-label" aria-describedby="modal-quantity-heading" tabindex="-1">
+  <div class="bx--modal-container bx--modal-container--xs">
+    <div class="bx--modal-header">
+      <p class="bx--modal-header__heading bx--type-beta" id="modal-quantity-heading"></p>
+      <button class="bx--modal-close" type="button" data-modal-close aria-label="close modal" >
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--modal-close__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M12 4.7L11.3 4 8 7.3 4.7 4 4 4.7 7.3 8 4 11.3 4.7 12 8 8.7 11.3 12 12 11.3 8.7 8z"></path></svg>
+      </button>
+    </div>
+    <div class="bx--modal-content bx--modal-content--with-form" >
+      <div class="bx--form-item">
+        <div data-numberinput class="bx--number">
+          <label for="modal-quantity-number-input" id="modal-quantity-text" class="bx--label"></label>
+          <div class="bx--number__input-wrapper">
+            <input id="modal-quantity-number-input" type="number" min="0" max="10000" value="1">
+            <div class="bx--number__controls">
+              <button aria-label="increase number input" class="bx--number__control-btn up-icon" type="button"
+                aria-live="polite" aria-atomic="true">
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true"><path d="M0 4L4 0 8 4z"></path></svg>
+              </button>
+              <button aria-label="decrease number input" class="bx--number__control-btn down-icon" type="button"
+                aria-live="polite" aria-atomic="true">
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true"><path d="M8 0L4 4 0 0z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bx--modal-footer">
+      <button class="bx--btn bx--btn--secondary" type="button" data-modal-close>Cancel</button>
+      <button class="bx--btn bx--btn--primary" type="button" id="modal-quantity-ok-button">Ok</button>
+    </div>
+  </div>
+  <span tabindex="0"></span>
+</div>

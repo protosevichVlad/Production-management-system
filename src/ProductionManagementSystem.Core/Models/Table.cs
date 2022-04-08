@@ -52,7 +52,7 @@ namespace ProductionManagementSystem.Core.Models
         public string GenerateCreateTableSqlQuery()
         {
             StringBuilder result = new StringBuilder($"CREATE TABLE `{TableName}` (");
-            result.Append(string.Join(", ", this.TableColumns.Select(column => $"`{column.ColumnName}` VARCHAR(255)")));
+            result.Append(string.Join(", ", this.TableColumns.Select(column => $"`{column.ColumnName}` VARCHAR(511)")));
             result.Append("); ");
             result.Append($"grant select on `{TableName}` to AltiumDBUser;");
             return result.ToString();

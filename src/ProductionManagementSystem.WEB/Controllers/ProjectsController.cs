@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,9 +10,8 @@ using Microsoft.Extensions.FileProviders;
 using ProductionManagementSystem.Core.Models.AltiumDB.Projects;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 
-namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
+namespace ProductionManagementSystem.WEB.Controllers
 {
-    [Area("AltiumDB")]
     public class ProjectsController : Controller
     {
         private readonly IProjectService _projectService;
@@ -31,8 +31,8 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
             else
             {
                 data = await _projectService
-                    .Find(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(q) 
-                                            || x.Entities.Any(x => !string.IsNullOrEmpty(x.PartNumber) && x.PartNumber == q), "Entities");
+                    .Find(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(q, StringComparison.InvariantCultureIgnoreCase));
+                data.AddRange(await _projectService.GetProjectsWithEntityAsync(q));
             }
             
             return View(data);
@@ -58,11 +58,16 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
         }
         
         [HttpDelete]
-        [Route("/AltiumDB/Projects/{id:int}")]
+        [Route("/Projects/{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _projectService.DeleteByIdAsync(id);
             return Ok();
+        }
+        
+        public async Task<IActionResult> PrintVersion(int id)
+        {
+            return View(await _projectService.GetByIdAsync(id));
         }
     }
 }

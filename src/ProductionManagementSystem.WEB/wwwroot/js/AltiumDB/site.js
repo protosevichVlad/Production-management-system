@@ -1,27 +1,23 @@
-﻿async function createTableColumn()
-{
+﻿async function createTableColumn() {
     disableButton(`#buttonCreateTableColumn`);
     let component_selects = [...document.getElementsByClassName(`Ids`)];
     let length = component_selects.length + 1;
-    $.get(`/Tables/GetPartialViewForTableColumn?index=${length}`, function(data) {
+    $.get(`/Tables/GetPartialViewForTableColumn?index=${length}`, function (data) {
         $(`#Tr0`).before(data)
         undisableButton(`#buttonCreateTableColumn`);
         updateIndex(`Ids`);
     });
 }
 
-function removeTableColumn(index)
-{
+function removeTableColumn(index) {
     let deviceItems = [...document.querySelectorAll(`.Ids`)];
     let length = deviceItems.length;
 
-    if (length === 0)
-    {
+    if (length === 0) {
         return;
     }
 
-    for (let i = index - 1; i < length - 1; i++)
-    {
+    for (let i = index - 1; i < length - 1; i++) {
         document.getElementsByName(`TableColumns[${i}].ColumnName`)[0].value =
             document.getElementsByName(`TableColumns[${i + 1}].ColumnName`)[0].value
         document.getElementsByName(`TableColumns[${i}].ColumnType`)[0].value =
@@ -35,113 +31,98 @@ function removeTableColumn(index)
     updateIndex(`Ids`);
 }
 
-function disableButton(selector)
-{
+function disableButton(selector) {
     let button = document.querySelector(selector);
     button.disabled = true;
 }
 
-function undisableButton(selector)
-{
+function undisableButton(selector) {
     let button = document.querySelector(selector);
     button.disabled = false;
 }
 
-function updateIndex(selector)
-{
+function updateIndex(selector) {
     let td_with_ids = [...document.getElementsByClassName(selector)];
-    td_with_ids.forEach((elem, index) => elem.innerText  = index + 1);
+    td_with_ids.forEach((elem, index) => elem.innerText = index + 1);
 }
 
-function showDeleteModal(heading, text, action)
-{
+function showDeleteModal(heading, text, action) {
     document.querySelector('#modal-danger-heading').innerHTML = heading;
     document.querySelector('#modal-danger-text').innerHTML = text;
     let listener = () => {
         action();
         document.querySelector('#modal-danger-delete-button').removeEventListener('click', listener, false)
     };
-    
+
     document.querySelector('#modal-danger-delete-button').addEventListener('click', listener, false);
 }
 
-function deleteTable(id)
-{
+function deleteTable(id) {
     return fetch(`/Tables/${id}`, {
         method: 'DELETE',
     }).then(response => {
-        if (response.ok)
-        {
+        if (response.ok) {
             location.reload();
         }
     })
 }
 
-function deleteEntity(id, action)
-{
+function deleteEntity(id, action) {
     return fetch(`/Entities/${id}`, {
         method: 'DELETE',
     }).then(response => {
-        if (response.ok)
-        {
+        if (response.ok) {
             if (action == null) {
                 location.reload();
-            }
-            else {
+            } else {
                 action();
             }
         }
     })
 }
 
-function deleteProject(id)
-{
-    return fetch(`/AltiumDB/Projects/${id}`, {
+function deleteProject(id) {
+    return fetch(`/Projects/${id}`, {
         method: 'DELETE',
     }).then(response => {
-        if (response.ok)
-        {
+        if (response.ok) {
             location.reload();
         }
     })
 }
 
-function markNoteAsCompleted(id)
-{
+function markNoteAsCompleted(id) {
     return fetch(`/api/AltiumDB/to-do/${id}/completed`, {
         method: 'POST',
     }).then(response => {
-        if (response.ok)
-        {
+        if (response.ok) {
             location.reload();
         }
     })
 }
 
-function getDateTime()
-{
+function getDateTime() {
     var date = new Date();
-    var day = date.getDate();       
-    var month = date.getMonth() + 1;    
-    var year = date.getFullYear();  
-    var hour = date.getHours();     
-    var minute = date.getMinutes(); 
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+    var hour = date.getHours();
+    var minute = date.getMinutes();
     var second = date.getSeconds();
-    return (day < 10 ? '0' + day: day) + "/" + (month < 10 ? '0' + month: month) + "/" + year + "_" + (hour < 10 ? '0' + hour: hour) + ':' + (minute < 10 ? '0' + minute: minute) + ':' + (second < 10 ? '0' + second: second);
+    return (day < 10 ? '0' + day : day) + "/" + (month < 10 ? '0' + month : month) + "/" + year + "_" + (hour < 10 ? '0' + hour : hour) + ':' + (minute < 10 ? '0' + minute : minute) + ':' + (second < 10 ? '0' + second : second);
 }
 
 let globalSearch = document.querySelector('#globalSearch');
 let globalSearchInput = document.querySelector('#globalSearchInput');
 let globalSearchIcon = document.querySelector('#globalSearchIcon');
 
-globalSearchIcon.addEventListener('click', (event) =>
-{
+globalSearchIcon.addEventListener('click', (event) => {
     globalSearchIcon.style.display = 'none';
     globalSearch.style.display = 'flex';
     globalSearchInput.focus();
 })
 
-window.addEventListener('click',(event)=> {
+window.addEventListener('click', (event) => {
     let hints = document.querySelector('.altiumdb--global-search--hints');
     if (hints && !hints.contains(event.target)) {
         globalSearch.style.display = 'none';
@@ -151,9 +132,69 @@ window.addEventListener('click',(event)=> {
     }
 })
 
-globalSearchInput.addEventListener('input', () =>{
-    $.get(`/AltiumDB/search?q=${globalSearchInput.value}`, function(data) {
+globalSearchInput.addEventListener('input', () => {
+    $.get(`/search?q=${globalSearchInput.value}`, function (data) {
         $('#global-search--hints').remove();
         $(`#global-search--close-button`).after(data);
     });
 })
+
+function showQuantityModal(type, id) {
+    let text = {};
+    if (type === 'increase')
+    {
+        text.heading = 'Add to warehouse';
+        text.quantityText = 'Quantity';
+    }
+    else if (type === 'decrease')
+    {
+        text.heading = 'Get from the warehouse';
+        text.quantityText = 'Quantity';
+    }
+    
+    document.querySelector('#modal-quantity-heading').innerText = text.heading;
+    document.querySelector('#modal-quantity-text').innerText = text.quantityText;
+    
+    let modal = CarbonComponents.Modal.create(document.querySelector('#modal-quantity'));
+    modal.show();
+    document.querySelector('#modal-quantity-number-input').value = 0;    
+    document.querySelector('#modal-quantity-number-input').focus();
+    document.querySelector('#modal-quantity-ok-button').onclick = () => {
+        modal.hide();
+        if (type === 'increase')
+            IncreaseQuantityOfEntity(id, document.querySelector('#modal-quantity-number-input').value);
+        else if (type === 'decrease')
+            DecreaseQuantityOfEntity(id, document.querySelector('#modal-quantity-number-input').value);
+    };
+}
+
+function IncreaseQuantityOfEntity(id, quantity) {
+    request(`/api/entities/${id}/increase`, 'POST', Number(quantity)).then(response => {
+        if (response.ok) {
+            document.querySelector('#quantity-value').innerText = 
+                Number(document.querySelector('#quantity-value').innerText) + 
+                Number(document.querySelector('#modal-quantity-number-input').value);
+        }
+    })
+}
+
+function DecreaseQuantityOfEntity(id, quantity) {
+    request(`/api/entities/${id}/decrease`, 'POST', Number(quantity)).then(response => {
+        if (response.ok) {
+            document.querySelector('#quantity-value').innerText =
+                Number(document.querySelector('#quantity-value').innerText) -
+                Number(document.querySelector('#modal-quantity-number-input').value);
+        }
+    })
+}
+
+async function request(url, method, body) {
+    return await fetch(url, {
+        method: method,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body),
+    });
+}

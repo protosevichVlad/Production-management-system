@@ -1,0 +1,149 @@
+﻿@using ProductionManagementSystem.Core.Models.Users
+@using ProductionManagementSystem.Core.Models.AltiumDB
+@model ProductionManagementSystem.WEB.Models.AltiumDB.DataListViewModel
+
+@{
+  ViewBag.Title = "Change quantity";
+  Layout = "_AltiumDBLayout";
+  var fields = AltiumDbEntity.Fields;
+}
+
+<div class="bx--data-table-container " data-table>
+  <form method="get" action="" id="tableFiltersForm">
+    @if (Model.Table != null)
+    {
+      <input type="hidden" name="tableId" value="@(Model.Table.Id)">
+    }
+    <div class="bx--data-table-header">
+      <div class="bx--grid bx--grid--full-width">
+        <div class="bx--row bx--row-padding">
+          <div class="bx--col-lg-12">
+            <h4 class="bx--data-table-header__title">@ViewBag.Title</h4>
+          </div>
+        </div>
+        <div class="bx--row">
+          <div class="bx--col-lg-12">
+            <div class="bx--grid">
+              <div class="bx--row">
+                @foreach (var filter in Model.Filters)
+                {
+                  <div class="bx--col-lg-2">
+                    <fieldset class="bx--fieldset" style="max-height: 200px; overflow: auto">
+                      <legend class="bx--label">@filter.FilterName</legend>
+                      @foreach (var value in filter.Values)
+                      {
+                        <div class="bx--form-item bx--checkbox-wrapper">
+                          <input id="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox" type="checkbox" value="@value.value"
+                                 name="@filter.FilterName" @(value.selected ? "checked" : "")>
+                          <label for="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox-label">@value.text</label>
+                        </div>
+                      }
+                    </fieldset>
+                  </div>
+                }
+              </div>
+              <div class="bx--row">
+                <div class="bx--col--auto" style="display: flex; justify-content: end">
+                  <button
+                    class="bx--btn bx--btn--tertiary bx--btn--sm"
+                    type="reset" onclick="location.href ='/Entities@(Model.Table != null ? $"?tableId={Model.Table.Id}" : "")'">
+                    Reset All
+                  </button>
+                  <button
+                    class="bx--btn bx--btn--tertiary bx--btn--sm"
+                    type="submit">
+                    Apply filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="bx--table-toolbar  bx--table-toolbar--small ">
+      <div class="bx--toolbar-content">
+        <partial name="Partail/CarbonUIComponents/SearchInTableSm"></partial>
+      </div>
+    </section>
+  </form>
+
+  <form method="post">
+  <table class="bx--data-table  bx--data-table--sort bx--data-table--visible-overflow-menu bx--data-table--compact">
+    <thead>
+    <tr>
+      <th></th>
+      @foreach (var columnName in fields.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x) && x != "Library Ref" && x != "Footprint Ref"))
+      {
+        <partial name="Partail/CarbonUIComponents/SortableTh" model="columnName"/>
+      }
+      <th></th>
+      <th>
+        <button
+          class="bx--btn bx--btn--ghost"
+          type="submit" name="type" value="add">
+          Add
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M9 7L9 3 7 3 7 7 3 7 3 9 7 9 7 13 9 13 9 9 13 9 13 7z"></path></svg>
+        </button>
+        <button
+          class="bx--btn bx--btn--ghost"
+           type="submit" name="type" value="get">
+          Get
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="7" height="2" width="8"></rect></svg>
+        </button>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (int i = 0; i < Model.Data.Count; i++)
+    {
+      <tr >
+        <td>
+          <img src="@Model.Data[i].ImageUrl" class="altiumdb--entity-table--image"/>
+        </td>
+
+        @foreach (var columnName in fields.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x) && x != "Library Ref" && x != "Footprint Ref"))
+        {
+          <td>
+            @if (columnName == "Part Number")
+            {
+              // <a href="/AltiumDB/Tables/@Model.Ex.TableName/@Model.Data[i]["Part Number"]">@Model[i][columnName]</a>
+              <a asp-action="Details" asp-route-id="@Model.Data[i].KeyId" target="_blank">@Model.Data[i][columnName]</a>
+            }
+            else
+            {
+              <span style="white-space: pre-line">@Model.Data[i][columnName]</span>
+            }
+          </td>
+        }
+        <td>@Model.Data[i].Quantity</td>
+        <td>
+          <input type="hidden" name="id" value="@Model.Data[i].KeyId"/>
+          <div class="bx--form-item">
+            <div data-numberinput class="bx--number">
+              <div class="bx--number__input-wrapper">
+                <input id="number-input-dec-@Model.Data[i].KeyId" type="number" name="quantity" min="0" max="10000" value="0">
+                <div class="bx--number__controls">
+                  <button aria-label="increase number input" class="bx--number__control-btn up-icon" type="button"
+                          aria-live="polite" aria-atomic="true">
+                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true">
+                      <path d="M0 4L4 0 8 4z"></path>
+                    </svg>
+                  </button>
+                  <button aria-label="decrease number input" class="bx--number__control-btn down-icon" type="button"
+                          aria-live="polite" aria-atomic="true">
+                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true">
+                      <path d="M8 0L4 4 0 0z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    }
+    </tbody>
+  </table>
+  </form>
+</div>

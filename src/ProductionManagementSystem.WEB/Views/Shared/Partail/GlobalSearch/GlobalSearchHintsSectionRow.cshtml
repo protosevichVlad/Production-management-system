@@ -18,7 +18,7 @@
     if (baseEntity == null)
       break;
     
-    <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/AltiumDB/Tables/@baseEntity["tableName"]/@baseEntity.PartNumber'">
+    <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/Entities/Details/@baseEntity.KeyId'">
       <div class="bx--col-sm-1">
         <img src="@baseEntity.ImageUrl" class="altiumdb--entity-table--image">
       </div>
@@ -39,7 +39,7 @@
     if (project == null)
       break;
 
-    <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/AltiumDB/projects/details/@project.Id'">
+    <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/projects/details/@project.Id'">
       <div class="bx--col-sm-1">
         <img src="@project.ImagePath" class="altiumdb--entity-table--image">
       </div>
@@ -60,7 +60,7 @@
     if (table == null)
       break;
     
-    <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/AltiumDB/Tables/@table.TableName'">
+    <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/Entities?tableId=@table.Id'">
       @table.DisplayName
     </div>
     break;
