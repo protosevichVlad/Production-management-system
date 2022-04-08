@@ -6,7 +6,6 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
     public interface IAltiumDBUnitOfWork : IBaseUnitOfWork
     {
         public DatabaseTableRepository DatabaseTables { get; }
-        public IProjectRepository Projects { get; }
         IToDoNoteRepository ToDoNotes { get; }
         IEntityInProjectRepository EntityInProjects { get; }
         IAltiumDBEntityRepository AltiumDbEntityRepository { get; }
@@ -31,7 +30,6 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
 
         public DatabaseTableRepository DatabaseTables =>
             _databaseTableRepository ??= new DatabaseTableRepository(_db);
-        public IProjectRepository Projects => _projectRepository ??= new ProjectRepository(_db);
         public IToDoNoteRepository ToDoNotes =>
             _toDoNoteRepository ??= new ToDoNoteRepository(_db);
         public IEntityInProjectRepository EntityInProjects =>

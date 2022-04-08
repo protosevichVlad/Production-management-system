@@ -139,14 +139,14 @@ globalSearchInput.addEventListener('input', () => {
     });
 })
 
-function showQuantityModal(type, id) {
+function showQuantityModal(entity, type, id) {
     let text = {};
-    if (type === 'increase')
+    if (type === 'add')
     {
         text.heading = 'Add to warehouse';
         text.quantityText = 'Quantity';
     }
-    else if (type === 'decrease')
+    else if (type === 'get')
     {
         text.heading = 'Get from the warehouse';
         text.quantityText = 'Quantity';
@@ -161,29 +161,21 @@ function showQuantityModal(type, id) {
     document.querySelector('#modal-quantity-number-input').focus();
     document.querySelector('#modal-quantity-ok-button').onclick = () => {
         modal.hide();
-        if (type === 'increase')
-            IncreaseQuantityOfEntity(id, document.querySelector('#modal-quantity-number-input').value);
-        else if (type === 'decrease')
-            DecreaseQuantityOfEntity(id, document.querySelector('#modal-quantity-number-input').value);
+        ChangeQuantity(entity, type, id, document.querySelector('#modal-quantity-number-input').value);
     };
 }
 
-function IncreaseQuantityOfEntity(id, quantity) {
-    request(`/api/entities/${id}/increase`, 'POST', Number(quantity)).then(response => {
+function ChangeQuantity(entity, type, id, quantity) {
+    request(`/api/${entity}/${id}/${type}`, 'POST', Number(quantity)).then(response => {
         if (response.ok) {
-            document.querySelector('#quantity-value').innerText = 
-                Number(document.querySelector('#quantity-value').innerText) + 
-                Number(document.querySelector('#modal-quantity-number-input').value);
-        }
-    })
-}
-
-function DecreaseQuantityOfEntity(id, quantity) {
-    request(`/api/entities/${id}/decrease`, 'POST', Number(quantity)).then(response => {
-        if (response.ok) {
-            document.querySelector('#quantity-value').innerText =
-                Number(document.querySelector('#quantity-value').innerText) -
-                Number(document.querySelector('#modal-quantity-number-input').value);
+            if (type === "add")
+                document.querySelector('#quantity-value').innerText = 
+                    Number(document.querySelector('#quantity-value').innerText) + 
+                    Number(document.querySelector('#modal-quantity-number-input').value);
+            else if(type === "get")
+                document.querySelector('#quantity-value').innerText =
+                    Number(document.querySelector('#quantity-value').innerText) -
+                    Number(document.querySelector('#modal-quantity-number-input').value);
         }
     })
 }

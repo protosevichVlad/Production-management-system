@@ -206,7 +206,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpPost]
-        [Route("/api/entities/{id:int}/increase")]
+        [Route("/api/entities/{id:int}/add")]
         public async Task<IActionResult> IncreaseQuantity([FromRoute]int id, [FromBody]int quantity)
         {
             await _entityExtService.IncreaseQuantityAsync(id, quantity);
@@ -214,7 +214,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
-        [Route("/api/entities/{id:int}/decrease")]
+        [Route("/api/entities/{id:int}/get")]
         public async Task<IActionResult> DecreaseQuantity([FromRoute]int id, [FromBody]int quantity)
         {
             await _entityExtService.DecreaseQuantityAsync(id, quantity);

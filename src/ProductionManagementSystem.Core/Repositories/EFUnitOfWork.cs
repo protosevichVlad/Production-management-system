@@ -32,6 +32,8 @@ namespace ProductionManagementSystem.Core.Repositories
         IDatabaseTableRepository DatabaseTableRepository { get; }
         IToDoNoteRepository ToDoNoteRepository { get; }
         IEntityExtRepository EntityExtRepository { get; }
+        IProjectRepository Projects { get; }
+
     }
 
     public class EF_BaseUnitOfWork : IBaseUnitOfWork
@@ -98,6 +100,7 @@ namespace ProductionManagementSystem.Core.Repositories
         private DatabaseTableRepository _databaseTableRepository;
         private IToDoNoteRepository _toDoNoteRepository;
         private IEntityExtRepository _entityExtRepository;
+        private IProjectRepository _projectRepository;
 
         public EFUnitOfWork(string connectionString) : base(connectionString)
         {
@@ -143,5 +146,7 @@ namespace ProductionManagementSystem.Core.Repositories
             _toDoNoteRepository ??= new ToDoNoteRepository(_db);
 
         public IEntityExtRepository EntityExtRepository => _entityExtRepository ??= new EntityExtRepository(_db);
+        public IProjectRepository Projects => _projectRepository ??= new ProjectRepository(_db);
+
     }
 }

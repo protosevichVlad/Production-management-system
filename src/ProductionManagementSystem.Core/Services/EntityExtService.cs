@@ -130,10 +130,12 @@ namespace ProductionManagementSystem.Core.Services
 
             var entity = await _currentRepository.GetByIdAsync(id);
             entity.Quantity += quantity;
+            if (entity.Quantity < 0)
+                throw new NotImplementedException();
             await _currentRepository.UpdateAsync(entity);
 
             await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()
-                {Difference = quantity, ElementId = entity.KeyId, ElementType = ElementType.Design});
+                {Difference = quantity, ElementId = entity.KeyId, ElementType = ElementType.Montage});
             await _db.SaveAsync();
         }
     }

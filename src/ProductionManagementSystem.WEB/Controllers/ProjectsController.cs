@@ -69,5 +69,21 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             return View(await _projectService.GetByIdAsync(id));
         }
+        
+        [HttpPost]
+        [Route("/api/projects/{id:int}/add")]
+        public async Task<IActionResult> IncreaseQuantity([FromRoute]int id, [FromBody]int quantity)
+        {
+            await _projectService.IncreaseQuantityAsync(id, quantity);
+            return Ok();
+        }
+        
+        [HttpPost]
+        [Route("/api/projects/{id:int}/get")]
+        public async Task<IActionResult> DecreaseQuantity([FromRoute]int id, [FromBody]int quantity)
+        {
+            await _projectService.DecreaseQuantityAsync(id, quantity);
+            return Ok();
+        }
     }
 }

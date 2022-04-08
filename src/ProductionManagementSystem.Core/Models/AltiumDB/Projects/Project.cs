@@ -15,6 +15,8 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB.Projects
         public string CircuitDiagramPath { get; set; }
         public string AssemblyDrawingPath { get; set; }
         public string ThreeDModelPath { get; set; }
+        public string Description { get; set; }
+        public int Quantity { get; set; }
         
         public DateTime ReportDate { get; set; }
         public string Variant { get; set; }
