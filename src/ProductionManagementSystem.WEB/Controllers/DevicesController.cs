@@ -146,6 +146,8 @@ namespace ProductionManagementSystem.WEB.Controllers
                 ViewBag.ErrorHeader = TempData["ErrorHeader"];
                 TempData["ErrorMessage"] = null;
                 TempData["ErrorHeader"] = null;
+                device.Montages = device.Montages.OrderBy(x => x.Montage.ToString()).ToList();
+                device.Designs = device.Designs.OrderBy(x => x.Design.ToString()).ToList();
                 return View(device);
             }
             catch (Exception e)

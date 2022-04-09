@@ -79,6 +79,17 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var task = await _taskService.GetByIdAsync(id);
+                task.Device.Montages = task.Device.Montages.OrderBy(x => x.Montage.ToString()).ToList();
+                task.ObtainedMontages = task.ObtainedMontages.OrderBy(x =>
+                {
+                    task.Device.Montages.FirstOrDefault(d => x.ComponentId == d.ComponentId);
+                    return x.Montage.ToString();
+                }).ToList();
+                task.ObtainedDesigns = task.ObtainedDesigns.OrderBy(x =>
+                {
+                    task.Device.Designs.FirstOrDefault(d => x.ComponentId == d.ComponentId);
+                    return x.Design.ToString();
+                }).ToList();
                 ViewBag.States = new SelectList(GetStates(task), "Id", "Name");
                 // ViewBag.Logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(_taskService.GetLogs(id));
                 return View(new TaskDetailsViewModel()

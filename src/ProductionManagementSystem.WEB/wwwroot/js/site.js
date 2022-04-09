@@ -171,3 +171,18 @@ function setObtained(tr, value)
 {
     return tr.children[4].children[0].value = value;
 }
+
+function changeUrl(paramName, value)
+{
+
+    let arr = location.search.slice(1).split('&').map(x => x.split('='));
+    let index = arr.findIndex(x => x[0] === paramName);
+    if (index === -1)
+    {
+        arr.push([paramName, value])
+    }
+    else {
+        arr[index][1] = value;
+    }
+    location.search = '?' + arr.map(x => x.join('=')).join('&');
+}
