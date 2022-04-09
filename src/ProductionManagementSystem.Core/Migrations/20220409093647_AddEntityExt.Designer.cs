@@ -9,8 +9,8 @@ using ProductionManagementSystem.Core.Data.EF;
 namespace ProductionManagementSystem.Core.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220405180400_FixEntityExt2")]
-    partial class FixEntityExt2
+    [Migration("20220409093647_AddEntityExt")]
+    partial class AddEntityExt
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -156,8 +156,8 @@ namespace ProductionManagementSystem.Core.Migrations
                     b.Property<string>("Designator")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("PartNumber")
-                        .HasColumnType("longtext");
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
@@ -187,11 +187,17 @@ namespace ProductionManagementSystem.Core.Migrations
                     b.Property<string>("CircuitDiagramPath")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ImagePath")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ReportDate")
                         .HasColumnType("datetime(6)");
@@ -205,29 +211,6 @@ namespace ProductionManagementSystem.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AltiumDB_Projects");
-                });
-
-            modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.Table", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("DisplayName")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("FootprintPath")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("LibraryPath")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("TableName")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tables");
                 });
 
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.TableColumn", b =>
@@ -630,6 +613,29 @@ namespace ProductionManagementSystem.Core.Migrations
                     b.ToTable("ComponentsSupplyRequests");
                 });
 
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.Table", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FootprintPath")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LibraryPath")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TableName")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tables");
+                });
+
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.Tasks.ObtainedDesign", b =>
                 {
                     b.Property<int>("Id")
@@ -854,7 +860,7 @@ namespace ProductionManagementSystem.Core.Migrations
 
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.TableColumn", b =>
                 {
-                    b.HasOne("ProductionManagementSystem.Core.Models.AltiumDB.Table", "Table")
+                    b.HasOne("ProductionManagementSystem.Core.Models.Table", "Table")
                         .WithMany("TableColumns")
                         .HasForeignKey("TableId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -900,7 +906,7 @@ namespace ProductionManagementSystem.Core.Migrations
 
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.Entity", b =>
                 {
-                    b.HasOne("ProductionManagementSystem.Core.Models.AltiumDB.Table", "Table")
+                    b.HasOne("ProductionManagementSystem.Core.Models.Table", "Table")
                         .WithMany()
                         .HasForeignKey("TableId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1017,14 +1023,14 @@ namespace ProductionManagementSystem.Core.Migrations
                     b.Navigation("Entities");
                 });
 
-            modelBuilder.Entity("ProductionManagementSystem.Core.Models.AltiumDB.Table", b =>
-                {
-                    b.Navigation("TableColumns");
-                });
-
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.Orders.Order", b =>
                 {
                     b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.Table", b =>
+                {
+                    b.Navigation("TableColumns");
                 });
 #pragma warning restore 612, 618
         }
