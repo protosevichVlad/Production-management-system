@@ -1,4 +1,5 @@
-﻿@model ProductionManagementSystem.Core.Models.Devices.Device;
+﻿@using ProductionManagementSystem.Core.Models.Users
+@model ProductionManagementSystem.Core.Models.Devices.Device;
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -12,9 +13,12 @@
     </div>
     <div class="col d-flex justify-content-md-end">
         <button class="btn btn-link float-right m-1" type="button" onclick="window.print()">Распечатать(Сохранить)</button>
-        <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-deviceId="@Model.Id">Логи</a>
-        <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
-        <a class="btn btn-danger btn-sm m-1" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+        @if (User.IsInRole(RoleEnum.Admin))
+        {
+            <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-deviceId="@Model.Id">Логи</a>
+            <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+            <a class="btn btn-danger btn-sm m-1" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+        }
     </div>
 </div>
 <div class="alert alert-info d-print-none" role="alert">

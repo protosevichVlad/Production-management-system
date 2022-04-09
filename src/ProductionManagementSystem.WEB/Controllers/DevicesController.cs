@@ -14,6 +14,9 @@ using ProductionManagementSystem.WEB.Models.Device;
 namespace ProductionManagementSystem.WEB.Controllers
 {
     [Authorize(Roles = RoleEnum.Admin)]
+    [Authorize(Roles = RoleEnum.OrderPicker)]
+    [Authorize(Roles = RoleEnum.Assembler)]
+    [Authorize(Roles = RoleEnum.Shipper)]
     public class DevicesController : Controller
     {
         private readonly IDeviceService _deviceService;
@@ -85,12 +88,14 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = RoleEnum.Admin)]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleEnum.Admin)]
         public async Task<IActionResult> Create(Device device)
         {
             await _deviceService.CreateAsync(device);
@@ -98,6 +103,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = RoleEnum.Admin)]
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -115,6 +121,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleEnum.Admin)]
         public async Task<IActionResult> Edit(Device device)
         {
             try
@@ -157,6 +164,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             }
         }
 
+        [Authorize(Roles = RoleEnum.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -174,6 +182,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         // POST: Designs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = RoleEnum.Admin)]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             try

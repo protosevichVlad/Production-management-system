@@ -1,13 +1,17 @@
-﻿@model IEnumerable<ProductionManagementSystem.Core.Models.Devices.Device>
+﻿@using ProductionManagementSystem.Core.Models.Users
+@model IEnumerable<ProductionManagementSystem.Core.Models.Devices.Device>
 @{
     ViewData["Title"] = "Приборы";
 }
 <h2>Cписок приборов</h2>
-<div class="row justify-content-end">
-    <div class="col-auto">
-         <a class="btn btn-primary btn-sm" asp-action="Create">Создать новый прибор</a>
+@if (User.IsInRole(RoleEnum.Admin))
+{
+    <div class="row justify-content-end">
+        <div class="col-auto">
+            <a class="btn btn-primary btn-sm" asp-action="Create">Создать новый прибор</a>
+        </div>
     </div>
-</div>
+}
 <div class="table-responsive">
     <table class="table table-sm table-hover">
         <thead>
