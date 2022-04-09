@@ -7,14 +7,15 @@
   Layout = "_AltiumDBLayout";
 }
 <div class="bx--grid">
-  @if (User.IsInRole(RoleEnum.AltiumDBEntitiesAdmin))
-  {
+  
   <div class="bx--row bx--row-padding">
     <div class="bx--col-sm-3">
       <h1>
         @Model.Category @Model.Item
       </h1>
     </div>
+    @if (User.IsInRole(RoleEnum.AltiumDBEntitiesAdmin))
+      {
     <div class="bx--col-sm-1" style="display: flex; justify-content: end;">
       <div data-overflow-menu class="bx--overflow-menu">
         <button
@@ -61,8 +62,8 @@
         </div>
       </div>
     </div>
+    }
   </div>
-  }
   <div class="bx--row">
     <div class="bx--col-lg-8">
       <div class="bx--grid">

@@ -9,6 +9,7 @@ using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.Core.Services.AltiumDB;
+using ProductionManagementSystem.WEB.Models;
 using ProductionManagementSystem.WEB.Models.AltiumDB;
 
 namespace ProductionManagementSystem.WEB.Controllers
@@ -30,15 +31,16 @@ namespace ProductionManagementSystem.WEB.Controllers
             _projectService = projectService;
         }
 
-        public async Task<IActionResult> Index(string orderBy, Dictionary<string, List<string>> filter, string q, int? tableId)
+        public async Task<IActionResult> Index(string orderBy, Dictionary<string, List<string>> filter, 
+            string q, int? tableId, int? itemPerPage, int? page)
         {
-            return View(await GetEntities(orderBy, filter, q, tableId));
+            return View(await GetEntities(orderBy, filter, q, tableId, itemPerPage, page));
         }
 
         public async Task<IActionResult> ChangeQuantity(string orderBy, Dictionary<string, List<string>> filter,
-            string q, int? tableId)
+            string q, int? tableId, int? itemPerPage, int? page)
         {
-            return View(await GetEntities(orderBy, filter, q, tableId));
+            return View(await GetEntities(orderBy, filter, q, tableId, itemPerPage, page));
         }
 
         [HttpPost]
@@ -55,8 +57,11 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         private async Task<DataListViewModel> GetEntities(string orderBy, Dictionary<string, List<string>> filter,
-            string q, int? tableId)
+            string q, int? tableId, int? itemPerPage, int? page)
         {
+            itemPerPage ??= 20;
+            page ??= 1;
+            
             var table = tableId.HasValue ? await _tableService.GetByIdAsync(tableId.Value):null;
             var data = string.IsNullOrEmpty(q) ? 
                 tableId.HasValue ? 
@@ -96,6 +101,8 @@ namespace ProductionManagementSystem.WEB.Controllers
                     .Select(x => ( x.Id.ToString(), x.ToString(), filter.ContainsKey(USING_IN_PROJECTS) && filter[USING_IN_PROJECTS].Contains(x.Id.ToString())))
                     .ToList()
             });
+            
+            var totalItems = data.Count;
 
             if (!string.IsNullOrEmpty(orderBy))
             {
@@ -108,12 +115,20 @@ namespace ProductionManagementSystem.WEB.Controllers
                     data = data.OrderBy(x => x[orderBy]).ToList();
                 }
             }
-            
+
+            data = data.Skip(itemPerPage.Value * (page.Value - 1)).Take(itemPerPage.Value).ToList();
+
             return new DataListViewModel()
             {
                 Table = table,
-                Data = data.Select(x => (EntityExt)x).ToList(),
-                Filters = filters
+                Data = data.ToList(),
+                Filters = filters,
+                Pagination = new PaginationViewModel()
+                {
+                    CurrentPage = page.Value,
+                    TotalItems = totalItems,
+                    ItemPerPage = itemPerPage.Value
+                }
             };
         }
 
@@ -220,7 +235,5 @@ namespace ProductionManagementSystem.WEB.Controllers
             await _entityExtService.DecreaseQuantityAsync(id, quantity);
             return Ok();
         }
-        
-        
     }
 }

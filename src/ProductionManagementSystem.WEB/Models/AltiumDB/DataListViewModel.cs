@@ -9,5 +9,6 @@ namespace ProductionManagementSystem.WEB.Models.AltiumDB
         public List<FilterViewModel> Filters { get; set; }
         public Table Table { get; set; }
         public List<EntityExt> Data { get; set; }
+        public PaginationViewModel Pagination { get; set; }
     }
 }
