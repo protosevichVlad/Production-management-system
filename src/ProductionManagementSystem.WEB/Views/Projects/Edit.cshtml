@@ -1,0 +1,361 @@
+﻿@model ProductionManagementSystem.WEB.Models.ProjectCreateEditViewModel
+
+@{
+  ViewBag.Title = "Create | Edit project";
+  Layout = "_AltiumDBLayout";
+}
+
+<div id="editProject">
+<div class="bx--grid">
+  <div class="bx--row bx--row-padding">
+    <div class="bx--col--auto">
+      <h1>Create | Edit project</h1>
+    </div>
+  </div>
+  <div class="bx--row bx--row-padding">
+    <div class="bx--col-md-5">
+      <div class="bx--grid">
+        <div class="bx--row">
+          <div class="bx--col-sm-3">
+            <label for="text-input-name" class="bx--label">Name</label>
+            <input id="text-input-name" type="text" class="bx--text-input" placeholder="Item" v-model="project.name">
+          </div>
+          <div class="bx--col-sm-1">
+            <label for="text-input-variant" class="bx--label">Variant</label>
+            <input id="text-input-variant" type="text" class="bx--text-input" placeholder="Item" v-model="project.variant">
+          </div>
+        </div>
+        <div class="bx--row">
+          <div class="bx--col-sm--auto">
+            <label for="text-area-Description" class="bx--label">Description</label>
+            <textarea id="text-area-Description" class="bx--text-area"
+            rows="4" placeholder="Placeholder text." v-model="project.description"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bx--col-md-3">
+      <div class="bx--row">
+        <div class="bx--col-sm-2">
+          <div class="bx--form-item">
+            <strong class="bx--file--label">Image</strong>
+            <p class="bx--label-description">Only .png files.</p>
+            <div class="bx--file" data-file>
+              <label for="file-importer-image" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+              <input type="file" class="bx--file-input" id="file-importer-image" data-file-uploader data-target="[data-file-container]" multiple/>
+              <div data-file-container class="bx--file-container">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bx--col-sm-2">
+          <div class="bx--form-item">
+            <strong class="bx--file--label">Circuit diagram file</strong>
+            <p class="bx--label-description">Only .pdf files.</p>
+            <div class="bx--file" data-file>
+              <label for="file-importer-circuit" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+              <input type="file" class="bx--file-input" id="file-importer-circuit" data-file-uploader data-target="[data-file-container]" multiple/>
+              <div data-file-container class="bx--file-container">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bx--col-sm-2">
+          <div class="bx--form-item">
+            <strong class="bx--file--label">Assembly drawing file</strong>
+            <p class="bx--label-description">Only .pdf files.</p>
+            <div class="bx--file" data-file>
+              <label for="file-importer-assembly" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+              <input type="file" class="bx--file-input" id="file-importer-assembly" data-file-uploader data-target="[data-file-container]" multiple/>
+              <div data-file-container class="bx--file-container">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bx--col-sm-2">
+          <div class="bx--form-item">
+            <strong class="bx--file--label">3D model</strong>
+            <p class="bx--label-description">Only .stl files.</p>
+            <div class="bx--file" data-file>
+              <label for="file-importer-treed-d" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+              <input type="file" class="bx--file-input" id="file-importer-treed-d" data-file-uploader data-target="[data-file-container]" multiple/>
+              <div data-file-container class="bx--file-container">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bx--row bx--row-padding">
+    <section class="bx--table-toolbar bx--table-toolbar--sm">
+      <div class="bx--toolbar-content">
+        <button class="bx--btn bx--btn--sm bx--btn--primary" v-on:click="showAddNewEntityInProjectModal">
+          Add entity
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
+          </svg>
+        </button>
+      </div>
+    </section>
+    <table class="bx--data-table  bx--data-table--compact">
+      <thead>
+      <tr>
+        <th >
+          <span class="bx--table-header-label">№</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Category</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Designator</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Item</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Part Number</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Supplier</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Case</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Manufacturer</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Quantity</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label hidden-print">Description</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="entityInProject in project.entities" v-if="entityInProject.entity!= null">
+        <td>{{project.entities.indexOf(entityInProject) + 1}}</td>
+        <td>{{entityInProject.entity.Category}}</td>
+        <td>{{entityInProject.designator}}</td>
+        <td>{{entityInProject.entity.Item}}</td>
+        <td >
+          <a :href="'/Entities/Details/' + entityInProject.entity.KeyId" target="_blank">{{entityInProject.entity["Part Number"]}}</a>
+        </td>
+        <td >{{entityInProject.entity.Supplier}}</td>
+        <td >{{entityInProject.entity.Case}}</td>
+        <td >{{entityInProject.entity.Manufacturer}}</td>
+        <td >{{entityInProject.quantity}}</td>
+        <td class="hidden-print">
+          <span style="white-space: pre-line">{{entityInProject.entity.Description}}</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="add-entity-modal" class="bx--modal" role="dialog" aria-modal="true" tabindex="-1">
+  <div class="bx--modal-container">
+    <div class="bx--modal-header">
+      <p class="bx--modal-header__heading bx--type-beta" id="modal-heading">Add entity to project</p>
+      <button class="bx--modal-close" type="button" data-modal-close aria-label="close modal">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--modal-close__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M12 4.7L11.3 4 8 7.3 4.7 4 4 4.7 7.3 8 4 11.3 4.7 12 8 8.7 11.3 12 12 11.3 8.7 8z"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="bx--modal-content bx--modal-content--with-form">
+      <div class="bx--grid">
+        <div class="bx--row bx--row-padding">
+          <div class="bx--col-sm-4">
+            <div data-search role="search" class="bx--search bx--search--xl">
+              <label id="search-input-label-1" class="bx--label" for="search__input-1">Search</label>
+              <input class="bx--search-input" type="text" id="search__input-1" placeholder="Search" v-model="searchString" v-on:input="search">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-magnifier" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M15,14.3L10.7,10c1.9-2.3,1.6-5.8-0.7-7.7S4.2,0.7,2.3,3S0.7,8.8,3,10.7c2,1.7,5,1.7,7,0l4.3,4.3L15,14.3z M2,6.5 C2,4,4,2,6.5,2S11,4,11,6.5S9,11,6.5,11S2,9,2,6.5z"></path>
+              </svg>
+              <button class="bx--search-close bx--search-close--hidden" title="Clear search input" aria-label="Clear search input">
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-clear" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+                  <path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="autocom-box">
+              <template v-for="entity in searchingData">
+                <div class="bx--row" v-on:click="() => selectEntity(entity)">
+                  <div class="bx--col-md-1">
+                    <img :src="entity.ImageUrl" alt="" class="altiumdb--entity-table--image"/>
+                  </div>
+                  <div class="bx--col-md-4">
+                    <div class="bx--grid">
+                      <div class="bx--row">{{entity.Item}}</div>
+                      <div class="bx--row" style="height: 4px"></div>
+                      <div class="bx--row">{{entity['Part Number']}}</div>
+                      <div class="bx--row" style="height: 4px"></div>
+                      <div class="bx--row">{{entity.Category}}</div>
+                    </div>
+                  </div>
+                  <div class="bx--col-md-3">
+                    {{entity.Description}}                   
+                  </div>
+                </div>
+              </template>
+            </div>
+            <div v-if="selectedEntity != null">
+              <div class="bx--row">
+                Selected entity:
+              </div>
+                <div class="bx--row">
+                  <div class="bx--col-md-1">
+                    <img :src="selectedEntity.ImageUrl" alt="" class="altiumdb--entity-table--image"/>
+                  </div>
+                  <div class="bx--col-md-4">
+                    <div class="bx--grid">
+                      <div class="bx--row">{{selectedEntity.Item}}</div>
+                      <div class="bx--row" style="height: 4px"></div>
+                      <div class="bx--row">{{selectedEntity['Part Number']}}</div>
+                      <div class="bx--row" style="height: 4px"></div>
+                      <div class="bx--row">{{selectedEntity.Category}}</div>
+                    </div>
+                  </div>
+                  <div class="bx--col-md-3">
+                    {{selectedEntity.Description}}
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+        <div class="bx--row bx--row-padding">
+          <div class="bx--col-md-8">
+            <div class="bx--form-item">
+              <div data-numberinput class=" bx--number bx--number--light">
+                <label for="input-quantity-entity-in-project" class="bx--label">Quantity</label>
+                <div class="bx--number__input-wrapper">
+                  <input id="input-quantity-entity-in-project" type="number" min="0" max="999999" v-model="newEntityInProject.quantity">
+                  <div class="bx--number__controls">
+                    <button aria-label="increase number input" class="bx--number__control-btn up-icon" type="button" aria-live="polite" aria-atomic="true">
+                      <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true">
+                        <path d="M0 4L4 0 8 4z"></path>
+                      </svg>
+                    </button>
+                    <button aria-label="decrease number input" class="bx--number__control-btn down-icon" type="button" aria-live="polite" aria-atomic="true">
+                      <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true">
+                        <path d="M8 0L4 4 0 0z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bx--col-md-8">
+            <label for="text-area-entityInProject-designator" class="bx--label">Designator</label>
+            <textarea id="text-area-entityInProject-designator" class="bx--text-area"
+                    style="height: 100px;" placeholder="Placeholder text." v-model="newEntityInProject.designator"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bx--modal-footer">
+      <button class="bx--btn bx--btn--secondary" type="button" data-modal-close>Secondary button</button>
+      <button class="bx--btn bx--btn--primary" type="button" v-on:click="saveEntityInProject">Primary button</button>
+    </div>
+  </div>
+  <!-- Note: focusable span allows for focus wrap feature within Modals -->
+  <span tabindex="0"></span>
+</div>
+</div>
+
+@section Scripts
+{
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vuex"></script>
+  <script>
+    let Modal = CarbonComponents.Modal;
+  
+    let app = new Vue({
+      el: '#editProject',
+      data: {
+        project : {
+          id: @Model.Id,
+          name: "",
+          variant: "",
+        },
+        newEntityInProject: {
+          designator:"",
+          entity: null,
+          entityId: null,
+          id: 0,
+          projectId: @Model.Id,
+          quantity:0
+        },
+        searchString: "",
+        searchingData: [],
+        selectedEntity: null,
+      },
+      methods: {
+        loadData : function ()
+        {
+          let vm = this;
+          request(`/api/projects/${vm.project.id}`, 'GET')
+            .then(r => {
+              r.json().then(json => vm.project = json);
+            })
+            .catch(e => console.log(e));
+        },
+        showAddNewEntityInProjectModal: function ()
+        {          
+          let vm = this;
+          let editEntityModal = Modal.create(document.getElementById('add-entity-modal'));
+          editEntityModal.show();
+        },
+        search : function ()
+        {
+          let vm = this;
+          request(`/api/entities/search?q=${vm.searchString}&take=5`, 'GET')
+            .then(r => {
+              r.json().then(json => vm.searchingData = json);
+            })
+            .catch(e => console.log(e));
+        },
+        selectEntity: function (entity)
+        {
+          this.selectedEntity = entity;
+          this.newEntityInProject.entityId = entity.KeyId;
+          this.searchingData = [];
+        },
+        saveEntityInProject : function ()
+        {
+          let vm = this;
+          vm.newEntityInProject.entity = vm.selectedEntity;
+          vm.project.entities.push(vm.newEntityInProject);
+
+          vm.newEntityInProject = {
+            designator:"",
+            entity: null,
+            entityId: null,
+            id: 0,
+            projectId: @Model.Id,
+            quantity:0
+          };
+          
+          let editEntityModal = Modal.create(document.getElementById('add-entity-modal'));
+          editEntityModal.hide();
+          vm.updateProject();
+        },
+        updateProject : function ()
+        {
+          let vm = this;
+           request(`/api/projects/${vm.project.id}`, 'PUT', vm.project)
+               .then(r => {
+                 console.log('ok');
+               })
+               .catch(e => console.log(e));
+        }
+      },
+      mounted() {
+        this.loadData();
+      }
+    });
+  </script>
+}

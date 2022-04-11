@@ -2,7 +2,10 @@
 <html lang="ru">
 <head>
   <title>@ViewData["Title"] - AltiumDB</title>
-  <link rel="stylesheet" href="~/css/carbon-components.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vuex"></script>
+  @* <link rel="stylesheet" href="~/css/carbon-components.min.css"/> *@
+  <link rel="stylesheet" href="https://unpkg.com/carbon-components@10.56.0/css/carbon-components.min.css"/>
   <link rel="stylesheet" href="~/css/AltiumDB/site.css"/>
   <link rel="stylesheet" href="/components/TreeView/treeViewComponent.css"/>
   @RenderSection("Stylesheet", required: false);
@@ -50,7 +53,8 @@
 <partial name="Partail/Modals/ChangeQuantityPartialModal"/>
 <script src="/components/TreeView/treeViewComponent.js"></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script type="text/javascript" src="~/js/carbon-components.js"></script>
+<script type="text/javascript" src="https://unpkg.com/carbon-components@10.0.0/scripts/carbon-components.min.js"></script>
+@* <script type="text/javascript" src="~/js/carbon-components.js"></script> *@
 <script type="text/javascript" src="~/js/AltiumDB/site.js"></script>
 @await RenderSectionAsync("Scripts", false)
 </body>

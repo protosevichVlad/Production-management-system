@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using ProductionManagementSystem.Core.Data;
 using ProductionManagementSystem.Core.Data.EF;
 using ProductionManagementSystem.Core.Models;
@@ -37,7 +38,9 @@ namespace ProductionManagementSystem.WEB
             {
                 op.Filters.Add<ToDoActionFilter>();
                 op.Filters.Add<UserFilter>();
-            });
+            }).AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );;
 
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),

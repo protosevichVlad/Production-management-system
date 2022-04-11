@@ -81,6 +81,12 @@
     background-color: #393939;
 }
 
+.bx--search
+{
+    left: -1rem;
+    width: calc(100% + 1rem);
+}
+
 .bx--search svg.bx--search-magnifier{
     position: relative;
     left: 2rem;
@@ -136,3 +142,5 @@
     top: 3rem;
     z-index: 10;
 }
+
+

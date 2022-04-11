@@ -235,5 +235,21 @@ namespace ProductionManagementSystem.WEB.Controllers
             await _entityExtService.DecreaseQuantityAsync(id, quantity);
             return Ok();
         }
+
+        [HttpGet]
+        [Route("/api/entities/search")]
+        public async Task<IActionResult> ApiSearch(string q, int? take)
+        {
+            var result = await _entityExtService.SearchByKeyWordAsync(q);
+            if (result.Count == 0)
+                return NoContent();
+            
+            if (take.HasValue)
+            {
+                result = result.Take(take.Value).ToList();
+            }
+
+            return Ok(result);
+        }
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using ProductionManagementSystem.Core.Models.AltiumDB.Projects;
 using ProductionManagementSystem.Core.Services.AltiumDB;
+using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
@@ -57,6 +58,37 @@ namespace ProductionManagementSystem.WEB.Controllers
             return View(await _projectService.GetByIdAsync(id));
         }
         
+        public async Task<IActionResult> Edit(int id)
+        {
+            var project = await _projectService.GetByIdAsync(id);
+            if (project == null)
+            {
+                return NotFound();
+            }
+            
+            return View(new ProjectCreateEditViewModel()
+            {
+                Id = project.Id,
+                Name = project.Name,
+                Variant = project.Variant,
+                Description = project.Description,
+                Quantity = project.Quantity,
+            });
+        }
+
+        [HttpGet]
+        [Route("api/projects/{id:int}")]
+        public async Task<IActionResult> ApiGet(int id)
+        {
+            var project = await _projectService.GetByIdAsync(id);
+            if (project == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(project);
+        }
+        
         [HttpDelete]
         [Route("/Projects/{id:int}")]
         public async Task<IActionResult> Delete(int id)
@@ -83,6 +115,15 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> DecreaseQuantity([FromRoute]int id, [FromBody]int quantity)
         {
             await _projectService.DecreaseQuantityAsync(id, quantity);
+            return Ok();
+        }
+        
+        [HttpPut]
+        [Route("/api/projects/{id:int}")]
+        public async Task<IActionResult> Update([FromRoute]int id, [FromBody]Project project)
+        {
+            project.Id = id;
+            await _projectService.UpdateAsync(project);
             return Ok();
         }
     }

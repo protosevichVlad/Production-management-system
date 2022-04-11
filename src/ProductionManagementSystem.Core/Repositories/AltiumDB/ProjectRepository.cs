@@ -34,5 +34,10 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
                 return new List<Project>();
             return await _dbSet.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(keyWord)).ToListAsync();
         }
+
+        public override async Task UpdateAsync(Project item)
+        {
+            _db.Update(item);
+        }
     }
 }
