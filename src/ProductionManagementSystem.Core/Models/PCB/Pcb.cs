@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProductionManagementSystem.Core.Models.AltiumDB.Projects
+namespace ProductionManagementSystem.Core.Models.PCB
 {
-    [Table("AltiumDB_Projects")]
-    public class Project
+    [Table("PCB")]
+    public class Pcb
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<EntityInProject> Entities { get; set; }
+        public List<EntityInPcb> Entities { get; set; }
         public string ImagePath { get; set; }
         public string BOMFilePath { get; set; }
         public string CircuitDiagramPath { get; set; }

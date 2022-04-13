@@ -17,18 +17,18 @@ namespace ProductionManagementSystem.WEB.Controllers
     public class EntitiesController : Controller
     {
         private readonly IEntityExtService _entityExtService;
-        private readonly IProjectService _projectService;
+        private readonly IPcbService _pcbService;
         private readonly IImportService _importService;
         private readonly ITableService _tableService;
         private const string USING_IN_PROJECTS = "Using in projects";
         
 
-        public EntitiesController(IEntityExtService entityExtService, IImportService importService, ITableService tableService, IProjectService projectService)
+        public EntitiesController(IEntityExtService entityExtService, IImportService importService, ITableService tableService, IPcbService pcbService)
         {
             _entityExtService = entityExtService;
             _importService = importService;
             _tableService = tableService;
-            _projectService = projectService;
+            _pcbService = pcbService;
         }
 
         public async Task<IActionResult> Index(string orderBy, Dictionary<string, List<string>> filter, 
@@ -88,7 +88,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             data = data
                 .Where(x =>
                 {
-                    bool Predicate(string y) => _projectService.GetProjectsWithEntityAsync(x.PartNumber).Result.Any(p => p.Id == int.Parse(y));
+                    bool Predicate(string y) => _pcbService.GetPcbWithEntityAsync(x.PartNumber).Result.Any(p => p.Id == int.Parse(y));
                     return !filter.ContainsKey(USING_IN_PROJECTS) ||
                            filter[USING_IN_PROJECTS].Any(Predicate
                            );
@@ -97,7 +97,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             filters.Add(new FilterViewModel()
             {
                 FilterName = USING_IN_PROJECTS,
-                Values = (await _projectService.GetAllAsync()).OrderBy(x => x)
+                Values = (await _pcbService.GetAllAsync()).OrderBy(x => x)
                     .Select(x => ( x.Id.ToString(), x.ToString(), filter.ContainsKey(USING_IN_PROJECTS) && filter[USING_IN_PROJECTS].Contains(x.Id.ToString())))
                     .ToList()
             });

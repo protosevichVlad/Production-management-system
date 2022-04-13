@@ -1,7 +1,7 @@
 ﻿@using ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch
 @using ProductionManagementSystem.Core.Models.AltiumDB
-@using ProductionManagementSystem.Core.Models.AltiumDB.Projects
 @using ProductionManagementSystem.Core.Models
+@using ProductionManagementSystem.Core.Models.PCB
 @model ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch.GlobalSearchHintsSectionRowViewModel
 
 <div class="bx--row" style="height: 5px"></div>
@@ -34,8 +34,8 @@
     </div>
     break;
 
-  case HintsSectionRowType.Project:
-    var project = @Model.Content as Project;
+  case HintsSectionRowType.Pcb:
+    var project = @Model.Content as Pcb;
     if (project == null)
       break;
 

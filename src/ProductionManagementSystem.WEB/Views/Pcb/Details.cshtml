@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.Core.Models.AltiumDB.Projects.Project
+﻿@model ProductionManagementSystem.Core.Models.PCB.Pcb
 
 @{
   ViewBag.Title = Model.Name + " " + Model.Variant;
@@ -26,28 +26,28 @@
              id="example-zyub0566err">
           <ul class="bx--overflow-menu-options__content">
             <li class="bx--overflow-menu-options__option">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('projects', 'add', @Model.Id)">
+              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('pcb', 'add', @Model.Id)">
                 <span class="bx--overflow-menu-options__option-content">
                   Add
                 </span>
               </button>
             </li>
             <li class="bx--overflow-menu-options__option">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('projects', 'get', @Model.Id)">
+              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('pcb', 'get', @Model.Id)">
                 <span class="bx--overflow-menu-options__option-content">
                   Get
                 </span>
               </button>
             </li>
             <li class="bx--overflow-menu-options__option  ">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="location.href='/Projects/Edit/@Model.Id'">
+              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="location.href='/pcb/edit/@Model.Id'">
                 <span class="bx--overflow-menu-options__option-content">
                   Edit
                 </span>
               </button>
             </li>
             <li class="bx--overflow-menu-options__option  ">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting a project', 'Do you really want to delete this project', () => deleteProject(@Model.Id, () => location.href='/Projects'))">
+              <button class="bx--overflow-menu-options__btn" role="menuitem" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting a project', 'Do you really want to delete this project', () => deleteProject(@Model.Id, () => location.href='/pcb'))">
                 <span class="bx--overflow-menu-options__option-content">
                   Delete
                 </span>
@@ -73,7 +73,7 @@
             <strong>Print version</strong>
           </div>
           <div class="bx--col-lg-7">
-            <a asp-controller="Projects" asp-action="PrintVersion" asp-route-id="@Model.Id" target="_blank">Print version</a>
+            <a asp-controller="Pcb" asp-action="PrintVersion" asp-route-id="@Model.Id" target="_blank">Print version</a>
           </div>
         </div>
         <div class="bx--row" style="height: 10px"></div>
@@ -126,7 +126,7 @@
     </div>
   </div>
   <div class="bx--row bx--row-padding">
-    <partial name="Partail/Projects/ProjectComponents" model="@Model"/>
+    <partial name="Partail/Pcb/PcbComponents" model="@Model"/>
   </div>
 </div>
 

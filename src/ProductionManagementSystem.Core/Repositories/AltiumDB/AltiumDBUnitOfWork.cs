@@ -7,7 +7,7 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
     {
         public DatabaseTableRepository DatabaseTables { get; }
         IToDoNoteRepository ToDoNotes { get; }
-        IEntityInProjectRepository EntityInProjects { get; }
+        IEntityInPcbRepository EntityInPcbs { get; }
         IAltiumDBEntityRepository AltiumDbEntityRepository { get; }
         
     }
@@ -15,9 +15,9 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
     public class EF_AltiumDBUnitOfWork : EF_BaseUnitOfWork, IAltiumDBUnitOfWork
     {
         private DatabaseTableRepository _databaseTableRepository;
-        private IProjectRepository _projectRepository;
+        private IPcbRepository _pcbRepository;
         private IToDoNoteRepository _toDoNoteRepository;
-        private IEntityInProjectRepository _entityInProject;
+        private IEntityInPcbRepository _entityInPcb;
         private IAltiumDBEntityRepository _altiumDbEntityRepository;
         
         public EF_AltiumDBUnitOfWork(string connectionString) : base(connectionString)
@@ -32,8 +32,8 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
             _databaseTableRepository ??= new DatabaseTableRepository(_db);
         public IToDoNoteRepository ToDoNotes =>
             _toDoNoteRepository ??= new ToDoNoteRepository(_db);
-        public IEntityInProjectRepository EntityInProjects =>
-            _entityInProject ??= new EntityInProjectRepository(_db);
+        public IEntityInPcbRepository EntityInPcbs =>
+            _entityInPcb ??= new EntityInPcbRepository(_db);
 
         public IAltiumDBEntityRepository AltiumDbEntityRepository =>
             _altiumDbEntityRepository ?? new AltiumDBEntityRepository(_db);

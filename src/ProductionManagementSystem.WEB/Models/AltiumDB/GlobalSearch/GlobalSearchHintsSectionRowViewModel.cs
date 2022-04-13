@@ -6,7 +6,7 @@ namespace ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch
     {
         Text,
         BaseEntity,
-        Project,
+        Pcb,
         Table
     }
     

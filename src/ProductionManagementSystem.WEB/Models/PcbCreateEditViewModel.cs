@@ -2,7 +2,7 @@
 
 namespace ProductionManagementSystem.WEB.Models
 {
-    public class ProjectCreateEditViewModel
+    public class PcbCreateEditViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

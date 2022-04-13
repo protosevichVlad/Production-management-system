@@ -6,122 +6,122 @@ using System.Linq;
 using System.Threading.Tasks;
 using OfficeOpenXml;
 using ProductionManagementSystem.Core.Models.AltiumDB;
-using ProductionManagementSystem.Core.Models.AltiumDB.Projects;
 using ProductionManagementSystem.Core.Models.ElementsDifference;
+using ProductionManagementSystem.Core.Models.PCB;
 using ProductionManagementSystem.Core.Repositories;
 using ProductionManagementSystem.Core.Repositories.AltiumDB;
 using Directory = System.IO.Directory;
 
-namespace ProductionManagementSystem.Core.Services.AltiumDB
+namespace ProductionManagementSystem.Core.Services
 {
-    public interface IProjectService : IBaseService<Project>
+    public interface IPcbService : IBaseService<Pcb>
     {
-        Task<Project> ImportProjectAsync(Stream bom, Stream image, Stream circuitDiagram,
+        Task<Pcb> ImportPcbAsync(Stream bom, Stream image, Stream circuitDiagram,
             Stream assemblyDrawing, Stream threeDModel);
 
-        Task<List<Project>> GetProjectsWithEntityAsync(string partNumber);
-        Task<List<Project>> SearchByKeyWordAsync(string keyWord);
+        Task<List<Pcb>> GetPcbWithEntityAsync(string partNumber);
+        Task<List<Pcb>> SearchByKeyWordAsync(string keyWord);
         Task DeleteByIdAsync(int id);
         Task IncreaseQuantityAsync(int id, int quantity);
         Task DecreaseQuantityAsync(int id, int quantity);
         Task ChangeQuantityAsync(int id, int quantity);
     }
-    public class ProjectService : BaseService<Project, IUnitOfWork>, IProjectService
+    public class PcbService : BaseService<Pcb, IUnitOfWork>, IPcbService
     {
         private readonly IEntityExtService _entityExtService;
         
-        public ProjectService(IUnitOfWork db, IEntityExtService entityService) : base(db)
+        public PcbService(IUnitOfWork db, IEntityExtService entityService) : base(db)
         {
             _entityExtService = entityService;
-            _currentRepository = _db.Projects;
+            _currentRepository = _db.Pcbs;
         }
 
-        public async Task<Project> ImportProjectAsync(Stream bom, Stream image, Stream circuitDiagram,
+        public async Task<Pcb> ImportPcbAsync(Stream bom, Stream image, Stream circuitDiagram,
             Stream assemblyDrawing, Stream threeDModel)
         {
-            Project project = new Project();
+            Pcb pcb = new Pcb();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             Stream bomExcel = new MemoryStream();
             await bom.CopyToAsync(bomExcel);
             using(var package = new ExcelPackage(bomExcel))
             {
                 var sheet = package.Workbook.Worksheets[0];
-                project.Name = sheet.Cells["D4"].Text;
-                if (project.Name.EndsWith(".PrjPcb"))
+                pcb.Name = sheet.Cells["D4"].Text;
+                if (pcb.Name.EndsWith(".PrjPcb"))
                 {
-                    project.Name = project.Name.Substring(0, project.Name.Length - ".PrjPcb".Length);
+                    pcb.Name = pcb.Name.Substring(0, pcb.Name.Length - ".PrjPcb".Length);
                 }
                 
-                project.Variant = sheet.Cells["D5"].Text;
+                pcb.Variant = sheet.Cells["D5"].Text;
 
                 if (DateTime.TryParseExact(sheet.Cells["D7"].Text + "_" + sheet.Cells["E7"].Text, "dd.MM.yyyy_hh:mm",
                     CultureInfo.InvariantCulture, DateTimeStyles.None, out var projectReportDate))
-                    project.ReportDate = projectReportDate;
+                    pcb.ReportDate = projectReportDate;
                 else
-                    project.ReportDate = DateTime.Now;
+                    pcb.ReportDate = DateTime.Now;
                 
-                project.Entities = new List<EntityInProject>();
+                pcb.Entities = new List<EntityInPcb>();
                 int row = 10;
                 while (true)
                 {
                     if (string.IsNullOrWhiteSpace(sheet.Cells[row, 6].Text))
                         break;
                     
-                    EntityInProject entityInProject = new EntityInProject();
-                    entityInProject.Designator = sheet.Cells[row, 4].Text;
-                    entityInProject.EntityId =
+                    EntityInPcb entityInPcb = new EntityInPcb();
+                    entityInPcb.Designator = sheet.Cells[row, 4].Text;
+                    entityInPcb.EntityId =
                         (await _entityExtService.GetEntityExtByPartNumber(sheet.Cells[row, 6].Text))?.KeyId  ?? 0;
-                    entityInProject.Quantity = int.Parse(sheet.Cells[row, 10].Text);
+                    entityInPcb.Quantity = int.Parse(sheet.Cells[row, 10].Text);
 
-                    project.Entities.Add(entityInProject);
+                    pcb.Entities.Add(entityInPcb);
                     row++;
                 }
             }
             
-            string basePath = Path.Combine("wwwroot", "uploads", project.Name, project.Variant);
-            string wwwPath = Path.Combine("uploads", project.Name, project.Variant);
+            string basePath = Path.Combine("wwwroot", "uploads", pcb.Name, pcb.Variant);
+            string wwwPath = Path.Combine("uploads", pcb.Name, pcb.Variant);
             if (!Directory.Exists(basePath))
             {
                 Directory.CreateDirectory(basePath);
             }
 
-            project.BOMFilePath = '/' + Path.Combine(wwwPath, $"{project.Name}_{project.Variant}_bom.xlsx").Replace('\\', '/');
-            project.ImagePath = '/' + Path.Combine(wwwPath, $"{project.Name}_{project.Variant}_image.png").Replace('\\', '/');
-            project.CircuitDiagramPath = '/' + Path.Combine(wwwPath, $"{project.Name}_{project.Variant}_circuitDiagram.pdf").Replace('\\', '/');
-            project.AssemblyDrawingPath = '/' + Path.Combine(wwwPath, $"{project.Name}_{project.Variant}_assemblyDrawing.pdf").Replace('\\', '/');
-            project.ThreeDModelPath = '/' + Path.Combine(wwwPath, $"{project.Name}_{project.Variant}_3dModel.stl").Replace('\\', '/');
-            project.Description = "This project was created with using a BOM file";
-            project.Quantity = 0;
+            pcb.BOMFilePath = '/' + Path.Combine(wwwPath, $"{pcb.Name}_{pcb.Variant}_bom.xlsx").Replace('\\', '/');
+            pcb.ImagePath = '/' + Path.Combine(wwwPath, $"{pcb.Name}_{pcb.Variant}_image.png").Replace('\\', '/');
+            pcb.CircuitDiagramPath = '/' + Path.Combine(wwwPath, $"{pcb.Name}_{pcb.Variant}_circuitDiagram.pdf").Replace('\\', '/');
+            pcb.AssemblyDrawingPath = '/' + Path.Combine(wwwPath, $"{pcb.Name}_{pcb.Variant}_assemblyDrawing.pdf").Replace('\\', '/');
+            pcb.ThreeDModelPath = '/' + Path.Combine(wwwPath, $"{pcb.Name}_{pcb.Variant}_3dModel.stl").Replace('\\', '/');
+            pcb.Description = "This project was created with using a BOM file";
+            pcb.Quantity = 0;
             
-            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{project.Name}_{project.Variant}_bom.xlsx"), FileMode.Create)) {  
+            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{pcb.Name}_{pcb.Variant}_bom.xlsx"), FileMode.Create)) {  
                 await bom.CopyToAsync(outputFileStream);  
             }
-            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{project.Name}_{project.Variant}_image.png"), FileMode.Create)) {  
+            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{pcb.Name}_{pcb.Variant}_image.png"), FileMode.Create)) {  
                 await image.CopyToAsync(outputFileStream);  
             } 
-            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{project.Name}_{project.Variant}_circuitDiagram.pdf"), FileMode.Create)) {  
+            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{pcb.Name}_{pcb.Variant}_circuitDiagram.pdf"), FileMode.Create)) {  
                 await circuitDiagram.CopyToAsync(outputFileStream);  
             } 
-            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{project.Name}_{project.Variant}_assemblyDrawing.pdf"), FileMode.Create)) {  
+            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{pcb.Name}_{pcb.Variant}_assemblyDrawing.pdf"), FileMode.Create)) {  
                 await assemblyDrawing.CopyToAsync(outputFileStream);  
             } 
-            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{project.Name}_{project.Variant}_3dModel.stl"), FileMode.Create)) {  
+            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{pcb.Name}_{pcb.Variant}_3dModel.stl"), FileMode.Create)) {  
                 await threeDModel.CopyToAsync(outputFileStream);  
             } 
             
-            return project;
+            return pcb;
         }
 
-        public async Task<List<Project>> GetProjectsWithEntityAsync(string partNumber)
+        public async Task<List<Pcb>> GetPcbWithEntityAsync(string partNumber)
         {
-            return await _db.Projects.GetProjectsWithEntityAsync(partNumber);
+            return await _db.Pcbs.GetProjectsWithEntityAsync(partNumber);
         }
 
-        public async Task<List<Project>> SearchByKeyWordAsync(string keyWord)
+        public async Task<List<Pcb>> SearchByKeyWordAsync(string keyWord)
         {
             if (string.IsNullOrEmpty(keyWord)) 
-                return new List<Project>();
-            return await _db.Projects.SearchByKeyWordAsync(keyWord);
+                return new List<Pcb>();
+            return await _db.Pcbs.SearchByKeyWordAsync(keyWord);
         }
 
         public async Task DeleteByIdAsync(int id)
@@ -130,20 +130,20 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             await DeleteAsync(project);
         }
 
-        public override async Task DeleteAsync(Project project)
+        public override async Task DeleteAsync(Pcb pcb)
         {
-            var path = Path.Combine(("wwwroot" + project.BOMFilePath).Split('/')[..^1]);
+            var path = Path.Combine(("wwwroot" + pcb.BOMFilePath).Split('/')[..^1]);
             if (Directory.Exists(path))  
             {  
                 Directory.Delete(path, true);  
             } 
             
-            await base.DeleteAsync(project);
+            await base.DeleteAsync(pcb);
         }
 
-        public override async Task<Project> GetByIdAsync(int id)
+        public override async Task<Pcb> GetByIdAsync(int id)
         {
-            var result = (await _db.Projects.FindAsync(x => x.Id == id, "Entities")).FirstOrDefault();
+            var result = (await _db.Pcbs.FindAsync(x => x.Id == id, "Entities")).FirstOrDefault();
             if (result == null)
                 return null;
             

@@ -1,0 +1,12 @@
+﻿@if (User.Identity?.IsAuthenticated ?? false)
+{
+  <button class="bx--header__menu-trigger bx--header__action" aria-label="User" title="User" onclick="document.location=`/Identity/Account/Logout`">
+    <img src="/carbonUIicons/user--avatar--filled--alt.svg"  class="bx--navigation-menu-panel-expand-icon" width="20" height="20" style="filter: invert(1)">
+  </button>
+}
+else
+{
+  <button class="bx--header__menu-trigger bx--header__action" aria-label="User" title="User" onclick="document.location=`/Identity/Account/Login`">
+    <img src="/carbonUIicons/login.svg"  class="bx--navigation-menu-panel-expand-icon" width="20" height="20" style="filter: invert(1)">
+  </button>
+}

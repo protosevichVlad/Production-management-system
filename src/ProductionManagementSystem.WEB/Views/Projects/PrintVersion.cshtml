@@ -1,9 +1,0 @@
-﻿@model ProductionManagementSystem.Core.Models.AltiumDB.Projects.Project
-
-@{
-  ViewBag.Title = "Print " + @Model.Name;
-  Layout = "_AltiumDBLayout";
-}
-
-<h2>@Model.Name @Model.Variant @Model.ReportDate</h2>
-<partial name="Partail/Projects/ProjectComponents" model="@Model"/>

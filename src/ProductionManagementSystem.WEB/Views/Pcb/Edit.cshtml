@@ -1,4 +1,4 @@
-﻿@model ProductionManagementSystem.WEB.Models.ProjectCreateEditViewModel
+﻿@model ProductionManagementSystem.WEB.Models.PcbCreateEditViewModel
 
 @{
   ViewBag.Title = "Create | Edit project";
@@ -8,8 +8,11 @@
 <div id="editProject">
 <div class="bx--grid">
   <div class="bx--row bx--row-padding">
-    <div class="bx--col--auto">
+    <div class="bx--col-sm-3">
       <h1>Create | Edit project</h1>
+    </div>
+    <div class="bx--col-sm-1" style="display: flex; justify-content: end">
+      <button class="bx--btn bx--btn--primary" v-on:click="updateProject">Save</button>
     </div>
   </div>
   <div class="bx--row bx--row-padding">
@@ -153,6 +156,11 @@
       </tbody>
     </table>
   </div>
+  <div class="bx--row-padding">
+    <div class="bx--col-sm-4" style="display: flex; justify-content: end">
+      <button class="bx--btn bx--btn--primary" v-on:click="updateProject">Save</button>
+    </div>
+  </div>
 </div>
 <div id="add-entity-modal" class="bx--modal" role="dialog" aria-modal="true" tabindex="-1">
   <div class="bx--modal-container">
@@ -170,7 +178,7 @@
           <div class="bx--col-sm-4">
             <div data-search role="search" class="bx--search bx--search--xl">
               <label id="search-input-label-1" class="bx--label" for="search__input-1">Search</label>
-              <input class="bx--search-input" type="text" id="search__input-1" placeholder="Search" v-model="searchString" v-on:input="search">
+              <input class="bx--search-input bx--search--light" type="text" id="search__input-1" placeholder="Search" v-model="searchString" v-on:input="search">
               <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-magnifier" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                 <path d="M15,14.3L10.7,10c1.9-2.3,1.6-5.8-0.7-7.7S4.2,0.7,2.3,3S0.7,8.8,3,10.7c2,1.7,5,1.7,7,0l4.3,4.3L15,14.3z M2,6.5 C2,4,4,2,6.5,2S11,4,11,6.5S9,11,6.5,11S2,9,2,6.5z"></path>
               </svg>
@@ -180,7 +188,7 @@
                 </svg>
               </button>
             </div>
-            <div class="autocom-box">
+            <div class="autocomplete-box bx--grid">
               <template v-for="entity in searchingData">
                 <div class="bx--row" v-on:click="() => selectEntity(entity)">
                   <div class="bx--col-md-1">
@@ -203,26 +211,28 @@
             </div>
             <div v-if="selectedEntity != null">
               <div class="bx--row">
-                Selected entity:
-              </div>
-                <div class="bx--row">
-                  <div class="bx--col-md-1">
-                    <img :src="selectedEntity.ImageUrl" alt="" class="altiumdb--entity-table--image"/>
-                  </div>
-                  <div class="bx--col-md-4">
-                    <div class="bx--grid">
-                      <div class="bx--row">{{selectedEntity.Item}}</div>
-                      <div class="bx--row" style="height: 4px"></div>
-                      <div class="bx--row">{{selectedEntity['Part Number']}}</div>
-                      <div class="bx--row" style="height: 4px"></div>
-                      <div class="bx--row">{{selectedEntity.Category}}</div>
-                    </div>
-                  </div>
-                  <div class="bx--col-md-3">
-                    {{selectedEntity.Description}}
-                  </div>
+                <div class="bx--col-md-8">
+                  Selected entity:
                 </div>
               </div>
+              <div class="bx--row">
+                <div class="bx--col-md-1">
+                  <img :src="selectedEntity.ImageUrl" alt="" class="altiumdb--entity-table--image"/>
+                </div>
+                <div class="bx--col-md-4">
+                  <div class="bx--grid">
+                    <div class="bx--row"><a :href="'/entities/details/'+ selectedEntity.KeyId" target="_blank">{{selectedEntity.Item}}</a> </div>
+                    <div class="bx--row" style="height: 4px"></div>
+                    <div class="bx--row">{{selectedEntity['Part Number']}}</div>
+                    <div class="bx--row" style="height: 4px"></div>
+                    <div class="bx--row">{{selectedEntity.Category}}</div>
+                  </div>
+                </div>
+                <div class="bx--col-md-3">
+                  {{selectedEntity.Description}}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="bx--row bx--row-padding">
@@ -257,8 +267,8 @@
       </div>
     </div>
     <div class="bx--modal-footer">
-      <button class="bx--btn bx--btn--secondary" type="button" data-modal-close>Secondary button</button>
-      <button class="bx--btn bx--btn--primary" type="button" v-on:click="saveEntityInProject">Primary button</button>
+      <button class="bx--btn bx--btn--secondary" type="button" data-modal-close>Close</button>
+      <button class="bx--btn bx--btn--primary" type="button" v-on:click="saveEntityInProject">Ok</button>
     </div>
   </div>
   <!-- Note: focusable span allows for focus wrap feature within Modals -->
@@ -292,12 +302,13 @@
         searchString: "",
         searchingData: [],
         selectedEntity: null,
+        editEntityModal: null,
       },
       methods: {
         loadData : function ()
         {
           let vm = this;
-          request(`/api/projects/${vm.project.id}`, 'GET')
+          request(`/api/pcb/${vm.project.id}`, 'GET')
             .then(r => {
               r.json().then(json => vm.project = json);
             })
@@ -305,14 +316,12 @@
         },
         showAddNewEntityInProjectModal: function ()
         {          
-          let vm = this;
-          let editEntityModal = Modal.create(document.getElementById('add-entity-modal'));
-          editEntityModal.show();
+          this.editEntityModal.show();
         },
         search : function ()
         {
           let vm = this;
-          request(`/api/entities/search?q=${vm.searchString}&take=5`, 'GET')
+          request(`/api/entities/search?q=${vm.searchString}&take=3`, 'GET')
             .then(r => {
               r.json().then(json => vm.searchingData = json);
             })
@@ -339,21 +348,35 @@
             quantity:0
           };
           
-          let editEntityModal = Modal.create(document.getElementById('add-entity-modal'));
-          editEntityModal.hide();
-          vm.updateProject();
+          vm.editEntityModal.hide();
+          vm.sortEntities();
+        },
+        sortEntities: function ()
+        {
+          let cmp = (a, b) => {
+            if ( a.designator < b.designator ){
+              return -1;
+            }
+            if ( a.designator > b.designator ){
+              return 1;
+            }
+            return 0;  
+          }
+          
+          this.project.entities.sort(cmp);
         },
         updateProject : function ()
         {
           let vm = this;
-           request(`/api/projects/${vm.project.id}`, 'PUT', vm.project)
+          request(`/api/pcb/${vm.project.id}`, 'PUT', vm.project)
                .then(r => {
-                 console.log('ok');
+                 location.href = `/pcb/details/${vm.project.id}`;
                })
                .catch(e => console.log(e));
         }
       },
       mounted() {
+        this.editEntityModal = Modal.create(document.getElementById('add-entity-modal'));
         this.loadData();
       }
     });

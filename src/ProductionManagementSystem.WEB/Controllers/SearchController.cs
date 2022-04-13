@@ -11,13 +11,13 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
 {
     public class SearchController : Controller
     {
-        private readonly IProjectService _projectService;
+        private readonly IPcbService _pcbService;
         private readonly IEntityExtService _entityExtService;
         private readonly ITableService _tableService;
         
-        public SearchController(IProjectService projectService, IEntityExtService entityService, ITableService tableService)
+        public SearchController(IPcbService pcbService, IEntityExtService entityService, ITableService tableService)
         {
-            _projectService = projectService;
+            _pcbService = pcbService;
             _entityExtService = entityService;
             _tableService = tableService;
         }
@@ -46,10 +46,10 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
             hints.Add(new GlobalSearchHintsSectionViewModel()
             {
                 Name = "Used in projects",
-                Rows = (await _projectService.GetProjectsWithEntityAsync(q)).Take(5).Select(x => 
+                Rows = (await _pcbService.GetPcbWithEntityAsync(q)).Take(5).Select(x => 
                     new GlobalSearchHintsSectionRowViewModel() 
                     {
-                     Type = HintsSectionRowType.Project,
+                     Type = HintsSectionRowType.Pcb,
                      Content = x
                 }).ToList()
             });
@@ -68,10 +68,10 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
             hints.Add(new GlobalSearchHintsSectionViewModel()
             {
                 Name = "Projects",
-                Rows = (await _projectService.SearchByKeyWordAsync(q)).Take(5).Select(x => 
+                Rows = (await _pcbService.SearchByKeyWordAsync(q)).Take(5).Select(x => 
                     new GlobalSearchHintsSectionRowViewModel() 
                     {
-                        Type = HintsSectionRowType.Project,
+                        Type = HintsSectionRowType.Pcb,
                         Content = x
                     }).ToList()
             });

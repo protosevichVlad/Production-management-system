@@ -1,4 +1,4 @@
-﻿@model List<ProductionManagementSystem.Core.Models.AltiumDB.Projects.Project>
+﻿@model List<ProductionManagementSystem.Core.Models.PCB.Pcb>
 
 @{
   ViewBag.Title = "Projects";
@@ -15,13 +15,13 @@
 <div class="bx--data-table-container " data-table>
   <form method="get" id="tableFiltersForm">
     <div class="bx--data-table-header">
-      <h4 class="bx--data-table-header__title">Projects</h4>
+      <h4 class="bx--data-table-header__title">PCBs</h4>
     </div>
     <!-- Toolbar Content -->
     <section class="bx--table-toolbar ">
       <div class="bx--toolbar-content">
         <partial name="Partail/CarbonUIComponents/SearchInTable"/>
-        <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" onclick="location.href='/Projects/Create'">
+        <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" onclick="location.href='/pcb/Create'">
           Add project
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
             <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
@@ -50,7 +50,7 @@
           <img src="@project.ImagePath" class="altiumdb--entity-table--image"/>
         </td>
         <td >
-          <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id">@project.Name</a>
+          <a asp-controller="Pcb" asp-action="Details" asp-route-id="@project.Id">@project.Name</a>
         </td>
         <td >
           @project.ReportDate.ToString("dd.MM.yyyy")

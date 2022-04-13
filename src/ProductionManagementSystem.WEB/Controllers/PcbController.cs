@@ -1,39 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
-using ProductionManagementSystem.Core.Models.AltiumDB.Projects;
-using ProductionManagementSystem.Core.Services.AltiumDB;
+using ProductionManagementSystem.Core.Models.PCB;
+using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
-    public class ProjectsController : Controller
+    public class PcbController : Controller
     {
-        private readonly IProjectService _projectService;
+        private readonly IPcbService _pcbService;
 
-        public ProjectsController(IProjectService projectService)
+        public PcbController(IPcbService pcbService)
         {
-            _projectService = projectService;
+            _pcbService = pcbService;
         }
 
         public async Task<IActionResult> Index(string orderBy, string q)
         {
-            List<Project> data = new List<Project>();
+            List<Pcb> data = new List<Pcb>();
             if (string.IsNullOrEmpty(q))
             {
-                data = await _projectService.GetAllAsync();
+                data = await _pcbService.GetAllAsync();
             }
             else
             {
-                data = await _projectService
+                data = await _pcbService
                     .Find(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(q, StringComparison.InvariantCultureIgnoreCase));
-                data.AddRange(await _projectService.GetProjectsWithEntityAsync(q));
+                data.AddRange(await _pcbService.GetPcbWithEntityAsync(q));
             }
             
             return View(data);
@@ -47,26 +43,26 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(IFormFile bom, IFormFile image, IFormFile circuitDiagram, IFormFile assemblyDrawing, IFormFile treeDModel)
         {
-            var project = await _projectService.ImportProjectAsync(bom.OpenReadStream(), image.OpenReadStream(),
+            var project = await _pcbService.ImportPcbAsync(bom.OpenReadStream(), image.OpenReadStream(),
                 circuitDiagram.OpenReadStream(), assemblyDrawing.OpenReadStream(), treeDModel.OpenReadStream());
-            await _projectService.CreateAsync(project);
+            await _pcbService.CreateAsync(project);
             return RedirectToAction(nameof(Details), new {id = project.Id});
         }
         
         public async Task<IActionResult> Details(int id)
         {
-            return View(await _projectService.GetByIdAsync(id));
+            return View(await _pcbService.GetByIdAsync(id));
         }
         
         public async Task<IActionResult> Edit(int id)
         {
-            var project = await _projectService.GetByIdAsync(id);
+            var project = await _pcbService.GetByIdAsync(id);
             if (project == null)
             {
                 return NotFound();
             }
             
-            return View(new ProjectCreateEditViewModel()
+            return View(new PcbCreateEditViewModel()
             {
                 Id = project.Id,
                 Name = project.Name,
@@ -77,10 +73,10 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpGet]
-        [Route("api/projects/{id:int}")]
+        [Route("api/pcb/{id:int}")]
         public async Task<IActionResult> ApiGet(int id)
         {
-            var project = await _projectService.GetByIdAsync(id);
+            var project = await _pcbService.GetByIdAsync(id);
             if (project == null)
             {
                 return NotFound();
@@ -90,40 +86,40 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpDelete]
-        [Route("/Projects/{id:int}")]
+        [Route("/pcb/{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _projectService.DeleteByIdAsync(id);
+            await _pcbService.DeleteByIdAsync(id);
             return Ok();
         }
         
         public async Task<IActionResult> PrintVersion(int id)
         {
-            return View(await _projectService.GetByIdAsync(id));
+            return View(await _pcbService.GetByIdAsync(id));
         }
         
         [HttpPost]
-        [Route("/api/projects/{id:int}/add")]
+        [Route("/api/pcb/{id:int}/add")]
         public async Task<IActionResult> IncreaseQuantity([FromRoute]int id, [FromBody]int quantity)
         {
-            await _projectService.IncreaseQuantityAsync(id, quantity);
+            await _pcbService.IncreaseQuantityAsync(id, quantity);
             return Ok();
         }
         
         [HttpPost]
-        [Route("/api/projects/{id:int}/get")]
+        [Route("/api/pcb/{id:int}/get")]
         public async Task<IActionResult> DecreaseQuantity([FromRoute]int id, [FromBody]int quantity)
         {
-            await _projectService.DecreaseQuantityAsync(id, quantity);
+            await _pcbService.DecreaseQuantityAsync(id, quantity);
             return Ok();
         }
         
         [HttpPut]
-        [Route("/api/projects/{id:int}")]
-        public async Task<IActionResult> Update([FromRoute]int id, [FromBody]Project project)
+        [Route("/api/pcb/{id:int}")]
+        public async Task<IActionResult> Update([FromRoute]int id, [FromBody]Pcb pcb)
         {
-            project.Id = id;
-            await _projectService.UpdateAsync(project);
+            pcb.Id = id;
+            await _pcbService.UpdateAsync(pcb);
             return Ok();
         }
     }

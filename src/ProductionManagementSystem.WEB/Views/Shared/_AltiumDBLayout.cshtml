@@ -31,8 +31,8 @@
         </a>
       </li>
       <li>
-        <a class="bx--header__menu-item" asp-controller="Projects" asp-action="Index" tabindex="0">
-          Projects
+        <a class="bx--header__menu-item" asp-controller="Pcb" asp-action="Index" tabindex="0">
+          PCB
         </a>
       </li>
     </ul>
@@ -40,9 +40,7 @@
   <div class="bx--header__global">
     <partial name="Partail/GlobalSearch/GlobalSearch"/>
     <partial name="Partail/Notification/NotificationIcon"/>
-    <button class="bx--header__menu-trigger bx--header__action" aria-label="User" title="User" onclick="document.location=`/Identity/Account/Login`">
-      <img src="carbonUIicons/login.svg"  class="bx--navigation-menu-panel-expand-icon" width="20" height="20" style="filter: invert(1)">
-    </button>
+    <partial name="Partail/UserIcon"/>
   </div>
 </header>
 <partial name="Partail/Notification/NotificationList"/>

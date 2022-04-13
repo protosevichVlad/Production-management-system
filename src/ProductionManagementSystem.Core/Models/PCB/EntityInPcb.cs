@@ -1,18 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using ProductionManagementSystem.Core.Models.AltiumDB.Projects;
 
-namespace ProductionManagementSystem.Core.Models.AltiumDB
+namespace ProductionManagementSystem.Core.Models.PCB
 {
-    [Table("AltiumDB_EntityInProjects")]
-    public class EntityInProject
+    [Table("EntityInPCB")]
+    public class EntityInPcb
     {
         public int Id { get; set; }
         public int EntityId { get; set; }
         public int Quantity { get; set; }
         public string Designator { get; set; }
         
-        public Project Project { get; set; }
-        public int ProjectId { get; set; }
+        public Pcb Pcb { get; set; }
+        public int PcbId { get; set; }
         
         [NotMapped]
         public EntityExt Entity { get; set; }

@@ -2,12 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
-using ProductionManagementSystem.Core.Models.AltiumDB.Projects;
 using ProductionManagementSystem.Core.Models.Components;
 using ProductionManagementSystem.Core.Models.Devices;
 using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Models.Orders;
+using ProductionManagementSystem.Core.Models.PCB;
 using ProductionManagementSystem.Core.Models.SupplyRequests;
 using ProductionManagementSystem.Core.Models.Tasks;
 using ProductionManagementSystem.Core.Models.Users;
@@ -36,8 +36,8 @@ namespace ProductionManagementSystem.Core.Data.EF
         public DbSet<Table> Tables { get; set; }
         public DbSet<TableColumn> TableColumns { get; set; }
         public DbSet<ToDoNote> ToDoNotes { get; set; }
-        public DbSet<Project> Projects { get; set; }
-        public DbSet<EntityInProject> EntityInProjects { get; set; }
+        public DbSet<Pcb> Projects { get; set; }
+        public DbSet<EntityInPcb> EntityInProjects { get; set; }
         public DbSet<Entity> Entities { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)

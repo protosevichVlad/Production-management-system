@@ -1,0 +1,9 @@
+﻿@model ProductionManagementSystem.Core.Models.PCB.Pcb
+
+@{
+  ViewBag.Title = "Print " + @Model.Name;
+  Layout = "_AltiumDBLayout";
+}
+
+<h2>@Model.Name @Model.Variant @Model.ReportDate</h2>
+<partial name="Partail/Pcb/PcbComponents" model="@Model"/>
