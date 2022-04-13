@@ -13,7 +13,7 @@ using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
-    [Authorize(Roles = RoleEnum.OrderPicker)]
+    [Authorize(Roles = "Администратор,Снабженец")]
     public class MontagesController : ComponentBaseAbstractController<Montage>
     {
 
@@ -31,6 +31,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         /// <param name="pageSize"></param>
         /// <returns>A page with all components sorted by parameter <paramref name="sortOrder"/> and satisfying <paramref name="searchString"/></returns>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Index(string sortOrder, string searchString,  int? deviceId, string typeName, int page=1, int pageSize = 50)
         {
             var selectListDevice = new SelectList(await _deviceService.GetAllAsync(), "Id", "Name");
@@ -134,6 +135,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         // GET: Components/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
         {
             return View(await _componentBaseService.GetByIdAsync(id));    

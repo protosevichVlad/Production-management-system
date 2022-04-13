@@ -13,13 +13,14 @@ using ProductionManagementSystem.WEB.Models;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
-    [Authorize(Roles = RoleEnum.OrderPicker)]
+    [Authorize(Roles = "Администратор,Снабженец")]
     public class DesignsController : ComponentBaseAbstractController<Design>
     {
         public DesignsController(IDesignService service, IDeviceService deviceService) : base(service, deviceService)
         {
         }
 
+        [AllowAnonymous]
         // GET: Designs
         [HttpGet]
         public async Task<IActionResult> Index(string sortOrder, string searchString, int? deviceId, string typeName, int page=1, int pageSize = 50)
@@ -120,6 +121,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         // GET: Designs/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
         {
             return View(await _componentBaseService.GetByIdAsync(id));

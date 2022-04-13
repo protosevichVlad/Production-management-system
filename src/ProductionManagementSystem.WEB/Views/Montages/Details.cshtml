@@ -1,4 +1,5 @@
-﻿@model ProductionManagementSystem.Core.Models.Components.Montage;
+﻿@using ProductionManagementSystem.Core.Models.Users
+@model ProductionManagementSystem.Core.Models.Components.Montage;
 
 @{
     ViewData["Title"] = "Подробная информация";
@@ -8,13 +9,16 @@
     <div class="col">
         <h4>Подробная информация</h4>
     </div>
-    <div class="col d-flex justify-content-md-end">
-        <a class="btn btn-light btn-sm m-1"  asp-action="Add" asp-route-id="@Model.Id">Добавить</a>
-        <a class="btn btn-light btn-sm m-1" asp-action="Receive" asp-route-id="@Model.Id">Получить</a>
-        <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-montageId="@Model.Id">Логи</a>
-        <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
-        <a class="btn btn-danger btn-sm m-1" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
-    </div>
+    @if (User.IsInRole(RoleEnum.OrderPicker) || User.IsInRole(RoleEnum.Admin))
+    {
+        <div class="col d-flex justify-content-md-end">
+            <a class="btn btn-light btn-sm m-1"  asp-action="Add" asp-route-id="@Model.Id">Добавить</a>
+            <a class="btn btn-light btn-sm m-1" asp-action="Receive" asp-route-id="@Model.Id">Получить</a>
+            <a class="btn btn-light btn-sm m-1" asp-controller="Logs" asp-action="Index" asp-route-montageId="@Model.Id">Логи</a>
+            <a class="btn btn-light btn-sm m-1" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+            <a class="btn btn-danger btn-sm m-1" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+        </div>
+    }
 </div>
 <div class="alert alert-info" role="alert">
     Здесь вы можете узнать подробную информацию или совершить дополнительные действие с @Model.Name.
