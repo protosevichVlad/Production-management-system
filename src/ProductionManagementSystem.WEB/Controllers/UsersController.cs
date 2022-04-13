@@ -16,11 +16,13 @@ namespace ProductionManagementSystem.WEB.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public UsersController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public UsersController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _signInManager = signInManager;
         }
 
         public async Task<IActionResult> Index()
@@ -88,7 +90,7 @@ namespace ProductionManagementSystem.WEB.Controllers
  
                 await _userManager.AddToRolesAsync(user, addedRoles);
                 await _userManager.RemoveFromRolesAsync(user, removedRoles);
- 
+                await _signInManager.SignInAsync(user, false);
                 return RedirectToAction(nameof(Index));
             }
  

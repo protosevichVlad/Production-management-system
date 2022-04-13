@@ -13,10 +13,7 @@ using ProductionManagementSystem.WEB.Models.Device;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
-    [Authorize(Roles = RoleEnum.Admin)]
-    [Authorize(Roles = RoleEnum.OrderPicker)]
-    [Authorize(Roles = RoleEnum.Assembler)]
-    [Authorize(Roles = RoleEnum.Shipper)]
+    [Authorize(Roles = "Администратор,Снабженец,Монтажник,Отгрузчик")]
     public class DevicesController : Controller
     {
         private readonly IDeviceService _deviceService;
