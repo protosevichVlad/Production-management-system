@@ -1,4 +1,6 @@
-﻿async function createTableColumn() {
+﻿CarbonComponents.OverflowMenu.init()
+
+async function createTableColumn() {
     disableButton(`#buttonCreateTableColumn`);
     let component_selects = [...document.getElementsByClassName(`Ids`)];
     let length = component_selects.length + 1;
@@ -82,7 +84,7 @@ function deleteEntity(id, action) {
 }
 
 function deleteProject(id) {
-    return fetch(`/Projects/${id}`, {
+    return fetch(`/pcb/${id}`, {
         method: 'DELETE',
     }).then(response => {
         if (response.ok) {

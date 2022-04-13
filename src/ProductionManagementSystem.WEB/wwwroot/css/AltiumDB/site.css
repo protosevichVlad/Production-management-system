@@ -148,6 +148,7 @@
     width: calc(100% - 4rem);
     background: white;
     z-index: 9001;
+    padding: 0rem 1rem 0rem 1rem;
 }
 
 .autocomplete-box > .bx--row:hover{

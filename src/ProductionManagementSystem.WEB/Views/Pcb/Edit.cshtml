@@ -93,7 +93,7 @@
   <div class="bx--row bx--row-padding">
     <section class="bx--table-toolbar bx--table-toolbar--sm">
       <div class="bx--toolbar-content">
-        <button class="bx--btn bx--btn--sm bx--btn--primary" v-on:click="showAddNewEntityInProjectModal">
+        <button class="bx--btn bx--btn--sm bx--btn--primary" v-on:click="() => showEditEntityInProjectModal(null)">
           Add entity
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
             <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
@@ -134,10 +134,11 @@
         <th >
           <span class="bx--table-header-label hidden-print">Description</span>
         </th>
+        <th></th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="entityInProject in project.entities" v-if="entityInProject.entity!= null">
+      <tr v-for="entityInProject in project.entities">
         <td>{{project.entities.indexOf(entityInProject) + 1}}</td>
         <td>{{entityInProject.entity.Category}}</td>
         <td>{{entityInProject.designator}}</td>
@@ -151,6 +152,33 @@
         <td >{{entityInProject.quantity}}</td>
         <td class="hidden-print">
           <span style="white-space: pre-line">{{entityInProject.entity.Description}}</span>
+        </td>
+        <td class="bx--table-column-menu">
+          <div data-overflow-menu role="menu" tabindex="0" aria-label="Overflow menu description" class="bx--overflow-menu">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--overflow-menu__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+              <circle cx="8" cy="3" r="1"></circle><circle cx="8" cy="8" r="1"></circle><circle cx="8" cy="13" r="1"></circle>
+            </svg>
+            <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
+              <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
+                <button class="bx--overflow-menu-options__btn" v-on:click="() => showEditEntityInProjectModal(entityInProject)">
+                  <div class="bx--overflow-menu-options__option-content">
+                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
+                    </svg> Edit
+                  </div>
+                </button>
+              </li>
+              <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
+                <button class="bx--overflow-menu-options__btn" v-on:click="() => deleteFromProject(entityInProject)">
+                  <div class="bx--overflow-menu-options__option-content">
+                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
+                    </svg> Delete
+                  </div>
+                </button>
+              </li>
+            </ul>
+          </div>
         </td>
       </tr>
       </tbody>
@@ -188,7 +216,7 @@
                 </svg>
               </button>
             </div>
-            <div class="autocomplete-box bx--grid">
+            <div class="autocomplete-box bx--grid bx--grid--full-width">
               <template v-for="entity in searchingData">
                 <div class="bx--row" v-on:click="() => selectEntity(entity)">
                   <div class="bx--col-md-1">
@@ -209,7 +237,7 @@
                 </div>
               </template>
             </div>
-            <div v-if="selectedEntity != null">
+            <div v-if="selectedEntityInProject.entity != null">
               <div class="bx--row">
                 <div class="bx--col-md-8">
                   Selected entity:
@@ -217,19 +245,19 @@
               </div>
               <div class="bx--row">
                 <div class="bx--col-md-1">
-                  <img :src="selectedEntity.ImageUrl" alt="" class="altiumdb--entity-table--image"/>
+                  <img :src="selectedEntityInProject.entity.ImageUrl" alt="" class="altiumdb--entity-table--image"/>
                 </div>
                 <div class="bx--col-md-4">
                   <div class="bx--grid">
-                    <div class="bx--row"><a :href="'/entities/details/'+ selectedEntity.KeyId" target="_blank">{{selectedEntity.Item}}</a> </div>
+                    <div class="bx--row"><a :href="'/entities/details/'+ selectedEntityInProject.entity.KeyId" target="_blank">{{selectedEntityInProject.entity.Item}}</a> </div>
                     <div class="bx--row" style="height: 4px"></div>
-                    <div class="bx--row">{{selectedEntity['Part Number']}}</div>
+                    <div class="bx--row">{{selectedEntityInProject.entity['Part Number']}}</div>
                     <div class="bx--row" style="height: 4px"></div>
-                    <div class="bx--row">{{selectedEntity.Category}}</div>
+                    <div class="bx--row">{{selectedEntityInProject.entity.Category}}</div>
                   </div>
                 </div>
                 <div class="bx--col-md-3">
-                  {{selectedEntity.Description}}
+                  {{selectedEntityInProject.entity.Description}}
                 </div>
               </div>
             </div>
@@ -241,7 +269,7 @@
               <div data-numberinput class=" bx--number bx--number--light">
                 <label for="input-quantity-entity-in-project" class="bx--label">Quantity</label>
                 <div class="bx--number__input-wrapper">
-                  <input id="input-quantity-entity-in-project" type="number" min="0" max="999999" v-model="newEntityInProject.quantity">
+                  <input id="input-quantity-entity-in-project" type="number" min="0" max="999999" v-model="selectedEntityInProject.quantity">
                   <div class="bx--number__controls">
                     <button aria-label="increase number input" class="bx--number__control-btn up-icon" type="button" aria-live="polite" aria-atomic="true">
                       <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true">
@@ -261,13 +289,13 @@
           <div class="bx--col-md-8">
             <label for="text-area-entityInProject-designator" class="bx--label">Designator</label>
             <textarea id="text-area-entityInProject-designator" class="bx--text-area"
-                    style="height: 100px;" placeholder="Placeholder text." v-model="newEntityInProject.designator"></textarea>
+                    style="height: 100px;" placeholder="Placeholder text." v-model="selectedEntityInProject.designator"></textarea>
           </div>
         </div>
       </div>
     </div>
     <div class="bx--modal-footer">
-      <button class="bx--btn bx--btn--secondary" type="button" data-modal-close>Close</button>
+      <button class="bx--btn bx--btn--secondary" type="button" v-on:click="resetSelectedEntityInProject" data-modal-close>Close</button>
       <button class="bx--btn bx--btn--primary" type="button" v-on:click="saveEntityInProject">Ok</button>
     </div>
   </div>
@@ -291,7 +319,7 @@
           name: "",
           variant: "",
         },
-        newEntityInProject: {
+        selectedEntityInProject: {
           designator:"",
           entity: null,
           entityId: null,
@@ -314,8 +342,9 @@
             })
             .catch(e => console.log(e));
         },
-        showAddNewEntityInProjectModal: function ()
-        {          
+        showEditEntityInProjectModal: function (entityInProject)
+        { 
+          Object.assign(this.selectedEntityInProject, entityInProject)
           this.editEntityModal.show();
         },
         search : function ()
@@ -329,25 +358,24 @@
         },
         selectEntity: function (entity)
         {
-          this.selectedEntity = entity;
-          this.newEntityInProject.entityId = entity.KeyId;
+          this.selectedEntityInProject.entity = entity;
+          this.selectedEntityInProject.entityId = entity.KeyId;
           this.searchingData = [];
         },
         saveEntityInProject : function ()
         {
           let vm = this;
-          vm.newEntityInProject.entity = vm.selectedEntity;
-          vm.project.entities.push(vm.newEntityInProject);
-
-          vm.newEntityInProject = {
-            designator:"",
-            entity: null,
-            entityId: null,
-            id: 0,
-            projectId: @Model.Id,
-            quantity:0
-          };
+          if (vm.selectedEntityInProject.id === 0)
+          {
+            vm.project.entities.push(vm.selectedEntityInProject);
+          }
+          else 
+          {
+            let index = vm.project.entities.findIndex(x => x.id === vm.selectedEntityInProject.id);
+            vm.project.entities[index] = vm.selectedEntityInProject;
+          }
           
+          vm.resetSelectedEntityInProject();
           vm.editEntityModal.hide();
           vm.sortEntities();
         },
@@ -373,6 +401,21 @@
                  location.href = `/pcb/details/${vm.project.id}`;
                })
                .catch(e => console.log(e));
+        },
+        resetSelectedEntityInProject: function ()
+        {
+          this.selectedEntityInProject = {
+            designator:"",
+            entity: null,
+            entityId: null,
+            id: 0,
+            projectId: @Model.Id,
+            quantity:0
+         };
+        },
+        deleteFromProject: function(entityInProject)
+        {
+          this.project.entities = this.project.entities.filter(x => x.id !== entityInProject.id);
         }
       },
       mounted() {
@@ -380,5 +423,7 @@
         this.loadData();
       }
     });
+    
+    CarbonComponents.OverflowMenu.init();
   </script>
 }
