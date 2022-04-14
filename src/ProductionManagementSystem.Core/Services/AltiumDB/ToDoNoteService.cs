@@ -11,6 +11,7 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
     {
         Task<List<ToDoNote>> GetNotCompletedAsync();
         Task MarkAsCompleted(int id);
+        Task DeleteByIdAsync(int id);
     }
     public class ToDoNoteService : BaseService<ToDoNote, IAltiumDBUnitOfWork>, IToDoNoteService
     {
@@ -34,6 +35,12 @@ namespace ProductionManagementSystem.Core.Services.AltiumDB
             note.CompletedDateTime = DateTime.Now;
             await _db.ToDoNotes.UpdateAsync(note);
             await _db.SaveAsync();
+        }
+
+        public async Task DeleteByIdAsync(int id)
+        {
+            var item = await base.GetByIdAsync(id);
+            await base.DeleteAsync(item);
         }
 
         public override async Task CreateAsync(ToDoNote item)

@@ -103,6 +103,17 @@ function markNoteAsCompleted(id) {
     })
 }
 
+function deleteNote(id)
+{
+    return fetch(`/api/to-do/${id}`, {
+        method: 'DELETE',
+    }).then(response => {
+        if (response.ok) {
+            location.reload();
+        }
+    })
+}
+
 function getDateTime() {
     var date = new Date();
     var day = date.getDate();

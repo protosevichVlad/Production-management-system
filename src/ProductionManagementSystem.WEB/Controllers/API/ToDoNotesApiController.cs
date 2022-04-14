@@ -22,5 +22,14 @@ namespace ProductionManagementSystem.WEB.Controllers.API
             await _toDoNoteService.MarkAsCompleted(id);
             return Ok();
         }
+        
+        [Route("/api/to-do/{id:int}")]
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> Delete([FromRoute]int id)
+        {
+            await _toDoNoteService.DeleteByIdAsync(id);
+            return Ok();
+        }
     }
 }
