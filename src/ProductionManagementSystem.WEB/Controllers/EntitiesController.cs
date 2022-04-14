@@ -97,7 +97,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             filters.Add(new FilterViewModel()
             {
                 FilterName = USING_IN_PROJECTS,
-                Values = (await _pcbService.GetAllAsync()).OrderBy(x => x)
+                Values = (await _pcbService.GetAllAsync())
                     .Select(x => ( x.Id.ToString(), x.ToString(), filter.ContainsKey(USING_IN_PROJECTS) && filter[USING_IN_PROJECTS].Contains(x.Id.ToString())))
                     .ToList()
             });

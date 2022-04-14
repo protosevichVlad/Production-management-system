@@ -155,7 +155,16 @@ namespace ProductionManagementSystem.Core.Services
             result.Entities = result.Entities.OrderBy(x => x.Designator).ToList();
             return result;
         }
-        
+
+        public override async Task CreateAsync(Pcb item)
+        {
+            if (item.ReportDate == default)
+            {
+                item.ReportDate = DateTime.Now;
+            }
+            await base.CreateAsync(item);
+        }
+
         public async Task IncreaseQuantityAsync(int id, int quantity)
         {
             await ChangeQuantityAsync(id, quantity);

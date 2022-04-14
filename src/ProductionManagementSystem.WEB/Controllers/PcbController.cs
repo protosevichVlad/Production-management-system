@@ -37,11 +37,27 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         public async Task<IActionResult> Create()
         {
+            return View("Edit", new PcbCreateEditViewModel()
+            {
+                Id = 0,
+            });
+        }
+        
+        [HttpPost]
+        [Route("/api/pcb")]
+        public async Task<IActionResult> Create([FromBody]Pcb pcb)
+        {
+            await _pcbService.CreateAsync(pcb);
+            return Ok(pcb);
+        }
+
+        public async Task<IActionResult> Import()
+        {
             return View();
         }
         
         [HttpPost]
-        public async Task<IActionResult> Create(IFormFile bom, IFormFile image, IFormFile circuitDiagram, IFormFile assemblyDrawing, IFormFile treeDModel)
+        public async Task<IActionResult> Import(IFormFile bom, IFormFile image, IFormFile circuitDiagram, IFormFile assemblyDrawing, IFormFile treeDModel)
         {
             var project = await _pcbService.ImportPcbAsync(bom.OpenReadStream(), image.OpenReadStream(),
                 circuitDiagram.OpenReadStream(), assemblyDrawing.OpenReadStream(), treeDModel.OpenReadStream());

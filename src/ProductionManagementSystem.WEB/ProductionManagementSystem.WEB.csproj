@@ -153,7 +153,6 @@
 
   <ItemGroup>
     <Folder Include="Pages" />
-    <Folder Include="test" />
     <Folder Include="wwwroot\Uploads\Serial-Port-Programator" />
   </ItemGroup>
 

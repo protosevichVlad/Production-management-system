@@ -1,7 +1,8 @@
 ﻿@model ProductionManagementSystem.WEB.Models.PcbCreateEditViewModel
 
 @{
-  ViewBag.Title = "Create | Edit project";
+  var isEdit = Model.Id != 0;
+  ViewBag.Title = isEdit ? "Edit" : "Create" + " PCB";
   Layout = "_AltiumDBLayout";
 }
 
@@ -9,12 +10,18 @@
 <div class="bx--grid">
   <div class="bx--row bx--row-padding">
     <div class="bx--col-sm-3">
-      <h1>Create | Edit project</h1>
+      <h1>@(isEdit ? "Edit" : "Create" + " PCB")</h1>
     </div>
     <div class="bx--col-sm-1" style="display: flex; justify-content: end">
       <button class="bx--btn bx--btn--primary" v-on:click="updateProject">Save</button>
     </div>
   </div>
+  @if (!isEdit)
+  {
+    <div class="bx--row">
+      <p>If you have BOM file you can import all data from BOM file using <a href="/pcb/import">this</a> form </p>
+    </div>
+  }
   <div class="bx--row bx--row-padding">
     <div class="bx--col-md-5">
       <div class="bx--grid">
@@ -314,10 +321,14 @@
     let app = new Vue({
       el: '#editProject',
       data: {
+        isEdit: @(isEdit ? "true" : "false"),
         project : {
           id: @Model.Id,
           name: "",
           variant: "",
+          entities: [],
+          quantity: 0,
+          description: "",
         },
         selectedEntityInProject: {
           designator:"",
@@ -336,11 +347,14 @@
         loadData : function ()
         {
           let vm = this;
-          request(`/api/pcb/${vm.project.id}`, 'GET')
-            .then(r => {
-              r.json().then(json => vm.project = json);
-            })
-            .catch(e => console.log(e));
+          if (vm.isEdit)
+          {
+            request(`/api/pcb/${vm.project.id}`, 'GET')
+              .then(r => {
+                r.json().then(json => vm.project = json);
+              })
+              .catch(e => console.log(e));
+          }
         },
         showEditEntityInProjectModal: function (entityInProject)
         { 
@@ -352,7 +366,8 @@
           let vm = this;
           request(`/api/entities/search?q=${vm.searchString}&take=3`, 'GET')
             .then(r => {
-              r.json().then(json => vm.searchingData = json);
+              r.json().then(json => vm.searchingData = json)
+              .catch(e => vm.searchingData = []);
             })
             .catch(e => console.log(e));
         },
@@ -396,11 +411,23 @@
         updateProject : function ()
         {
           let vm = this;
-          request(`/api/pcb/${vm.project.id}`, 'PUT', vm.project)
+          if (vm.isEdit)
+          {
+             request(`/api/pcb/${vm.project.id}`, 'PUT', vm.project)
+              .then(r => {
+                location.href = `/pcb/details/${vm.project.id}`;
+              })
+              .catch(e => console.log(e));
+          }
+          else
+          {
+            request(`/api/pcb`, 'POST', vm.project)
                .then(r => {
-                 location.href = `/pcb/details/${vm.project.id}`;
+                 r.json().then(project => location.href = `/pcb/details/${project.id}`)
                })
-               .catch(e => console.log(e));
+               .catch(e => console.log(e));  
+            }
+         
         },
         resetSelectedEntityInProject: function ()
         {
@@ -421,9 +448,11 @@
       mounted() {
         this.editEntityModal = Modal.create(document.getElementById('add-entity-modal'));
         this.loadData();
+      },
+      updated() {
+        CarbonComponents.OverflowMenu.init();
       }
     });
     
-    CarbonComponents.OverflowMenu.init();
   </script>
 }

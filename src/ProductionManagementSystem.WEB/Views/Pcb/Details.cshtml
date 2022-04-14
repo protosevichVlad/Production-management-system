@@ -77,33 +77,42 @@
           </div>
         </div>
         <div class="bx--row" style="height: 10px"></div>
-        <div class="bx--row">
-          <div class="bx--col-lg-5">
-            <strong>Bill of matirial</strong>
+        @if (!string.IsNullOrEmpty(Model.BOMFilePath))
+        {
+          <div class="bx--row">
+            <div class="bx--col-lg-5">
+              <strong>Bill of matirial</strong>
+            </div>
+            <div class="bx--col-lg-7">
+              <a href="@Model.BOMFilePath" target="_blank">@Model.Name bom file</a>
+            </div>
           </div>
-          <div class="bx--col-lg-7">
-            <a href="@Model.BOMFilePath" target="_blank">@Model.Name bom file</a>
+          <div class="bx--row" style="height: 10px"></div>
+        }
+        @if (!string.IsNullOrEmpty(Model.AssemblyDrawingPath))
+        {
+          <div class="bx--row">
+            <div class="bx--col-lg-5">
+              <strong>Assembly drawing</strong>
+            </div>
+            <div class="bx--col-lg-7">
+              <a href="@Model.AssemblyDrawingPath" target="_blank">@Model.Name assembly drawing</a>
+            </div>
           </div>
-        </div>
-        <div class="bx--row" style="height: 10px"></div>
-        <div class="bx--row">
-          <div class="bx--col-lg-5">
-            <strong>Assembly drawing</strong>
+          <div class="bx--row" style="height: 10px"></div>
+        }
+        @if (!string.IsNullOrEmpty(Model.CircuitDiagramPath))
+        {
+          <div class="bx--row">
+            <div class="bx--col-lg-5">
+              <strong>Circuit diagram</strong>
+            </div>
+            <div class="bx--col-lg-7">
+              <a href="@Model.CircuitDiagramPath" target="_blank">@Model.Name circuit diagram</a>
+            </div>
           </div>
-          <div class="bx--col-lg-7">
-            <a href="@Model.AssemblyDrawingPath" target="_blank">@Model.Name assembly drawing</a>
-          </div>
-        </div>
-        <div class="bx--row" style="height: 10px"></div>
-        <div class="bx--row">
-          <div class="bx--col-lg-5">
-            <strong>Circuit diagram</strong>
-          </div>
-          <div class="bx--col-lg-7">
-            <a href="@Model.CircuitDiagramPath" target="_blank">@Model.Name circuit diagram</a>
-          </div>
-        </div>
-        <div class="bx--row" style="height: 10px"></div>
+          <div class="bx--row" style="height: 10px"></div>
+        }
         <div class="bx--row">
           <div class="bx--col-lg-5">
             <strong>Quantity</strong>
@@ -132,10 +141,12 @@
 
 @section Scripts
 {
-  <script src="/js/three.min.js"></script>
-  <script src="/js/STLLoader.js"></script>
-  <script src="/js/OrbitControls.js"></script>
-  <script>
+  @if (!string.IsNullOrEmpty(Model.ThreeDModelPath))
+  {
+    <script src="/js/three.min.js"></script>
+    <script src="/js/STLLoader.js"></script>
+    <script src="/js/OrbitControls.js"></script>
+    <script>
   
   function STLViewer(model, elementID) {
       var elem = document.getElementById(elementID);
@@ -196,9 +207,10 @@
           });
   }
   </script>
-  <script type="text/javascript">
+    <script type="text/javascript">
       window.onload = function() {
           STLViewer("@Model.ThreeDModelPath", "model")
       }
   </script>
+  }
 }
