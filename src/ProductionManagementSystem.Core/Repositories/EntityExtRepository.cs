@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using ProductionManagementSystem.Core.Data.EF;
+using ProductionManagementSystem.Core.Exceptions;
 using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 
@@ -164,6 +165,13 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public void Delete(EntityExt item)
         {
+            var used = _context.EntityInProjects.Any(x => x.EntityId == item.KeyId);
+            used = used || _context.UsedInDevice.Any(x => x.ComponentType == UsedInDeviceComponentType.Entity && x.UsedComponentId == item.KeyId);
+            if (used)
+            {
+                throw new DeleteReferenceException("Entity delete not permitted", "This entity used in device or pcb");
+            }
+
             var table = _context.Tables.Find(item.TableId);
             try
             {

@@ -17,7 +17,6 @@
 
     <ItemGroup>
       <Folder Include="Data\Migrations" />
-      <Folder Include="Exceptions" />
       <Folder Include="Infrastructure\Helpers" />
       <Folder Include="Models\Charts" />
     </ItemGroup>

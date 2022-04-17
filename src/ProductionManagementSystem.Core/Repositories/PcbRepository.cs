@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Core.Data.EF;
+using ProductionManagementSystem.Core.Exceptions;
+using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.PCB;
 
 namespace ProductionManagementSystem.Core.Repositories.AltiumDB
@@ -38,6 +41,19 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
         public override async Task UpdateAsync(Pcb item)
         {
             _db.Update(item);
+        }
+
+        public override void Delete(Pcb item)
+        {
+            var usedInDevice = _db.UsedInDevice
+                .FirstOrDefault(d => d.ComponentType == UsedInDeviceComponentType.PCB 
+                                     && d.UsedComponentId == item.Id);
+            if (usedInDevice != null)
+            {
+                throw new DeleteReferenceException("PCB removal is not possible", $"This PCB used in device");
+            }
+            
+            base.Delete(item);
         }
     }
 }

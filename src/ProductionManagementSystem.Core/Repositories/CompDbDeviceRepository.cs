@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Core.Data.EF;
+using ProductionManagementSystem.Core.Exceptions;
 using ProductionManagementSystem.Core.Models;
 
 namespace ProductionManagementSystem.Core.Repositories
@@ -51,6 +52,16 @@ namespace ProductionManagementSystem.Core.Repositories
                 return x;
             }).ToList();
             return device;
+        }
+
+        public override void Delete(CompDbDevice item)
+        {
+            var used = _db.UsedInDevice.Any(x => x.ComponentType == UsedInDeviceComponentType.Device && x.UsedComponentId == item.Id);
+            if (used)
+            {
+                throw new DeleteReferenceException("Device delete not permitted", "This device used in other device");
+            }
+            base.Delete(item);
         }
     }
 }

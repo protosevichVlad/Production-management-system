@@ -132,13 +132,12 @@ namespace ProductionManagementSystem.Core.Services
 
         public override async Task DeleteAsync(Pcb pcb)
         {
+            await base.DeleteAsync(pcb);
             var path = Path.Combine(("wwwroot" + pcb.BOMFilePath).Split('/')[..^1]);
             if (Directory.Exists(path))  
             {  
                 Directory.Delete(path, true);  
             } 
-            
-            await base.DeleteAsync(pcb);
         }
 
         public override async Task<Pcb> GetByIdAsync(int id)

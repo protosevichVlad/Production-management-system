@@ -39,6 +39,7 @@ namespace ProductionManagementSystem.WEB
             {
                 op.Filters.Add<ToDoActionFilter>();
                 op.Filters.Add<UserFilter>();
+                op.Filters.Add<ApiException>();
             }).AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );;
