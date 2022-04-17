@@ -1,0 +1,83 @@
+﻿@model List<ProductionManagementSystem.Core.Models.CompDbDevice>
+
+@{
+  ViewBag.Title = "Devices";
+  Layout = "_AltiumDBLayout";
+}
+
+@{
+  var columns = new List<string>()
+  {
+    "Name", "ReportDate", "Variant"
+  };
+}
+
+<div class="bx--data-table-container " data-table>
+  <form method="get" id="tableFiltersForm">
+    <div class="bx--data-table-header">
+      <h4 class="bx--data-table-header__title">Devices</h4>
+    </div>
+    <!-- Toolbar Content -->
+    <section class="bx--table-toolbar ">
+      <div class="bx--toolbar-content">
+        <partial name="Partail/CarbonUIComponents/SearchInTable"/>
+        <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" onclick="location.href='@Url.Action("Create")'">
+          Add Device
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
+          </svg>
+        </button>
+      </div>
+    </section>
+  </form>
+  <table class="bx--data-table  bx--data-table--sort bx--data-table--short">
+    <thead>
+    <tr>
+      <th></th>
+      @foreach (var column in columns)
+      {
+        <partial name="Partail/CarbonUIComponents/SortableTh" model="@column"/>
+      }
+      <th class="bx--table-column-menu" style="width: 40px">
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var project in Model)
+    {
+      <tr >
+        <td>
+          <img src="@project.ImagePath" class="altiumdb--entity-table--image"/>
+        </td>
+        <td >
+          <a asp-controller="CompDbDevices" asp-action="Details" asp-route-id="@project.Id">@project.Name</a>
+        </td>
+        <td >
+          @project.ReportDate.ToString("dd.MM.yyyy")
+        </td>
+        <td >
+          @project.Variant
+        </td>
+        <td class="bx--table-column-menu">
+          <div data-overflow-menu role="menu" tabindex="0" aria-label="Overflow menu description" class="bx--overflow-menu">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--overflow-menu__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+              <circle cx="8" cy="3" r="1"></circle><circle cx="8" cy="8" r="1"></circle><circle cx="8" cy="13" r="1"></circle>
+            </svg>
+            <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
+              <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
+                <button class="bx--overflow-menu-options__btn" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting a device', 'Do you really want to delete this device', () => deleteDevice(@project.Id))">
+                  <div class="bx--overflow-menu-options__option-content">
+                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
+                    </svg> Delete
+                  </div>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+    }
+    </tbody>
+  </table>
+</div>

@@ -10,7 +10,14 @@ using ProductionManagementSystem.Core.Services.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Services
 {
-    public interface IEntityExtService : IBaseService<EntityExt>
+    public interface ICalculableObject
+    {
+        Task IncreaseQuantityAsync(int id, int quantity);
+        Task DecreaseQuantityAsync(int id, int quantity);
+        Task ChangeQuantityAsync(int id, int quantity);
+    }
+    
+    public interface IEntityExtService : IBaseService<EntityExt>, ICalculableObject
     {
         Task<List<EntityExt>> GetFromTable(int tableId);
         Task<EntityExt> GetEntityExtByPartNumber(string partNumber);
@@ -19,9 +26,6 @@ namespace ProductionManagementSystem.Core.Services
         Task<List<string>> GetValues(string column, int? tableId);
         Task DeleteByIdAsync(int id);
         Task<List<EntityExt>> SearchByKeyWordAsync(string s, int? tableId=null);
-        Task IncreaseQuantityAsync(int id, int quantity);
-        Task DecreaseQuantityAsync(int id, int quantity);
-        Task ChangeQuantityAsync(int id, int quantity);
     }
 
     public class EntityExtService : BaseService<EntityExt, IUnitOfWork>, IEntityExtService

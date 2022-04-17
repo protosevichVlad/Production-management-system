@@ -1,0 +1,163 @@
+﻿@using ProductionManagementSystem.Core.Models
+@using ProductionManagementSystem.Core.Models.Devices
+@using ProductionManagementSystem.Core.Models.PCB
+@model ProductionManagementSystem.Core.Models.CompDbDevice
+
+<table class="bx--data-table  bx--data-table--compact  ">
+  <thead>
+  <tr>
+    <th >
+      <span class="bx--table-header-label">№</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Category</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Designator</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Item</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Part Number</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Supplier</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Case</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Manufacturer</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Quantity</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label hidden-print">Description</span>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  @for (int i = 0; Model.UsedInDevice != null && i < Model.UsedInDevice.Count; i++)
+  {
+    switch (Model.UsedInDevice[i].ComponentType)
+    {
+      case UsedInDeviceComponentType.Entity:
+        var entity = Model.UsedInDevice[i].Component as EntityExt;
+        <tr>
+          <td>
+            @(i + 1)
+          </td>
+          @if (entity == null)
+          {
+            <td></td>
+            <td >
+              @Model.UsedInDevice[i].Designator
+            </td>
+            <td colspan="5">Item not found</td>
+            <td >
+              @Model.UsedInDevice[i].Quantity
+            </td>
+            <td class="hidden-print"></td>
+          }
+          else
+          {
+            <td >
+              @entity.Category
+            </td>
+            <td >
+              @Model.UsedInDevice[i].Designator
+            </td>
+            <td >
+              @entity.Item
+            </td>
+            <td >
+              <a href="/Entities/Details/@entity.KeyId" target="_blank">@entity.PartNumber</a>
+            </td>
+            <td >
+              @entity.Supplier
+            </td>
+            <td >
+              @entity.Case
+            </td>
+            <td >
+              @entity.Manufacturer
+            </td>
+            <td >
+              @Model.UsedInDevice[i].Quantity
+            </td>
+            <td class="hidden-print">
+              <span style="white-space: pre-line">@entity.Description</span>
+            </td>
+          }
+        </tr>
+        break;
+      case UsedInDeviceComponentType.PCB:
+        var pcb = Model.UsedInDevice[i].Component as Pcb;
+        <tr>
+          <td>
+            @(i + 1)
+          </td>
+          <td >
+            PCB
+          </td>
+          <td >
+            @Model.UsedInDevice[i].Designator
+          </td>
+          <td >
+            @pcb.Name
+          </td>
+          <td >
+            @pcb.Variant
+          </td>
+          <td >
+          </td>
+          <td >
+          </td>
+          <td >
+          </td>
+          <td >
+            @Model.UsedInDevice[i].Quantity
+          </td>
+          <td class="hidden-print">
+            <span style="white-space: pre-line">@pcb.Description</span>
+          </td>
+        </tr>
+        break;
+      case UsedInDeviceComponentType.Device:
+        var device = Model.UsedInDevice[i].Component as CompDbDevice;
+        <tr>
+          <td>
+            @(i + 1)
+          </td>
+          <td >
+            Device
+          </td>
+          <td >
+            @Model.UsedInDevice[i].Designator
+          </td>
+          <td >
+            @device.Name
+          </td>
+          <td >
+            @device.Variant
+          </td>
+          <td >
+          </td>
+          <td >
+          </td>
+          <td >
+          </td>
+          <td >
+            @Model.UsedInDevice[i].Quantity
+          </td>
+          <td class="hidden-print">
+            <span style="white-space: pre-line">@device.Description</span>
+          </td>
+        </tr>
+        break;
+    }
+  }
+  </tbody>
+</table>

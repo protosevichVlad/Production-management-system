@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductionManagementSystem.Core.Data.EF;
 
 namespace ProductionManagementSystem.Core.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220414153239_AddDeviceToCompDB")]
+    partial class AddDeviceToCompDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -759,7 +761,7 @@ namespace ProductionManagementSystem.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("CompDbDeviceId")
+                    b.Property<int?>("CompDbDeviceId")
                         .HasColumnType("int");
 
                     b.Property<int>("ComponentType")
@@ -1075,18 +1077,14 @@ namespace ProductionManagementSystem.Core.Migrations
 
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.UsedInDevice", b =>
                 {
-                    b.HasOne("ProductionManagementSystem.Core.Models.CompDbDevice", "CompDbDevice")
-                        .WithMany("UsedInDevice")
-                        .HasForeignKey("CompDbDeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CompDbDevice");
+                    b.HasOne("ProductionManagementSystem.Core.Models.CompDbDevice", null)
+                        .WithMany("UsedInDevise")
+                        .HasForeignKey("CompDbDeviceId");
                 });
 
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.CompDbDevice", b =>
                 {
-                    b.Navigation("UsedInDevice");
+                    b.Navigation("UsedInDevise");
                 });
 
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.Orders.Order", b =>

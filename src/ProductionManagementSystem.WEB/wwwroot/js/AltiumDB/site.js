@@ -93,6 +93,16 @@ function deleteProject(id) {
     })
 }
 
+function deleteDevice(id) {
+    return fetch(`/api/devices/${id}`, {
+        method: 'DELETE',
+    }).then(response => {
+        if (response.ok) {
+            location.reload();
+        }
+    })
+}
+
 function markNoteAsCompleted(id) {
     return fetch(`/api/AltiumDB/to-do/${id}/completed`, {
         method: 'POST',
@@ -202,6 +212,11 @@ async function request(url, method, body) {
         },
         body: JSON.stringify(body),
     });
+}
+
+const HttpRequest = function (url, method, body)
+{
+    return request(url, method, body).then(r => r.json());
 }
 
 function changeUrl(paramName, value)

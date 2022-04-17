@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Routing;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 using ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch;
+using ProductionManagementSystem.WEB.Models.Device;
 
 namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
 {
@@ -14,12 +15,14 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
         private readonly IPcbService _pcbService;
         private readonly IEntityExtService _entityExtService;
         private readonly ITableService _tableService;
+        private readonly ICompDbDeviceService _deviceService;
         
-        public SearchController(IPcbService pcbService, IEntityExtService entityService, ITableService tableService)
+        public SearchController(IPcbService pcbService, IEntityExtService entityService, ITableService tableService, ICompDbDeviceService deviceService)
         {
             _pcbService = pcbService;
             _entityExtService = entityService;
             _tableService = tableService;
+            _deviceService = deviceService;
         }
 
         [Route("/search")]
@@ -45,7 +48,7 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
             
             hints.Add(new GlobalSearchHintsSectionViewModel()
             {
-                Name = "Used in projects",
+                Name = "Used in pcb",
                 Rows = (await _pcbService.GetPcbWithEntityAsync(q)).Take(5).Select(x => 
                     new GlobalSearchHintsSectionRowViewModel() 
                     {
@@ -67,7 +70,7 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
             
             hints.Add(new GlobalSearchHintsSectionViewModel()
             {
-                Name = "Projects",
+                Name = "PCB",
                 Rows = (await _pcbService.SearchByKeyWordAsync(q)).Take(5).Select(x => 
                     new GlobalSearchHintsSectionRowViewModel() 
                     {
@@ -87,6 +90,16 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
                     }).ToList()
             });
             return PartialView("Partail/GlobalSearch/GlobalSearchHints", hints);
+        }
+        
+        [Route("/api/search/create-device")]
+        public async Task<List<CreateDeviceSearchViewModel>> CreateDeviceSearch(string q, int take)
+        {
+            var result = new List<CreateDeviceSearchViewModel>();
+            result.AddRange((await _entityExtService.SearchByKeyWordAsync(q)).Select(x => new CreateDeviceSearchViewModel(x)));
+            result.AddRange((await _pcbService.SearchByKeyWordAsync(q)).Select(x => new CreateDeviceSearchViewModel(x)));
+            result.AddRange((await _deviceService.SearchByKeyWordAsync(q)).Select(x => new CreateDeviceSearchViewModel(x)));
+            return result.Take(3).ToList();
         }
     }
 }

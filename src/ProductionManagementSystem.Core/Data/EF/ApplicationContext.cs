@@ -39,6 +39,8 @@ namespace ProductionManagementSystem.Core.Data.EF
         public DbSet<Pcb> Projects { get; set; }
         public DbSet<EntityInPcb> EntityInProjects { get; set; }
         public DbSet<Entity> Entities { get; set; }
+        public DbSet<CompDbDevice> CompDbDevices { get; set; }
+        public DbSet<UsedInDevice> UsedInDevice { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {

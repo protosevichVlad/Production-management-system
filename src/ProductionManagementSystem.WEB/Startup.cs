@@ -88,6 +88,7 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEntityExtService, EntityExtService>();
+            services.AddScoped<ICompDbDeviceService, CompDbDeviceService>();
             services.AddScoped<IImportService, ImportService>();
         }
 

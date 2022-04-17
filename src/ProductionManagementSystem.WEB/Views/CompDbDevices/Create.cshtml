@@ -1,0 +1,459 @@
+﻿@model int
+
+@{
+  var isEdit = Model != 0;
+  ViewBag.Title = isEdit ? "Edit" : "Create" + " device";
+  Layout = "_AltiumDBLayout";
+}
+
+<div id="editDevice">
+<div class="bx--grid">
+  <div class="bx--row bx--row-padding">
+    <div class="bx--col-sm-3">
+      <h1>@(isEdit ? "Edit" : "Create" + " device")</h1>
+    </div>
+    <div class="bx--col-sm-1" style="display: flex; justify-content: end">
+      <button class="bx--btn bx--btn--primary" v-on:click="saveDevice">Save</button>
+    </div>
+  </div>
+  <div class="bx--row bx--row-padding">
+    <div class="bx--col-md-5">
+      <div class="bx--grid">
+        <div class="bx--row">
+          <div class="bx--col-sm-3">
+            <label for="text-input-name" class="bx--label">Name</label>
+            <input id="text-input-name" type="text" class="bx--text-input" placeholder="Item" v-model="device.name">
+          </div>
+          <div class="bx--col-sm-1">
+            <label for="text-input-variant" class="bx--label">Variant</label>
+            <input id="text-input-variant" type="text" class="bx--text-input" placeholder="Item" v-model="device.variant">
+          </div>
+        </div>
+        <div class="bx--row">
+          <div class="bx--col-sm--auto">
+            <label for="text-area-Description" class="bx--label">Description</label>
+            <textarea id="text-area-Description" class="bx--text-area"
+            rows="4" placeholder="Placeholder text." v-model="device.description"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bx--col-md-3">
+      <div class="bx--row">
+        <div class="bx--col-sm-2">
+          <div class="bx--form-item">
+            <strong class="bx--file--label">Image</strong>
+            <p class="bx--label-description">Only .png files.</p>
+            <div class="bx--file" data-file>
+              <label for="file-importer-image" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+              <input type="file" class="bx--file-input" id="file-importer-image" data-file-uploader data-target="[data-file-container]" multiple/>
+              <div data-file-container class="bx--file-container">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bx--col-sm-2">
+          <div class="bx--form-item">
+            <strong class="bx--file--label">Circuit diagram file</strong>
+            <p class="bx--label-description">Only .pdf files.</p>
+            <div class="bx--file" data-file>
+              <label for="file-importer-circuit" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+              <input type="file" class="bx--file-input" id="file-importer-circuit" data-file-uploader data-target="[data-file-container]" multiple/>
+              <div data-file-container class="bx--file-container">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bx--col-sm-2">
+          <div class="bx--form-item">
+            <strong class="bx--file--label">Assembly drawing file</strong>
+            <p class="bx--label-description">Only .pdf files.</p>
+            <div class="bx--file" data-file>
+              <label for="file-importer-assembly" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+              <input type="file" class="bx--file-input" id="file-importer-assembly" data-file-uploader data-target="[data-file-container]" multiple/>
+              <div data-file-container class="bx--file-container">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bx--col-sm-2">
+          <div class="bx--form-item">
+            <strong class="bx--file--label">3D model</strong>
+            <p class="bx--label-description">Only .stl files.</p>
+            <div class="bx--file" data-file>
+              <label for="file-importer-treed-d" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+              <input type="file" class="bx--file-input" id="file-importer-treed-d" data-file-uploader data-target="[data-file-container]" multiple/>
+              <div data-file-container class="bx--file-container">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bx--row bx--row-padding">
+    <section class="bx--table-toolbar bx--table-toolbar--sm">
+      <div class="bx--toolbar-content">
+        <button class="bx--btn bx--btn--sm bx--btn--primary" v-on:click="() => showEditEntityInDeviceModal(null)">
+          Add entity
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
+          </svg>
+        </button>
+      </div>
+    </section>
+    <table class="bx--data-table  bx--data-table--compact">
+      <thead>
+      <tr>
+        <th >
+          <span class="bx--table-header-label">№</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Category</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Designator</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Item</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Part Number</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Supplier</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Case</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Manufacturer</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label">Quantity</span>
+        </th>
+        <th >
+          <span class="bx--table-header-label hidden-print">Description</span>
+        </th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="usedComponent in device.usedInDevice">
+        <td>{{device.usedInDevice.indexOf(usedComponent) + 1}}</td>
+        <td>{{usedComponent.component.category}}</td>
+        <td>{{usedComponent.designator}}</td>
+        <td>{{usedComponent.component.name}}</td>
+        <td>{{usedComponent.component.partNumber}}</td>
+        <td>{{usedComponent.component.supplier}}</td>
+        <td>{{usedComponent.component.case}}</td>
+        <td>{{usedComponent.component.manufacturer}}</td>
+        <td>{{usedComponent.quantity}}</td>
+        <td class="hidden-print">
+          <span style="white-space: pre-line">{{usedComponent.component.description}}</span>
+        </td>
+        <td class="bx--table-column-menu">
+          <div data-overflow-menu role="menu" tabindex="0" aria-label="Overflow menu description" class="bx--overflow-menu">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--overflow-menu__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+              <circle cx="8" cy="3" r="1"></circle><circle cx="8" cy="8" r="1"></circle><circle cx="8" cy="13" r="1"></circle>
+            </svg>
+            <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
+              <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
+                <button class="bx--overflow-menu-options__btn" v-on:click="() => showEditEntityInDeviceModal(usedComponent)">
+                  <div class="bx--overflow-menu-options__option-content">
+                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
+                    </svg> Edit
+                  </div>
+                </button>
+              </li>
+              <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
+                <button class="bx--overflow-menu-options__btn" v-on:click="() => deleteFromDevice(usedComponent)">
+                  <div class="bx--overflow-menu-options__option-content">
+                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
+                    </svg> Delete
+                  </div>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="bx--row-padding">
+    <div class="bx--col-sm-4" style="display: flex; justify-content: end">
+      <button class="bx--btn bx--btn--primary" v-on:click="saveDevice">Save</button>
+    </div>
+  </div>
+</div>
+<div id="add-entity-modal" class="bx--modal" role="dialog" aria-modal="true" tabindex="-1">
+  <div class="bx--modal-container">
+    <div class="bx--modal-header">
+      <p class="bx--modal-header__heading bx--type-beta" id="modal-heading">Add new component in device</p>
+      <button class="bx--modal-close" type="button" data-modal-close aria-label="close modal">
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--modal-close__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M12 4.7L11.3 4 8 7.3 4.7 4 4 4.7 7.3 8 4 11.3 4.7 12 8 8.7 11.3 12 12 11.3 8.7 8z"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="bx--modal-content bx--modal-content--with-form">
+      <div class="bx--grid">
+        <div class="bx--row bx--row-padding">
+          <div class="bx--col-sm-4">
+            <div data-search role="search" class="bx--search bx--search--xl">
+              <label id="search-input-label-1" class="bx--label" for="search__input-1">Search</label>
+              <input class="bx--search-input bx--search--light" type="text" id="search__input-1" placeholder="Search" v-model="searchString" v-on:input="search">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-magnifier" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M15,14.3L10.7,10c1.9-2.3,1.6-5.8-0.7-7.7S4.2,0.7,2.3,3S0.7,8.8,3,10.7c2,1.7,5,1.7,7,0l4.3,4.3L15,14.3z M2,6.5 C2,4,4,2,6.5,2S11,4,11,6.5S9,11,6.5,11S2,9,2,6.5z"></path>
+              </svg>
+              <button class="bx--search-close bx--search-close--hidden" title="Clear search input" aria-label="Clear search input">
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-clear" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+                  <path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="autocomplete-box bx--grid bx--grid--full-width">
+              <template v-for="component in searchingData">
+                <div class="bx--row" v-on:click="() => selectComponent(component)">
+                  <div class="bx--col-md-1">
+                    <img :src="component.imageUrl" alt="" class="altiumdb--entity-table--image"/>
+                  </div>
+                  <div class="bx--col-md-4">
+                    <div class="bx--grid">
+                      <div class="bx--row">{{component.name}}</div>
+                      <div class="bx--row" style="height: 4px"></div>
+                      <div class="bx--row">{{component.partNamber}}</div>
+                      <div class="bx--row" style="height: 4px"></div>
+                      <div class="bx--row">{{component.category}}</div>
+                    </div>
+                  </div>
+                  <div class="bx--col-md-3">
+                    {{component.description}}                   
+                  </div>
+                </div>
+              </template>
+            </div>
+            <div v-if="selectedComponent.component != null">
+              <div class="bx--row">
+                <div class="bx--col-md-8">
+                  Selected:
+                </div>
+              </div>
+              <div class="bx--row">
+                <div class="bx--col-md-1">
+                  <img :src="selectedComponent.component.imageUrl" alt="" class="altiumdb--entity-table--image"/>
+                </div>
+                <div class="bx--col-md-4">
+                  <div class="bx--grid">
+                    <div class="bx--row">{{selectedComponent.component.name}}</div>
+                    <div class="bx--row" style="height: 4px"></div>
+                    <div class="bx--row">{{selectedComponent.component.partNumber}}</div>
+                    <div class="bx--row" style="height: 4px"></div>
+                    <div class="bx--row">{{selectedComponent.component.category}}</div>
+                  </div>
+                </div>
+                <div class="bx--col-md-3">
+                  {{selectedComponent.component.description}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bx--row bx--row-padding">
+          <div class="bx--col-md-8">
+            <div class="bx--form-item">
+              <div data-numberinput class=" bx--number bx--number--light">
+                <label for="input-quantity-entity-in-device" class="bx--label">Quantity</label>
+                <div class="bx--number__input-wrapper">
+                  <input id="input-quantity-entity-in-device" type="number" min="0" max="999999" v-model="selectedComponent.quantity">
+                  <div class="bx--number__controls">
+                    <button aria-label="increase number input" class="bx--number__control-btn up-icon" type="button" aria-live="polite" aria-atomic="true">
+                      <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true">
+                        <path d="M0 4L4 0 8 4z"></path>
+                      </svg>
+                    </button>
+                    <button aria-label="decrease number input" class="bx--number__control-btn down-icon" type="button" aria-live="polite" aria-atomic="true">
+                      <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true">
+                        <path d="M8 0L4 4 0 0z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bx--col-md-8">
+            <label for="text-area-selectedComponent-designator" class="bx--label">Designator</label>
+            <textarea id="text-area-selectedComponent-designator" class="bx--text-area"
+                    style="height: 100px;" placeholder="Placeholder text." v-model="selectedComponent.designator"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bx--modal-footer">
+      <button class="bx--btn bx--btn--secondary" type="button" v-on:click="resetSelectedComponent" data-modal-close>Close</button>
+      <button class="bx--btn bx--btn--primary" type="button" v-on:click="saveUsedComponent">Ok</button>
+    </div>
+  </div>
+  <!-- Note: focusable span allows for focus wrap feature within Modals -->
+  <span tabindex="0"></span>
+</div>
+</div>
+
+@section Scripts
+{
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vuex"></script>
+  <script>
+    let Modal = CarbonComponents.Modal;
+      
+    let app = new Vue({
+      el: '#editDevice',
+      data: {
+        isEdit: @(isEdit ? "true" : "false"),
+        device : {
+          id: @Model,
+          name: "",
+          variant: "",
+          usedInDevice: [],
+          quantity: 0,
+          description: "",
+        },
+        selectedComponent: {
+          designator:"",
+          component: null,
+          usedComponentId: null,
+          componentType: null,
+          id: 0,
+          compDbDeviceId: @Model,
+          quantity:0
+        },
+        searchString: "",
+        searchingData: [],
+        editEntityModal: null,
+        componentTypes: [
+          { id: 1, name: "Entity"},
+          { id: 2, name: "PCB"},
+          { id: 3, name: "Device"},
+        ]
+      },
+      methods: {
+        loadData : function ()
+        {
+          let vm = this;
+          if (vm.isEdit)
+          {
+            HttpRequest(`/api/devices/${vm.device.id}`, 'GET')
+            .then(json => 
+            {
+              vm.device = json;
+              if (vm.device.usedInDevice == null)
+                vm.device.usedInDevice = [];
+            })
+            .catch(e => console.log(e));
+          }
+        },
+        getComponentType : function (componentInDevice) {
+          if (componentInDevice.component.Category)
+            return componentInDevice.component.Category;
+          
+          return this.componentTypes.filter(t => t.id === componentInDevice.componentType)[0].name;  
+        },
+        showEditEntityInDeviceModal: function (selectedComponent)
+        { 
+          Object.assign(this.selectedComponent, selectedComponent)
+          this.editEntityModal.show();
+        },
+        search : function ()
+        {
+          let vm = this;
+          HttpRequest(`/api/search/create-device?q=${vm.searchString}&take=3`, 'GET')
+          .then(json => vm.searchingData = json)
+          .catch(e => console.log(e));
+        },
+        selectComponent: function (component)
+        {
+          this.selectedComponent.component = component;
+          this.selectedComponent.usedComponentId = component.id;
+          this.selectedComponent.componentType = component.componentType;
+          this.searchingData = [];
+        },
+        saveUsedComponent : function ()
+        {
+          let vm = this;
+          if (vm.selectedComponent.id === 0)
+          {
+            vm.device.usedInDevice.push(vm.selectedComponent);
+          }
+          else 
+          {
+            let index = vm.device.usedInDevice.findIndex(x => x.id === vm.selectedComponent.id);
+            vm.device.usedInDevice[index] = vm.selectedComponent;
+          }
+          
+          vm.resetSelectedComponent();
+          vm.editEntityModal.hide();
+          vm.sortEntities();
+        },
+        sortEntities: function ()
+        {
+          let cmp = (a, b) => {
+            if ( a.designator < b.designator ){
+              return -1;
+            }
+            if ( a.designator > b.designator ){
+              return 1;
+            }
+            return 0;  
+          }
+          
+          this.device.usedInDevice.sort(cmp);
+        },
+        saveDevice : function ()
+        {
+          let vm = this;
+          if (vm.isEdit)
+          {
+             HttpRequest(`/api/devices/${vm.device.id}`, 'PUT', vm.device)
+              .then(r => location.href = `/compDbDevices/details/${vm.device.id}`)
+              .catch(e => console.log(e));
+          }
+          else
+          {
+            HttpRequest(`/api/devices`, 'POST', vm.device)
+             .then(device => location.href = `/compDbDevices/details/${device.id}`)
+             .catch(e => console.log(e));  
+          }
+         
+        },
+        resetSelectedComponent: function ()
+        {
+          this.selectedComponent = {
+            designator:"",
+            entity: null,
+            entityId: null,
+            id: 0,
+            compDbDeviceId: @Model,
+            quantity:0
+         };
+        },
+        deleteFromDevice: function(usedComponent)
+        {
+          this.device.entities = this.device.entities.filter(x => x.id !== usedComponent.id);
+        }
+      },
+      mounted() {
+        this.editEntityModal = Modal.create(document.getElementById('add-entity-modal'));
+        this.loadData();
+      },
+      updated() {
+        CarbonComponents.OverflowMenu.init();
+      }
+    });
+    
+  
+  </script>
+}

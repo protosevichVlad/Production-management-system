@@ -33,6 +33,8 @@ namespace ProductionManagementSystem.Core.Repositories
         IToDoNoteRepository ToDoNoteRepository { get; }
         IEntityExtRepository EntityExtRepository { get; }
         IPcbRepository Pcbs { get; }
+        IUsedInDeviceRepository UsedInDeviceRepository { get; }
+        ICompDbDeviceRepository CompDbDeviceRepository { get; }
 
     }
 
@@ -101,6 +103,8 @@ namespace ProductionManagementSystem.Core.Repositories
         private IToDoNoteRepository _toDoNoteRepository;
         private IEntityExtRepository _entityExtRepository;
         private IPcbRepository _pcbRepository;
+        private ICompDbDeviceRepository _compDbDeviceRepository;
+        private IUsedInDeviceRepository _usedInDeviceRepository;
 
         public EFUnitOfWork(string connectionString) : base(connectionString)
         {
@@ -147,6 +151,8 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public IEntityExtRepository EntityExtRepository => _entityExtRepository ??= new EntityExtRepository(_db);
         public IPcbRepository Pcbs => _pcbRepository ??= new PcbRepository(_db);
+        public ICompDbDeviceRepository CompDbDeviceRepository => _compDbDeviceRepository ??= new CompDbDeviceRepository(_db);
+        public IUsedInDeviceRepository UsedInDeviceRepository => _usedInDeviceRepository ??= new UsedInDeviceRepository(_db);
 
     }
 }
