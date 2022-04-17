@@ -15,6 +15,7 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     volumes:
       - C:\https:/https
+      - ./log.txt:/app/log.txt
     ports:
       - "32825:80"
       - "32824:443"

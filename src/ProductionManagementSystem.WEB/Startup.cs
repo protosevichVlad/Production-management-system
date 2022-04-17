@@ -19,6 +19,7 @@ using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 using ProductionManagementSystem.Core.Services.SupplyRequestServices;
 using ProductionManagementSystem.WEB.Filters;
+using ProductionManagementSystem.WEB.MiddlewareComponents;
 
 namespace ProductionManagementSystem.WEB
 {
@@ -116,6 +117,7 @@ namespace ProductionManagementSystem.WEB
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseMiddleware<ErrorLogsComponent>();
                 app.UseHsts();
             }
 
