@@ -58,5 +58,15 @@ namespace ProductionManagementSystem.Core.Services
             var item = await base.GetByIdAsync(id);
             await base.DeleteAsync(item);
         }
+
+        public override async Task CreateAsync(CompDbDevice item)
+        {
+            if (item.ReportDate == default)
+            {
+                item.ReportDate = DateTime.Now;
+            }
+            
+            await base.CreateAsync(item);
+        }
     }
 }
