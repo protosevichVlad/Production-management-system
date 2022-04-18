@@ -40,6 +40,8 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
 
         public override async Task UpdateAsync(Pcb item)
         {
+            var entityInPcbs = _db.EntityInProjects.Where(x => x.PcbId == item.Id && item.Entities.All(y => y.Id != x.Id));
+            _db.EntityInProjects.RemoveRange(entityInPcbs);
             _db.Update(item);
         }
 

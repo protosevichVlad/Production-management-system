@@ -8,145 +8,154 @@
 
 <div id="editProject">
 <div class="bx--grid">
-  <div class="bx--row bx--row-padding">
-    <div class="bx--col-sm-3">
-      <h1>@(isEdit ? "Edit" : "Create" + " PCB")</h1>
-    </div>
-    <div class="bx--col-sm-1" style="display: flex; justify-content: end">
-      <button class="bx--btn bx--btn--primary" v-on:click="updateProject">Save</button>
-    </div>
+<div class="bx--row bx--row-padding">
+  <div class="bx--col-sm-3">
+    <h1>@(isEdit ? "Edit" : "Create" + " PCB")</h1>
   </div>
-  @if (!isEdit)
-  {
-    <div class="bx--row">
-      <p>If you have BOM file you can import all data from BOM file using <a href="/pcb/import">this</a> form </p>
-    </div>
-  }
-  <div class="bx--row bx--row-padding">
-    <div class="bx--col-md-5">
-      <div class="bx--grid">
-        <div class="bx--row">
-          <div class="bx--col-sm-3">
-            <label for="text-input-name" class="bx--label">Name</label>
-            <input id="text-input-name" type="text" class="bx--text-input" placeholder="Item" v-model="project.name">
-          </div>
-          <div class="bx--col-sm-1">
-            <label for="text-input-variant" class="bx--label">Variant</label>
-            <input id="text-input-variant" type="text" class="bx--text-input" placeholder="Item" v-model="project.variant">
-          </div>
-        </div>
-        <div class="bx--row">
-          <div class="bx--col-sm--auto">
-            <label for="text-area-Description" class="bx--label">Description</label>
-            <textarea id="text-area-Description" class="bx--text-area"
-            rows="4" placeholder="Placeholder text." v-model="project.description"></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="bx--col-md-3">
+  <div class="bx--col-sm-1" style="display: flex; justify-content: end">
+    <button class="bx--btn bx--btn--primary" v-on:click="updateProject">Save</button>
+  </div>
+</div>
+@if (!isEdit)
+{
+  <div class="bx--row">
+    <p>If you have BOM file you can import all data from BOM file using <a href="/pcb/import">this</a> form </p>
+  </div>
+}
+<div class="bx--row bx--row-padding">
+  <div class="bx--col-md-5">
+    <div class="bx--grid">
       <div class="bx--row">
-        <div class="bx--col-sm-2">
-          <div class="bx--form-item">
-            <strong class="bx--file--label">Image</strong>
-            <p class="bx--label-description">Only .png files.</p>
-            <div class="bx--file" data-file>
-              <label for="file-importer-image" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
-              <input type="file" class="bx--file-input" id="file-importer-image" data-file-uploader data-target="[data-file-container]" multiple/>
-              <div data-file-container class="bx--file-container">
-              </div>
+        <div class="bx--col-sm-3">
+          <label for="text-input-name" class="bx--label">Name</label>
+          <input id="text-input-name" type="text" class="bx--text-input" placeholder="Item" v-model="project.name">
+        </div>
+        <div class="bx--col-sm-1">
+          <label for="text-input-variant" class="bx--label">Variant</label>
+          <input id="text-input-variant" type="text" class="bx--text-input" placeholder="Item" v-model="project.variant">
+        </div>
+      </div>
+      <div class="bx--row">
+        <div class="bx--col-sm--auto">
+          <label for="text-area-Description" class="bx--label">Description</label>
+          <textarea id="text-area-Description" class="bx--text-area"
+            rows="4" placeholder="Placeholder text." v-model="project.description"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bx--col-md-3">
+    <div class="bx--row">
+      <div class="bx--col-sm-2">
+        <div class="bx--form-item">
+          <strong class="bx--file--label">Image</strong>
+          <p class="bx--label-description">Only .png files.</p>
+          <div class="bx--file" data-file>
+            <label for="file-importer-image" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+            <input type="file" class="bx--file-input" accept="image/png" v-on:change="uploadFile('imageUploader')" ref="imageUploader" id="file-importer-image" data-file-uploader data-target="[data-file-container]"/>
+            <div data-file-container class="bx--file-container">
             </div>
           </div>
         </div>
-        <div class="bx--col-sm-2">
-          <div class="bx--form-item">
-            <strong class="bx--file--label">Circuit diagram file</strong>
-            <p class="bx--label-description">Only .pdf files.</p>
-            <div class="bx--file" data-file>
-              <label for="file-importer-circuit" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
-              <input type="file" class="bx--file-input" id="file-importer-circuit" data-file-uploader data-target="[data-file-container]" multiple/>
-              <div data-file-container class="bx--file-container">
-              </div>
+      </div>
+      <div class="bx--col-sm-2">
+        <div class="bx--form-item">
+          <strong class="bx--file--label">Circuit diagram file</strong>
+          <p class="bx--label-description">Only .pdf files.</p>
+          <div class="bx--file" data-file>
+            <label for="file-importer-circuit" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+            <input type="file" class="bx--file-input" accept="application/pdf" v-on:change="uploadFile('circuitUploader')" ref="circuitUploader" id="file-importer-circuit" data-file-uploader data-target="[data-file-container]" multiple/>
+            <div data-file-container class="bx--file-container">
             </div>
           </div>
         </div>
-        <div class="bx--col-sm-2">
-          <div class="bx--form-item">
-            <strong class="bx--file--label">Assembly drawing file</strong>
-            <p class="bx--label-description">Only .pdf files.</p>
-            <div class="bx--file" data-file>
-              <label for="file-importer-assembly" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
-              <input type="file" class="bx--file-input" id="file-importer-assembly" data-file-uploader data-target="[data-file-container]" multiple/>
-              <div data-file-container class="bx--file-container">
-              </div>
+      </div>
+      <div class="bx--col-sm-2">
+        <div class="bx--form-item">
+          <strong class="bx--file--label">Assembly drawing file</strong>
+          <p class="bx--label-description">Only .pdf files.</p>
+          <div class="bx--file" data-file>
+            <label for="file-importer-assembly" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+            <input type="file" class="bx--file-input" accept="application/pdf" v-on:change="uploadFile('assemblyUploader')" ref="assemblyUploader" id="file-importer-assembly" data-file-uploader data-target="[data-file-container]" multiple/>
+            <div data-file-container class="bx--file-container">
             </div>
           </div>
         </div>
-        <div class="bx--col-sm-2">
-          <div class="bx--form-item">
-            <strong class="bx--file--label">3D model</strong>
-            <p class="bx--label-description">Only .stl files.</p>
-            <div class="bx--file" data-file>
-              <label for="file-importer-treed-d" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
-              <input type="file" class="bx--file-input" id="file-importer-treed-d" data-file-uploader data-target="[data-file-container]" multiple/>
-              <div data-file-container class="bx--file-container">
-              </div>
+      </div>
+      <div class="bx--col-sm-2">
+        <div class="bx--form-item">
+          <strong class="bx--file--label">3D model</strong>
+          <p class="bx--label-description">Only .stl files.</p>
+          <div class="bx--file" data-file>
+            <label for="file-importer-treed-d" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
+            <input type="file" class="bx--file-input" accept="model/stl" v-on:change="uploadFile('treeDUploader')" ref="treeDUploader" id="file-importer-treed-d" data-file-uploader data-target="[data-file-container]" multiple/>
+            <div data-file-container class="bx--file-container">
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="bx--row bx--row-padding">
-    <section class="bx--table-toolbar bx--table-toolbar--sm">
-      <div class="bx--toolbar-content">
-        <button class="bx--btn bx--btn--sm bx--btn--primary" v-on:click="() => showEditEntityInProjectModal(null)">
-          Add entity
-          <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
-            <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
-          </svg>
-        </button>
-      </div>
-    </section>
-    <table class="bx--data-table  bx--data-table--compact">
-      <thead>
-      <tr>
-        <th >
-          <span class="bx--table-header-label">№</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Category</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Designator</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Item</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Part Number</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Supplier</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Case</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Manufacturer</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label">Quantity</span>
-        </th>
-        <th >
-          <span class="bx--table-header-label hidden-print">Description</span>
-        </th>
-        <th></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="entityInProject in project.entities">
-        <td>{{project.entities.indexOf(entityInProject) + 1}}</td>
+</div>
+<div class="bx--row bx--row-padding">
+  <section class="bx--table-toolbar bx--table-toolbar--sm">
+    <div class="bx--toolbar-content">
+      <button class="bx--btn bx--btn--sm bx--btn--primary" v-on:click="() => showEditEntityInProjectModal(null)">
+        Add entity
+        <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
+        </svg>
+      </button>
+    </div>
+  </section>
+  <table class="bx--data-table  bx--data-table--compact">
+    <thead>
+    <tr>
+      <th >
+        <span class="bx--table-header-label">№</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Category</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Designator</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Item</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Part Number</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Supplier</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Case</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Manufacturer</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Quantity</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label hidden-print">Description</span>
+      </th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="entityInProject in project.entities">
+      <td>{{project.entities.indexOf(entityInProject) + 1}}</td>
+      <template v-if="entityInProject.entity == null">
+        <td></td>
+        <td>{{entityInProject.designator}}</td>
+        <td colspan="5">Item not found</td>
+        <td >{{entityInProject.quantity}}</td>
+        <td >
+        </td>
+      </template>
+      <template v-else>
         <td>{{entityInProject.entity.Category}}</td>
         <td>{{entityInProject.designator}}</td>
         <td>{{entityInProject.entity.Item}}</td>
@@ -157,45 +166,46 @@
         <td >{{entityInProject.entity.Case}}</td>
         <td >{{entityInProject.entity.Manufacturer}}</td>
         <td >{{entityInProject.quantity}}</td>
-        <td class="hidden-print">
+        <td>
           <span style="white-space: pre-line">{{entityInProject.entity.Description}}</span>
         </td>
-        <td class="bx--table-column-menu">
-          <div data-overflow-menu role="menu" tabindex="0" aria-label="Overflow menu description" class="bx--overflow-menu">
-            <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--overflow-menu__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-              <circle cx="8" cy="3" r="1"></circle><circle cx="8" cy="8" r="1"></circle><circle cx="8" cy="13" r="1"></circle>
-            </svg>
-            <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
-              <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                <button class="bx--overflow-menu-options__btn" v-on:click="() => showEditEntityInProjectModal(entityInProject)">
-                  <div class="bx--overflow-menu-options__option-content">
-                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                      <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
-                    </svg> Edit
-                  </div>
-                </button>
-              </li>
-              <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                <button class="bx--overflow-menu-options__btn" v-on:click="() => deleteFromProject(entityInProject)">
-                  <div class="bx--overflow-menu-options__option-content">
-                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                      <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
-                    </svg> Delete
-                  </div>
-                </button>
-              </li>
-            </ul>
-          </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+      </template>
+      <td class="bx--table-column-menu">
+        <div data-overflow-menu role="menu" tabindex="0" aria-label="Overflow menu description" class="bx--overflow-menu">
+          <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--overflow-menu__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <circle cx="8" cy="3" r="1"></circle><circle cx="8" cy="8" r="1"></circle><circle cx="8" cy="13" r="1"></circle>
+          </svg>
+          <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
+            <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
+              <button class="bx--overflow-menu-options__btn" v-on:click="() => showEditEntityInProjectModal(entityInProject)">
+                <div class="bx--overflow-menu-options__option-content">
+                  <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
+                  </svg> Edit
+                </div>
+              </button>
+            </li>
+            <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
+              <button class="bx--overflow-menu-options__btn" v-on:click="() => deleteFromProject(entityInProject)">
+                <div class="bx--overflow-menu-options__option-content">
+                  <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
+                  </svg> Delete
+                </div>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="bx--row-padding">
+  <div class="bx--col-sm-4" style="display: flex; justify-content: end">
+    <button class="bx--btn bx--btn--primary" v-on:click="updateProject">Save</button>
   </div>
-  <div class="bx--row-padding">
-    <div class="bx--col-sm-4" style="display: flex; justify-content: end">
-      <button class="bx--btn bx--btn--primary" v-on:click="updateProject">Save</button>
-    </div>
-  </div>
+</div>
 </div>
 <div id="add-entity-modal" class="bx--modal" role="dialog" aria-modal="true" tabindex="-1">
   <div class="bx--modal-container">
@@ -239,7 +249,7 @@
                     </div>
                   </div>
                   <div class="bx--col-md-3">
-                    {{entity.Description}}                   
+                    {{entity.Description}}
                   </div>
                 </div>
               </template>
@@ -256,7 +266,9 @@
                 </div>
                 <div class="bx--col-md-4">
                   <div class="bx--grid">
-                    <div class="bx--row"><a :href="'/entities/details/'+ selectedEntityInProject.entity.KeyId" target="_blank">{{selectedEntityInProject.entity.Item}}</a> </div>
+                    <div class="bx--row">
+                      <a :href="'/entities/details/'+ selectedEntityInProject.entity.KeyId" target="_blank">{{selectedEntityInProject.entity.Item}}</a>
+                    </div>
                     <div class="bx--row" style="height: 4px"></div>
                     <div class="bx--row">{{selectedEntityInProject.entity['Part Number']}}</div>
                     <div class="bx--row" style="height: 4px"></div>
@@ -380,6 +392,7 @@
         saveEntityInProject : function ()
         {
           let vm = this;
+          if (this.selectedEntityInProject.entity == null ) return;
           if (vm.selectedEntityInProject.id === 0)
           {
             vm.project.entities.push(vm.selectedEntityInProject);
@@ -413,21 +426,16 @@
           let vm = this;
           if (vm.isEdit)
           {
-             request(`/api/pcb/${vm.project.id}`, 'PUT', vm.project)
-              .then(r => {
-                location.href = `/pcb/details/${vm.project.id}`;
-              })
-              .catch(e => console.log(e));
+             sendObjectAsFormData(`/api/pcb/${vm.project.id}`, 'PUT', vm.project)
+                .then(project => location.href = `/pcb/details/${project.id}`)
+                .catch(e => console.log(e));  
           }
           else
           {
-            request(`/api/pcb`, 'POST', vm.project)
-               .then(r => {
-                 r.json().then(project => location.href = `/pcb/details/${project.id}`)
-               })
+            sendObjectAsFormData(`/api/pcb`, 'POST',vm.project)
+               .then(project => location.href = `/pcb/details/${project.id}`)
                .catch(e => console.log(e));  
-            }
-         
+          }
         },
         resetSelectedEntityInProject: function ()
         {
@@ -443,7 +451,10 @@
         deleteFromProject: function(entityInProject)
         {
           this.project.entities = this.project.entities.filter(x => x.id !== entityInProject.id);
-        }
+        },
+        uploadFile: function (key) {
+          this.project[key] = this.$refs[key].files[0];
+        },
       },
       mounted() {
         this.editEntityModal = Modal.create(document.getElementById('add-entity-modal'));

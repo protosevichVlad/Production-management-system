@@ -132,12 +132,39 @@ namespace ProductionManagementSystem.Core.Services
 
         public override async Task DeleteAsync(Pcb pcb)
         {
+            var paths = new List<string>()
+            {
+                GetPathByUrl(pcb.ImagePath),
+                GetPathByUrl(pcb.CircuitDiagramPath),
+                GetPathByUrl(pcb.AssemblyDrawingPath),
+                GetPathByUrl(pcb.ThreeDModelPath),
+                GetPathByUrl(pcb.BOMFilePath)
+            };
+            
+            foreach (var path in paths)
+            {
+                if (!string.IsNullOrEmpty(path) && File.Exists(path))  
+                {  
+                    File.Delete(path);
+                } 
+            }
+            
             await base.DeleteAsync(pcb);
-            var path = Path.Combine(("wwwroot" + pcb.BOMFilePath).Split('/')[..^1]);
-            if (Directory.Exists(path))  
+        }
+
+        private string GetPathByUrl(string url)
+        {
+            if  (string.IsNullOrEmpty(url)) return String.Empty;
+            return Path.Combine(("wwwroot" + url).Split('/'));
+        }
+
+        private void DeleteByUrl(string url)
+        {
+            var path = GetPathByUrl(url);
+            if (!string.IsNullOrEmpty(path) && File.Exists(path))  
             {  
-                Directory.Delete(path, true);  
-            } 
+                File.Delete(path);
+            }
         }
 
         public override async Task<Pcb> GetByIdAsync(int id)
@@ -190,6 +217,32 @@ namespace ProductionManagementSystem.Core.Services
             await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()
                 {Difference = quantity, ElementId = entity.Id, ElementType = ElementType.Design});
             await _db.SaveAsync();
+        }
+
+        public override async Task UpdateAsync(Pcb item)
+        {
+            var pcbFromDb = await GetByIdAsync(item.Id);
+            item.ImagePath = UpdateFile(item.ImagePath, pcbFromDb.ImagePath);
+            item.AssemblyDrawingPath = UpdateFile(item.AssemblyDrawingPath, pcbFromDb.AssemblyDrawingPath);
+            item.CircuitDiagramPath = UpdateFile(item.CircuitDiagramPath, pcbFromDb.CircuitDiagramPath);
+            item.ThreeDModelPath = UpdateFile(item.ThreeDModelPath, pcbFromDb.ThreeDModelPath);
+            item.BOMFilePath = UpdateFile(item.BOMFilePath, pcbFromDb.BOMFilePath);
+            await base.UpdateAsync(item);
+        }
+
+        private string UpdateFile(string newPath, string oldPath)
+        {
+            if (!string.IsNullOrEmpty(newPath))
+            {
+                if (!string.IsNullOrEmpty(oldPath) && oldPath != newPath)
+                {
+                    DeleteByUrl(oldPath);
+                }
+
+                return newPath;
+            }
+
+            return oldPath;
         }
     }
 }

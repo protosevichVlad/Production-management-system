@@ -92,6 +92,7 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<IEntityExtService, EntityExtService>();
             services.AddScoped<ICompDbDeviceService, CompDbDeviceService>();
             services.AddScoped<IImportService, ImportService>();
+            services.AddScoped<IFileService, FileService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

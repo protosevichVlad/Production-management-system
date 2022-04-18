@@ -205,6 +205,46 @@ const HttpRequest = function (url, method, body) {
   });
 }
 
+function formDataAppend(formData, prop, value)
+{
+  if (Array.isArray(value))
+  {
+    for (let index in value)
+    {
+      formDataAppend(formData, `${prop}[${index}]`, value[index])
+    }
+  }
+  else if (typeof value === 'object' && value !== null && !(value instanceof File)){
+    for (let valueProp in value)
+    {
+      formDataAppend(formData, `${prop}.${valueProp}`, value[valueProp])
+    }
+  }
+  else {
+    formData.append(prop, value);
+  }
+}
+
+function getFormDataFromObj(obj){
+  let formData = new FormData();
+  for (var prop in obj)
+  {
+    formDataAppend(formData, prop, obj[prop]);
+  }
+  return formData;
+}
+
+function sendObjectAsFormData(url, method, obj)
+{
+  let formData = getFormDataFromObj(obj);
+  return fetch(url, {
+    method : method,
+    body : formData
+  })
+    .then(r => r.json())
+    .catch(e => console.log(e));
+}
+
 function changeUrl(paramName, value) {
 
   let arr = location.search.slice(1).split('&').map(x => x.split('='));

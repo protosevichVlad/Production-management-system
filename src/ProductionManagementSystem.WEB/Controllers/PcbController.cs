@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace ProductionManagementSystem.WEB.Controllers
     public class PcbController : Controller
     {
         private readonly IPcbService _pcbService;
+        private readonly IFileService _fileService;
 
-        public PcbController(IPcbService pcbService)
+        public PcbController(IPcbService pcbService, IFileService fileService)
         {
             _pcbService = pcbService;
+            _fileService = fileService;
         }
 
         public async Task<IActionResult> Index(string orderBy, string q)
@@ -45,11 +48,57 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpPost]
         [Route("/api/pcb")]
-        public async Task<IActionResult> Create([FromBody]Pcb pcb)
+        public async Task<IActionResult> Create([FromForm]PcbCreateEditViewModel pcbViewModel)
         {
+            var pcb = await MapToPcb(pcbViewModel);
             await _pcbService.CreateAsync(pcb);
             return Ok(pcb);
         }
+
+        private async Task<Pcb> MapToPcb(PcbCreateEditViewModel pcbViewModel)
+        {
+            Pcb result = new Pcb()
+            {
+                Description = pcbViewModel.Description,
+                Name = pcbViewModel.Name,
+                Variant = pcbViewModel.Variant,
+                ReportDate = pcbViewModel.ReportDate,
+                Entities = pcbViewModel.Entities,
+                Id = pcbViewModel.Id,
+                Quantity = pcbViewModel.Quantity,
+            };
+            
+            var path = Path.Combine("wwwroot", "uploads", pcbViewModel.Name, pcbViewModel.Variant);
+            var url = Path.Combine("/uploads", pcbViewModel.Name, pcbViewModel.Variant)
+                .Replace('\\', '/');
+
+            if (pcbViewModel.ImageUploader != null)
+            {
+                await _fileService.UploadFile(pcbViewModel.ImageUploader.OpenReadStream(), path, pcbViewModel.ImageUploader.FileName);
+                result.ImagePath = $"{url}/{pcbViewModel.ImageUploader.FileName}";
+            }
+            
+            if (pcbViewModel.CircuitUploader != null)
+            {
+                await _fileService.UploadFile(pcbViewModel.CircuitUploader.OpenReadStream(), path, pcbViewModel.CircuitUploader.FileName);
+                result.CircuitDiagramPath = $"{url}/{pcbViewModel.CircuitUploader.FileName}";
+            }
+            
+            if (pcbViewModel.AssemblyUploader != null)
+            {
+                await _fileService.UploadFile(pcbViewModel.AssemblyUploader.OpenReadStream(), path, pcbViewModel.AssemblyUploader.FileName);
+                result.AssemblyDrawingPath = $"{url}/{pcbViewModel.AssemblyUploader.FileName}";
+            }
+            
+            if (pcbViewModel.TreeDUploader != null)
+            {
+                await _fileService.UploadFile(pcbViewModel.TreeDUploader.OpenReadStream(), path, pcbViewModel.TreeDUploader.FileName);
+                result.ThreeDModelPath = $"{url}/{pcbViewModel.TreeDUploader.FileName}";
+            }
+
+            return result;
+        }
+        
 
         public async Task<IActionResult> Import()
         {
@@ -132,11 +181,12 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpPut]
         [Route("/api/pcb/{id:int}")]
-        public async Task<IActionResult> Update([FromRoute]int id, [FromBody]Pcb pcb)
+        public async Task<IActionResult> Update([FromRoute]int id, [FromForm]PcbCreateEditViewModel pcbViewModel)
         {
+            var pcb = await MapToPcb(pcbViewModel);
             pcb.Id = id;
             await _pcbService.UpdateAsync(pcb);
-            return Ok();
+            return Ok(pcb);
         }
     }
 }

@@ -44,8 +44,8 @@ namespace ProductionManagementSystem.Core.Repositories
         public virtual async Task<List<TItem>> FindAsync(Func<TItem, bool> predicate, string includeProperty=null)
         {
             if (string.IsNullOrEmpty(includeProperty))
-                return _dbSet.Where(predicate).ToList();
-            return _dbSet.Include(includeProperty).Where(predicate).ToList();
+                return _dbSet.AsNoTracking().AsEnumerable().Where(predicate).ToList();
+            return _dbSet.AsNoTracking().Include(includeProperty).AsEnumerable().Where(predicate).ToList();
         }
 
         public virtual async Task CreateAsync(TItem item)
