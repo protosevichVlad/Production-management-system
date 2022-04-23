@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Core.Data.EF;
+using ProductionManagementSystem.Core.Models;
 
 namespace ProductionManagementSystem.Core.Repositories
 {

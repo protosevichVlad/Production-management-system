@@ -8,7 +8,6 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
         public DatabaseTableRepository DatabaseTables { get; }
         IToDoNoteRepository ToDoNotes { get; }
         IEntityInPcbRepository EntityInPcbs { get; }
-        IAltiumDBEntityRepository AltiumDbEntityRepository { get; }
         
     }
     
@@ -18,7 +17,6 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
         private IPcbRepository _pcbRepository;
         private IToDoNoteRepository _toDoNoteRepository;
         private IEntityInPcbRepository _entityInPcb;
-        private IAltiumDBEntityRepository _altiumDbEntityRepository;
         
         public EF_AltiumDBUnitOfWork(string connectionString) : base(connectionString)
         {
@@ -34,8 +32,5 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
             _toDoNoteRepository ??= new ToDoNoteRepository(_db);
         public IEntityInPcbRepository EntityInPcbs =>
             _entityInPcb ??= new EntityInPcbRepository(_db);
-
-        public IAltiumDBEntityRepository AltiumDbEntityRepository =>
-            _altiumDbEntityRepository ?? new AltiumDBEntityRepository(_db);
     }
 }

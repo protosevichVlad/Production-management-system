@@ -46,31 +46,7 @@
             <p class="bx--label-description">Only .png files.</p>
             <div class="bx--file" data-file>
               <label for="file-importer-image" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
-              <input type="file" class="bx--file-input" id="file-importer-image" data-file-uploader data-target="[data-file-container]" multiple/>
-              <div data-file-container class="bx--file-container">
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="bx--col-sm-2">
-          <div class="bx--form-item">
-            <strong class="bx--file--label">Circuit diagram file</strong>
-            <p class="bx--label-description">Only .pdf files.</p>
-            <div class="bx--file" data-file>
-              <label for="file-importer-circuit" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
-              <input type="file" class="bx--file-input" id="file-importer-circuit" data-file-uploader data-target="[data-file-container]" multiple/>
-              <div data-file-container class="bx--file-container">
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="bx--col-sm-2">
-          <div class="bx--form-item">
-            <strong class="bx--file--label">Assembly drawing file</strong>
-            <p class="bx--label-description">Only .pdf files.</p>
-            <div class="bx--file" data-file>
-              <label for="file-importer-assembly" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
-              <input type="file" class="bx--file-input" id="file-importer-assembly" data-file-uploader data-target="[data-file-container]" multiple/>
+              <input type="file" class="bx--file-input" id="file-importer-image" v-on:change="uploadFile('ImageUploader')" ref="ImageUploader" data-file-uploader data-target="[data-file-container]" multiple/>
               <div data-file-container class="bx--file-container">
               </div>
             </div>
@@ -82,7 +58,7 @@
             <p class="bx--label-description">Only .stl files.</p>
             <div class="bx--file" data-file>
               <label for="file-importer-treed-d" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
-              <input type="file" class="bx--file-input" id="file-importer-treed-d" data-file-uploader data-target="[data-file-container]" multiple/>
+              <input type="file" class="bx--file-input" id="file-importer-treed-d" v-on:change="uploadFile('ThreeDModelUploader')" ref="ThreeDModelUploader" data-file-uploader data-target="[data-file-container]" multiple/>
               <div data-file-container class="bx--file-container">
               </div>
             </div>
@@ -417,15 +393,15 @@
           let vm = this;
           if (vm.isEdit)
           {
-             HttpRequest(`/api/devices/${vm.device.id}`, 'PUT', vm.device)
+             sendObjectAsFormData(`/api/devices/${vm.device.id}`, 'PUT', vm.device)
               .then(r => location.href = `/compDbDevices/details/${vm.device.id}`)
               .catch(e => console.log(e));
           }
           else
           {
-            HttpRequest(`/api/devices`, 'POST', vm.device)
-             .then(device => location.href = `/compDbDevices/details/${device.id}`)
-             .catch(e => console.log(e));  
+            sendObjectAsFormData(`/api/devices`, 'POST', vm.device)
+             .then(device => location.href = `/compDbDevices/latest`)
+             .catch(e => console.log(e));
           }
          
         },
@@ -442,8 +418,11 @@
         },
         deleteFromDevice: function(usedComponent)
         {
-          this.device.entities = this.device.entities.filter(x => x.id !== usedComponent.id);
-        }
+          this.device.usedInDevice = this.device.usedInDevice.filter(x => x.id !== usedComponent.id);
+        },
+        uploadFile: function (key) {
+          this.device[key] = this.$refs[key].files[0];
+        },
       },
       mounted() {
         this.editEntityModal = Modal.create(document.getElementById('add-entity-modal'));

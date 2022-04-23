@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.ElementsDifference;
@@ -9,14 +10,20 @@ namespace ProductionManagementSystem.Core.Services
 {
     public interface ICompDbDeviceService : IBaseService<CompDbDevice>, ICalculableObject
     {
+        Task CreateAsync(CreateEditDevice device);
+        Task UpdateAsync(CreateEditDevice device);
         Task<List<CompDbDevice>> SearchByKeyWordAsync(string s);
         Task DeleteByIdAsync(int id);
+        Task<CompDbDevice> GetLatest();
     }
 
     public class CompDbDeviceService : BaseService<CompDbDevice, IUnitOfWork>, ICompDbDeviceService
     {
-        public CompDbDeviceService(IUnitOfWork db) : base(db)
+        private readonly IFileService _fileService;
+        
+        public CompDbDeviceService(IUnitOfWork db, IFileService fileService) : base(db)
         {
+            _fileService = fileService;
             _currentRepository = _db.CompDbDeviceRepository;
         }
 
@@ -48,6 +55,16 @@ namespace ProductionManagementSystem.Core.Services
             await _db.SaveAsync();
         }
 
+        public async Task CreateAsync(CreateEditDevice device)
+        {
+            await CreateAsync(await device.GetDevice(_fileService));
+        }
+
+        public async Task UpdateAsync(CreateEditDevice device)
+        {
+            await UpdateAsync(await device.GetDevice(_fileService));
+        }
+
         public async Task<List<CompDbDevice>> SearchByKeyWordAsync(string s)
         {
             return await _db.CompDbDeviceRepository.SearchByKeyWordAsync(s);
@@ -59,6 +76,13 @@ namespace ProductionManagementSystem.Core.Services
             await base.DeleteAsync(item);
         }
 
+        public async Task<CompDbDevice> GetLatest()
+        {
+            var devices = await _currentRepository.GetAllAsync();
+            var deviceId = devices.FirstOrDefault(x => x.Id == devices.Max(y => y.Id)).Id;
+            return await GetByIdAsync(deviceId);
+        }
+
         public override async Task CreateAsync(CompDbDevice item)
         {
             if (item.ReportDate == default)
@@ -67,6 +91,15 @@ namespace ProductionManagementSystem.Core.Services
             }
             
             await base.CreateAsync(item);
+        }
+
+        public override async Task UpdateAsync(CompDbDevice item)
+        {
+            var deviceFromDb = await GetByIdAsync(item.Id);
+            item.ImagePath = await _fileService.GetNewUrl(item.ImagePath, deviceFromDb.ImagePath);
+            item.ThreeDModelPath = await _fileService.GetNewUrl(item.ThreeDModelPath, deviceFromDb.ThreeDModelPath);
+            
+            await base.UpdateAsync(item);
         }
     }
 }

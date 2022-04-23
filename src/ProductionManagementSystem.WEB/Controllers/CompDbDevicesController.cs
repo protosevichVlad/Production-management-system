@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -48,17 +49,17 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         [HttpPost]
         [Route("/api/devices")]
-        public async Task<IActionResult> ApiCreate([FromBody] CompDbDevice device)
+        public async Task<IActionResult> ApiCreate([FromForm] DeviceCreateEditViewModel device)
         {
-            await _deviceService.CreateAsync(device);
+            await _deviceService.CreateAsync(await MapToDevice(device));
             return Ok(device);
         }
         
         [HttpPut]
         [Route("/api/devices/{id:int}")]
-        public async Task<IActionResult> ApiEdit([FromRoute] int id, [FromBody] CompDbDevice device)
+        public async Task<IActionResult> ApiEdit([FromRoute] int id, [FromForm] DeviceCreateEditViewModel device)
         {
-            await _deviceService.UpdateAsync(device);
+            await _deviceService.UpdateAsync(await MapToDevice(device));
             return Ok(device);
         }
         
@@ -75,6 +76,13 @@ namespace ProductionManagementSystem.WEB.Controllers
             return View(await _deviceService.GetByIdAsync(id));
         }
         
+        [HttpGet]
+        [Route("/compDbDevices/latest")]
+        public async  Task<IActionResult> LatestDetails()
+        {
+            return View(nameof(Details), await _deviceService.GetLatest());
+        }
+        
         [HttpPost]
         [Route("/api/devices/{id:int}/add")]
         public async Task<IActionResult> IncreaseQuantity([FromRoute]int id, [FromBody]int quantity)
@@ -89,6 +97,36 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             await _deviceService.DecreaseQuantityAsync(id, quantity);
             return Ok();
+        }
+
+        private async Task<CreateEditDevice> MapToDevice(DeviceCreateEditViewModel model)
+        {
+            var device = new CreateEditDevice()
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Variant = model.Variant,
+                Description = model.Description,
+                Quantity = model.Quantity,
+                ReportDate = model.ReportDate,
+                UsedInDevice = model.UsedInDevice,
+            };
+            
+            if (model.ImageUploader != null)
+            {
+                await using var ms = new MemoryStream();
+                await model.ImageUploader.CopyToAsync(ms);
+                device.Image = ms.ToArray();  
+            }
+            
+            if (model.ThreeDModelUploader != null)
+            {
+                await using var ms = new MemoryStream();
+                await model.ThreeDModelUploader.CopyToAsync(ms);
+                device.ThreeDModel = ms.ToArray();  
+            }
+
+            return device;
         }
     }
 }

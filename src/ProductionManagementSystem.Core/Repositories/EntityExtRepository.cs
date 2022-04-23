@@ -202,6 +202,11 @@ namespace ProductionManagementSystem.Core.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<EntityExt> GetLatestAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<List<EntityExt>> GetAllByTableId(int id)
         {
             var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.Id == id);

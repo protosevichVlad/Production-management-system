@@ -32,13 +32,16 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public override async Task UpdateAsync(CompDbDevice item)
         {
+            var ent = await _db.UsedInDevice.AsNoTracking().Where(x => x.CompDbDeviceId == item.Id).ToListAsync();
+            ent = ent.Where(x => item.UsedInDevice.All(y => y.Id != x.Id)).ToList();
+            _db.UsedInDevice.RemoveRange(ent);
             _dbSet.Update(item);
         }
 
         public override async Task<CompDbDevice> GetByIdAsync(int id)
         {
-            var device = await base.GetByIdAsync(id);
-            device.UsedInDevice = _db.UsedInDevice.Where(x => x.CompDbDeviceId == id).ToList();
+            var device = await _dbSet.AsNoTracking().Include(x => x.UsedInDevice).FirstOrDefaultAsync(x => x.Id == id);
+            if (device == null) return null;
             device.UsedInDevice = device.UsedInDevice.Select(x =>
             {
                 x.Component = x.ComponentType switch

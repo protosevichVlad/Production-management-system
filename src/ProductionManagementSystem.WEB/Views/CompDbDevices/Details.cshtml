@@ -103,3 +103,18 @@
     <partial name="Partail/Devices/DevicesComponents" model="@Model"/>
   </div>
 </div>
+
+@section Scripts
+{
+  @if (!string.IsNullOrEmpty(Model.ThreeDModelPath))
+  {
+    <script src="/js/three.min.js"></script>
+    <script src="/js/STLLoader.js"></script>
+    <script src="/js/OrbitControls.js"></script>
+    <script type="text/javascript">
+      window.onload = function() {
+          STLViewer("@Model.ThreeDModelPath", "model")
+      }
+  </script>
+  }
+}
