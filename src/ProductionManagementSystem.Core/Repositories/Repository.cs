@@ -16,6 +16,7 @@ namespace ProductionManagementSystem.Core.Repositories
         public Task UpdateAsync(TItem item);
         Task UpdateRangeAsync(List<TItem> items);
         public void Delete(TItem item);
+        public void DeleteRange(List<TItem> items);
         public Task SaveAsync();
     }
     
@@ -66,6 +67,11 @@ namespace ProductionManagementSystem.Core.Repositories
         public virtual void Delete(TItem item)
         {
             _dbSet.Remove(item);
+        }
+
+        public void DeleteRange(List<TItem> items)
+        {
+            _dbSet.RemoveRange(items);
         }
 
         public virtual async Task SaveAsync()

@@ -192,6 +192,11 @@ namespace ProductionManagementSystem.Core.Repositories
             }
         }
 
+        public void DeleteRange(List<EntityExt> items)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();

@@ -19,6 +19,9 @@ namespace ProductionManagementSystem.Core.Services
         Task<Pcb> ImportPcbAsync(Stream bom, Stream image, Stream circuitDiagram,
             Stream assemblyDrawing, Stream threeDModel);
 
+        Task UpdateAsync(CreateEditPcb createEditPcb);
+        Task CreateAsync(CreateEditPcb createEditPcb);
+
         Task<List<Pcb>> GetPcbWithEntityAsync(string partNumber);
         Task<List<Pcb>> SearchByKeyWordAsync(string keyWord);
         Task DeleteByIdAsync(int id);
@@ -29,10 +32,12 @@ namespace ProductionManagementSystem.Core.Services
     public class PcbService : BaseService<Pcb, IUnitOfWork>, IPcbService
     {
         private readonly IEntityExtService _entityExtService;
+        private readonly IFileService _fileService;
         
-        public PcbService(IUnitOfWork db, IEntityExtService entityService) : base(db)
+        public PcbService(IUnitOfWork db, IEntityExtService entityService, IFileService fileService) : base(db)
         {
             _entityExtService = entityService;
+            _fileService = fileService;
             _currentRepository = _db.Pcbs;
         }
 
@@ -112,6 +117,16 @@ namespace ProductionManagementSystem.Core.Services
             return pcb;
         }
 
+        public async Task UpdateAsync(CreateEditPcb createEditPcb)
+        {
+            await UpdateAsync(await createEditPcb.GetPcb(_fileService));
+        }
+
+        public async Task CreateAsync(CreateEditPcb createEditPcb)
+        {
+            await CreateAsync(await createEditPcb.GetPcb(_fileService));
+        }
+
         public async Task<List<Pcb>> GetPcbWithEntityAsync(string partNumber)
         {
             return await _db.Pcbs.GetProjectsWithEntityAsync(partNumber);
@@ -132,39 +147,21 @@ namespace ProductionManagementSystem.Core.Services
 
         public override async Task DeleteAsync(Pcb pcb)
         {
-            var paths = new List<string>()
+            var urls = new List<string>()
             {
-                GetPathByUrl(pcb.ImagePath),
-                GetPathByUrl(pcb.CircuitDiagramPath),
-                GetPathByUrl(pcb.AssemblyDrawingPath),
-                GetPathByUrl(pcb.ThreeDModelPath),
-                GetPathByUrl(pcb.BOMFilePath)
+                pcb.ImagePath,
+                pcb.CircuitDiagramPath,
+                pcb.AssemblyDrawingPath,
+                pcb.ThreeDModelPath,
+                pcb.BOMFilePath,
             };
             
-            foreach (var path in paths)
+            foreach (var url in urls)
             {
-                if (!string.IsNullOrEmpty(path) && File.Exists(path))  
-                {  
-                    File.Delete(path);
-                } 
+                await _fileService.DeleteFileByUrl(url);
             }
             
             await base.DeleteAsync(pcb);
-        }
-
-        private string GetPathByUrl(string url)
-        {
-            if  (string.IsNullOrEmpty(url)) return String.Empty;
-            return Path.Combine(("wwwroot" + url).Split('/'));
-        }
-
-        private void DeleteByUrl(string url)
-        {
-            var path = GetPathByUrl(url);
-            if (!string.IsNullOrEmpty(path) && File.Exists(path))  
-            {  
-                File.Delete(path);
-            }
         }
 
         public override async Task<Pcb> GetByIdAsync(int id)
@@ -222,27 +219,13 @@ namespace ProductionManagementSystem.Core.Services
         public override async Task UpdateAsync(Pcb item)
         {
             var pcbFromDb = await GetByIdAsync(item.Id);
-            item.ImagePath = UpdateFile(item.ImagePath, pcbFromDb.ImagePath);
-            item.AssemblyDrawingPath = UpdateFile(item.AssemblyDrawingPath, pcbFromDb.AssemblyDrawingPath);
-            item.CircuitDiagramPath = UpdateFile(item.CircuitDiagramPath, pcbFromDb.CircuitDiagramPath);
-            item.ThreeDModelPath = UpdateFile(item.ThreeDModelPath, pcbFromDb.ThreeDModelPath);
-            item.BOMFilePath = UpdateFile(item.BOMFilePath, pcbFromDb.BOMFilePath);
+            item.ImagePath = await _fileService.GetNewUrl(item.ImagePath, pcbFromDb.ImagePath);
+            item.AssemblyDrawingPath = await _fileService.GetNewUrl(item.AssemblyDrawingPath, pcbFromDb.AssemblyDrawingPath);
+            item.CircuitDiagramPath = await _fileService.GetNewUrl(item.CircuitDiagramPath, pcbFromDb.CircuitDiagramPath);
+            item.ThreeDModelPath = await _fileService.GetNewUrl(item.ThreeDModelPath, pcbFromDb.ThreeDModelPath);
+            item.BOMFilePath = await _fileService.GetNewUrl(item.BOMFilePath, pcbFromDb.BOMFilePath);
+            
             await base.UpdateAsync(item);
-        }
-
-        private string UpdateFile(string newPath, string oldPath)
-        {
-            if (!string.IsNullOrEmpty(newPath))
-            {
-                if (!string.IsNullOrEmpty(oldPath) && oldPath != newPath)
-                {
-                    DeleteByUrl(oldPath);
-                }
-
-                return newPath;
-            }
-
-            return oldPath;
         }
     }
 }

@@ -222,6 +222,11 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
             throw new NotImplementedException();
         }
 
+        public void DeleteRange(List<AltiumDbEntity> items)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task SaveAsync()
         {
             throw new NotImplementedException();

@@ -35,6 +35,7 @@ namespace ProductionManagementSystem.Core.Repositories
         IPcbRepository Pcbs { get; }
         IUsedInDeviceRepository UsedInDeviceRepository { get; }
         ICompDbDeviceRepository CompDbDeviceRepository { get; }
+        IEntityInPcbRepository EntityInPcbRepository { get; }
 
     }
 
@@ -105,6 +106,7 @@ namespace ProductionManagementSystem.Core.Repositories
         private IPcbRepository _pcbRepository;
         private ICompDbDeviceRepository _compDbDeviceRepository;
         private IUsedInDeviceRepository _usedInDeviceRepository;
+        private IEntityInPcbRepository _entityInPcb;
 
         public EFUnitOfWork(string connectionString) : base(connectionString)
         {
@@ -153,6 +155,8 @@ namespace ProductionManagementSystem.Core.Repositories
         public IPcbRepository Pcbs => _pcbRepository ??= new PcbRepository(_db);
         public ICompDbDeviceRepository CompDbDeviceRepository => _compDbDeviceRepository ??= new CompDbDeviceRepository(_db);
         public IUsedInDeviceRepository UsedInDeviceRepository => _usedInDeviceRepository ??= new UsedInDeviceRepository(_db);
+        public IEntityInPcbRepository EntityInPcbRepository =>
+            _entityInPcb ??= new EntityInPcbRepository(_db);
 
     }
 }
