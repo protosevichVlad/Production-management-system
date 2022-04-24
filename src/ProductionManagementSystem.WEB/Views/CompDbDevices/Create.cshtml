@@ -169,7 +169,7 @@
   <div class="bx--modal-container">
     <div class="bx--modal-header">
       <p class="bx--modal-header__heading bx--type-beta" id="modal-heading">Add new component in device</p>
-      <button class="bx--modal-close" type="button" data-modal-close aria-label="close modal">
+      <button class="bx--modal-close" type="button" data-modal-close aria-label="close modal" tabindex="-1" v-on:click="closeModal">
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--modal-close__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
           <path d="M12 4.7L11.3 4 8 7.3 4.7 4 4 4.7 7.3 8 4 11.3 4.7 12 8 8.7 11.3 12 12 11.3 8.7 8z"></path>
         </svg>
@@ -181,12 +181,12 @@
           <div class="bx--col-sm-4">
             <div data-search role="search" class="bx--search bx--search--xl">
               <label id="search-input-label-1" class="bx--label" for="search__input-1">Search</label>
-              <input class="bx--search-input bx--search--light" type="text" id="search__input-1" placeholder="Search" v-model="searchString" v-on:input="search">
-              <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-magnifier" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+              <input class="bx--search-input bx--search--light" tabindex="0"  type="text" id="search__input-1" placeholder="Search" v-model="searchString" v-on:input="search">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-magnifier" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" tabindex="-1">
                 <path d="M15,14.3L10.7,10c1.9-2.3,1.6-5.8-0.7-7.7S4.2,0.7,2.3,3S0.7,8.8,3,10.7c2,1.7,5,1.7,7,0l4.3,4.3L15,14.3z M2,6.5 C2,4,4,2,6.5,2S11,4,11,6.5S9,11,6.5,11S2,9,2,6.5z"></path>
               </svg>
               <button class="bx--search-close bx--search-close--hidden" title="Clear search input" aria-label="Clear search input">
-                <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-clear" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-clear" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true" tabindex="-1">
                   <path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"></path>
                 </svg>
               </button>
@@ -244,7 +244,7 @@
               <div data-numberinput class=" bx--number bx--number--light">
                 <label for="input-quantity-entity-in-device" class="bx--label">Quantity</label>
                 <div class="bx--number__input-wrapper">
-                  <input id="input-quantity-entity-in-device" type="number" min="0" max="999999" v-model="selectedComponent.quantity">
+                  <input id="input-quantity-entity-in-device" tabindex="1" type="number" min="0" max="999999" v-model="selectedComponent.quantity">
                   <div class="bx--number__controls">
                     <button aria-label="increase number input" class="bx--number__control-btn up-icon" type="button" aria-live="polite" aria-atomic="true">
                       <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true">
@@ -263,15 +263,15 @@
           </div>
           <div class="bx--col-md-8">
             <label for="text-area-selectedComponent-designator" class="bx--label">Designator</label>
-            <textarea id="text-area-selectedComponent-designator" class="bx--text-area"
+            <textarea id="text-area-selectedComponent-designator" class="bx--text-area" tabindex="2"
                     style="height: 100px;" placeholder="Placeholder text." v-model="selectedComponent.designator"></textarea>
           </div>
         </div>
       </div>
     </div>
     <div class="bx--modal-footer">
-      <button class="bx--btn bx--btn--secondary" type="button" v-on:click="resetSelectedComponent" data-modal-close>Close</button>
-      <button class="bx--btn bx--btn--primary" type="button" v-on:click="saveUsedComponent">Ok</button>
+      <button class="bx--btn bx--btn--secondary" type="button" tabindex="-1" v-on:click="closeModal" data-modal-close>Close</button>
+      <button class="bx--btn bx--btn--primary" type="button" tabindex="3" v-on:click="saveUsedComponent">Ok</button>
     </div>
   </div>
   <!-- Note: focusable span allows for focus wrap feature within Modals -->
@@ -370,8 +370,7 @@
             vm.device.usedInDevice[index] = vm.selectedComponent;
           }
           
-          vm.resetSelectedComponent();
-          vm.editEntityModal.hide();
+          vm.closeModal();
           vm.sortEntities();
         },
         sortEntities: function ()
@@ -405,7 +404,7 @@
           }
          
         },
-        resetSelectedComponent: function ()
+        closeModal: function ()
         {
           this.selectedComponent = {
             designator:"",
@@ -414,7 +413,10 @@
             id: 0,
             compDbDeviceId: @Model,
             quantity:0
-         };
+          };
+          
+          this.searchString = "";
+          this.editEntityModal.hide();
         },
         deleteFromDevice: function(usedComponent)
         {
@@ -425,8 +427,10 @@
         },
       },
       mounted() {
-        this.editEntityModal = Modal.create(document.getElementById('add-entity-modal'));
-        this.loadData();
+        let vm = this;
+        vm.editEntityModal = Modal.create(document.getElementById('add-entity-modal'));
+        vm.loadData();
+        document.addEventListener('modal-hidden', vm.closeModal);
       },
       updated() {
         CarbonComponents.OverflowMenu.init();

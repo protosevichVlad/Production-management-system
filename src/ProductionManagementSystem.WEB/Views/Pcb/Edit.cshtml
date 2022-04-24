@@ -457,8 +457,12 @@
         },
       },
       mounted() {
-        this.editEntityModal = Modal.create(document.getElementById('add-entity-modal'));
-        this.loadData();
+        let vm = this;
+        vm.editEntityModal = Modal.create(document.getElementById('add-entity-modal'));
+        vm.loadData();
+        document.addEventListener('modal-hidden', function(evt) {
+          vm.searchString = "";
+        });
       },
       updated() {
         CarbonComponents.OverflowMenu.init();
