@@ -193,16 +193,21 @@ const HttpRequest = function (url, method, body) {
       return r.json()
         .then(e => {
           if (e.message != null && e.title != null) {
-            let modal = CarbonComponents.Modal.create(document.querySelector('#passive-modal'));
-            document.querySelector('#passive-modal-heading').innerHTML = e.title;
-            document.querySelector('#passive-modal-message').innerHTML = e.message;
-            modal.show();
+            showPassiveModal(e.title, e.message);
           }
 
           throw e;
         });
     }
   });
+}
+
+const showPassiveModal = (title, message) =>
+{
+  let modal = CarbonComponents.Modal.create(document.querySelector('#passive-modal'));
+  document.querySelector('#passive-modal-heading').innerHTML = title;
+  document.querySelector('#passive-modal-message').innerHTML = message;
+  modal.show();
 }
 
 function formDataAppend(formData, prop, value)

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 using ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch;
@@ -99,7 +100,16 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
             result.AddRange((await _entityExtService.SearchByKeyWordAsync(q)).Select(x => new CreateDeviceSearchViewModel(x)));
             result.AddRange((await _pcbService.SearchByKeyWordAsync(q)).Select(x => new CreateDeviceSearchViewModel(x)));
             result.AddRange((await _deviceService.SearchByKeyWordAsync(q)).Select(x => new CreateDeviceSearchViewModel(x)));
-            return result.Take(3).ToList();
+            return result.Take(take).ToList();
+        }
+        
+        [Route("/api/search/taskItem")]
+        public async Task<List<UniversalItem>> TaskItemSearch(string q, int take=5)
+        {
+            var result = new List<UniversalItem>();
+            result.AddRange((await _pcbService.SearchByKeyWordAsync(q)).Select(x => new UniversalItem(x)));
+            result.AddRange((await _deviceService.SearchByKeyWordAsync(q)).Select(x => new UniversalItem(x)));
+            return result.Take(take).ToList();
         }
     }
 }

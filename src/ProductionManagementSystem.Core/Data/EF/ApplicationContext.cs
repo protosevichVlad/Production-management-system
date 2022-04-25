@@ -41,16 +41,13 @@ namespace ProductionManagementSystem.Core.Data.EF
         public DbSet<Entity> Entities { get; set; }
         public DbSet<CompDbDevice> CompDbDevices { get; set; }
         public DbSet<UsedInDevice> UsedInDevice { get; set; }
+        public DbSet<CDBTask> CdbTasks { get; set; }
+        public DbSet<CDBObtained> CdbObtained { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
         }
 
-        public void ResetDatabase()
-        {
-            Database.EnsureCreated(); 
-        }
-                
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();

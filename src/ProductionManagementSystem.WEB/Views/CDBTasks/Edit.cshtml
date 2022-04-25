@@ -1,0 +1,189 @@
+﻿@model int
+
+@{
+  bool isEdit = Model != 0;
+  ViewBag.Title = isEdit ? "Create task" : "Edit task";
+  Layout = "_AltiumDBLayout";
+}
+
+<div id="editTask">
+  <div class="bx--grid">
+    <div class="bx--row bx--row-padding">
+      <h1>@ViewBag.Title</h1>
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-md-6" style="padding-top: 2.5rem;">
+        <div class="bx--form-item">
+          <div data-search role="search" class="bx--search bx--search--lg">
+            <label id="search-input-label" class="bx--label" for="search__input">Search</label>
+            <input class="bx--search-input" type="text" id="search__input" placeholder="Search" v-model="searchString" v-on:input="search">
+            <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-magnifier" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M15,14.3L10.7,10c1.9-2.3,1.6-5.8-0.7-7.7S4.2,0.7,2.3,3S0.7,8.8,3,10.7c2,1.7,5,1.7,7,0l4.3,4.3L15,14.3z M2,6.5 C2,4,4,2,6.5,2S11,4,11,6.5S9,11,6.5,11S2,9,2,6.5z"></path>
+            </svg>
+            <button class="bx--search-close bx--search-close--hidden" title="Clear search input" aria-label="Clear search input">
+              <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-clear" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+                <path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="autocomplete-box bx--grid bx--grid--full-width" style="max-width: 700px; background-color: #F4F4F4">
+          <template v-for="component in searchingData">
+            <div class="bx--row" v-on:click="() => selectTaskItem(component)">
+              <div class="bx--col-md-1">
+                <img :src="component.imagePath" alt="" class="altiumdb--entity-table--image"/>
+              </div>
+              <div class="bx--col-md-4">
+                <div class="bx--grid">
+                  <div class="bx--row">{{component.name}}</div>
+                  <div class="bx--row" style="height: 4px"></div>
+                  <div class="bx--row">{{component.partNamber}}</div>
+                  <div class="bx--row" style="height: 4px"></div>
+                  <div class="bx--row">{{component.category}}</div>
+                </div>
+              </div>
+              <div class="bx--col-md-3">
+                {{component.description}}
+              </div>
+            </div>
+          </template>
+        </div>
+        <div v-if="task.taskItem != null" class="bx--grid">
+          <div class="bx--row">
+            <div class="bx--col-md-8">
+              <h4>
+                Selected task item:
+              </h4>
+            </div>
+          </div>
+          <div class="bx--row">
+            <div class="bx--col-md-1">
+              <img :src="task.taskItem.imagePath" alt="" class="altiumdb--entity-table--image"/>
+            </div>
+            <div class="bx--col-md-4">
+              <div class="bx--grid">
+                <div class="bx--row">{{task.taskItem.name}}</div>
+                <div class="bx--row" style="height: 4px"></div>
+                <div class="bx--row">{{task.taskItem.partNumber}}</div>
+                <div class="bx--row" style="height: 4px"></div>
+                <div class="bx--row">{{task.taskItem.category}}</div>
+              </div>
+            </div>
+            <div class="bx--col-md-3">
+              {{task.taskItem.description}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bx--col-md-2">
+        <div class="bx--form-item">
+          <div data-date-picker data-date-picker-type="single"
+               class="bx--date-picker bx--date-picker--single">
+            <div class="bx--date-picker-container">
+              <label for="deadline-date-picker" class="bx--label">Deadline</label>
+              <div class="bx--date-picker-input__wrapper">
+                <input type="text" id="deadline-date-picker" class="bx--date-picker__input" dateFormat="d.m.Y"
+                       pattern="\d{1,2}.\d{1,2}.\d{4}" placeholder="dd.mm.yyyy" data-date-picker-input v-model="task.deadline"/>
+                <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" data-date-picker-icon="true" class="bx--date-picker__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M13,2h-2V1h-1v1H6V1H5v1H3C2.4,2,2,2.4,2,3v10c0,0.6,0.4,1,1,1h10c0.6,0,1-0.4,1-1V3C14,2.4,13.6,2,13,2z M13,13H3V6h10V13z M13,5H3V3h2v1h1V3h4v1h1V3h2V5z"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col-md-8">
+        <div class="bx--form-item">
+          <label for="text-area-description" class="bx--label">Description</label>
+          <div class="bx--text-area__wrapper">
+            <textarea id="text-area-description" class="bx--text-area" rows="4" cols="50" placeholder="Description" v-model="task.description"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bx--row bx--row-padding">
+      <div class="bx--col--auto">
+        <h4>Also was created next tasks:</h4>
+      </div>
+    </div>
+    <div class="bx--row" v-for="alsoTask in alsoCreated">
+      <div class="bx--col-md-4">
+        <div class="bx--row">
+          <div class="bx--col-md-1">
+            <img :src="alsoTask.taskItem.imagePath" alt="" class="altiumdb--entity-table--image"/>
+          </div>
+          <div class="bx--col-md-4">
+            <div class="bx--grid">
+              <div class="bx--row">{{alsoTask.taskItem.name}}</div>
+              <div class="bx--row" style="height: 4px"></div>
+              <div class="bx--row">{{alsoTask.taskItem.partNumber}}</div>
+              <div class="bx--row" style="height: 4px"></div>
+              <div class="bx--row">{{alsoTask.taskItem.category}}</div>
+            </div>
+          </div>
+          <div class="bx--col-md-3">
+            {{alsoTask.taskItem.description}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bx--row bx--row-padding" style="justify-content: end">
+    <button type="button" v-on:click="saveTask">@(isEdit ? "Save" : "Create")</button>
+  </div>
+</div>
+
+
+@section Scripts
+{
+  @if (false)
+  {
+    <script src="js/vue.global.js"></script>
+  }
+  <script>
+    let editTask = new Vue({
+     el: '#editTask',
+     data: {
+       task: {
+         id: @Model,
+         taskItemId: null,
+         taskItem: null,
+         taskItemType: null,
+         deadline: "",
+         description: "",
+       },
+       searchString: "",
+       searchingData: [],
+       alsoCreated: []
+     },
+     methods: {
+       search : function () {
+         let vm = this;
+         HttpRequest(`/api/search/taskItem?q=${vm.searchString}`, 'GET')
+          .then(result => vm.searchingData = result)
+          .catch((e) => showPassiveModal("Error", e));
+       },
+       selectTaskItem : function (taskItem){
+         let vm = this;
+         vm.task.taskItem = taskItem;
+         vm.task.taskItemType = taskItem.itemType;
+         vm.task.taskItemId = taskItem.id;
+         vm.searchingData = [];
+         
+         HttpRequest(`/api/tasks/alsoCreated`, 'GET', vm.task)
+           .then(result => vm.alsoCreated = result)
+           .catch((e) => showPassiveModal("Error", e));
+       },
+       saveTask : function (){
+       
+       }
+     },
+     mounted: function () {
+       CarbonComponents.DatePicker.init();
+       flatpickr('#deadline-date-picker', { dateFormat: 'd.m.Y'})
+     }
+    })
+  </script>
+}

@@ -168,3 +168,7 @@
         width: calc(100% - 7rem);
     }
 }
+
+.flatpickr-prev-month, .flatpickr-next-month {
+    width: 1.2rem;
+}

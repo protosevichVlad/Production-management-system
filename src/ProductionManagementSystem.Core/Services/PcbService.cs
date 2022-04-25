@@ -14,7 +14,7 @@ using Directory = System.IO.Directory;
 
 namespace ProductionManagementSystem.Core.Services
 {
-    public interface IPcbService : IBaseService<Pcb>
+    public interface IPcbService : IBaseService<Pcb>, ICalculableService
     {
         Task<Pcb> ImportPcbAsync(Stream bom, Stream image, Stream circuitDiagram,
             Stream assemblyDrawing, Stream threeDModel);
@@ -24,10 +24,6 @@ namespace ProductionManagementSystem.Core.Services
 
         Task<List<Pcb>> GetPcbWithEntityAsync(string partNumber);
         Task<List<Pcb>> SearchByKeyWordAsync(string keyWord);
-        Task DeleteByIdAsync(int id);
-        Task IncreaseQuantityAsync(int id, int quantity);
-        Task DecreaseQuantityAsync(int id, int quantity);
-        Task ChangeQuantityAsync(int id, int quantity);
     }
     public class PcbService : BaseService<Pcb, IUnitOfWork>, IPcbService
     {

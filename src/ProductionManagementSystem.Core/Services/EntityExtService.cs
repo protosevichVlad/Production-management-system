@@ -10,14 +10,14 @@ using ProductionManagementSystem.Core.Services.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Services
 {
-    public interface ICalculableObject
+    public interface ICalculableService
     {
         Task IncreaseQuantityAsync(int id, int quantity);
         Task DecreaseQuantityAsync(int id, int quantity);
         Task ChangeQuantityAsync(int id, int quantity);
     }
     
-    public interface IEntityExtService : IBaseService<EntityExt>, ICalculableObject
+    public interface IEntityExtService : IBaseService<EntityExt>, ICalculableService
     {
         Task<List<EntityExt>> GetFromTable(int tableId);
         Task<EntityExt> GetEntityExtByPartNumber(string partNumber);

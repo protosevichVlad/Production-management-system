@@ -4,11 +4,15 @@ using ProductionManagementSystem.Core.Models.AltiumDB;
 
 namespace ProductionManagementSystem.WEB.Models.AltiumDB
 {
-    public class DataListViewModel
+    public class DataListViewModel<TItem>
     {
         public List<FilterViewModel> Filters { get; set; }
-        public Table Table { get; set; }
-        public List<EntityExt> Data { get; set; }
+        public List<TItem> Data { get; set; }
         public PaginationViewModel Pagination { get; set; }
+    }
+    
+    public class EntityDataListViewModel : DataListViewModel<EntityExt>
+    {
+        public Table Table { get; set; }
     }
 }

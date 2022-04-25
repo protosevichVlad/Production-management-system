@@ -8,7 +8,7 @@ using ProductionManagementSystem.Core.Repositories;
 
 namespace ProductionManagementSystem.Core.Services
 {
-    public interface ICompDbDeviceService : IBaseService<CompDbDevice>, ICalculableObject
+    public interface ICompDbDeviceService : IBaseService<CompDbDevice>, ICalculableService
     {
         Task CreateAsync(CreateEditDevice device);
         Task UpdateAsync(CreateEditDevice device);

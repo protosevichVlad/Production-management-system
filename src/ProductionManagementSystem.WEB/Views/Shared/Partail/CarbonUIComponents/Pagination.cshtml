@@ -1,5 +1,10 @@
 ﻿@model ProductionManagementSystem.WEB.Models.PaginationViewModel
 
+@if (Model == null)
+{
+  return;
+}
+
 @{
   List<int> itemsPerPage = new List<int>() {10, 20, 30, 40, 50};
 

@@ -14,6 +14,7 @@ namespace ProductionManagementSystem.Core.Services
         public Task UpdateAsync(TItem item);
         public Task UpdateRangeAsync(List<TItem> items);
         public Task DeleteAsync(TItem item);
+        Task DeleteByIdAsync(int id);
     }
     
     public abstract class BaseService<TItem, TIUnitOfWork> : IBaseService<TItem>
@@ -64,6 +65,14 @@ namespace ProductionManagementSystem.Core.Services
 
         public virtual async Task DeleteAsync(TItem item)
         {
+            _currentRepository.Delete(item);
+            await _db.SaveAsync();
+        }
+
+        public async Task DeleteByIdAsync(int id)
+        {
+            var item = await _currentRepository.GetByIdAsync(id);
+            if (item == null) throw new NotImplementedException();
             _currentRepository.Delete(item);
             await _db.SaveAsync();
         }

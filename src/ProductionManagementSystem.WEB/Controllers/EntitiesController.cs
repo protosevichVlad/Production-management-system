@@ -56,7 +56,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             return Redirect(HttpContext.Request.Path + HttpContext.Request.QueryString);
         }
 
-        private async Task<DataListViewModel> GetEntities(string orderBy, Dictionary<string, List<string>> filter,
+        private async Task<EntityDataListViewModel> GetEntities(string orderBy, Dictionary<string, List<string>> filter,
             string q, int? tableId, int? itemPerPage, int? page)
         {
             itemPerPage ??= 20;
@@ -118,7 +118,7 @@ namespace ProductionManagementSystem.WEB.Controllers
 
             data = data.Skip(itemPerPage.Value * (page.Value - 1)).Take(itemPerPage.Value).ToList();
 
-            return new DataListViewModel()
+            return new EntityDataListViewModel()
             {
                 Table = table,
                 Data = data.ToList(),
