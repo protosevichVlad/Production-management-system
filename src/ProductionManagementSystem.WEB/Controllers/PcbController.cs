@@ -63,7 +63,7 @@ namespace ProductionManagementSystem.WEB.Controllers
                 Name = pcbViewModel.Name,
                 Variant = pcbViewModel.Variant,
                 ReportDate = pcbViewModel.ReportDate,
-                Entities = pcbViewModel.Entities,
+                UsedItems = pcbViewModel.UsedItems,
                 Id = pcbViewModel.Id,
                 Quantity = pcbViewModel.Quantity,
             };

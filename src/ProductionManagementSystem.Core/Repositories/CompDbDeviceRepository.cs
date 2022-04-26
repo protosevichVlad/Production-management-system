@@ -46,7 +46,7 @@ namespace ProductionManagementSystem.Core.Repositories
             {
                 x.Component = x.ComponentType switch
                 {
-                    UsedInDeviceComponentType.Device => _db.CompDbDevices.Find(x.UsedComponentId),
+                    UsedInDeviceComponentType.Device => _db.CDBDevices.Find(x.UsedComponentId),
                     UsedInDeviceComponentType.Entity => _entityExtRepository.GetByIdAsync(x.UsedComponentId).Result,
                     UsedInDeviceComponentType.PCB => _db.Projects.Find(x.UsedComponentId),
                     _ => throw new ArgumentOutOfRangeException()

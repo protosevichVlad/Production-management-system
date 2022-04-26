@@ -103,6 +103,14 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
             return result.Take(take).ToList();
         }
         
+        [Route("/api/search/pcbItem")]
+        public async Task<List<UniversalItem>> PcbItemSearch(string q, int take=5)
+        {
+            var result = new List<UniversalItem>();
+            result.AddRange((await _entityExtService.SearchByKeyWordAsync(q)).Select(x => new UniversalItem(x)));
+            return result.Take(take).ToList();
+        }
+        
         [Route("/api/search/taskItem")]
         public async Task<List<UniversalItem>> TaskItemSearch(string q, int take=5)
         {

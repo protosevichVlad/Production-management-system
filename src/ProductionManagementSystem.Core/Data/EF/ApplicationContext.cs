@@ -37,12 +37,12 @@ namespace ProductionManagementSystem.Core.Data.EF
         public DbSet<TableColumn> TableColumns { get; set; }
         public DbSet<ToDoNote> ToDoNotes { get; set; }
         public DbSet<Pcb> Projects { get; set; }
-        public DbSet<EntityInPcb> EntityInProjects { get; set; }
         public DbSet<Entity> Entities { get; set; }
-        public DbSet<CompDbDevice> CompDbDevices { get; set; }
+        public DbSet<CompDbDevice> CDBDevices { get; set; }
         public DbSet<UsedInDevice> UsedInDevice { get; set; }
         public DbSet<CDBTask> CdbTasks { get; set; }
         public DbSet<CDBObtained> CdbObtained { get; set; }
+        public DbSet<UsedItem> UsedItems { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {

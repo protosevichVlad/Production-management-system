@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using OfficeOpenXml;
+using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Models.ElementsDifference;
 using ProductionManagementSystem.Core.Models.PCB;
@@ -61,20 +62,20 @@ namespace ProductionManagementSystem.Core.Services
                 else
                     pcb.ReportDate = DateTime.Now;
                 
-                pcb.Entities = new List<EntityInPcb>();
+                pcb.UsedItems = new List<UsedItem>();
                 int row = 10;
                 while (true)
                 {
                     if (string.IsNullOrWhiteSpace(sheet.Cells[row, 6].Text))
                         break;
                     
-                    EntityInPcb entityInPcb = new EntityInPcb();
+                    UsedItem entityInPcb = new UsedItem() { InItemType = CDBItemType.PCB, ItemType = CDBItemType.Entity};
                     entityInPcb.Designator = sheet.Cells[row, 4].Text;
-                    entityInPcb.EntityId =
+                    entityInPcb.ItemId =
                         (await _entityExtService.GetEntityExtByPartNumber(sheet.Cells[row, 6].Text))?.KeyId  ?? 0;
                     entityInPcb.Quantity = int.Parse(sheet.Cells[row, 10].Text);
 
-                    pcb.Entities.Add(entityInPcb);
+                    pcb.UsedItems.Add(entityInPcb);
                     row++;
                 }
             }
@@ -162,16 +163,8 @@ namespace ProductionManagementSystem.Core.Services
 
         public override async Task<Pcb> GetByIdAsync(int id)
         {
-            var result = (await _db.Pcbs.FindAsync(x => x.Id == id, "Entities")).FirstOrDefault();
-            if (result == null)
-                return null;
-            
-            foreach (var entity in result.Entities)
-            {
-                entity.Entity = await _entityExtService.GetByIdAsync(entity.EntityId);
-            }
-
-            result.Entities = result.Entities.OrderBy(x => x.Designator).ToList();
+            var result = await _currentRepository.GetByIdAsync(id);
+            result.UsedItems = result.UsedItems.OrderBy(x => x.Designator).ToList();
             return result;
         }
 
@@ -182,6 +175,9 @@ namespace ProductionManagementSystem.Core.Services
                 item.ReportDate = DateTime.Now;
             }
             await base.CreateAsync(item);
+            item.UsedItems.ForEach(x => x.InItemId = item.Id);
+            await _db.UsedItemRepository.UpdateRangeAsync(item.UsedItems);
+            await _db.SaveAsync();
         }
 
         public async Task IncreaseQuantityAsync(int id, int quantity)

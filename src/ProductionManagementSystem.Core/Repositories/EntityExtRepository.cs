@@ -80,11 +80,23 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public async Task<EntityExt> GetByIdAsync(int id)
         {
-            var entity = await _context.Entities.AsNoTracking().FirstOrDefaultAsync(x => x.KeyId == id);
-            if (entity == null) return null;
-            var altiumDbEntity = await GetByPartNumber(entity.PartNumber, entity.TableId);
-            if (altiumDbEntity == null) return null;
-            return new EntityExt(altiumDbEntity ,entity);
+            var tables = await _context.Tables.Include(x => x.TableColumns).ToListAsync();
+            try
+            {
+                await _conn.OpenAsync();
+                var cmd = _conn.CreateCommand();
+                cmd.CommandText = string.Join(" UNION ",
+                    tables.Select(table => $"{GetSqlSelectAllColumnsEntityExt(table)} WHERE `KeyId`= '{id}'"));
+                return (await GetListEntityExt(cmd)).FirstOrDefault();
+            }
+            catch(MySqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {  
+                await _conn.CloseAsync(); 
+            }
         }
 
         public async Task<List<EntityExt>> FindAsync(Func<EntityExt, bool> predicate, string includeProperty = null)
@@ -165,7 +177,7 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public void Delete(EntityExt item)
         {
-            var used = _context.EntityInProjects.Any(x => x.EntityId == item.KeyId);
+            var used = _context.UsedItems.Any(x => x.ItemType == CDBItemType.Entity && x.ItemId == item.KeyId);
             used = used || _context.UsedInDevice.Any(x => x.ComponentType == UsedInDeviceComponentType.Entity && x.UsedComponentId == item.KeyId);
             if (used)
             {

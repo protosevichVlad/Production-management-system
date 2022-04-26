@@ -36,52 +36,52 @@
       </tr>
       </thead>
       <tbody>
-      @for (int i = 0; i < Model.Entities.Count; i++)
+      @for (int i = 0; i < Model.UsedItems.Count; i++)
       {
         <tr >
           <td >
             @(i + 1)
           </td>
-          @if (Model.Entities[i].Entity == null)
+          @if (Model.UsedItems[i].Item == null)
           {
             <td></td>
             <td >
-              @Model.Entities[i].Designator
+              @Model.UsedItems[i].Designator
             </td>
             <td colspan="5">Item not found</td>
             <td >
-              @Model.Entities[i].Quantity
+              @Model.UsedItems[i].Quantity
             </td>
             <td class="hidden-print"></td>
           }
           else
           {
             <td >
-              @Model.Entities[i].Entity.Category
+              @Model.UsedItems[i].Item.Category
             </td>
             <td >
-              @Model.Entities[i].Designator
+              @Model.UsedItems[i].Designator
             </td>
             <td >
-              @Model.Entities[i].Entity.Item
+              @Model.UsedItems[i].Item.Name
             </td>
             <td >
-              <a href="/Entities/Details/@Model.Entities[i].Entity.KeyId" target="_blank">@Model.Entities[i].Entity.PartNumber</a>
+              <a href="/Entities/Details/@Model.UsedItems[i].Item.Id" target="_blank">@Model.UsedItems[i].Item.PartNumber</a>
             </td>
             <td >
-              @Model.Entities[i].Entity.Supplier
+              @Model.UsedItems[i].Item.Supplier
             </td>
             <td >
-              @Model.Entities[i].Entity.Case
+              @Model.UsedItems[i].Item.Case
             </td>
             <td >
-              @Model.Entities[i].Entity.Manufacturer
+              @Model.UsedItems[i].Item.Manufacture
             </td>
             <td >
-              @Model.Entities[i].Quantity
+              @Model.UsedItems[i].Quantity
             </td>
             <td class="hidden-print">
-              <span style="white-space: pre-line">@Model.Entities[i].Entity.Description</span>
+              <span style="white-space: pre-line">@Model.UsedItems[i].Item.Description</span>
             </td>
           }
         </tr>

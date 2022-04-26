@@ -10,7 +10,7 @@ namespace ProductionManagementSystem.Core.Models.PCB
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<EntityInPcb> Entities { get; set; }
+        public List<UsedItem> UsedItems { get; set; }
         public byte[] Image { get; set; }
         public byte[] CircuitDiagram { get; set; }
         public byte[] AssemblyDrawing { get; set; }
@@ -33,7 +33,7 @@ namespace ProductionManagementSystem.Core.Models.PCB
             {
                 Id = this.Id,
                 Name = this.Name,
-                Entities = this.Entities,
+                UsedItems = this.UsedItems,
                 Description = this.Description,
                 Quantity = this.Quantity,
                 ReportDate = this.ReportDate,

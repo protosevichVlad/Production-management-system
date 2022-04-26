@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductionManagementSystem.Core.Data.EF;
 
 namespace ProductionManagementSystem.Core.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220426153100_AddUsedItems")]
+    partial class AddUsedItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -825,6 +827,10 @@ namespace ProductionManagementSystem.Core.Migrations
                     b.Property<string>("Designator")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<int>("InItemId")
                         .HasColumnType("int");
 
@@ -843,6 +849,8 @@ namespace ProductionManagementSystem.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UsedItems");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("UsedItem");
                 });
 
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.Users.User", b =>
@@ -913,6 +921,15 @@ namespace ProductionManagementSystem.Core.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.PCB.EntityInPcb", b =>
+                {
+                    b.HasBaseType("ProductionManagementSystem.Core.Models.UsedItem");
+
+                    b.ToTable("UsedItems");
+
+                    b.HasDiscriminator().HasValue("EntityInPcb");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

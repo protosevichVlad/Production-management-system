@@ -210,19 +210,21 @@ const showPassiveModal = (title, message) =>
   modal.show();
 }
 
-function formDataAppend(formData, prop, value)
+function formDataAppend(formData, prop, value, deep)
 {
+  if (deep === 0) return;
+  
   if (Array.isArray(value))
   {
     for (let index in value)
     {
-      formDataAppend(formData, `${prop}[${index}]`, value[index])
+      formDataAppend(formData, `${prop}[${index}]`, value[index], deep - 1)
     }
   }
   else if (typeof value === 'object' && value !== null && !(value instanceof File)){
     for (let valueProp in value)
     {
-      formDataAppend(formData, `${prop}.${valueProp}`, value[valueProp])
+      formDataAppend(formData, `${prop}.${valueProp}`, value[valueProp], deep - 1)
     }
   }
   else {
@@ -230,18 +232,18 @@ function formDataAppend(formData, prop, value)
   }
 }
 
-function getFormDataFromObj(obj){
+function getFormDataFromObj(obj, deep){
   let formData = new FormData();
   for (var prop in obj)
   {
-    formDataAppend(formData, prop, obj[prop]);
+    formDataAppend(formData, prop, obj[prop], deep == null ? -1 : deep + 1);
   }
   return formData;
 }
 
-function sendObjectAsFormData(url, method, obj)
+function sendObjectAsFormData(url, method, obj, deep)
 {
-  let formData = getFormDataFromObj(obj);
+  let formData = getFormDataFromObj(obj, deep);
   return fetch(url, {
     method : method,
     body : formData

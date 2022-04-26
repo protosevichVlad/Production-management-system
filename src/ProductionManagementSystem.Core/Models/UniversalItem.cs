@@ -13,11 +13,14 @@ namespace ProductionManagementSystem.Core.Models
         public string PartNumber { get; set; }
         public CDBItemType ItemType { get; set; }
         public object Origin { get; set; }
-        
+        public string Supplier { get; set; }
+        public string Case { get; set; }
+
         public UniversalItem() {}
 
         public UniversalItem(object obj)
         {
+            if (obj == null) return;
             if (obj is EntityExt entityExt)
             {
                 MapFromEntity(entityExt);
@@ -32,17 +35,14 @@ namespace ProductionManagementSystem.Core.Models
             }
         }
 
-        public UniversalItem(EntityExt entityExt)
+        public UniversalItem(EntityExt entityExt) : this((object)entityExt)
         {
-            MapFromEntity(entityExt);
         }
-        public UniversalItem(Pcb pcb)
+        public UniversalItem(Pcb pcb) : this((object)pcb)
         {
-            MapFromPcb(pcb);
         }
-        public UniversalItem(CompDbDevice device)
+        public UniversalItem(CompDbDevice device) : this((object)device)
         {
-            MapFromDevice(device);
         }
         
         private void MapFromPcb(Pcb pcb)
@@ -55,6 +55,8 @@ namespace ProductionManagementSystem.Core.Models
             Category = "PCB";
             PartNumber = pcb.Variant;
             ItemType = CDBItemType.PCB;
+            Case = "";
+            Supplier = "";
             Origin = pcb;
         }
         
@@ -68,6 +70,8 @@ namespace ProductionManagementSystem.Core.Models
             Category = "Device";
             PartNumber = device.Variant;
             ItemType = CDBItemType.Device;
+            Case = "";
+            Supplier = "";
             Origin = device;
         }
 
@@ -80,7 +84,9 @@ namespace ProductionManagementSystem.Core.Models
             Manufacture = entityExt.Manufacturer;
             Category = entityExt.Category;
             PartNumber = entityExt.PartNumber;
-            ItemType = CDBItemType.Device;
+            ItemType = CDBItemType.Entity;
+            Case = entityExt.Case;
+            Supplier = entityExt.Supplier;
             Origin = entityExt;
         }
     }
