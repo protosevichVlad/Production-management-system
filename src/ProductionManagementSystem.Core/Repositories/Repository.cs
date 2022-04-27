@@ -62,7 +62,10 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public virtual async Task UpdateRangeAsync(List<TItem> items)
         {
-            _dbSet.UpdateRange(items);
+            foreach (var item in items)
+            {
+                _db.Entry(item).State = EntityState.Modified;
+            }
         }
 
         public virtual void Delete(TItem item)

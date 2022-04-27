@@ -54,12 +54,13 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
         {
             var ent = await _usedItemRepository.GetByPcbIdAsync(item.Id);
             ent = ent.Where(x => item.UsedItems.All(y => y.Id != x.Id)).ToList();
-            _db.UsedItems.RemoveRange(ent);
-            _db.Update(item);
+            _db.UsedItems.RemoveRange(ent); 
             foreach (var used in item.UsedItems)
             {
-                _db.Entry(used).State = EntityState.Modified;
+                _db.Entry(used).State = used.Id == 0 ? EntityState.Added : EntityState.Modified;
             }
+
+            await base.UpdateAsync(item);
         }
 
         public override void Delete(Pcb item)
