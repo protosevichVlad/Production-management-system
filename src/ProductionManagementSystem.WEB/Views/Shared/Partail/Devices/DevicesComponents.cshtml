@@ -39,12 +39,12 @@
   </tr>
   </thead>
   <tbody>
-  @for (int i = 0; Model.UsedInDevice != null && i < Model.UsedInDevice.Count; i++)
+  @for (int i = 0; Model.UsedItems != null && i < Model.UsedItems.Count; i++)
   {
-    switch (Model.UsedInDevice[i].ComponentType)
+    switch (Model.UsedItems[i].ItemType)
     {
-      case UsedInDeviceComponentType.Entity:
-        var entity = Model.UsedInDevice[i].Component as EntityExt;
+      case CDBItemType.Entity:
+        var entity = Model.UsedItems[i].Item.Origin as EntityExt;
         <tr>
           <td>
             @(i + 1)
@@ -53,11 +53,11 @@
           {
             <td></td>
             <td >
-              @Model.UsedInDevice[i].Designator
+              @Model.UsedItems[i].Designator
             </td>
             <td colspan="5">Item not found</td>
             <td >
-              @Model.UsedInDevice[i].Quantity
+              @Model.UsedItems[i].Quantity
             </td>
             <td class="hidden-print"></td>
           }
@@ -67,7 +67,7 @@
               @entity.Category
             </td>
             <td >
-              @Model.UsedInDevice[i].Designator
+              @Model.UsedItems[i].Designator
             </td>
             <td >
               @entity.Item
@@ -85,7 +85,7 @@
               @entity.Manufacturer
             </td>
             <td >
-              @Model.UsedInDevice[i].Quantity
+              @Model.UsedItems[i].Quantity
             </td>
             <td class="hidden-print">
               <span style="white-space: pre-line">@entity.Description</span>
@@ -93,8 +93,8 @@
           }
         </tr>
         break;
-      case UsedInDeviceComponentType.PCB:
-        var pcb = Model.UsedInDevice[i].Component as Pcb;
+      case CDBItemType.PCB:
+        var pcb = Model.UsedItems[i].Item.Origin as Pcb;
         <tr>
           <td>
             @(i + 1)
@@ -103,7 +103,7 @@
             PCB
           </td>
           <td >
-            @Model.UsedInDevice[i].Designator
+            @Model.UsedItems[i].Designator
           </td>
           <td >
             @pcb.Name
@@ -118,15 +118,15 @@
           <td >
           </td>
           <td >
-            @Model.UsedInDevice[i].Quantity
+            @Model.UsedItems[i].Quantity
           </td>
           <td class="hidden-print">
             <span style="white-space: pre-line">@pcb.Description</span>
           </td>
         </tr>
         break;
-      case UsedInDeviceComponentType.Device:
-        var device = Model.UsedInDevice[i].Component as CompDbDevice;
+      case CDBItemType.Device:
+        var device = Model.UsedItems[i].Item.Origin as CompDbDevice;
         <tr>
           <td>
             @(i + 1)
@@ -135,7 +135,7 @@
             Device
           </td>
           <td >
-            @Model.UsedInDevice[i].Designator
+            @Model.UsedItems[i].Designator
           </td>
           <td >
             @device.Name
@@ -150,7 +150,7 @@
           <td >
           </td>
           <td >
-            @Model.UsedInDevice[i].Quantity
+            @Model.UsedItems[i].Quantity
           </td>
           <td class="hidden-print">
             <span style="white-space: pre-line">@device.Description</span>

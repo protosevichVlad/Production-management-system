@@ -91,6 +91,9 @@ namespace ProductionManagementSystem.Core.Services
             }
             
             await base.CreateAsync(item);
+            item.UsedItems.ForEach(x => x.InItemId = item.Id);
+            await _db.UsedItemRepository.CreateRangeAsync(item.UsedItems);
+            await _db.SaveAsync();
         }
 
         public override async Task UpdateAsync(CompDbDevice item)

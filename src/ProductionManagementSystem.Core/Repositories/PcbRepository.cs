@@ -65,10 +65,8 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
 
         public override void Delete(Pcb item)
         {
-            var usedInDevice = _db.UsedInDevice
-                .FirstOrDefault(d => d.ComponentType == UsedInDeviceComponentType.PCB 
-                                     && d.UsedComponentId == item.Id);
-            if (usedInDevice != null)
+            var usedInDevice = _db.UsedItems.Any(x => x.ItemType == CDBItemType.PCB && x.ItemId == item.Id);
+            if (usedInDevice)
             {
                 throw new DeleteReferenceException("PCB removal is not possible", $"This PCB used in device");
             }

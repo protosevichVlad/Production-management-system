@@ -20,30 +20,9 @@ namespace ProductionManagementSystem.Core.Models
       public DateTime ReportDate { get; set; }
       public int Quantity { get; set; }
       
-      public List<UsedInDevice> UsedInDevice { get; set; }
-      public string ThreeDModelPath { get; set; }
-   }
-
-   [Table("UsedInDevice")]
-   public class UsedInDevice
-   {
-      [Key]
-      public int Id { get; set; }
-      public int UsedComponentId { get; set; }
-      public UsedInDeviceComponentType ComponentType { get; set; }
       [NotMapped]
-      public object Component { get; set; }
-      public int Quantity { get; set; }
-      public string Designator { get; set; }
-      public int CompDbDeviceId { get; set; }
-      public CompDbDevice CompDbDevice { get; set; }
-   }
-
-   public enum UsedInDeviceComponentType
-   {
-      Entity = 1,
-      PCB = 2,
-      Device = 3,
+      public List<UsedItem> UsedItems { get; set; }
+      public string ThreeDModelPath { get; set; }
    }
 
    public class CreateEditDevice
@@ -58,7 +37,7 @@ namespace ProductionManagementSystem.Core.Models
       public DateTime ReportDate { get; set; }
       public int Quantity { get; set; }
       
-      public List<UsedInDevice> UsedInDevice { get; set; }
+      public List<UsedItem> UsedItems { get; set; }
 
       internal async Task<CompDbDevice> GetDevice(IFileService fileService)
       {
@@ -70,7 +49,7 @@ namespace ProductionManagementSystem.Core.Models
             Quantity = this.Quantity,
             ReportDate = this.ReportDate,
             Variant = this.Variant,
-            UsedInDevice = this.UsedInDevice
+            UsedItems = this.UsedItems
          };
 
          pcb.ImagePath = await fileService.CreateFileByUrl(Image, $"/uploads/{Name}/{Variant}", "Image.png");

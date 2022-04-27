@@ -17,9 +17,12 @@ namespace ProductionManagementSystem.Core.Repositories
     public class CompDbDeviceRepository : Repository<CompDbDevice>, ICompDbDeviceRepository
     {
         private IEntityExtRepository _entityExtRepository;
+        private IUsedItemRepository _usedItemRepository;
+
         public CompDbDeviceRepository(ApplicationContext db) : base(db)
         {
             _entityExtRepository = new EntityExtRepository(db);
+            _usedItemRepository = new UsedItemRepository(db);
         }
 
         public async Task<List<CompDbDevice>> SearchByKeyWordAsync(string s)
@@ -32,38 +35,33 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public override async Task UpdateAsync(CompDbDevice item)
         {
-            var ent = await _db.UsedInDevice.AsNoTracking().Where(x => x.CompDbDeviceId == item.Id).ToListAsync();
-            ent = ent.Where(x => item.UsedInDevice.All(y => y.Id != x.Id)).ToList();
-            _db.UsedInDevice.RemoveRange(ent);
-            _dbSet.Update(item);
+            var ent = await _usedItemRepository.GetByDeviceIdAsync(item.Id);
+            ent = ent.Where(x => item.UsedItems.All(y => y.Id != x.Id)).ToList();
+            _db.UsedItems.RemoveRange(ent); 
+            foreach (var used in item.UsedItems)
+            {
+                _db.Entry(used).State = used.Id == 0 ? EntityState.Added : EntityState.Modified;
+            }
+
+            await base.UpdateAsync(item);
         }
 
         public override async Task<CompDbDevice> GetByIdAsync(int id)
         {
-            var device = await _dbSet.AsNoTracking().Include(x => x.UsedInDevice).FirstOrDefaultAsync(x => x.Id == id);
+            var device = await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
             if (device == null) return null;
-            device.UsedInDevice = device.UsedInDevice.Select(x =>
-            {
-                x.Component = x.ComponentType switch
-                {
-                    UsedInDeviceComponentType.Device => _db.CDBDevices.Find(x.UsedComponentId),
-                    UsedInDeviceComponentType.Entity => _entityExtRepository.GetByIdAsync(x.UsedComponentId).Result,
-                    UsedInDeviceComponentType.PCB => _db.Projects.Find(x.UsedComponentId),
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-                
-                return x;
-            }).ToList();
+            device.UsedItems = await _usedItemRepository.GetByDeviceIdAsync(id);
             return device;
         }
 
         public override void Delete(CompDbDevice item)
         {
-            var used = _db.UsedInDevice.Any(x => x.ComponentType == UsedInDeviceComponentType.Device && x.UsedComponentId == item.Id);
+            var used = _db.UsedItems.Any(x => x.ItemType == CDBItemType.Device && x.ItemId == item.Id);
             if (used)
             {
                 throw new DeleteReferenceException("Device delete not permitted", "This device used in other device");
             }
+            
             base.Delete(item);
         }
     }

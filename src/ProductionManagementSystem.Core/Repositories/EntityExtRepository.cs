@@ -178,7 +178,6 @@ namespace ProductionManagementSystem.Core.Repositories
         public void Delete(EntityExt item)
         {
             var used = _context.UsedItems.Any(x => x.ItemType == CDBItemType.Entity && x.ItemId == item.KeyId);
-            used = used || _context.UsedInDevice.Any(x => x.ComponentType == UsedInDeviceComponentType.Entity && x.UsedComponentId == item.KeyId);
             if (used)
             {
                 throw new DeleteReferenceException("Entity delete not permitted", "This entity used in device or pcb");

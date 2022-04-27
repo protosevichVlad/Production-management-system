@@ -94,12 +94,12 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
         }
         
         [Route("/api/search/create-device")]
-        public async Task<List<CreateDeviceSearchViewModel>> CreateDeviceSearch(string q, int take)
+        public async Task<List<UniversalItem>> CreateDeviceSearch(string q, int take)
         {
-            var result = new List<CreateDeviceSearchViewModel>();
-            result.AddRange((await _entityExtService.SearchByKeyWordAsync(q)).Select(x => new CreateDeviceSearchViewModel(x)));
-            result.AddRange((await _pcbService.SearchByKeyWordAsync(q)).Select(x => new CreateDeviceSearchViewModel(x)));
-            result.AddRange((await _deviceService.SearchByKeyWordAsync(q)).Select(x => new CreateDeviceSearchViewModel(x)));
+            var result = new List<UniversalItem>();
+            result.AddRange((await _entityExtService.SearchByKeyWordAsync(q)).Select(x => new UniversalItem(x)));
+            result.AddRange((await _pcbService.SearchByKeyWordAsync(q)).Select(x => new UniversalItem(x)));
+            result.AddRange((await _deviceService.SearchByKeyWordAsync(q)).Select(x => new UniversalItem(x)));
             return result.Take(take).ToList();
         }
         

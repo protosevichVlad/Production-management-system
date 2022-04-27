@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductionManagementSystem.Core.Data.EF;
 
 namespace ProductionManagementSystem.Core.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220427130343_DeleteUsedInDevice")]
+    partial class DeleteUsedInDevice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -794,6 +796,9 @@ namespace ProductionManagementSystem.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int?>("CompDbDeviceId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Designator")
                         .HasColumnType("longtext");
 
@@ -813,6 +818,8 @@ namespace ProductionManagementSystem.Core.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompDbDeviceId");
 
                     b.ToTable("UsedItems");
                 });
@@ -1109,9 +1116,21 @@ namespace ProductionManagementSystem.Core.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.UsedItem", b =>
+                {
+                    b.HasOne("ProductionManagementSystem.Core.Models.CompDbDevice", null)
+                        .WithMany("UsedItems")
+                        .HasForeignKey("CompDbDeviceId");
+                });
+
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.CDBTask", b =>
                 {
                     b.Navigation("Obtained");
+                });
+
+            modelBuilder.Entity("ProductionManagementSystem.Core.Models.CompDbDevice", b =>
+                {
+                    b.Navigation("UsedItems");
                 });
 
             modelBuilder.Entity("ProductionManagementSystem.Core.Models.Orders.Order", b =>

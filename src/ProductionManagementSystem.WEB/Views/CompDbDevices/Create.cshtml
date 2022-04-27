@@ -115,18 +115,18 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="usedComponent in device.usedInDevice">
-        <td>{{device.usedInDevice.indexOf(usedComponent) + 1}}</td>
-        <td>{{usedComponent.component.category}}</td>
-        <td>{{usedComponent.designator}}</td>
-        <td>{{usedComponent.component.name}}</td>
-        <td>{{usedComponent.component.partNumber}}</td>
-        <td>{{usedComponent.component.supplier}}</td>
-        <td>{{usedComponent.component.case}}</td>
-        <td>{{usedComponent.component.manufacturer}}</td>
-        <td>{{usedComponent.quantity}}</td>
+      <tr v-for="usedItem in device.usedItems">
+        <td>{{device.usedItems.indexOf(usedItem) + 1}}</td>
+        <td>{{usedItem.item.category}}</td>
+        <td>{{usedItem.designator}}</td>
+        <td>{{usedItem.item.name}}</td>
+        <td>{{usedItem.item.partNumber}}</td>
+        <td>{{usedItem.item.supplier}}</td>
+        <td>{{usedItem.item.case}}</td>
+        <td>{{usedItem.item.manufacturer}}</td>
+        <td>{{usedItem.quantity}}</td>
         <td class="hidden-print">
-          <span style="white-space: pre-line">{{usedComponent.component.description}}</span>
+          <span style="white-space: pre-line">{{usedItem.item.description}}</span>
         </td>
         <td class="bx--table-column-menu">
           <div data-overflow-menu role="menu" tabindex="0" aria-label="Overflow menu description" class="bx--overflow-menu">
@@ -135,7 +135,7 @@
             </svg>
             <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
               <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                <button class="bx--overflow-menu-options__btn" v-on:click="() => showEditEntityInDeviceModal(usedComponent)">
+                <button class="bx--overflow-menu-options__btn" v-on:click="() => showEditEntityInDeviceModal(usedItem)">
                   <div class="bx--overflow-menu-options__option-content">
                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                       <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
@@ -144,7 +144,7 @@
                 </button>
               </li>
               <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                <button class="bx--overflow-menu-options__btn" v-on:click="() => deleteFromDevice(usedComponent)">
+                <button class="bx--overflow-menu-options__btn" v-on:click="() => deleteFromDevice(usedItem)">
                   <div class="bx--overflow-menu-options__option-content">
                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                       <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
@@ -192,27 +192,27 @@
               </button>
             </div>
             <div class="autocomplete-box bx--grid bx--grid--full-width">
-              <template v-for="component in searchingData">
-                <div class="bx--row" v-on:click="() => selectComponent(component)">
+              <template v-for="item in searchingData">
+                <div class="bx--row" v-on:click="() => selectComponent(item)">
                   <div class="bx--col-md-1">
-                    <img :src="component.imageUrl" alt="" class="altiumdb--entity-table--image"/>
+                    <img :src="item.imagePath" alt="" class="altiumdb--entity-table--image"/>
                   </div>
                   <div class="bx--col-md-4">
                     <div class="bx--grid">
-                      <div class="bx--row">{{component.name}}</div>
+                      <div class="bx--row">{{item.name}}</div>
                       <div class="bx--row" style="height: 4px"></div>
-                      <div class="bx--row">{{component.partNamber}}</div>
+                      <div class="bx--row">{{item.partNamber}}</div>
                       <div class="bx--row" style="height: 4px"></div>
-                      <div class="bx--row">{{component.category}}</div>
+                      <div class="bx--row">{{item.category}}</div>
                     </div>
                   </div>
                   <div class="bx--col-md-3">
-                    {{component.description}}                   
+                    {{item.description}}                   
                   </div>
                 </div>
               </template>
             </div>
-            <div v-if="selectedComponent.component != null">
+            <div v-if="selectedItem.item != null">
               <div class="bx--row">
                 <div class="bx--col-md-8">
                   Selected:
@@ -220,19 +220,19 @@
               </div>
               <div class="bx--row">
                 <div class="bx--col-md-1">
-                  <img :src="selectedComponent.component.imageUrl" alt="" class="altiumdb--entity-table--image"/>
+                  <img :src="selectedItem.item.imagePath" alt="" class="altiumdb--entity-table--image"/>
                 </div>
                 <div class="bx--col-md-4">
                   <div class="bx--grid">
-                    <div class="bx--row">{{selectedComponent.component.name}}</div>
+                    <div class="bx--row">{{selectedItem.item.name}}</div>
                     <div class="bx--row" style="height: 4px"></div>
-                    <div class="bx--row">{{selectedComponent.component.partNumber}}</div>
+                    <div class="bx--row">{{selectedItem.item.partNumber}}</div>
                     <div class="bx--row" style="height: 4px"></div>
-                    <div class="bx--row">{{selectedComponent.component.category}}</div>
+                    <div class="bx--row">{{selectedItem.item.category}}</div>
                   </div>
                 </div>
                 <div class="bx--col-md-3">
-                  {{selectedComponent.component.description}}
+                  {{selectedItem.item.description}}
                 </div>
               </div>
             </div>
@@ -244,7 +244,7 @@
               <div data-numberinput class=" bx--number bx--number--light">
                 <label for="input-quantity-entity-in-device" class="bx--label">Quantity</label>
                 <div class="bx--number__input-wrapper">
-                  <input id="input-quantity-entity-in-device" tabindex="1" type="number" min="0" max="999999" v-model="selectedComponent.quantity">
+                  <input id="input-quantity-entity-in-device" tabindex="1" type="number" min="0" max="999999" v-model="selectedItem.quantity">
                   <div class="bx--number__controls">
                     <button aria-label="increase number input" class="bx--number__control-btn up-icon" type="button" aria-live="polite" aria-atomic="true">
                       <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true">
@@ -262,9 +262,9 @@
             </div>
           </div>
           <div class="bx--col-md-8">
-            <label for="text-area-selectedComponent-designator" class="bx--label">Designator</label>
-            <textarea id="text-area-selectedComponent-designator" class="bx--text-area" tabindex="2"
-                    style="height: 100px;" placeholder="Placeholder text." v-model="selectedComponent.designator"></textarea>
+            <label for="text-area-selectedItem-designator" class="bx--label">Designator</label>
+            <textarea id="text-area-selectedItem-designator" class="bx--text-area" tabindex="2"
+                    style="height: 100px;" placeholder="Placeholder text." v-model="selectedItem.designator"></textarea>
           </div>
         </div>
       </div>
@@ -294,26 +294,27 @@
           id: @Model,
           name: "",
           variant: "",
-          usedInDevice: [],
+          usedItems: [],
           quantity: 0,
           description: "",
         },
-        selectedComponent: {
+        selectedItem: {
           designator:"",
-          component: null,
-          usedComponentId: null,
-          componentType: null,
+          item: null,
+          itemId: null,
+          itemType: null,
+          inItemId: @Model,
+          inItemType: 2, // device
           id: 0,
-          compDbDeviceId: @Model,
           quantity:0
         },
         searchString: "",
         searchingData: [],
         editEntityModal: null,
-        componentTypes: [
-          { id: 1, name: "Entity"},
-          { id: 2, name: "PCB"},
-          { id: 3, name: "Device"},
+        temTypes: [
+          { id: 0, name: "Entity"},
+          { id: 1, name: "PCB"},
+          { id: 2, name: "Device"},
         ]
       },
       methods: {
@@ -326,8 +327,8 @@
             .then(json => 
             {
               vm.device = json;
-              if (vm.device.usedInDevice == null)
-                vm.device.usedInDevice = [];
+              if (vm.device.usedItems == null)
+                vm.device.usedItems = [];
             })
             .catch(e => console.log(e));
           }
@@ -338,9 +339,9 @@
           
           return this.componentTypes.filter(t => t.id === componentInDevice.componentType)[0].name;  
         },
-        showEditEntityInDeviceModal: function (selectedComponent)
+        showEditEntityInDeviceModal: function (selectedItem)
         { 
-          Object.assign(this.selectedComponent, selectedComponent)
+          Object.assign(this.selectedItem, selectedItem)
           this.editEntityModal.show();
         },
         search : function ()
@@ -350,24 +351,24 @@
           .then(json => vm.searchingData = json)
           .catch(e => console.log(e));
         },
-        selectComponent: function (component)
+        selectComponent: function (item)
         {
-          this.selectedComponent.component = component;
-          this.selectedComponent.usedComponentId = component.id;
-          this.selectedComponent.componentType = component.componentType;
+          this.selectedItem.item = item;
+          this.selectedItem.itemId = item.id;
+          this.selectedItem.itemType = item.itemType;
           this.searchingData = [];
         },
         saveUsedComponent : function ()
         {
           let vm = this;
-          if (vm.selectedComponent.id === 0)
+          if (vm.selectedItem.id === 0)
           {
-            vm.device.usedInDevice.push(vm.selectedComponent);
+            vm.device.usedItems.push(vm.selectedItem);
           }
           else 
           {
-            let index = vm.device.usedInDevice.findIndex(x => x.id === vm.selectedComponent.id);
-            vm.device.usedInDevice[index] = vm.selectedComponent;
+            let index = vm.device.usedItems.findIndex(x => x.id === vm.selectedItem.id);
+            vm.device.usedItems[index] = vm.selectedItem;
           }
           
           vm.closeModal();
@@ -385,7 +386,7 @@
             return 0;  
           }
           
-          this.device.usedInDevice.sort(cmp);
+          this.device.usedItems.sort(cmp);
         },
         saveDevice : function ()
         {
@@ -406,21 +407,23 @@
         },
         closeModal: function ()
         {
-          this.selectedComponent = {
+          this.selectedItem = {
             designator:"",
-            entity: null,
-            entityId: null,
+            item: null,
+            itemId: null,
+            itemType: null,
+            inItemId: @Model,
+            inItemType: 2, // device
             id: 0,
-            compDbDeviceId: @Model,
             quantity:0
-          };
+          }
           
           this.searchString = "";
           this.editEntityModal.hide();
         },
         deleteFromDevice: function(usedComponent)
         {
-          this.device.usedInDevice = this.device.usedInDevice.filter(x => x.id !== usedComponent.id);
+          this.device.usedItems = this.device.usedItems.filter(x => x.id !== usedComponent.id);
         },
         uploadFile: function (key) {
           this.device[key] = this.$refs[key].files[0];

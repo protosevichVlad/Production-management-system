@@ -13,6 +13,9 @@ namespace ProductionManagementSystem.Core.Repositories
         Task<List<UsedItem>> GetByPcbIdAsync(int pcbId);
         Task IncludeItems(List<UsedItem> usedItems);
         Task IncludeItems(UsedItem usedItem);
+        Task<List<UsedItem>> GetByDeviceIdAsync(int itemId);
+        Task<List<UsedItem>> GetByInItemIdAsync(int itemId, CDBItemType type);
+        Task CreateRangeAsync(List<UsedItem> items);
     }
     
     public class UsedItemRepository : Repository<UsedItem>, IUsedItemRepository
@@ -24,13 +27,6 @@ namespace ProductionManagementSystem.Core.Repositories
             _entityExtRepository = new EntityExtRepository(db);
         }
         
-        public async Task<List<UsedItem>> GetByPcbIdAsync(int pcbId)
-        {
-            var result =  await _db.UsedItems.AsNoTracking().Where(x => x.InItemType == CDBItemType.PCB && x.InItemId == pcbId).ToListAsync();
-            await IncludeItems(result);
-            return result;
-        }
-
         public async Task IncludeItems(List<UsedItem> usedItems)
         {
             foreach (var item in usedItems)
@@ -66,6 +62,28 @@ namespace ProductionManagementSystem.Core.Repositories
                     usedItem.InItem = new UniversalItem(await _db.CDBDevices.AsNoTracking().FirstOrDefaultAsync(x => x.Id == usedItem.InItemId));
                     break;
             }
+        }
+
+        public async Task<List<UsedItem>> GetByDeviceIdAsync(int itemId)
+        {
+            return await GetByInItemIdAsync(itemId, CDBItemType.Device);
+        }
+
+        public async Task<List<UsedItem>> GetByPcbIdAsync(int pcbId)
+        {
+            return await GetByInItemIdAsync(pcbId, CDBItemType.PCB);
+        }
+
+        public async Task<List<UsedItem>> GetByInItemIdAsync(int itemId, CDBItemType type)
+        {
+            var result =  await _db.UsedItems.AsNoTracking().Where(x => x.InItemType == type && x.InItemId == itemId).ToListAsync();
+            await IncludeItems(result);
+            return result;
+        }
+
+        public async Task CreateRangeAsync(List<UsedItem> items)
+        {
+            await _dbSet.AddRangeAsync(items);
         }
     }
 }

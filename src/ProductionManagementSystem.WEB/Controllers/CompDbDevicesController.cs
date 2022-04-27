@@ -38,13 +38,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         [Route("/api/devices/{id:int}")]
         public async Task<CompDbDevice> ApiGet([FromRoute] int id)
         {
-            var device = await _deviceService.GetByIdAsync(id);
-            device.UsedInDevice = device.UsedInDevice.Select(x =>
-            {
-                x.Component = new CreateDeviceSearchViewModel(x.Component);
-                return x;
-            }).ToList();
-            return device;
+            return await _deviceService.GetByIdAsync(id);
         }
 
         [HttpPost]
@@ -109,7 +103,7 @@ namespace ProductionManagementSystem.WEB.Controllers
                 Description = model.Description,
                 Quantity = model.Quantity,
                 ReportDate = model.ReportDate,
-                UsedInDevice = model.UsedInDevice,
+                UsedItems = model.UsedItems,
             };
             
             if (model.ImageUploader != null)

@@ -33,7 +33,6 @@ namespace ProductionManagementSystem.Core.Repositories
         IToDoNoteRepository ToDoNoteRepository { get; }
         IEntityExtRepository EntityExtRepository { get; }
         IPcbRepository Pcbs { get; }
-        IUsedInDeviceRepository UsedInDeviceRepository { get; }
         ICompDbDeviceRepository CompDbDeviceRepository { get; }
         ICDBObtainedRepository CdbObtainedRepository { get; }
         ICDBTasksRepository CdbTasksRepository { get; }
@@ -107,10 +106,9 @@ namespace ProductionManagementSystem.Core.Repositories
         private IEntityExtRepository _entityExtRepository;
         private IPcbRepository _pcbRepository;
         private ICompDbDeviceRepository _compDbDeviceRepository;
-        private IUsedInDeviceRepository _usedInDeviceRepository;
         private ICDBObtainedRepository _cdbObtainedRepository;
         private ICDBTasksRepository _cdbTasksRepository;
-        private UsedItemRepository _usedItemRepository;
+        private IUsedItemRepository _usedItemRepository;
 
         public EFUnitOfWork(string connectionString) : base(connectionString)
         {
@@ -158,7 +156,6 @@ namespace ProductionManagementSystem.Core.Repositories
         public IEntityExtRepository EntityExtRepository => _entityExtRepository ??= new EntityExtRepository(_db);
         public IPcbRepository Pcbs => _pcbRepository ??= new PcbRepository(_db);
         public ICompDbDeviceRepository CompDbDeviceRepository => _compDbDeviceRepository ??= new CompDbDeviceRepository(_db);
-        public IUsedInDeviceRepository UsedInDeviceRepository => _usedInDeviceRepository ??= new UsedInDeviceRepository(_db);
 
         public ICDBObtainedRepository CdbObtainedRepository => _cdbObtainedRepository ??= new CDBObtainedRepository(_db);
         public ICDBTasksRepository CdbTasksRepository => _cdbTasksRepository ??= new CDBTasksRepository(_db);

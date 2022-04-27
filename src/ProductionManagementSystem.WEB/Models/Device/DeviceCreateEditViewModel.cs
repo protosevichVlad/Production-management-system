@@ -14,7 +14,7 @@ namespace ProductionManagementSystem.WEB.Models.Device
         public DateTime ReportDate { get; set; }
         public int Quantity { get; set; }
         public string Description { get; set; }
-        public List<UsedInDevice> UsedInDevice { get; set; }
+        public List<UsedItem> UsedItems { get; set; }
         
         public IFormFile ImageUploader { get; set; }
         public IFormFile ThreeDModelUploader { get; set; }
