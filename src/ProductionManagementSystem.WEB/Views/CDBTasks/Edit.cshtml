@@ -2,7 +2,7 @@
 
 @{
   bool isEdit = Model != 0;
-  ViewBag.Title = isEdit ? "Create task" : "Edit task";
+  ViewBag.Title = isEdit ? "Edit task" : "Create task";
   Layout = "_AltiumDBLayout";
 }
 
@@ -48,7 +48,7 @@
             </div>
           </template>
         </div>
-        <div v-if="task.taskItem != null" class="bx--grid">
+        <div v-if="task.item != null" class="bx--grid">
           <div class="bx--row">
             <div class="bx--col-md-8">
               <h4>
@@ -58,19 +58,19 @@
           </div>
           <div class="bx--row">
             <div class="bx--col-md-1">
-              <img :src="task.taskItem.imagePath" alt="" class="altiumdb--entity-table--image"/>
+              <img :src="task.item.imagePath" alt="" class="altiumdb--entity-table--image"/>
             </div>
             <div class="bx--col-md-4">
               <div class="bx--grid">
-                <div class="bx--row">{{task.taskItem.name}}</div>
+                <div class="bx--row">{{task.item.name}}</div>
                 <div class="bx--row" style="height: 4px"></div>
-                <div class="bx--row">{{task.taskItem.partNumber}}</div>
+                <div class="bx--row">{{task.item.partNumber}}</div>
                 <div class="bx--row" style="height: 4px"></div>
-                <div class="bx--row">{{task.taskItem.category}}</div>
+                <div class="bx--row">{{task.item.category}}</div>
               </div>
             </div>
             <div class="bx--col-md-3">
-              {{task.taskItem.description}}
+              {{task.item.description}}
             </div>
           </div>
         </div>
@@ -105,33 +105,42 @@
     </div>
     <div class="bx--row bx--row-padding">
       <div class="bx--col--auto">
-        <h4>Also was created next tasks:</h4>
+        <h4>The following tasks will be created:</h4>
       </div>
     </div>
-    <div class="bx--row" v-for="alsoTask in alsoCreated">
-      <div class="bx--col-md-4">
-        <div class="bx--row">
-          <div class="bx--col-md-1">
-            <img :src="alsoTask.taskItem.imagePath" alt="" class="altiumdb--entity-table--image"/>
-          </div>
-          <div class="bx--col-md-4">
-            <div class="bx--grid">
-              <div class="bx--row">{{alsoTask.taskItem.name}}</div>
-              <div class="bx--row" style="height: 4px"></div>
-              <div class="bx--row">{{alsoTask.taskItem.partNumber}}</div>
-              <div class="bx--row" style="height: 4px"></div>
-              <div class="bx--row">{{alsoTask.taskItem.category}}</div>
+    <template v-for="alsoTask in alsoCreated">
+      <div class="bx--row">
+        <div class="bx--col-md-1">
+          {{alsoTask.id}}
+        </div>
+        <div class="bx--col-md-4">
+          <div class="bx--row">
+            <div class="bx--col-md-1">
+              <img :src="alsoTask.item.imagePath" alt="" class="altiumdb--entity-table--image"/>
+            </div>
+            <div class="bx--col-md-4">
+              <div class="bx--grid">
+                <div class="bx--row">{{alsoTask.item.name}}</div>
+                <div class="bx--row" style="height: 4px"></div>
+                <div class="bx--row">{{alsoTask.item.partNumber}}</div>
+                <div class="bx--row" style="height: 4px"></div>
+                <div class="bx--row">{{alsoTask.item.category}}</div>
+              </div>
+            </div>
+            <div class="bx--col-md-3">
+              {{alsoTask.item.description}}
             </div>
           </div>
-          <div class="bx--col-md-3">
-            {{alsoTask.taskItem.description}}
-          </div>
+        </div>
+        <div class="bx--col-md-3">
+          {{alsoTask.description}}
         </div>
       </div>
+      <div class="bx--row" style="height: 8px"></div>
+    </template>
+    <div class="bx--row bx--row-padding" style="justify-content: end">
+        <button type="button" class="bx--btn bx--btn--primary" v-on:click="saveTask">@(isEdit ? "Save" : "Create")</button>
     </div>
-  </div>
-  <div class="bx--row bx--row-padding" style="justify-content: end">
-    <button type="button" v-on:click="saveTask">@(isEdit ? "Save" : "Create")</button>
   </div>
 </div>
 
@@ -143,16 +152,33 @@
     <script src="js/vue.global.js"></script>
   }
   <script>
+    const getDateStr = function (date) {
+      let day = date.getDate();
+      if (day < 10)
+        day = '0' + day;
+      
+      let month = date.getMonth() + 1;
+        if (month < 10)
+           month = '0' + month;
+      return `${day}.${month}.${date.getFullYear()}`
+    }
+  
     let editTask = new Vue({
      el: '#editTask',
      data: {
+       isEdit: @(isEdit ? "true" : "false"),
        task: {
          id: @Model,
-         taskItemId: null,
-         taskItem: null,
-         taskItemType: null,
-         deadline: "",
+         itemId: null,
+         item: null,
+         itemType: null,
          description: "",
+         parentTaskId: 0,
+         status: 1,
+         startDate: getDateStr(new Date()),
+         deadline: getDateStr(new Date()),
+         endDate: "",
+         obtained: []
        },
        searchString: "",
        searchingData: [],
@@ -167,18 +193,26 @@
        },
        selectTaskItem : function (taskItem){
          let vm = this;
-         vm.task.taskItem = taskItem;
-         vm.task.taskItemType = taskItem.itemType;
-         vm.task.taskItemId = taskItem.id;
+         vm.task.item = taskItem;
+         vm.task.itemType = taskItem.itemType;
+         vm.task.itemId = taskItem.id;
          vm.searchingData = [];
          
-         HttpRequest(`/api/tasks/alsoCreated`, 'GET', vm.task)
+         sendObjectAsFormData(`/api/tasks/alsoCreated`, 'POST', vm.task)
            .then(result => vm.alsoCreated = result)
            .catch((e) => showPassiveModal("Error", e));
        },
        saveTask : function (){
-       
-       }
+        let vm = this;
+        if (vm.isEdit) {
+          
+        }
+        else {
+          sendObjectAsFormData(`/api/tasks`, 'POST', vm.task)
+             .then(result => vm.alsoCreated = result)
+             .catch((e) => showPassiveModal("Error", e));
+        }
+       },
      },
      mounted: function () {
        CarbonComponents.DatePicker.init();

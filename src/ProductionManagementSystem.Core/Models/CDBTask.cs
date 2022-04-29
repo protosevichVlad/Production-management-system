@@ -10,12 +10,12 @@ namespace ProductionManagementSystem.Core.Models
     {
         public int Id { get; set; }
         public int ParentTaskId { get; set; }
-        public int TaskItemId { get; set; }
+        public int ItemId { get; set; }
         [NotMapped]
-        public UniversalItem TaskItem { get; set; }
+        public UniversalItem Item { get; set; }
         public TaskStatusEnum Status { get; set; } = TaskStatusEnum.Equipment;
         public DateTime StartDate { get; set; } = DateTime.Now;
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public DateTime Deadline { get; set; }
         public string Description { get; set; }
         public List<CDBObtained> Obtained { get; set; }
@@ -36,8 +36,7 @@ namespace ProductionManagementSystem.Core.Models
         public int Quantity { get; set; }
         public int TaskId { get; set; }
         public CDBTask Task { get; set; }
-        public int ObtainedId { get; set; }
-        [NotMapped]
-        public UniversalItem ObtainedItem { get; set; }
+        public int UsedItemId { get; set; }
+        public UsedItem UsedItem { get; set; }
     }
 }

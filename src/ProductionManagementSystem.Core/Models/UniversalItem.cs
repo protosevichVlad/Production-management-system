@@ -1,4 +1,5 @@
-﻿using ProductionManagementSystem.Core.Models.PCB;
+﻿using System;
+using ProductionManagementSystem.Core.Models.PCB;
 
 namespace ProductionManagementSystem.Core.Models
 {
@@ -15,6 +16,7 @@ namespace ProductionManagementSystem.Core.Models
         public object Origin { get; set; }
         public string Supplier { get; set; }
         public string Case { get; set; }
+        public int Quantity { get; set; }
 
         public UniversalItem() {}
 
@@ -50,6 +52,7 @@ namespace ProductionManagementSystem.Core.Models
             Id = pcb.Id;
             ImagePath = pcb.ImagePath;
             Name = pcb.Name;
+            Quantity = pcb.Quantity;
             Description = pcb.Description;
             Manufacture = "";
             Category = "PCB";
@@ -65,6 +68,7 @@ namespace ProductionManagementSystem.Core.Models
             Id = device.Id;
             ImagePath = device.ImagePath;
             Name = device.Name;
+            Quantity = device.Quantity;
             Description = device.Description;
             Manufacture = "";
             Category = "Device";
@@ -80,6 +84,7 @@ namespace ProductionManagementSystem.Core.Models
             Id = entityExt.KeyId;
             ImagePath = entityExt.ImageUrl;
             Name = entityExt.Item;
+            Quantity = entityExt.Quantity;
             Description = entityExt.Description;
             Manufacture = entityExt.Manufacturer;
             Category = entityExt.Category;
@@ -88,6 +93,26 @@ namespace ProductionManagementSystem.Core.Models
             Case = entityExt.Case;
             Supplier = entityExt.Supplier;
             Origin = entityExt;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as UniversalItem);
+        }
+
+        public bool Equals(UniversalItem other)
+        {
+            return Id == other?.Id && ItemType == other?.ItemType;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode() ^ ItemType.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return Category + " " + Name + " " + PartNumber;
         }
     }
 }

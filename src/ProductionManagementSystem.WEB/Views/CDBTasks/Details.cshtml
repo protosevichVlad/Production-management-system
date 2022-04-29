@@ -1,0 +1,71 @@
+﻿@model ProductionManagementSystem.Core.Models.CDBTask
+
+@{
+  ViewBag.Title = "Task №" + Model.Id;
+  Layout = "_AltiumDBLayout";
+}
+
+<script src="/js/AltiumDB/UniversalItemVueJs.js"></script>
+
+<div id="taskDetails" class="bx--grid">
+  <div class="bx--row bx--row-padding">
+    <div class="bx--col-sm-2">
+      <h1>Task №@Model.Id</h1>
+    </div>
+    <div class="bx--col-sm-2">
+      
+    </div>
+  </div>
+  <div class="bx--row bx--row-padding">
+    <div class="bx--col-sm-4">
+      <partial name="Partail/CarbonUIComponents/ProgressIndicator" model="@Model.Status"/>
+    </div>
+  </div>
+  <div class="bx--row bx--row-padding">
+    <div class="bx--col-md-6">
+      <partial name="Partail/UniversalItem/UniversalItemDisplay" model="@Model.Item"/>
+    </div>
+  </div>
+  <div class="bx--row bx--row-padding">
+    <partial name="Partail/UniversalItem/Table" model="Model.Obtained"/>
+  </div>
+</div>
+<partial name="Partail/Modals/ChangeStatus"/>
+
+@section Scripts
+{
+  <script>
+    let modal = CarbonComponents.Modal.create(document.querySelector('#modal-change-task-status'));
+
+    function changeStatus(value)
+    {
+      const sendFullStatus = () => {
+        HttpRequest(`/api/tasks/@Model.Id/changeStatus`, 'POST', { to: value, full: true})
+          .then(x => location.reload())
+          .catch(e => showPassiveModal("Error", e));
+        modal.hide();  
+      };
+      
+      const sendPartlyStatus = () => {
+        HttpRequest(`/api/tasks/@Model.Id/changeStatus`, 'POST', { to: value, full: false})
+          .then(x => location.reload())
+          .catch(e => showPassiveModal("Error", e));
+        modal.hide();
+      };
+      
+      document.querySelector('#modal-change-task-status-content').textContent = 'Статус задачи будет изменён на ' + value;
+      document.querySelector('#modal-change-task-status-partly-button').addEventListener('click', sendPartlyStatus);
+      document.querySelector('#modal-change-task-status-full-button').addEventListener('click', sendFullStatus);
+      document.addEventListener('modal-hidden', function(evt) {
+        document.querySelector('#modal-change-task-status-partly-button').removeEventListener('click', sendPartlyStatus);
+        document.querySelector('#modal-change-task-status-full-button').removeEventListener('click', sendFullStatus);
+      });
+      
+      modal.show();
+    }
+    
+    
+  </script>
+}
+
+

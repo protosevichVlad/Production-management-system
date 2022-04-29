@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Reflection;
 
 namespace ProductionManagementSystem.Core.Models.Tasks
 {
@@ -20,5 +23,25 @@ namespace ProductionManagementSystem.Core.Models.Tasks
         Warehouse = 32,
         [Display(Name="Задача выполнена")]
         Done = 64
+    }
+
+    public static class TaskStatusExtension
+    {
+        public static string GetName(this TaskStatusEnum status)
+        {
+            List<string> result = new List<string>();
+            foreach (var value in Enum.GetValues<TaskStatusEnum>())
+            {
+                if ((status & value) == value)
+                {
+                    result.Add(value.GetType()
+                        .GetMember(value.ToString())
+                        .First()
+                        .GetCustomAttribute<DisplayAttribute>()
+                        ?.GetName());
+                }
+            }
+            return String.Join(", ", result);
+        }
     }
 }

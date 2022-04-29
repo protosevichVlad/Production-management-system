@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Core.Data.EF;
 using ProductionManagementSystem.Core.Models;
 
@@ -22,42 +24,61 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public override async Task<CDBTask> GetByIdAsync(int id)
         {
-            var task = await base.GetByIdAsync(id);
-            if (task == null) return null;
-            await InitUniversalItem(task);
+            var task = await _db.CdbTasks
+                .Include(x => x.Obtained)
+                .ThenInclude(y => y.UsedItem)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            await Include(task);
             return task;
         }
 
         public override async Task<List<CDBTask>> FindAsync(Func<CDBTask, bool> predicate, string includeProperty = null)
         {
             var tasks = await base.FindAsync(predicate, includeProperty);
-            await InitUniversalItem(tasks);
+            await Include(tasks);
             return tasks;
         }
 
         public override async Task<List<CDBTask>> GetAllAsync()
         {
-            var tasks = await base.GetAllAsync();
-            await InitUniversalItem(tasks);
+            var tasks = await _db.CdbTasks
+                .Include(x => x.Obtained)
+                .ThenInclude(y => y.UsedItem)
+                .ToListAsync();
+            await Include(tasks);
             return tasks;
         }
 
-        private async Task InitUniversalItem(CDBTask task)
+        private async Task Include(CDBTask task)
         {
-            object taskItem = task.TaskItem.ItemType switch
+            object taskItem = task.ItemType switch
             {
-                CDBItemType.Device => await _db.Devices.FindAsync(task.TaskItemId),
-                CDBItemType.PCB => await _db.Projects.FindAsync(task.TaskItemId),
-                CDBItemType.Entity => await _entityExtRepository.GetByIdAsync(task.TaskItemId),
+                CDBItemType.Device => await _db.CDBDevices.FindAsync(task.ItemId),
+                CDBItemType.PCB => await _db.Projects.FindAsync(task.ItemId),
+                CDBItemType.Entity => await _entityExtRepository.GetByIdAsync(task.ItemId),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
-            task.TaskItem = new UniversalItem(taskItem);
+            task.Item = new UniversalItem(taskItem);
+
+            for (int i = 0; i < task.Obtained.Count; i++)
+            {
+                task.Obtained[i].UsedItem.Item = new UniversalItem(task.Obtained[i].UsedItem.ItemType switch
+                {
+                    CDBItemType.Device => await _db.CDBDevices.FindAsync(task.Obtained[i].UsedItem.ItemId),
+                    CDBItemType.PCB => await _db.Projects.FindAsync(task.Obtained[i].UsedItem.ItemId),
+                    CDBItemType.Entity => await _entityExtRepository.GetByIdAsync(task.Obtained[i].UsedItem.ItemId),
+                    _ => throw new ArgumentOutOfRangeException()
+                });
+            }
         }
 
-        private async Task InitUniversalItem(List<CDBTask> tasks)
+        private async Task Include(List<CDBTask> tasks)
         {
-            tasks.ForEach(async t => await InitUniversalItem(t));
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                await Include(tasks[i]);
+            }
         }
     }
 }

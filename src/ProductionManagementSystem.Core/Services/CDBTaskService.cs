@@ -19,7 +19,7 @@ namespace ProductionManagementSystem.Core.Services
         Task TransferAsync(int taskId, bool full, int to, string message);
         string GetTaskStatusName(TaskStatusEnum item);
         Task ObtainItems(int taskId, List<ObtainedModel> obtainedModels);
-        Task<List<CDBTask>> AlsoCreatedAsync(CDBTask task);
+        Task<List<CDBTask>> AlsoCreatedAsync(CDBTask task, Dictionary<UniversalItem, int> quantityInStockDict=null);
     }
 
     public class CDBTaskService : BaseService<CDBTask, IUnitOfWork>, ICDBTaskService
@@ -49,12 +49,12 @@ namespace ProductionManagementSystem.Core.Services
             var logString = $"{_db.LogRepository.CurrentUser?.UserName} изменил статус задачи №{taskId} с {GetTaskStatusName(task.Status)} ";
             if (task.Status == TaskStatusEnum.Warehouse)
             {
-                await _deviceService.DecreaseQuantityAsync(task.TaskItemId, 1);
+                await _deviceService.DecreaseQuantityAsync(task.ItemId, 1);
             }
             
             if ((TaskStatusEnum) to == TaskStatusEnum.Warehouse)
             {
-                await _deviceService.IncreaseQuantityAsync(task.TaskItemId, 1);
+                await _deviceService.IncreaseQuantityAsync(task.ItemId, 1);
             }
             
             if (full)
@@ -93,7 +93,7 @@ namespace ProductionManagementSystem.Core.Services
             foreach (var obtainedModel in obtainedModels)
             {
                 var obtained = await _db.CdbObtainedRepository.GetByIdAsync(obtainedModel.ObtainedId);
-                ICalculableService calculableService = obtained.ObtainedItem.ItemType switch
+                ICalculableService calculableService = obtained.UsedItem.ItemType switch
                 {
                     CDBItemType.Device => _deviceService,
                     CDBItemType.PCB => _pcbService,
@@ -106,9 +106,120 @@ namespace ProductionManagementSystem.Core.Services
             
         }
 
-        public async Task<List<CDBTask>> AlsoCreatedAsync(CDBTask task)
+        public async Task<List<CDBTask>> AlsoCreatedAsync(CDBTask task, Dictionary<UniversalItem, int> quantityInStockDict = null)
         {
-            throw new NotImplementedException();
+            if (quantityInStockDict == null)
+            {
+                quantityInStockDict = new Dictionary<UniversalItem, int>();
+            }
+            
+            if (task.Id == 0)
+            {
+                var tasks = await GetAllAsync();
+                if (tasks.Count > 0)
+                {
+                    task.Id = tasks.Max(x => x.Id) + 1;
+                }
+                else
+                {
+                    task.Id = 1;
+                }
+            }
+
+            if (task.Item == null)
+            {
+                task.Item = task.ItemType switch
+                {
+                    CDBItemType.Device => new UniversalItem(await _deviceService.GetByIdAsync(task.ItemId)),
+                    CDBItemType.PCB => new UniversalItem(await _pcbService.GetByIdAsync(task.ItemId)),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            }
+            
+            var items = task.ItemType switch
+            {
+                CDBItemType.Device => (await _deviceService.GetByIdAsync(task.ItemId)).UsedItems,
+                CDBItemType.PCB => (await _pcbService.GetByIdAsync(task.ItemId)).UsedItems,
+                _ => new List<UsedItem>()
+            };
+
+            var result = new List<CDBTask> {task};
+
+            foreach (var item in items)
+            {
+                if (item.ItemType != CDBItemType.Entity)
+                {
+                    int quantityInStock;
+                    
+                    if (quantityInStockDict.ContainsKey(item.Item))
+                    {
+                        quantityInStock = quantityInStockDict[item.Item];
+                    }
+                    else
+                    {
+                        quantityInStock = item.ItemType switch
+                        {
+                            CDBItemType.Device => (await _deviceService.GetByIdAsync(item.ItemId))?.Quantity ?? 0,
+                            CDBItemType.PCB => (await _pcbService.GetByIdAsync(item.ItemId))?.Quantity ?? 0,
+                            _ => throw new ArgumentOutOfRangeException(),
+                        };
+
+                        quantityInStockDict[item.Item] = quantityInStock;
+                    }
+
+                    var needQuantity = item.Quantity - quantityInStock;
+                    if (needQuantity < 1)
+                    {
+                        needQuantity = 0;
+                        quantityInStock -= item.Quantity;
+                    }
+                    else
+                    {
+                        quantityInStock = 0;
+                    }
+
+                    quantityInStockDict[item.Item] = quantityInStock;
+                    for (int i = 0; i < needQuantity; i++)
+                    {
+                        result.AddRange(await AlsoCreatedAsync(new CDBTask()
+                        {
+                            Deadline = task.Deadline,
+                            Description = $"This task was created because of the creation of task №{task.Id}",
+                            ItemId = item.ItemId,
+                            ItemType = item.ItemType,
+                            ParentTaskId = task.Id,
+                            Id = task.Id + result.Count,
+                        }, quantityInStockDict));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public override async Task CreateAsync(CDBTask item)
+        {
+            var tasks = await AlsoCreatedAsync(item);
+            foreach (var task in tasks)
+            {
+                if (task.Obtained == null || task.Obtained.Count == 0)
+                {
+                    task.Obtained = await GenerateObtainedAsync(task);
+                }
+                
+                await base.CreateAsync(task);
+            }
+        }
+
+        private async Task<List<CDBObtained>> GenerateObtainedAsync(CDBTask task)
+        {
+            var usedItems = await _db.UsedItemRepository.GetByInItemIdAsync(task.ItemId, task.ItemType);
+            return usedItems.Select(x => new CDBObtained()
+            {
+                UsedItemId = x.Id,
+                TaskId = task.Id,
+                UsedItem = x,
+            }).ToList();
         }
 
         private TaskStatusEnum ToStatus(IEnumerable<string> roles)

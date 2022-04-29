@@ -1,5 +1,4 @@
 ﻿@using ProductionManagementSystem.Core.Models.Users
-@using ProductionManagementSystem.Core.Models.AltiumDB
 @model ProductionManagementSystem.WEB.Models.AltiumDB.DataListViewModel<ProductionManagementSystem.Core.Models.CDBTask>
 
 @{
@@ -59,11 +58,10 @@
   {
     <tr >
       <td>@Model.Data[i].Id</td>
-      <td>@Model.Data[i].TaskItem.ToString()</td>
-      <td>@Model.Data[i].StartDate</td>
-      <td>@Model.Data[i].EndDate</td>
-      <td>@Model.Data[i].Deadline</td>
-      <td>@Model.Data[i].Status</td>
+      <td><a class="bx--link" asp-controller="CDBTasks" asp-action="Details" asp-route-id="@Model.Data[i].Id">@Model.Data[i].Item.ToString()</a></td>
+      <td>@Model.Data[i].StartDate.ToString("dd.MM.yyyy")</td>
+      <td>@Model.Data[i].Deadline.ToString("dd.MM.yyyy")</td>
+      <td>@ProductionManagementSystem.Core.Models.Tasks.TaskStatusExtension.GetName(Model.Data[i].Status)</td>
       <td>@Model.Data[i].Description</td>
       @if (User.IsInRole(RoleEnum.AltiumDBEntitiesAdmin))
       {

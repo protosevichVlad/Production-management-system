@@ -1,0 +1,58 @@
+﻿@model List<ProductionManagementSystem.Core.Models.CDBObtained>
+
+<table class="bx--data-table  bx--data-table--compact  ">
+  <thead>
+  <tr>
+    <th >
+      <span class="bx--table-header-label">№</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Category</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Item</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Part Number</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Supplier</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Case</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Manufacturer</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Obtained</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label">Quantity</span>
+    </th>
+    <th >
+      <span class="bx--table-header-label hidden-print">Description</span>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  @for (int i = 0; Model != null && i < Model.Count; i++)
+  {
+        <tr>
+          <td>@(i + 1)</td>
+          <td>@Model[i].UsedItem.Item.Category</td>
+          <td>@Model[i].UsedItem.Item.Name</td>
+          <td>@Model[i].UsedItem.Item.PartNumber</td>
+          <td>@Model[i].UsedItem.Item.Supplier</td>
+          <td>@Model[i].UsedItem.Item.Case</td>
+          <td>@Model[i].UsedItem.Item.Manufacture</td>
+          <td>@Model[i].Quantity</td>
+          <td>@Model[i].UsedItem.Quantity</td>
+          <td class="hidden-print">
+            <span style="white-space: pre-line">@Model[i].UsedItem.Item.Description</span>
+          </td>
+        </tr>
+  }
+  </tbody>
+</table>
+

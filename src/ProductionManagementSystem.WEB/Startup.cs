@@ -93,6 +93,7 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<ICompDbDeviceService, CompDbDeviceService>();
             services.AddScoped<IImportService, ImportService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<ICDBTaskService, CDBTaskService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -125,6 +126,7 @@ namespace ProductionManagementSystem.WEB
 
             app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
             app.UseHttpsRedirection();
+            app.UseDefaultFiles();
             app.UseStaticFiles();
 
             app.UseRouting();
