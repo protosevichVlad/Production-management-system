@@ -47,14 +47,22 @@ namespace ProductionManagementSystem.Core.Services
         {
             var task = await GetByIdAsync(taskId);
             var logString = $"{_db.LogRepository.CurrentUser?.UserName} изменил статус задачи №{taskId} с {GetTaskStatusName(task.Status)} ";
+            ICalculableService calculableService = task.ItemType switch
+            {
+                CDBItemType.Device => _deviceService,
+                CDBItemType.PCB => _pcbService,
+                CDBItemType.Entity => _entityService,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            
             if (task.Status == TaskStatusEnum.Warehouse)
             {
-                await _deviceService.DecreaseQuantityAsync(task.ItemId, 1);
+                await calculableService.DecreaseQuantityAsync(task.ItemId, 1);
             }
             
             if ((TaskStatusEnum) to == TaskStatusEnum.Warehouse)
             {
-                await _deviceService.IncreaseQuantityAsync(task.ItemId, 1);
+                await calculableService.IncreaseQuantityAsync(task.ItemId, 1);
             }
             
             if (full)
@@ -62,7 +70,7 @@ namespace ProductionManagementSystem.Core.Services
             else
                 task.Status |= (TaskStatusEnum) to;
 
-            await base.UpdateAsync(task);
+            await _currentRepository.UpdateAsync(task);
 
             logString += $"на {GetTaskStatusName(task.Status)}" + 
                          (!string.IsNullOrWhiteSpace(message) ? $" с сообщением: {message}": string.Empty);
@@ -101,7 +109,10 @@ namespace ProductionManagementSystem.Core.Services
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
-                await calculableService.ChangeQuantityAsync(obtainedModel.ObtainedId, obtainedModel.Quantity);
+                await calculableService.ChangeQuantityAsync(obtained.UsedItem.ItemId, -obtainedModel.Quantity);
+                
+                obtained.Quantity += obtainedModel.Quantity;
+                await _db.SaveAsync();
             }
             
         }
@@ -218,7 +229,6 @@ namespace ProductionManagementSystem.Core.Services
             {
                 UsedItemId = x.Id,
                 TaskId = task.Id,
-                UsedItem = x,
             }).ToList();
         }
 

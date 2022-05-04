@@ -12,6 +12,7 @@ namespace ProductionManagementSystem.Core.Repositories
     public interface ICompDbDeviceRepository : IRepository<CompDbDevice>
     {
         Task<List<CompDbDevice>> SearchByKeyWordAsync(string s);
+        Task UpdateQuantityAsync(int deviceId, int newQuantity);
     }
     
     public class CompDbDeviceRepository : Repository<CompDbDevice>, ICompDbDeviceRepository
@@ -31,6 +32,12 @@ namespace ProductionManagementSystem.Core.Repositories
                                            || !string.IsNullOrEmpty(x.Variant) && x.Variant.Contains(s)
                                            || !string.IsNullOrEmpty(x.Description) && x.Description.Contains(s))
                 .ToListAsync();
+        }
+
+        public async Task UpdateQuantityAsync(int deviceId, int newQuantity)
+        {
+            var device = await _db.CDBDevices.FindAsync(deviceId);
+            device.Quantity = newQuantity;
         }
 
         public override async Task UpdateAsync(CompDbDevice item)

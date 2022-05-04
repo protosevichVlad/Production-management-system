@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Core.Models;
+using ProductionManagementSystem.Core.Models.Tasks;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.WEB.Models.AltiumDB;
 using ProductionManagementSystem.WEB.Models.Tasks;
@@ -65,6 +67,20 @@ namespace ProductionManagementSystem.WEB.Controllers
         {
             await _taskService.TransferAsync(id, model.Full, model.To, "");
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get(int id)
+        {
+            return View(await _taskService.GetByIdAsync(id));
+        }
+        
+        [HttpPost]
+        
+        public async Task<IActionResult> Get(int taskId, List<ObtainedModel> obtainedModels)
+        {
+            await _taskService.ObtainItems(taskId, obtainedModels);
+            return View(await _taskService.GetByIdAsync(taskId));
         }
     }
 }

@@ -45,10 +45,11 @@ namespace ProductionManagementSystem.Core.Services
             }
 
             var item = await _currentRepository.GetByIdAsync(id);
+            if (item == null) return;
             item.Quantity += quantity;
             if (item.Quantity < 0)
                 throw new NotImplementedException();
-            await _currentRepository.UpdateAsync(item);
+            await _db.CompDbDeviceRepository.UpdateQuantityAsync(item.Id, item.Quantity);
 
             await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()
                 {Difference = quantity, ElementId = item.Id, ElementType = ElementType.Device});

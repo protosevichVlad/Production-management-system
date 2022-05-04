@@ -9,6 +9,7 @@ using ProductionManagementSystem.Core.Data.EF;
 using ProductionManagementSystem.Core.Exceptions;
 using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
+using ProductionManagementSystem.Core.Repositories.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Repositories
 {
@@ -19,6 +20,7 @@ namespace ProductionManagementSystem.Core.Repositories
         Task<List<string>> GetValues(string column, string tableName);
         Task<List<string>> GetValues(string column, int? tableId=null);
         Task<List<EntityExt>> SearchByKeyWordAsync(string s, int? tableId=null);
+        Task UpdateQuantity(int id, int newQuantity);
     }
 
     public class EntityExtRepository : IEntityExtRepository
@@ -277,6 +279,12 @@ namespace ProductionManagementSystem.Core.Repositories
             {  
                 await _conn.CloseAsync(); 
             }
+        }
+
+        public async Task UpdateQuantity(int id, int newQuantity)
+        {
+            var entity = await _context.Entities.FindAsync(id);
+            entity.Quantity = newQuantity;
         }
 
         public async Task<List<string>> GetValues(string column, string tableName)

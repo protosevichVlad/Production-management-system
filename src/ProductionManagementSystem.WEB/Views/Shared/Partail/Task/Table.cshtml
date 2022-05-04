@@ -1,5 +1,16 @@
 ﻿@model List<ProductionManagementSystem.Core.Models.CDBObtained>
 
+<div class="bx--data-table-container " data-table>
+	<section class="bx--table-toolbar bx--table-toolbar--sm">
+    <div class="bx--toolbar-content">
+      @if (Model.Count > 0)
+      {
+        <button class="bx--btn bx--btn--sm bx--btn--primary bx--btn--sm" onclick="location.href = '@Url.Action("Get", "CDBTasks", new {Id = Model[0].TaskId})'">
+          Получить
+        </button>
+      }
+    </div>
+	</section>
 <table class="bx--data-table  bx--data-table--compact  ">
   <thead>
   <tr>
@@ -38,21 +49,22 @@
   <tbody>
   @for (int i = 0; Model != null && i < Model.Count; i++)
   {
-        <tr>
-          <td>@(i + 1)</td>
-          <td>@Model[i].UsedItem.Item.Category</td>
-          <td>@Model[i].UsedItem.Item.Name</td>
-          <td>@Model[i].UsedItem.Item.PartNumber</td>
-          <td>@Model[i].UsedItem.Item.Supplier</td>
-          <td>@Model[i].UsedItem.Item.Case</td>
-          <td>@Model[i].UsedItem.Item.Manufacture</td>
-          <td>@Model[i].Quantity</td>
-          <td>@Model[i].UsedItem.Quantity</td>
-          <td class="hidden-print">
-            <span style="white-space: pre-line">@Model[i].UsedItem.Item.Description</span>
-          </td>
-        </tr>
+    <tr>
+      <td>@(i + 1)</td>
+      <td>@Model[i].UsedItem.Item.Category</td>
+      <td><a href="@Model[i].UsedItem.Item.Path" target="_blank">@Model[i].UsedItem.Item.Name</a></td>
+      <td>@Model[i].UsedItem.Item.PartNumber</td>
+      <td>@Model[i].UsedItem.Item.Supplier</td>
+      <td>@Model[i].UsedItem.Item.Case</td>
+      <td>@Model[i].UsedItem.Item.Manufacture</td>
+      <td>@Model[i].Quantity</td>
+      <td>@Model[i].UsedItem.Quantity</td>
+      <td class="hidden-print">
+        <span style="white-space: pre-line">@Model[i].UsedItem.Item.Description</span>
+      </td>
+    </tr>
   }
   </tbody>
 </table>
+</div>
 

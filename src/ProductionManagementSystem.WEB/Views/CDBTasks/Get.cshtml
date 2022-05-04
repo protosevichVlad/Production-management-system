@@ -1,0 +1,147 @@
+﻿@model ProductionManagementSystem.Core.Models.CDBTask
+
+@{
+  ViewBag.Title = "title";
+  Layout = "_AltiumDBLayout";
+}
+@{
+  // TODO: add to component
+}
+
+<nav class="bx--breadcrumb" aria-label="breadcrumb">
+  <div class="bx--breadcrumb-item">
+    <a href="@Url.Action("Index")" class="bx--link">Задачи</a>
+  </div>
+  <div class="bx--breadcrumb-item">
+    <a href="@Url.Action("Details", new {Id = Model.Id})" class="bx--link">Задача №@Model.Id</a>
+  </div>
+  <div class="bx--breadcrumb-item bx--breadcrumb-item--current">
+    <a href="#" class="bx--link">Получить</a>
+  </div>
+</nav>
+
+<form method="post">
+<input type="hidden" name="taskId" value="@Model.Id">
+<div class="bx--data-table-container " data-table>
+  <section class="bx--table-toolbar bx--table-toolbar--sm">
+    <div class="bx--toolbar-content">
+      <button class="bx--btn bx--btn--sm bx--btn--tertiary bx--btn--sm" type="button" onclick="receiveAll()">
+        Получить все
+      </button>
+      <button class="bx--btn bx--btn--sm bx--btn--primary bx--btn--sm" type="submit">
+        Получить
+      </button>
+    </div>
+  </section>
+  <table class="bx--data-table  bx--data-table--compact  ">
+    <thead>
+    <tr>
+      <th >
+        <span class="bx--table-header-label">№</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Category</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Item</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Part Number</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Supplier</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Case</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Manufacturer</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Obtained</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label">Quantity</span>
+      </th>
+      <th ></th>
+      <th >
+        <span class="bx--table-header-label hidden-print">Description</span>
+      </th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (int i = 0; Model.Obtained != null && i < Model.Obtained.Count; i++)
+    {
+      <tr>
+        <input type="hidden" name="obtainedModels[@i].ObtainedId" value="@Model.Obtained[i].Id"/>
+        <td>@(i + 1)</td>
+        <td>@Model.Obtained[i].UsedItem.Item.Category</td>
+        <td><a href="@Model.Obtained[i].UsedItem.Item.Path" target="_blank">@Model.Obtained[i].UsedItem.Item.Name</a></td>
+        <td>@Model.Obtained[i].UsedItem.Item.PartNumber</td>
+        <td>@Model.Obtained[i].UsedItem.Item.Supplier</td>
+        <td>@Model.Obtained[i].UsedItem.Item.Case</td>
+        <td>@Model.Obtained[i].UsedItem.Item.Manufacture</td>
+        <td>@Model.Obtained[i].Quantity</td>
+        <td>@Model.Obtained[i].UsedItem.Quantity</td>
+        <td>@Model.Obtained[i].UsedItem.Item.Quantity</td>
+        <td class="hidden-print">
+          <span style="white-space: pre-line">@Model.Obtained[i].UsedItem.Item.Description</span>
+        </td>
+        <td>
+          <div class="bx--form-item">
+            <div data-numberinput class=" bx--number bx--nu">
+              <div class="bx--number__input-wrapper">
+                <input id="number-input" type="number" name="obtainedModels[@i].Quantity" min="@(-Model.Obtained[i].Quantity)" max="@(Model.Obtained[i].UsedItem.Quantity < Model.Obtained[i].UsedItem.Item.Quantity ? Model.Obtained[i].UsedItem.Quantity : Model.Obtained[i].UsedItem.Item.Quantity)" value="0">
+                <div class="bx--number__controls">
+                  <button aria-label="increase number input" class="bx--number__control-btn up-icon" type="button" aria-live="polite" aria-atomic="true">
+                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true"><path d="M0 4L4 0 8 4z"></path></svg>
+                  </button>
+                  <button aria-label="decrease number input" class="bx--number__control-btn down-icon" type="button" aria-live="polite" aria-atomic="true">
+                    <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true"><path d="M8 0L4 4 0 0z"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    }
+    </tbody>
+  </table>
+</div>
+</form>
+@section Scripts
+{
+  <script>
+    function receiveAll(){
+        let trs = document.querySelectorAll('table tbody tr')
+        for (let i = 0; i < trs.length; i++)
+        {
+            let inDevice = getQuantityInDevice(trs[i]);
+            let qt = getQuantity(trs[i]);
+            let obt = getObtained(trs[i]);
+            let value = ((inDevice - obt) < qt ? (inDevice - obt) : qt);
+            if (value < 0) value = 0;
+            setObtained(trs[i], value)
+        }
+    }
+    function getQuantityInDevice(tr)
+    {
+        return Number(tr.children[9].innerText);
+    }
+    function getQuantity(tr)
+    {
+        return Number(tr.children[10].innerText);
+    }
+    function getObtained(tr)
+    {
+        return Number(tr.children[8].innerText);
+    }
+    
+    function setObtained(tr, value)
+    {
+        return tr.querySelector('#number-input').value = value;
+    }
+  </script>
+}

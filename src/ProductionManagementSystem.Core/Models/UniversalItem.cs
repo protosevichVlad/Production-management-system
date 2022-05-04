@@ -17,6 +17,7 @@ namespace ProductionManagementSystem.Core.Models
         public string Supplier { get; set; }
         public string Case { get; set; }
         public int Quantity { get; set; }
+        public string Path { get; set; }
 
         public UniversalItem() {}
 
@@ -60,6 +61,7 @@ namespace ProductionManagementSystem.Core.Models
             ItemType = CDBItemType.PCB;
             Case = "";
             Supplier = "";
+            Path = "/pcb/details/" + pcb.Id;
             Origin = pcb;
         }
         
@@ -76,6 +78,7 @@ namespace ProductionManagementSystem.Core.Models
             ItemType = CDBItemType.Device;
             Case = "";
             Supplier = "";
+            Path = "/CompDbDevices/details/" + device.Id;
             Origin = device;
         }
 
@@ -92,6 +95,7 @@ namespace ProductionManagementSystem.Core.Models
             ItemType = CDBItemType.Entity;
             Case = entityExt.Case;
             Supplier = entityExt.Supplier;
+            Path = "/entities/details/" + entityExt.KeyId;
             Origin = entityExt;
         }
 

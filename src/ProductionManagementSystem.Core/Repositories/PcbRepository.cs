@@ -14,6 +14,7 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
     {
         Task<List<Pcb>> GetProjectsWithEntityAsync(string partNumber);
         Task<List<Pcb>> SearchByKeyWordAsync(string keyWord);
+        Task UpdateQuantityAsync(int entityId, int quantity);
     }
     
     public class PcbRepository : Repository<Pcb>, IPcbRepository
@@ -30,9 +31,18 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
         {
             var entity = await _db.Entities.FirstOrDefaultAsync(x => x.PartNumber == partNumber);
             if (entity == null) return new List<Pcb>();
-            return await _dbSet.Include(x => x.UsedItems)
-                .Where(x => x.UsedItems.Count(x => x.ItemId == entity.KeyId) > 0)
-                .ToListAsync();
+            var pcbIds = await _db.UsedItems.Where(x =>
+                x.ItemType == CDBItemType.Entity && x.ItemId == entity.KeyId && x.InItemType == CDBItemType.PCB).Select(x => x.InItemId).ToListAsync();
+
+            var result = new List<Pcb>();
+            foreach (var id in pcbIds)
+            {
+                var pcb = await GetByIdAsync(id);
+                if (pcb != null)
+                    result.Add(pcb);
+            }
+
+            return result;
         }
 
         public override async Task<Pcb> GetByIdAsync(int id)
@@ -48,6 +58,12 @@ namespace ProductionManagementSystem.Core.Repositories.AltiumDB
             if (string.IsNullOrEmpty(keyWord))
                 return new List<Pcb>();
             return await _dbSet.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(keyWord)).ToListAsync();
+        }
+
+        public async Task UpdateQuantityAsync(int entityId, int quantity)
+        {
+            var pcb = await _db.Projects.FindAsync(entityId);
+            pcb.Quantity = quantity;
         }
 
         public override async Task UpdateAsync(Pcb item)
