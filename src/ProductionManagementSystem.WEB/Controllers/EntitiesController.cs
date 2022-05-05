@@ -18,17 +18,20 @@ namespace ProductionManagementSystem.WEB.Controllers
     {
         private readonly IEntityExtService _entityExtService;
         private readonly IPcbService _pcbService;
+        private readonly ICompDbDeviceService _deviceService;
         private readonly IImportService _importService;
         private readonly ITableService _tableService;
-        private const string USING_IN_PROJECTS = "Using in projects";
+        private const string USING_IN_PCB = "Используется в PCB";
+        private const string USING_IN_DEVICE = "Используется в приборе";
         
 
-        public EntitiesController(IEntityExtService entityExtService, IImportService importService, ITableService tableService, IPcbService pcbService)
+        public EntitiesController(IEntityExtService entityExtService, IImportService importService, ITableService tableService, IPcbService pcbService, ICompDbDeviceService deviceService)
         {
             _entityExtService = entityExtService;
             _importService = importService;
             _tableService = tableService;
             _pcbService = pcbService;
+            _deviceService = deviceService;
         }
 
         public async Task<IActionResult> Index(string orderBy, Dictionary<string, List<string>> filter, 
@@ -88,17 +91,32 @@ namespace ProductionManagementSystem.WEB.Controllers
             data = data
                 .Where(x =>
                 {
-                    bool Predicate(string y) => _pcbService.GetPcbWithEntityAsync(x.PartNumber).Result.Any(p => p.Id == int.Parse(y));
-                    return !filter.ContainsKey(USING_IN_PROJECTS) ||
-                           filter[USING_IN_PROJECTS].Any(Predicate
-                           );
+                    bool Predicate(string y) => _pcbService.UsingInPcb(int.Parse(y), x.KeyId).Result;
+                    return !filter.ContainsKey(USING_IN_PCB) ||
+                           filter[USING_IN_PCB].Any(Predicate);
                 }).ToList();
             
             filters.Add(new FilterViewModel()
             {
-                FilterName = USING_IN_PROJECTS,
+                FilterName = USING_IN_PCB,
                 Values = (await _pcbService.GetAllAsync())
-                    .Select(x => ( x.Id.ToString(), x.ToString(), filter.ContainsKey(USING_IN_PROJECTS) && filter[USING_IN_PROJECTS].Contains(x.Id.ToString())))
+                    .Select(x => ( x.Id.ToString(), x.ToString(), filter.ContainsKey(USING_IN_PCB) && filter[USING_IN_PCB].Contains(x.Id.ToString())))
+                    .ToList()
+            });
+            
+            data = data
+                .Where(x =>
+                {
+                    bool Predicate(string y) => _deviceService.UsingInDevice(int.Parse(y), x.KeyId).Result;
+                    return !filter.ContainsKey(USING_IN_DEVICE) ||
+                           filter[USING_IN_DEVICE].Any(Predicate);
+                }).ToList();
+            
+            filters.Add(new FilterViewModel()
+            {
+                FilterName = USING_IN_DEVICE,
+                Values = (await _deviceService.GetAllAsync())
+                    .Select(x => ( x.Id.ToString(), x.ToString(), filter.ContainsKey(USING_IN_DEVICE) && filter[USING_IN_DEVICE].Contains(x.Id.ToString())))
                     .ToList()
             });
             
@@ -164,6 +182,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             EntityExt entityExt = await _entityExtService.GetByIdAsync(id);
+            entityExt.Table = await _tableService.GetByIdAsync(entityExt.TableId);
             await AddEntityHintsAsync(entityExt.TableId);
             return View("Create", entityExt);
         }

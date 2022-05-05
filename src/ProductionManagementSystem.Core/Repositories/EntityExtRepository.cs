@@ -82,14 +82,15 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public async Task<EntityExt> GetByIdAsync(int id)
         {
-            var tables = await _context.Tables.Include(x => x.TableColumns).ToListAsync();
+            var entity = await _context.Entities.FindAsync(id);
+            if (entity == null) return null;
+            var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.Id == entity.TableId);
             try
             {
                 await _conn.OpenAsync();
                 var cmd = _conn.CreateCommand();
-                cmd.CommandText = string.Join(" UNION ",
-                    tables.Select(table => $"{GetSqlSelectAllColumnsEntityExt(table)} WHERE `KeyId`= '{id}'"));
-                return (await GetListEntityExt(cmd)).FirstOrDefault();
+                cmd.CommandText = $"{GetSqlSelectAllColumnsEntityExt(table, true)} WHERE `KeyId`= '{id}'";
+                return (await GetListEntityExt(cmd, table)).FirstOrDefault();
             }
             catch(MySqlException ex)
             {

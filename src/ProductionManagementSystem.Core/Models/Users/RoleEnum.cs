@@ -12,5 +12,6 @@
         public const string SuperAdmin = "Супер админ";
         public const string AltiumDBTablesAdmin = "AltiumDB_TabelsAdmin";
         public const string AltiumDBEntitiesAdmin = "AltiumDB_EntitiesAdmin";
+        public const string Engineer = "Инженер";
     }
 }

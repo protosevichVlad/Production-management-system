@@ -2,7 +2,7 @@
 
 @{
   var isEdit = Model != 0;
-  ViewBag.Title = isEdit ? "Edit" : "Create" + " device";
+  ViewBag.Title = isEdit ? "Изменение" : "Создание" + " прибора";
   Layout = "_AltiumDBLayout";
 }
 
@@ -10,10 +10,10 @@
 <div class="bx--grid">
   <div class="bx--row bx--row-padding">
     <div class="bx--col-sm-3">
-      <h1>@(isEdit ? "Edit" : "Create" + " device")</h1>
+      <h1>@ViewBag.Title</h1>
     </div>
     <div class="bx--col-sm-1" style="display: flex; justify-content: end">
-      <button class="bx--btn bx--btn--primary" v-on:click="saveDevice">Save</button>
+      <button class="bx--btn bx--btn--primary" v-on:click="saveDevice">Сохранить</button>
     </div>
   </div>
   <div class="bx--row bx--row-padding">
@@ -21,17 +21,17 @@
       <div class="bx--grid">
         <div class="bx--row">
           <div class="bx--col-sm-3">
-            <label for="text-input-name" class="bx--label">Name</label>
+            <label for="text-input-name" class="bx--label">Наименование</label>
             <input id="text-input-name" type="text" class="bx--text-input" placeholder="Item" v-model="device.name">
           </div>
           <div class="bx--col-sm-1">
-            <label for="text-input-variant" class="bx--label">Variant</label>
+            <label for="text-input-variant" class="bx--label">Версия</label>
             <input id="text-input-variant" type="text" class="bx--text-input" placeholder="Item" v-model="device.variant">
           </div>
         </div>
         <div class="bx--row">
           <div class="bx--col-sm--auto">
-            <label for="text-area-Description" class="bx--label">Description</label>
+            <label for="text-area-Description" class="bx--label">Описание</label>
             <textarea id="text-area-Description" class="bx--text-area"
             rows="4" placeholder="Placeholder text." v-model="device.description"></textarea>
           </div>
@@ -42,8 +42,8 @@
       <div class="bx--row">
         <div class="bx--col-sm-2">
           <div class="bx--form-item">
-            <strong class="bx--file--label">Image</strong>
-            <p class="bx--label-description">Only .png files.</p>
+            <strong class="bx--file--label">Изображение </strong>
+            <p class="bx--label-description">.png файл.</p>
             <div class="bx--file" data-file>
               <label for="file-importer-image" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
               <input type="file" class="bx--file-input" id="file-importer-image" v-on:change="uploadFile('ImageUploader')" ref="ImageUploader" data-file-uploader data-target="[data-file-container]" multiple/>
@@ -54,8 +54,8 @@
         </div>
         <div class="bx--col-sm-2">
           <div class="bx--form-item">
-            <strong class="bx--file--label">3D model</strong>
-            <p class="bx--label-description">Only .stl files.</p>
+            <strong class="bx--file--label">3D модель</strong>
+            <p class="bx--label-description">.stl файл.</p>
             <div class="bx--file" data-file>
               <label for="file-importer-treed-d" class="bx--file-btn bx--btn bx--btn--primary" role="button" tabindex="0">Add file</label>
               <input type="file" class="bx--file-input" id="file-importer-treed-d" v-on:change="uploadFile('ThreeDModelUploader')" ref="ThreeDModelUploader" data-file-uploader data-target="[data-file-container]" multiple/>
@@ -138,8 +138,8 @@
                 <button class="bx--overflow-menu-options__btn" v-on:click="() => showEditEntityInDeviceModal(usedItem)">
                   <div class="bx--overflow-menu-options__option-content">
                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                      <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
-                    </svg> Edit
+                      <path d="M1 13H15V14H1zM12.7 4.5c.4-.4.4-1 0-1.4 0 0 0 0 0 0l-1.8-1.8c-.4-.4-1-.4-1.4 0 0 0 0 0 0 0L2 8.8V12h3.2L12.7 4.5zM10.2 2L12 3.8l-1.5 1.5L8.7 3.5 10.2 2zM3 11V9.2l5-5L9.8 6l-5 5H3z"></path>
+                    </svg> Изменить
                   </div>
                 </button>
               </li>
@@ -148,7 +148,7 @@
                   <div class="bx--overflow-menu-options__option-content">
                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                       <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
-                    </svg> Delete
+                    </svg> Удалить
                   </div>
                 </button>
               </li>
@@ -161,7 +161,7 @@
   </div>
   <div class="bx--row-padding">
     <div class="bx--col-sm-4" style="display: flex; justify-content: end">
-      <button class="bx--btn bx--btn--primary" v-on:click="saveDevice">Save</button>
+      <button class="bx--btn bx--btn--primary" v-on:click="saveDevice">Сохранить</button>
     </div>
   </div>
 </div>

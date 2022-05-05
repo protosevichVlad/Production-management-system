@@ -15,6 +15,7 @@ namespace ProductionManagementSystem.Core.Services
         Task<List<CompDbDevice>> SearchByKeyWordAsync(string s);
         Task DeleteByIdAsync(int id);
         Task<CompDbDevice> GetLatest();
+        Task<bool> UsingInDevice(int deviceId, int entityId);
     }
 
     public class CompDbDeviceService : BaseService<CompDbDevice, IUnitOfWork>, ICompDbDeviceService
@@ -48,7 +49,7 @@ namespace ProductionManagementSystem.Core.Services
             if (item == null) return;
             item.Quantity += quantity;
             if (item.Quantity < 0)
-                throw new NotImplementedException();
+                return;
             await _db.CompDbDeviceRepository.UpdateQuantityAsync(item.Id, item.Quantity);
 
             await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()
@@ -82,6 +83,12 @@ namespace ProductionManagementSystem.Core.Services
             var devices = await _currentRepository.GetAllAsync();
             var deviceId = devices.FirstOrDefault(x => x.Id == devices.Max(y => y.Id)).Id;
             return await GetByIdAsync(deviceId);
+        }
+
+        public async Task<bool> UsingInDevice(int deviceId, int entityId)
+        {
+            return (await _db.UsedItemRepository.GetByDeviceIdAsync(deviceId)).Any(x =>
+                x.ItemId == entityId && x.ItemType == CDBItemType.Entity);
         }
 
         public override async Task CreateAsync(CompDbDevice item)

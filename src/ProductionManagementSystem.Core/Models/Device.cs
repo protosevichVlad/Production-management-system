@@ -23,6 +23,11 @@ namespace ProductionManagementSystem.Core.Models
       [NotMapped]
       public List<UsedItem> UsedItems { get; set; }
       public string ThreeDModelPath { get; set; }
+
+      public override string ToString()
+      {
+         return Name + " " + Variant;
+      }
    }
 
    public class CreateEditDevice

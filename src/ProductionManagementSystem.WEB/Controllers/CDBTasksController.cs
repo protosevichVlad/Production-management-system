@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.Tasks;
 using ProductionManagementSystem.Core.Services;
+using ProductionManagementSystem.WEB.Models;
 using ProductionManagementSystem.WEB.Models.AltiumDB;
 using ProductionManagementSystem.WEB.Models.Tasks;
 using Task = ProductionManagementSystem.Core.Models.Tasks.Task;
@@ -20,11 +21,25 @@ namespace ProductionManagementSystem.WEB.Controllers
             _taskService = taskService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string orderBy, string q, 
+            int? itemPerPage, int? page)
         {
+            itemPerPage ??= 20;
+            page ??= 1;
+            
+            var data = await _taskService.GetAllAsync();
+            int totalItems = data.Count();
+            data = data.Skip(itemPerPage.Value * (page.Value - 1)).Take(itemPerPage.Value).ToList();
+            
             return View(new DataListViewModel<CDBTask>()
             {
-                Data = await _taskService.GetAllAsync(),
+                Data = data,
+                Pagination = new PaginationViewModel()
+                {
+                    CurrentPage = page.Value,
+                    TotalItems = totalItems,
+                    ItemPerPage = itemPerPage.Value
+                }
             });
         }
 

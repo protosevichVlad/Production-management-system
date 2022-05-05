@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <title>@ViewData["Title"] - AltiumDB</title>
+  <title>@ViewData["Title"] - CompDB</title>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/vuex"></script>
   @* <link rel="stylesheet" href="~/css/carbon-components.min.css"/> *@
@@ -17,17 +17,17 @@
     <ul class="bx--header__menu-bar" aria-label="Platform Name">
       <li>
         <a class="bx--header__menu-item" asp-controller="Tables" asp-action="Index" tabindex="0">
-          Tables
+          Таблицы
         </a>
       </li>
       <li>
         <a class="bx--header__menu-item" asp-controller="Entities" asp-action="Index" tabindex="0">
-          Entities
+          Компоненты
         </a>
       </li>
       <li>
         <a class="bx--header__menu-item" asp-controller="Entities" asp-action="ChangeQuantity" tabindex="0">
-          Add/Get entities
+          Добавить/Получить компоненты
         </a>
       </li>
       <li>
@@ -37,12 +37,12 @@
       </li>
       <li>
         <a class="bx--header__menu-item" asp-controller="CompDbDevices" asp-action="Index" tabindex="0">
-          Devices
+          Приборы
         </a>
       </li>
       <li>
         <a class="bx--header__menu-item" asp-controller="CDBTasks" asp-action="Index" tabindex="0">
-          Tasks
+          Задачи
         </a>
       </li>
     </ul>

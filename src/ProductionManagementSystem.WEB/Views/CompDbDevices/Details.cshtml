@@ -29,28 +29,28 @@
             <li class="bx--overflow-menu-options__option">
               <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('devices', 'add', @Model.Id)">
                 <span class="bx--overflow-menu-options__option-content">
-                  Add
+                  Добавить на склад
                 </span>
               </button>
             </li>
             <li class="bx--overflow-menu-options__option">
               <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('devices', 'get', @Model.Id)">
                 <span class="bx--overflow-menu-options__option-content">
-                  Get
+                  Получить со склада
                 </span>
               </button>
             </li>
             <li class="bx--overflow-menu-options__option  ">
               <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="location.href='/compDbDevices/edit/@Model.Id'">
                 <span class="bx--overflow-menu-options__option-content">
-                  Edit
+                  Изменить
                 </span>
               </button>
             </li>
             <li class="bx--overflow-menu-options__option  ">
               <button class="bx--overflow-menu-options__btn" role="menuitem" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting a project', 'Do you really want to delete this project', () => deleteDevice(@Model.Id, () => location.href='@Url.Action("Index")'))">
                 <span class="bx--overflow-menu-options__option-content">
-                  Delete
+                  Удалить
                 </span>
               </button>
             </li>
@@ -71,16 +71,16 @@
       <div class="bx--grid">
         <div class="bx--row">
           <div class="bx--col-lg-5">
-            <strong>Print version</strong>
+            <strong>Версия для печати</strong>
           </div>
           <div class="bx--col-lg-7">
-            <a asp-controller="Pcb" asp-action="PrintVersion" asp-route-id="@Model.Id" target="_blank">Print version</a>
+            <a asp-controller="Pcb" asp-action="PrintVersion" asp-route-id="@Model.Id" target="_blank">Версия для печати</a>
           </div>
         </div>
         <div class="bx--row" style="height: 10px"></div>
         <div class="bx--row">
           <div class="bx--col-lg-5">
-            <strong>Quantity</strong>
+            <strong>Количество</strong>
           </div>
           <div class="bx--col-lg-7">
             <span style="white-space: pre-line" id="quantity-value">@Model.Quantity</span>
@@ -89,7 +89,7 @@
         <div class="bx--row" style="height: 10px"></div>
         <div class="bx--row">
           <div class="bx--col-lg-5">
-            <strong>Description</strong>
+            <strong>Описание</strong>
           </div>
           <div class="bx--col-lg-7">
             @Model.Description

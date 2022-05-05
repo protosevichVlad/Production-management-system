@@ -137,7 +137,7 @@ namespace ProductionManagementSystem.Core.Services
             
             entity.Quantity += quantity;
             if (entity.Quantity < 0)
-                throw new NotImplementedException();
+                return;
             await _db.EntityExtRepository.UpdateQuantity(entity.KeyId, entity.Quantity);
 
             await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()

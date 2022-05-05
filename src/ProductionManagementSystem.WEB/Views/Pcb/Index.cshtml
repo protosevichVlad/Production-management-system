@@ -15,14 +15,14 @@
 <div class="bx--data-table-container " data-table>
   <form method="get" id="tableFiltersForm">
     <div class="bx--data-table-header">
-      <h4 class="bx--data-table-header__title">PCBs</h4>
+      <h4 class="bx--data-table-header__title">PCB</h4>
     </div>
     <!-- Toolbar Content -->
     <section class="bx--table-toolbar ">
       <div class="bx--toolbar-content">
         <partial name="Partail/CarbonUIComponents/SearchInTable"/>
-        <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" onclick="location.href='/pcb/Create'">
-          Add PCB
+        <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" onclick="location.href='@Url.Action("Create")'">
+          Создать PCB
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
             <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
           </svg>
@@ -69,7 +69,7 @@
                   <div class="bx--overflow-menu-options__option-content">
                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                       <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
-                    </svg> Delete
+                    </svg> Удалить
                   </div>
                 </button>
               </li>

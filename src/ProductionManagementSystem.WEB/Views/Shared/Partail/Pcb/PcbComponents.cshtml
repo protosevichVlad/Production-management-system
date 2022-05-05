@@ -63,10 +63,10 @@
               @Model.UsedItems[i].Designator
             </td>
             <td >
-              @Model.UsedItems[i].Item.Name
+              <a href="@Model.UsedItems[i].Item.Path" target="_blank">@Model.UsedItems[i].Item.Name</a>
             </td>
             <td >
-              <a href="/Entities/Details/@Model.UsedItems[i].Item.Id" target="_blank">@Model.UsedItems[i].Item.PartNumber</a>
+              @Model.UsedItems[i].Item.PartNumber
             </td>
             <td >
               @Model.UsedItems[i].Item.Supplier

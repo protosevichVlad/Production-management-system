@@ -41,123 +41,39 @@
   <tbody>
   @for (int i = 0; Model.UsedItems != null && i < Model.UsedItems.Count; i++)
   {
-    switch (Model.UsedItems[i].ItemType)
-    {
-      case CDBItemType.Entity:
-        var entity = Model.UsedItems[i].Item.Origin as EntityExt;
-        <tr>
-          <td>
-            @(i + 1)
-          </td>
-          @if (entity == null)
-          {
-            <td></td>
-            <td >
-              @Model.UsedItems[i].Designator
-            </td>
-            <td colspan="5">Item not found</td>
-            <td >
-              @Model.UsedItems[i].Quantity
-            </td>
-            <td class="hidden-print"></td>
-          }
-          else
-          {
-            <td >
-              @entity.Category
-            </td>
-            <td >
-              @Model.UsedItems[i].Designator
-            </td>
-            <td >
-              @entity.Item
-            </td>
-            <td >
-              <a href="/Entities/Details/@entity.KeyId" target="_blank">@entity.PartNumber</a>
-            </td>
-            <td >
-              @entity.Supplier
-            </td>
-            <td >
-              @entity.Case
-            </td>
-            <td >
-              @entity.Manufacturer
-            </td>
-            <td >
-              @Model.UsedItems[i].Quantity
-            </td>
-            <td class="hidden-print">
-              <span style="white-space: pre-line">@entity.Description</span>
-            </td>
-          }
-        </tr>
-        break;
-      case CDBItemType.PCB:
-        var pcb = Model.UsedItems[i].Item.Origin as Pcb;
-        <tr>
-          <td>
-            @(i + 1)
-          </td>
-          <td >
-            PCB
-          </td>
-          <td >
-            @Model.UsedItems[i].Designator
-          </td>
-          <td >
-            @pcb.Name
-          </td>
-          <td >
-            @pcb.Variant
-          </td>
-          <td >
-          </td>
-          <td >
-          </td>
-          <td >
-          </td>
-          <td >
-            @Model.UsedItems[i].Quantity
-          </td>
-          <td class="hidden-print">
-            <span style="white-space: pre-line">@pcb.Description</span>
-          </td>
-        </tr>
-        break;
-      case CDBItemType.Device:
-        var device = Model.UsedItems[i].Item.Origin as CompDbDevice;
-        <tr>
-          <td>
-            @(i + 1)
-          </td>
-          <td >
-            Device
-          </td>
-          <td >
-            @Model.UsedItems[i].Designator
-          </td>
-          <td >
-            @device.Name
-          </td>
-          <td >
-            @device.Variant
-          </td>
-          <td >
-          </td>
-          <td >
-          </td>
-          <td >
-          </td>
-          <td >
-            @Model.UsedItems[i].Quantity
-          </td>
-          <td class="hidden-print">
-            <span style="white-space: pre-line">@device.Description</span>
-          </td>
-        </tr>
-        break;
-    }
+      <tr>
+        <td>
+          @(i + 1)
+        </td>
+        <td >
+          @Model.UsedItems[i].Item.Category
+        </td>
+        <td >
+          @Model.UsedItems[i].Designator
+        </td>
+        <td >
+          <a href="@Model.UsedItems[i].Item.Path" target="_blank">@Model.UsedItems[i].Item.Name</a>
+        </td>
+        <td >
+          @Model.UsedItems[i].Item.PartNumber
+        </td>
+        <td >
+          @Model.UsedItems[i].Item.Supplier
+        </td>
+        <td >
+          @Model.UsedItems[i].Item.Case
+        </td>
+        <td >
+          @Model.UsedItems[i].Item.Manufacture
+        </td>
+        <td >
+          @Model.UsedItems[i].Quantity
+        </td>
+        <td class="hidden-print">
+          <span style="white-space: pre-line">@Model.UsedItems[i].Item.Description</span>
+        </td>
+      </tr>
+       
   }
   </tbody>
 </table>

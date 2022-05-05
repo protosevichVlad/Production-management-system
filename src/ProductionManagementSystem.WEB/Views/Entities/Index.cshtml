@@ -3,9 +3,18 @@
 @model ProductionManagementSystem.WEB.Models.AltiumDB.EntityDataListViewModel
 
 @{
-  ViewBag.Title = Model.Table?.DisplayName ?? "All entities";
+  ViewBag.Title = Model.Table?.DisplayName ?? "Все компоненты";
   Layout = "_AltiumDBLayout";
-  var fields = Model.Table?.TableColumns?.Where(x => x.Display)?.Select(x => x.ColumnName) ?? AltiumDbEntity.Fields;
+  List<string> columns = Model.Table?.TableColumns?.Where(x => x.Display)?.Select(x => x.ColumnName).ToList() ?? AltiumDbEntity.Fields;
+  columns = columns.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x)).ToList();
+  columns.AddRange(new List<string>(){"Quantity"});
+  
+  if (!User.IsInRole(RoleEnum.Engineer))
+    columns = columns.Where(x => !x.Contains("Ref", StringComparison.CurrentCultureIgnoreCase)).ToList();
+
+  if (User.Identity is {IsAuthenticated: false })
+    columns = columns.Where(x => !x.Contains("Quantity", StringComparison.CurrentCultureIgnoreCase)).ToList();
+  
 }
 
 <div class="bx--data-table-container " data-table>
@@ -51,13 +60,13 @@
               <div class="bx--col--auto" style="display: flex; justify-content: end">
                 <button
                   class="bx--btn bx--btn--tertiary bx--btn--sm"
-                  type="reset" onclick="location.href ='/Entities@(Model.Table != null ? $"?tableId={Model.Table.Id}" : "")'">
-                  Reset All
+                  type="reset" onclick="location.href ='@Url.Action("Index", Model.Table != null ? new {tableId = Model.Table.Id} : new {})'">
+                  Сбросить фильтр
                 </button>
                 <button
                   class="bx--btn bx--btn--tertiary bx--btn--sm"
                   type="submit">
-                  Apply filters
+                  Применить фильтр
                 </button>
               </div>
             </div>
@@ -72,8 +81,8 @@
       <partial name="Partail/CarbonUIComponents/SearchInTableSm"></partial>
       @if (User.IsInRole(RoleEnum.AltiumDBEntitiesAdmin))
       {
-        <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" onclick="location.href='/Entities/Create'">
-          Add entity
+        <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" onclick="location.href='@Url.Action("Create", Model.Table != null ? new {tableId = Model.Table.Id} : new {})'">
+          Создать компонент
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
             <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
           </svg>
@@ -89,7 +98,7 @@
   <thead>
   <tr>
     <th></th>
-    @foreach (var columnName in fields.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x)))
+    @foreach (var columnName in columns)
     {
       <partial name="Partail/CarbonUIComponents/SortableTh" model="columnName"/>
     }
@@ -107,12 +116,11 @@
         <img src="@Model.Data[i].ImageUrl" class="altiumdb--entity-table--image"/>
       </td>
 
-      @foreach (var columnName in fields.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x)))
+      @foreach (var columnName in columns)
       {
         <td>
-          @if (columnName == "Part Number")
+          @if (columnName == "Item")
           {
-            // <a href="/AltiumDB/Tables/@Model.Ex.TableName/@Model.Data[i]["Part Number"]">@Model[i][columnName]</a>
             <a asp-action="Details" asp-route-id="@Model.Data[i].KeyId" target="_blank">@Model.Data[i][columnName]</a>
           }
           else
@@ -130,11 +138,11 @@
             </svg>
             <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
               <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                <button class="bx--overflow-menu-options__btn" onclick="location.href='/Entities/Edit/@Model.Data[i].KeyId'">
+                <button class="bx--overflow-menu-options__btn" onclick="location.href='@Url.Action("Edit", new {id = Model.Data[i].KeyId})'">
                   <div class="bx--overflow-menu-options__option-content">
                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                       <path d="M1 13H15V14H1zM12.7 4.5c.4-.4.4-1 0-1.4 0 0 0 0 0 0l-1.8-1.8c-.4-.4-1-.4-1.4 0 0 0 0 0 0 0L2 8.8V12h3.2L12.7 4.5zM10.2 2L12 3.8l-1.5 1.5L8.7 3.5 10.2 2zM3 11V9.2l5-5L9.8 6l-5 5H3z"></path>
-                    </svg> Edit
+                    </svg> Изменить
                   </div>
                 </button>
               </li>
@@ -143,7 +151,7 @@
                   <div class="bx--overflow-menu-options__option-content">
                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                       <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
-                    </svg> Delete
+                    </svg> Удалить
                   </div>
                 </button>
               </li>

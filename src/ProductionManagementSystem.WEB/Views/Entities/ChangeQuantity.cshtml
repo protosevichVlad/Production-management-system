@@ -3,7 +3,7 @@
 @model ProductionManagementSystem.WEB.Models.AltiumDB.EntityDataListViewModel
 
 @{
-  ViewBag.Title = "Change quantity";
+  ViewBag.Title = "Добавить/Получить компоненты";
   Layout = "_AltiumDBLayout";
   var fields = AltiumDbEntity.Fields;
 }
@@ -46,13 +46,13 @@
                 <div class="bx--col--auto" style="display: flex; justify-content: end">
                   <button
                     class="bx--btn bx--btn--tertiary bx--btn--sm"
-                    type="reset" onclick="location.href ='/Entities@(Model.Table != null ? $"?tableId={Model.Table.Id}" : "")'">
-                    Reset All
+                    type="reset" onclick="location.href ='@Url.Action("Index", Model.Table != null ? new {tableId = Model.Table.Id} : new {})'">
+                    Сбросить фильтр
                   </button>
                   <button
                     class="bx--btn bx--btn--tertiary bx--btn--sm"
                     type="submit">
-                    Apply filters
+                    Применить фильтр
                   </button>
                 </div>
               </div>
@@ -77,18 +77,18 @@
       {
         <partial name="Partail/CarbonUIComponents/SortableTh" model="columnName"/>
       }
-      <th></th>
-      <th>
+      <th>К-во</th>
+      <th style="width: 250px">
         <button
           class="bx--btn bx--btn--ghost"
           type="submit" name="type" value="add">
-          Add
+          Добавить
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M9 7L9 3 7 3 7 7 3 7 3 9 7 9 7 13 9 13 9 9 13 9 13 7z"></path></svg>
         </button>
         <button
           class="bx--btn bx--btn--ghost"
            type="submit" name="type" value="get">
-          Get
+          Получить
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="7" height="2" width="8"></rect></svg>
         </button>
       </th>

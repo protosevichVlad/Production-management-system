@@ -25,6 +25,7 @@ namespace ProductionManagementSystem.Core.Services
 
         Task<List<Pcb>> GetPcbWithEntityAsync(string partNumber);
         Task<List<Pcb>> SearchByKeyWordAsync(string keyWord);
+        Task<bool> UsingInPcb(int pcbId, int entityId);
     }
     public class PcbService : BaseService<Pcb, IUnitOfWork>, IPcbService
     {
@@ -136,6 +137,13 @@ namespace ProductionManagementSystem.Core.Services
             return await _db.Pcbs.SearchByKeyWordAsync(keyWord);
         }
 
+        public async Task<bool> UsingInPcb(int pcbId, int entityId)
+        {
+            return (await _db.UsedItemRepository.FindAsync(x =>
+                x.ItemId == entityId && x.ItemType == CDBItemType.Entity && x.InItemType == CDBItemType.PCB &&
+                x.InItemId == pcbId)).Count > 0;
+        }
+
         public async Task DeleteByIdAsync(int id)
         {
             var project = await GetByIdAsync(id);
@@ -201,7 +209,7 @@ namespace ProductionManagementSystem.Core.Services
             if (entity == null) return;
             entity.Quantity += quantity;
             if (entity.Quantity < 0)
-                throw new NotImplementedException();
+                return;
             await _db.Pcbs.UpdateQuantityAsync(entity.Id, entity.Quantity);
 
             await _db.ElementDifferenceRepository.CreateAsync(new ElementDifference()

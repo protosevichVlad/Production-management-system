@@ -22,7 +22,7 @@
       id="select-id-pagination-count-label"
       class="bx--pagination__text"
       for="select-id-pagination-count">
-      Items per page:
+      Элементов на странице:
     </label>
     <div class="bx--select bx--select--inline bx--select__item-count">
       <select
@@ -37,8 +37,8 @@
       </svg>
     </div>
     <span class="bx--pagination__text">
-      <span data-displayed-item-range>@((Model.CurrentPage - 1) * Model.ItemPerPage + 1)-@(Model.CurrentPage * Model.ItemPerPage > Model.TotalItems ? Model.TotalItems: Model.CurrentPage * Model.ItemPerPage)</span> of
-      <span data-total-items>@Model.TotalItems</span> items
+      <span data-displayed-item-range>@((Model.CurrentPage - 1) * Model.ItemPerPage + 1)-@(Model.CurrentPage * Model.ItemPerPage > Model.TotalItems ? Model.TotalItems: Model.CurrentPage * Model.ItemPerPage)</span> из
+      <span data-total-items>@Model.TotalItems</span> элементов
     </span>
   </div>
   <div class="bx--pagination__right">
@@ -59,7 +59,7 @@
       id="select-id-pagination-page-label"
       class="bx--pagination__text"
       for="select-id-pagination-page">
-      of @totalPages pages
+      из @totalPages страниц
     </label>
     <button class="bx--pagination__button bx--pagination__button--backward" @(Model.CurrentPage == 1 ? "disabled":"") tabindex="0" data-page-backward aria-label="Backward button" onclick="changeUrl('page', @Model.CurrentPage - 1)">
       <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--pagination__nav-arrow" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
