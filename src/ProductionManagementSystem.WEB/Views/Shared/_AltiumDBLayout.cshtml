@@ -2,12 +2,10 @@
 <html lang="ru">
 <head>
   <title>@ViewData["Title"] - CompDB</title>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <script src="https://unpkg.com/vuex"></script>
-  @* <link rel="stylesheet" href="~/css/carbon-components.min.css"/> *@
-  <link rel="stylesheet" href="https://unpkg.com/carbon-components@10.56.0/css/carbon-components.min.css"/>
+  <script src="~/lib/vue-js/vue.min.js"></script>
+  <script src="~/lib/vue-js/vuex.global.js"></script>
+  <link rel="stylesheet" href="~/lib/carbon-components/carbon-components.min.css"/>
   <link rel="stylesheet" href="~/css/AltiumDB/site.css"/>
-  <link rel="stylesheet" href="/components/TreeView/treeViewComponent.css"/>
   @RenderSection("Stylesheet", required: false);
 </head>
 <body>
@@ -60,11 +58,8 @@
 <partial name="Partail/DangerModal"/>
 <partial name="Partail/Modals/ChangeQuantityPartialModal"/>
 <partial name="Partail/Modals/PassiveModal"/>
-<script src="/components/TreeView/treeViewComponent.js"></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script type="text/javascript" src="https://unpkg.com/carbon-components@10.0.0/scripts/carbon-components.js"></script>
-@* <script type="text/javascript" src="https://unpkg.com/carbon-components@10.0.0/scripts/carbon-components.min.js"></script> *@
-@* <script type="text/javascript" src="~/js/carbon-components.js"></script> *@
+<script type="text/javascript" src="~/lib/carbon-components/carbon-components.min.js"></script>
 <script type="text/javascript" src="~/js/AltiumDB/site.js"></script>
 @await RenderSectionAsync("Scripts", false)
 </body>

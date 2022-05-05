@@ -16,14 +16,13 @@ namespace ProductionManagementSystem.WEB.Filters
     {
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
-            if (context.Controller is Controller)
+            if (context.Controller is Controller controller)
             {
-                var controller = context.Controller as Controller;
                 var service = context.HttpContext.RequestServices.GetService<IToDoNoteService>();
                 if (service == null)
                     controller.ViewBag.ToDos = new List<ToDoNote>();
                 else
-                    controller.ViewBag.ToDos = (await service.GetAllAsync()).OrderByDescending(x => x.CreatedDateTime).ToList();
+                    controller.ViewBag.ToDos = (await service.GetAllAsync()).OrderByDescending(x => x.CreatedDateTime).Take(30).ToList();
             }
             
             await base.OnResultExecutionAsync(context, next);
