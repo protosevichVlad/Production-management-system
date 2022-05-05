@@ -190,6 +190,7 @@ namespace ProductionManagementSystem.Core.Services
             {
                 item.ReportDate = DateTime.Now;
             }
+            
             await base.CreateAsync(item);
             item.UsedItems.ForEach(x => x.InItemId = item.Id);
             await _db.UsedItemRepository.UpdateRangeAsync(item.UsedItems);

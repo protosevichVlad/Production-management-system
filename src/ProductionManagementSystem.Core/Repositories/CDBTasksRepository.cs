@@ -51,6 +51,9 @@ namespace ProductionManagementSystem.Core.Repositories
 
         private async Task Include(CDBTask task)
         {
+            if (task == null)
+                return;
+            
             object taskItem = task.ItemType switch
             {
                 CDBItemType.Device => await _db.CDBDevices.FindAsync(task.ItemId),

@@ -67,7 +67,13 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         public async  Task<IActionResult> Details(int id)
         {
-            return View(await _deviceService.GetByIdAsync(id));
+            var device = await _deviceService.GetByIdAsync(id);
+            if (device == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
+            return View(device);
         }
         
         [HttpGet]

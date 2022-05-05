@@ -28,7 +28,7 @@ namespace ProductionManagementSystem.WEB.MiddlewareComponents
                 var controllerName = context.GetRouteData().Values["controller"];
                 var actionName = context.GetRouteData().Values["action"];
                 var data = JsonSerializer.Serialize(context.GetRouteData().Values as IDictionary<string, object>);
-                string logPath = "log.txt";
+                string logPath = Path.Combine(".", "log.txt");
                 await using var stream = new StreamWriter(logPath, append: true);
                 await stream.WriteLineAsync($"{DateTime.Now} - {controllerName}:{actionName}\n" +
                                             $"Data: {data}\n" +

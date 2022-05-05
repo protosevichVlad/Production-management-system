@@ -153,6 +153,11 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var entityExt =  await _entityExtService.GetByIdAsync(id);
+            if (entityExt == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
             return View(entityExt);
         }
         
@@ -182,6 +187,11 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             EntityExt entityExt = await _entityExtService.GetByIdAsync(id);
+            if (entityExt == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
             entityExt.Table = await _tableService.GetByIdAsync(entityExt.TableId);
             await AddEntityHintsAsync(entityExt.TableId);
             return View("Create", entityExt);

@@ -116,7 +116,13 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         public async Task<IActionResult> Details(int id)
         {
-            return View(await _pcbService.GetByIdAsync(id));
+            var pcb = await _pcbService.GetByIdAsync(id);
+            if (pcb == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
+            return View(pcb);
         }
         
         public async Task<IActionResult> Edit(int id)
@@ -160,7 +166,13 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         public async Task<IActionResult> PrintVersion(int id)
         {
-            return View(await _pcbService.GetByIdAsync(id));
+            var pcb = await _pcbService.GetByIdAsync(id);
+            if (pcb == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
+            return View();
         }
         
         [HttpPost]

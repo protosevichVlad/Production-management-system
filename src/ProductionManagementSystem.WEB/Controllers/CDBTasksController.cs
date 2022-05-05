@@ -73,7 +73,13 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            return View(await _taskService.GetByIdAsync(id));
+            var task = await _taskService.GetByIdAsync(id);
+            if (task == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
+            return View(task);
         }
 
         [HttpPost]
@@ -87,15 +93,27 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int id)
         {
-            return View(await _taskService.GetByIdAsync(id));
+            var task = await _taskService.GetByIdAsync(id);
+            if (task == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
+            return View(task);
         }
         
         [HttpPost]
         
         public async Task<IActionResult> Get(int taskId, List<ObtainedModel> obtainedModels)
         {
+            var task = await _taskService.GetByIdAsync(taskId);
+            if (task == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
             await _taskService.ObtainItems(taskId, obtainedModels);
-            return View(await _taskService.GetByIdAsync(taskId));
+            return View(task);
         }
     }
 }
