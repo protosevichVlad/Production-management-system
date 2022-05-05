@@ -7,7 +7,8 @@ namespace ProductionManagementSystem.WEB.Models.AltiumDB.GlobalSearch
         Text,
         BaseEntity,
         Pcb,
-        Table
+        Table,
+        Device
     }
     
     public class GlobalSearchHintsSectionRowViewModel

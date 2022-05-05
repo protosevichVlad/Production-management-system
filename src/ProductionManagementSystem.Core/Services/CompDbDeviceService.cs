@@ -16,6 +16,7 @@ namespace ProductionManagementSystem.Core.Services
         Task DeleteByIdAsync(int id);
         Task<CompDbDevice> GetLatest();
         Task<bool> UsingInDevice(int deviceId, int entityId);
+        Task<List<CompDbDevice>> GetWithEntity(int entityId);
     }
 
     public class CompDbDeviceService : BaseService<CompDbDevice, IUnitOfWork>, ICompDbDeviceService
@@ -89,6 +90,13 @@ namespace ProductionManagementSystem.Core.Services
         {
             return (await _db.UsedItemRepository.GetByDeviceIdAsync(deviceId)).Any(x =>
                 x.ItemId == entityId && x.ItemType == CDBItemType.Entity);
+        }
+
+        public async Task<List<CompDbDevice>> GetWithEntity(int entityId)
+        {
+            return (await _db.UsedItemRepository.FindAsync(x =>
+                    x.ItemId == entityId && x.ItemType == CDBItemType.Entity && x.InItemType == CDBItemType.Device))
+                .Select(x => GetByIdAsync(x.Id).Result).ToList(); 
         }
 
         public override async Task CreateAsync(CompDbDevice item)

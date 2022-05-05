@@ -14,42 +14,23 @@
     break;
 
   case HintsSectionRowType.BaseEntity:
-    var baseEntity = @Model.Content as EntityExt;
-    if (baseEntity == null)
-      break;
-    
-    <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/Entities/Details/@baseEntity.KeyId'">
-      <div class="bx--col-sm-1">
-        <img src="@baseEntity.ImageUrl" class="altiumdb--entity-table--image">
-      </div>
-      <div class="bx--col-sm-3">
-        <div class="bx--grid">
-          <div class="bx--row">@baseEntity.Item</div>
-          <div class="bx--row" style="height: 4px"></div>
-          <div class="bx--row">@baseEntity.PartNumber</div>
-          <div class="bx--row" style="height: 4px"></div>
-          <div class="bx--row">@baseEntity.Category</div>
-        </div>
-      </div>
-    </div>
-    break;
-
   case HintsSectionRowType.Pcb:
-    var project = @Model.Content as Pcb;
-    if (project == null)
+  case HintsSectionRowType.Device:
+    var item = new UniversalItem(Model.Content);
+    if (item == null)
       break;
 
-    <div class="bx--row altiumdb--global-search--hints--row" onclick="location.href='/projects/details/@project.Id'">
+    <div class="bx--row altiumdb--global-search--hints--row" onclick="window.open('@item.Path', '_blank');">
       <div class="bx--col-sm-1">
-        <img src="@project.ImagePath" class="altiumdb--entity-table--image">
+        <img src="@item.ImagePath" class="altiumdb--entity-table--image">
       </div>
       <div class="bx--col-sm-3">
         <div class="bx--grid">
-          <div class="bx--row">@project.Name</div>
+          <div class="bx--row">@item.Name</div>
           <div class="bx--row" style="height: 4px"></div>
-          <div class="bx--row">@project.Variant</div>
+          <div class="bx--row">@item.PartNumber</div>
           <div class="bx--row" style="height: 4px"></div>
-          <div class="bx--row">@project.ReportDate.ToString("dd.MM.yyyy")</div>
+          <div class="bx--row">@item.Category</div>
         </div>
       </div>
     </div>

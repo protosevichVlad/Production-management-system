@@ -26,6 +26,7 @@ namespace ProductionManagementSystem.Core.Services
         Task<List<Pcb>> GetPcbWithEntityAsync(string partNumber);
         Task<List<Pcb>> SearchByKeyWordAsync(string keyWord);
         Task<bool> UsingInPcb(int pcbId, int entityId);
+        Task<List<Pcb>> GetWithEntity(int entityId);
     }
     public class PcbService : BaseService<Pcb, IUnitOfWork>, IPcbService
     {
@@ -142,6 +143,13 @@ namespace ProductionManagementSystem.Core.Services
             return (await _db.UsedItemRepository.FindAsync(x =>
                 x.ItemId == entityId && x.ItemType == CDBItemType.Entity && x.InItemType == CDBItemType.PCB &&
                 x.InItemId == pcbId)).Count > 0;
+        }
+
+        public async Task<List<Pcb>> GetWithEntity(int entityId)
+        {
+            return (await _db.UsedItemRepository.FindAsync(x =>
+                x.ItemId == entityId && x.ItemType == CDBItemType.Entity && x.InItemType == CDBItemType.PCB))
+                .Select(x => GetByIdAsync(x.Id).Result).ToList(); 
         }
 
         public async Task DeleteByIdAsync(int id)

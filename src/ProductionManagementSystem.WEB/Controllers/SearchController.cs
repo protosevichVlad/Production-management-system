@@ -35,7 +35,7 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
             {
                 hints.Add(new GlobalSearchHintsSectionViewModel()
                 {
-                    Name = "Find by part number",
+                    Name = "Поиск по Part Number",
                     Rows = new List<GlobalSearchHintsSectionRowViewModel>()
                     {
                         new GlobalSearchHintsSectionRowViewModel()
@@ -45,22 +45,35 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
                         }
                     }
                 });
+                
+                hints.Add(new GlobalSearchHintsSectionViewModel()
+                {
+                    Name = "Используется в pcb",
+                    Rows = (await _pcbService.GetWithEntity(entity.KeyId)).Take(5).Select(x => 
+                        new GlobalSearchHintsSectionRowViewModel() 
+                        {
+                            Type = HintsSectionRowType.Pcb,
+                            Content = x
+                        }).ToList()
+                });
+            
+                hints.Add(new GlobalSearchHintsSectionViewModel()
+                {
+                    Name = "Используется в приборах",
+                    Rows = (await _deviceService.GetWithEntity(entity.KeyId)).Take(5).Select(x => 
+                        new GlobalSearchHintsSectionRowViewModel() 
+                        {
+                            Type = HintsSectionRowType.Device,
+                            Content = x
+                        }).ToList()
+                });
+                
+                return PartialView("Partail/GlobalSearch/GlobalSearchHints", hints);
             }
-            
+           
             hints.Add(new GlobalSearchHintsSectionViewModel()
             {
-                Name = "Used in pcb",
-                Rows = (await _pcbService.GetPcbWithEntityAsync(q)).Take(5).Select(x => 
-                    new GlobalSearchHintsSectionRowViewModel() 
-                    {
-                     Type = HintsSectionRowType.Pcb,
-                     Content = x
-                }).ToList()
-            });
-            
-            hints.Add(new GlobalSearchHintsSectionViewModel()
-            {
-                Name = "Entities",
+                Name = "Компоненты",
                 Rows = (await _entityExtService.SearchByKeyWordAsync(q)).Take(5).Select(x => 
                     new GlobalSearchHintsSectionRowViewModel() 
                     {
@@ -82,7 +95,18 @@ namespace ProductionManagementSystem.WEB.Areas.AltiumDB.Controllers
             
             hints.Add(new GlobalSearchHintsSectionViewModel()
             {
-                Name = "Tables",
+                Name = "Приборы",
+                Rows = (await _deviceService.SearchByKeyWordAsync(q)).Take(5).Select(x => 
+                    new GlobalSearchHintsSectionRowViewModel() 
+                    {
+                        Type = HintsSectionRowType.Device,
+                        Content = x
+                    }).ToList()
+            });
+            
+            hints.Add(new GlobalSearchHintsSectionViewModel()
+            {
+                Name = "Таблицы",
                 Rows = (await _tableService.SearchByKeyWordAsync(q)).Take(5).Select(x => 
                     new GlobalSearchHintsSectionRowViewModel() 
                     {
