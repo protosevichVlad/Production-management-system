@@ -124,6 +124,7 @@ namespace ProductionManagementSystem.WEB
                 app.UseHsts();
             }
 
+
             app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
             app.UseHttpsRedirection();
             app.UseDefaultFiles();

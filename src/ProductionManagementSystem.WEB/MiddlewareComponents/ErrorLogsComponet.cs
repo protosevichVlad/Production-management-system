@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -25,16 +26,14 @@ namespace ProductionManagementSystem.WEB.MiddlewareComponents
             }
             catch (Exception e)
             {
-                var controllerName = context.GetRouteData().Values["controller"];
-                var actionName = context.GetRouteData().Values["action"];
                 var data = JsonSerializer.Serialize(context.GetRouteData().Values as IDictionary<string, object>);
-                string logPath = Path.Combine(".", "log.txt");
-                await using var stream = new StreamWriter(logPath, append: true);
-                await stream.WriteLineAsync($"{DateTime.Now} - {controllerName}:{actionName}\n" +
-                                            $"Data: {data}\n" +
-                                            $"Exception: {e.Message}\n" +
-                                            $"InnerException: {e.InnerException?.Message ?? "-"}\n" +
-                                            $"StackTrace: {e.ToString()}\n");
+                string logPath = Path.Combine("wwwroot", "uploads", "log.txt");
+                await using var stream = new StreamWriter(logPath, true);
+                await stream.WriteLineAsync($"{DateTime.Now} - {Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(context.Request)}\n" +
+                                                               $"Data: {data}\n" +
+                                                               $"Exception: {e.Message}\n" +
+                                                               $"InnerException: {e.InnerException?.Message ?? "-"}\n" +
+                                                               $"StackTrace: {e.ToString()}\n\n");
                 throw;
             }
         }

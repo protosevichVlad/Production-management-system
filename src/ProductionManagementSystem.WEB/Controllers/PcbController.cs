@@ -48,7 +48,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpPost]
         [Route("/api/pcb")]
-        public async Task<IActionResult> Create([FromForm]PcbCreateEditViewModel pcbViewModel)
+        public async Task<IActionResult> CreateApi([FromForm]PcbCreateEditViewModel pcbViewModel)
         {
             var pcb = await MapToCreateEditPcb(pcbViewModel);
             await _pcbService.CreateAsync(pcb);
