@@ -43,11 +43,11 @@ namespace ProductionManagementSystem.WEB.Controllers
             });
         }
 
-        [HttpPut]
+        [HttpGet]
         [Route("/cdbtasks/edit/{id:int}")]
         public async Task<IActionResult> Edit([FromRoute]int id)
         {
-            return View();
+            return View(id);
         }
 
         public IActionResult Create()
@@ -69,6 +69,22 @@ namespace ProductionManagementSystem.WEB.Controllers
             await _taskService.CreateAsync(task);
             return Ok();
         }
+        
+        [HttpPut]
+        [Route("/api/tasks")]
+        public async Task<ActionResult> AptEdit([FromForm]CDBTask task)
+        {
+            await _taskService.UpdateAsync(task);
+            return Ok();
+        }
+        
+        [HttpDelete]
+        [Route("/api/tasks/{id:int}")]
+        public async Task<ActionResult> AptDelete([FromRoute]int id)
+        {
+            await _taskService.DeleteByIdAsync(id);
+            return Ok();
+        }
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)
@@ -80,6 +96,19 @@ namespace ProductionManagementSystem.WEB.Controllers
             }
             
             return View(task);
+        }
+        
+        [HttpGet]
+        [Route("/api/tasks/{id:int}")]
+        public async Task<ActionResult<CDBTask>> ApiDetails(int id)
+        {
+            var task = await _taskService.GetByIdAsync(id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+            
+            return task;
         }
 
         [HttpPost]

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using ProductionManagementSystem.Core.Exceptions;
 using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Models.Tasks;
@@ -195,7 +196,7 @@ namespace ProductionManagementSystem.Core.Services
                         result.AddRange(await AlsoCreatedAsync(new CDBTask()
                         {
                             Deadline = task.Deadline,
-                            Description = $"This task was created because of the creation of task №{task.Id}",
+                            Description = $"Эта задача была создана из-за создания задачи №{task.Id}",
                             ItemId = item.ItemId,
                             ItemType = item.ItemType,
                             ParentTaskId = task.Id,

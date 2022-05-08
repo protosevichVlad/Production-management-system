@@ -103,7 +103,7 @@
         </div>
       </div>
     </div>
-    <div class="bx--row bx--row-padding">
+    <div v-if="!isEdit" class="bx--row bx--row-padding">
       <div class="bx--col--auto">
         <h4>The following tasks will be created:</h4>
       </div>
@@ -153,6 +153,9 @@
   }
   <script>
     const getDateStr = function (date) {
+      if (!(date instanceof Date)) {
+          date = new Date(date);
+      }
       let day = date.getDate();
       if (day < 10)
         day = '0' + day;
@@ -185,12 +188,23 @@
        alsoCreated: []
      },
      methods: {
+       loadData: function () {
+         if (!this.isEdit) return;
+         
+         let vm = this;
+         HttpRequest(`/api/tasks/${vm.task.id}`, 'GET').then(r => {
+           vm.task = r;
+           vm.task.startDate = vm.getDateStr(vm.task.startDate);
+           vm.task.deadline = vm.getDateStr(vm.task.deadline);
+         }).catch(showError);
+       },
        search : function () {
          let vm = this;
          HttpRequest(`/api/search/taskItem?q=${vm.searchString}`, 'GET')
           .then(result => vm.searchingData = result)
           .catch((e) => showPassiveModal("Error", e));
        },
+       getDateStr: getDateStr,
        selectTaskItem : function (taskItem){
          let vm = this;
          vm.task.item = taskItem;
@@ -207,18 +221,19 @@
         if (vm.isEdit) {
           sendObjectAsFormData(`/api/tasks`, 'PUT', vm.task)
              .then(result => location.href = '@Url.Action("Details", new {Id = Model})')
-             .catch((e) => showPassiveModal("Error", e));
+             .catch(showError);
         }
         else {
           sendObjectAsFormData(`/api/tasks`, 'POST', vm.task)
              .then(result => location.href = '@Url.Action("Index")')
-             .catch((e) => showPassiveModal("Error", e));
+             .catch(showError);
         }
        },
      },
      mounted: function () {
        CarbonComponents.DatePicker.init();
        flatpickr('#deadline-date-picker', { dateFormat: 'd.m.Y'})
+       this.loadData();
      }
     })
   </script>

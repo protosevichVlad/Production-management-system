@@ -1,7 +1,7 @@
 ﻿@model ProductionManagementSystem.Core.Models.CDBTask
 
 @{
-  ViewBag.Title = "title";
+  ViewBag.Title = "Получить компоненты";
   Layout = "_AltiumDBLayout";
 }
 @{
@@ -40,32 +40,34 @@
         <span class="bx--table-header-label">№</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Category</span>
+        <span class="bx--table-header-label">Категория</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Item</span>
+        <span class="bx--table-header-label">Элемент</span>
       </th>
       <th >
         <span class="bx--table-header-label">Part Number</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Supplier</span>
+        <span class="bx--table-header-label">Поставщик</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Case</span>
+        <span class="bx--table-header-label">Корпус</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Manufacturer</span>
+        <span class="bx--table-header-label">Производитель</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Obtained</span>
+        <span class="bx--table-header-label">Получено</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Quantity</span>
+        <span class="bx--table-header-label">К-во в задаче</span>
       </th>
-      <th ></th>
       <th >
-        <span class="bx--table-header-label hidden-print">Description</span>
+        <span class="bx--table-header-label">К-во на складе</span>
+      </th>
+      <th >
+        <span class="bx--table-header-label hidden-print">Описание</span>
       </th>
       <th></th>
     </tr>
@@ -92,7 +94,7 @@
           <div class="bx--form-item">
             <div data-numberinput class=" bx--number bx--nu">
               <div class="bx--number__input-wrapper">
-                <input id="number-input" type="number" name="obtainedModels[@i].Quantity" min="@(-Model.Obtained[i].Quantity)" max="@(Model.Obtained[i].UsedItem.Quantity < Model.Obtained[i].UsedItem.Item.Quantity ? Model.Obtained[i].UsedItem.Quantity : Model.Obtained[i].UsedItem.Item.Quantity)" value="0">
+                <input id="number-input" type="number" style="padding-right: 5rem" name="obtainedModels[@i].Quantity" min="@(-Model.Obtained[i].Quantity)" max="@(Model.Obtained[i].UsedItem.Quantity < Model.Obtained[i].UsedItem.Item.Quantity ? Model.Obtained[i].UsedItem.Quantity : Model.Obtained[i].UsedItem.Item.Quantity)" value="0">
                 <div class="bx--number__controls">
                   <button aria-label="increase number input" class="bx--number__control-btn up-icon" type="button" aria-live="polite" aria-atomic="true">
                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true"><path d="M0 4L4 0 8 4z"></path></svg>

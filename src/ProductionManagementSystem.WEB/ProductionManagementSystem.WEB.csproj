@@ -149,6 +149,7 @@
     <Content Remove="package.json" />
     <Content Remove="package-lock.json" />
     <Content Remove="test\package.json" />
+    <Content Remove="wwwroot\log.txt" />
   </ItemGroup>
 
   <ItemGroup>

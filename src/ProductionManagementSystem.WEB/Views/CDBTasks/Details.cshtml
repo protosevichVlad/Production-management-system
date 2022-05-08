@@ -34,7 +34,7 @@
               </button>
             </li>
             <li class="bx--overflow-menu-options__option  ">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting a project', 'Do you really want to delete this project', () => deleteProject(@Model.Id, () => location.href='/pcb'))">
+              <button class="bx--overflow-menu-options__btn" role="menuitem" data-modal-target="#modal-danger" onclick="deleteTask(@Model.Id, () => location.href='/cdbTasks')">
                 <span class="bx--overflow-menu-options__option-content">
                   Delete
                 </span>
@@ -52,8 +52,29 @@
     </div>
   </div>
   <div class="bx--row bx--row-padding">
-    <div class="bx--col-md-6">
-      <partial name="Partail/UniversalItem/UniversalItemDisplay" model="@Model.Item"/>
+    <div class="bx--col-md-4">
+      <div class="bx--row">
+        <div class="bx--col-md-8">
+          <strong>Выбранный элемент: </strong>
+        </div>
+      </div>
+      <div class="bx--row">
+        <div class="bx--col-md-8">
+          <partial name="Partail/UniversalItem/UniversalItemDisplay" model="@Model.Item"/>
+        </div>
+      </div>
+    </div>
+    <div class="bx--col-md-4">
+      <div class="bx--row">
+        <div class="bx--col-md-8">
+          <strong>Описание: </strong>
+        </div>
+      </div>
+      <div class="bx--row">
+        <div class="bx--col-md-8">
+          <p style="white-space: pre-line">@Model.Description</p>
+        </div>
+      </div>
     </div>
   </div>
   <div class="bx--row bx--row-padding">

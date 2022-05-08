@@ -210,6 +210,8 @@ const showPassiveModal = (title, message) =>
   modal.show();
 }
 
+const showError = (message) => showPassiveModal("Ошибка", message);
+
 function formDataAppend(formData, prop, value, deep)
 {
   if (deep === 0) return;
@@ -262,6 +264,12 @@ function changeUrl(paramName, value) {
     arr[index][1] = value;
   }
   location.search = '?' + arr.map(x => x.join('=')).join('&');
+}
+
+function deleteTask(id, action) {
+  showDeleteModal('Удаление задачи', 'Вы действительно хотите удалить эту задачу?', () => {
+    HttpRequest(`/api/tasks/${id}`, 'DELETE').then(action).catch(e => showPassiveModal("Error", e));
+  });
 }
 
 function STLViewer(model, elementID) {
