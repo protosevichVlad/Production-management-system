@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Services;
@@ -40,10 +41,10 @@ namespace ProductionManagementSystem.Core.Models.PCB
                 Variant = this.Variant,
             };
 
-            pcb.ImagePath = await  fileService.CreateFileByUrl(Image, $"/uploads/{Name}/{Variant}", "Image.png");
-            pcb.CircuitDiagramPath = await  fileService.CreateFileByUrl(CircuitDiagram, $"/uploads/{Name}/{Variant}", "CircuitDiagram.pdf");
-            pcb.AssemblyDrawingPath = await  fileService.CreateFileByUrl(AssemblyDrawing, $"/uploads/{Name}/{Variant}", "AssemblyDrawing.pdf");
-            pcb.ThreeDModelPath = await  fileService.CreateFileByUrl(ThreeDModel, $"/uploads/{Name}/{Variant}", "ThreeDModel.stl");
+            pcb.ImagePath = await  fileService.CreateFileByUrl(Image, $"/uploads/{Name}/{Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", "Image.png");
+            pcb.CircuitDiagramPath = await  fileService.CreateFileByUrl(CircuitDiagram, $"/uploads/{Name}/{Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", "CircuitDiagram.pdf");
+            pcb.AssemblyDrawingPath = await  fileService.CreateFileByUrl(AssemblyDrawing, $"/uploads/{Name}/{Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", "AssemblyDrawing.pdf");
+            pcb.ThreeDModelPath = await  fileService.CreateFileByUrl(ThreeDModel, $"/uploads/{Name}/{Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", "ThreeDModel.stl");
             return pcb;
         }
     }

@@ -1,4 +1,5 @@
-﻿@model ProductionManagementSystem.Core.Models.PCB.Pcb
+﻿@using ProductionManagementSystem.Core.Models.Users
+@model ProductionManagementSystem.Core.Models.PCB.Pcb
 
 @{
   ViewBag.Title = Model.Name + " " + Model.Variant;
@@ -13,7 +14,9 @@
       </h1>
     </div>
     <div class="bx--col-sm-1" style="display: flex; justify-content: end;">
-      <div data-overflow-menu class="bx--overflow-menu">
+      @if (User.IsInRole(RoleEnum.Admin) || User.IsInRole(RoleEnum.OrderPicker))
+      {
+        <div data-overflow-menu class="bx--overflow-menu">
         <button
           class="bx--overflow-menu__trigger bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--align-start"
           aria-haspopup="true" aria-expanded="false" id="example-zyub0566err-trigger" aria-controls="example-zyub0566err">
@@ -25,38 +28,45 @@
              data-floating-menu-direction="bottom" role="menu" aria-labelledby="example-zyub0566err-trigger"
              id="example-zyub0566err">
           <ul class="bx--overflow-menu-options__content">
-            <li class="bx--overflow-menu-options__option">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('pcb', 'add', @Model.Id)">
-                <span class="bx--overflow-menu-options__option-content">
-                  Добавить на склад
-                </span>
-              </button>
-            </li>
-            <li class="bx--overflow-menu-options__option">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('pcb', 'get', @Model.Id)">
-                <span class="bx--overflow-menu-options__option-content">
-                  Получить со склада
-                </span>
-              </button>
-            </li>
-            <li class="bx--overflow-menu-options__option  ">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="location.href='/pcb/edit/@Model.Id'">
-                <span class="bx--overflow-menu-options__option-content">
-                  Изменить
-                </span>
-              </button>
-            </li>
-            <li class="bx--overflow-menu-options__option  ">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting a project', 'Do you really want to delete this project', () => deleteProject(@Model.Id, () => location.href='/pcb'))">
-                <span class="bx--overflow-menu-options__option-content">
-                  Удалить
-                </span>
-              </button>
-            </li>
+            @if (User.IsInRole(RoleEnum.OrderPicker))
+            {
+              <li class="bx--overflow-menu-options__option">
+                <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('pcb', 'add', @Model.Id)">
+                  <span class="bx--overflow-menu-options__option-content">
+                    Добавить на склад
+                  </span>
+                </button>
+              </li>
+              <li class="bx--overflow-menu-options__option">
+                <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('pcb', 'get', @Model.Id)">
+                  <span class="bx--overflow-menu-options__option-content">
+                    Получить со склада
+                  </span>
+                </button>
+              </li>
+            }
+            @if (User.IsInRole(RoleEnum.Admin))
+            {
+              <li class="bx--overflow-menu-options__option  ">
+                <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="location.href='/pcb/edit/@Model.Id'">
+                  <span class="bx--overflow-menu-options__option-content">
+                    Изменить
+                  </span>
+                </button>
+              </li>
+              <li class="bx--overflow-menu-options__option  ">
+                <button class="bx--overflow-menu-options__btn" role="menuitem" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting a project', 'Do you really want to delete this project', () => deleteProject(@Model.Id, () => location.href='/pcb'))">
+                  <span class="bx--overflow-menu-options__option-content">
+                    Удалить
+                  </span>
+                </button>
+              </li>
+            }
           </ul>
           <span tabindex="0"></span>
         </div>
       </div>
+      }
     </div>
   </div>
   <div class="bx--row bx--row-padding">
@@ -77,50 +87,53 @@
           </div>
         </div>
         <div class="bx--row" style="height: 10px"></div>
-        @if (!string.IsNullOrEmpty(Model.BOMFilePath))
+        @if (User.Identity?.IsAuthenticated ?? false)
         {
+          @if (!string.IsNullOrEmpty(Model.BOMFilePath))
+          {
+            <div class="bx--row">
+              <div class="bx--col-lg-5">
+                <strong>Спецификация</strong>
+              </div>
+              <div class="bx--col-lg-7">
+                <a href="@Model.BOMFilePath" target="_blank">@Model.Name спецификация</a>
+              </div>
+            </div>
+            <div class="bx--row" style="height: 10px"></div>
+          }
+          @if (!string.IsNullOrEmpty(Model.AssemblyDrawingPath))
+          {
+            <div class="bx--row">
+              <div class="bx--col-lg-5">
+                <strong>Cборочный чертеж</strong>
+              </div>
+              <div class="bx--col-lg-7">
+                <a href="@Model.AssemblyDrawingPath" target="_blank">@Model.Name сборочный чертеж</a>
+              </div>
+            </div>
+            <div class="bx--row" style="height: 10px"></div>
+          }
+          @if (!string.IsNullOrEmpty(Model.CircuitDiagramPath))
+          {
+            <div class="bx--row">
+              <div class="bx--col-lg-5">
+                <strong>Принципиальная электрическая схема</strong>
+              </div>
+              <div class="bx--col-lg-7">
+                <a href="@Model.CircuitDiagramPath" target="_blank">@Model.Name принципиальная электрическая схема</a>
+              </div>
+            </div>
+            <div class="bx--row" style="height: 10px"></div>
+          }
           <div class="bx--row">
             <div class="bx--col-lg-5">
-              <strong>Bill of matirial</strong>
+              <strong>Количество</strong>
             </div>
             <div class="bx--col-lg-7">
-              <a href="@Model.BOMFilePath" target="_blank">@Model.Name bom file</a>
+              <span style="white-space: pre-line" id="quantity-value">@Model.Quantity</span>
             </div>
           </div>
-          <div class="bx--row" style="height: 10px"></div>
         }
-        @if (!string.IsNullOrEmpty(Model.AssemblyDrawingPath))
-        {
-          <div class="bx--row">
-            <div class="bx--col-lg-5">
-              <strong>Cборочный чертеж</strong>
-            </div>
-            <div class="bx--col-lg-7">
-              <a href="@Model.AssemblyDrawingPath" target="_blank">@Model.Name assembly drawing</a>
-            </div>
-          </div>
-          <div class="bx--row" style="height: 10px"></div>
-        }
-        @if (!string.IsNullOrEmpty(Model.CircuitDiagramPath))
-        {
-          <div class="bx--row">
-            <div class="bx--col-lg-5">
-              <strong>Принципиальная электрическая схема</strong>
-            </div>
-            <div class="bx--col-lg-7">
-              <a href="@Model.CircuitDiagramPath" target="_blank">@Model.Name circuit diagram</a>
-            </div>
-          </div>
-          <div class="bx--row" style="height: 10px"></div>
-        }
-        <div class="bx--row">
-          <div class="bx--col-lg-5">
-            <strong>Количество</strong>
-          </div>
-          <div class="bx--col-lg-7">
-            <span style="white-space: pre-line" id="quantity-value">@Model.Quantity</span>
-          </div>
-        </div>
         <div class="bx--row" style="height: 10px"></div>
         <div class="bx--row">
           <div class="bx--col-lg-5">

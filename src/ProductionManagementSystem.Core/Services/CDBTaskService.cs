@@ -40,7 +40,7 @@ namespace ProductionManagementSystem.Core.Services
         public async Task<List<CDBTask>> GetTasksByUserRoleAsync(List<string> roles)
         {
             TaskStatusEnum accessLevel = ToStatus(roles);
-            var tasks = await Find(task => (task.Status & accessLevel) == task.Status);
+            var tasks = (await GetAllAsync()).Where(task => (task.Status & accessLevel) != 0).ToList();
             return tasks;
         }
 

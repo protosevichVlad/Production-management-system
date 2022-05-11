@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
+using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 using ProductionManagementSystem.WEB.Models;
@@ -47,6 +49,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleEnum.OrderPicker)]
         public async Task<IActionResult> ChangeQuantity(int[] id, int[] quantity, string type)
         {
             for (int i = 0; i < quantity.Length; i++)
@@ -161,6 +164,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             return View(entityExt);
         }
         
+        [Authorize(Roles = "Администратор,AltiumDB_EntitiesAdmin")]
         public async Task<IActionResult> Create(int? tableId)
         {
             if (tableId.HasValue)
@@ -178,12 +182,14 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = "Администратор,AltiumDB_EntitiesAdmin")]
         public async Task<IActionResult> Create(EntityExt entityExt)
         {
             await _entityExtService.CreateAsync(entityExt);
             return RedirectToAction(nameof(Details), new {id = entityExt.KeyId});
         }
         
+        [Authorize(Roles = "Администратор,AltiumDB_EntitiesAdmin")]
         public async Task<IActionResult> Edit(int id)
         {
             EntityExt entityExt = await _entityExtService.GetByIdAsync(id);
@@ -198,6 +204,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = "Администратор,AltiumDB_EntitiesAdmin")]
         public async Task<IActionResult> Edit(EntityExt entityExt)
         {
             await _entityExtService.UpdateAsync(entityExt);
@@ -205,6 +212,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Администратор,AltiumDB_EntitiesAdmin")]
         [Route("/Entities/{id:int}")]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
@@ -223,12 +231,14 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Администратор,AltiumDB_EntitiesAdmin")]
         public async Task<IActionResult> Import()
         {
             return View();
         }
         
         [HttpPost]
+        [Authorize(Roles = "Администратор,AltiumDB_EntitiesAdmin")]
         public async Task<IActionResult> Import(IFormFile file)
         {
             var tableName = file.FileName.Split('.')[0];
@@ -250,6 +260,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleEnum.OrderPicker)]
         [Route("/api/entities/{id:int}/add")]
         public async Task<IActionResult> IncreaseQuantity([FromRoute]int id, [FromBody]int quantity)
         {
@@ -258,6 +269,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = RoleEnum.OrderPicker)]
         [Route("/api/entities/{id:int}/get")]
         public async Task<IActionResult> DecreaseQuantity([FromRoute]int id, [FromBody]int quantity)
         {

@@ -32,28 +32,28 @@
             <li class="bx--overflow-menu-options__option">
               <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('entities', 'add', @Model.KeyId)">
                 <span class="bx--overflow-menu-options__option-content">
-                  Add
+                  Добавить на склад
                 </span>
               </button>
             </li>
             <li class="bx--overflow-menu-options__option">
               <button class="bx--overflow-menu-options__btn" role="menuitem"  onclick="showQuantityModal('entities', 'get', @Model.KeyId)">
                 <span class="bx--overflow-menu-options__option-content">
-                  Get
+                  Получить со склада
                 </span>
               </button>
             </li>
             <li class="bx--overflow-menu-options__option  ">
               <button class="bx--overflow-menu-options__btn" role="menuitem"  onclick="location.href='/Entities/Edit/@Model.KeyId'"  >
                 <span class="bx--overflow-menu-options__option-content">
-                  Edit
+                  Изменить
                 </span>
               </button>
             </li>
             <li class="bx--overflow-menu-options__option  ">
               <button class="bx--overflow-menu-options__btn" role="menuitem" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting an entity', 'Do you really want to delete this entity', () => deleteEntity(@Model.KeyId, () => location.href='/Entities'));" >
                 <span class="bx--overflow-menu-options__option-content">
-                  Delete
+                  Удалить
                 </span>
               </button>
             </li>
@@ -133,61 +133,61 @@
       </div>
     </div>
     <div class="bx--col-lg-4">
-      <div class="bx--grid">
-        <div class="bx--row bx--row-padding">
-          <div class="bx--col--auto">
-            <strong>Pricing (EUR)</strong>
-          </div>
-        </div>
-        <div class="bx--row" style="height: 8px"></div>
-        <div class="bx--row">
-          <div class="bx--col-sm-1">
-            <strong>Qty.</strong>
-          </div>
-          <div class="bx--col-sm-1">
-            <strong>Unit Price</strong>
-          </div>
-          <div class="bx--col-sm-1">
-            <strong>Ext. Price</strong>
-          </div>
-        </div>
-        <div class="bx--row" style="height: 8px"></div>
-        <div class="bx--row">
-          <div class="bx--col-sm-1">
-            <strong>1</strong>
-          </div>
-          <div class="bx--col-sm-1">
-            <span>0,088 € </span>
-          </div>
-          <div class="bx--col-sm-1">
-            <span>0,09 € </span>
-          </div>
-        </div>
-        <div class="bx--row" style="height: 8px"></div>
-        <div class="bx--row">
-          <div class="bx--col-sm-1">
-            <strong>10</strong>
-          </div>
-          <div class="bx--col-sm-1">
-            <span>0,037 €</span>
-          </div>
-          <div class="bx--col-sm-1">
-            <span>0,37 €</span>
-          </div>
-        </div>
-        <div class="bx--row" style="height: 8px"></div>
-        <div class="bx--row">
-          <div class="bx--col-sm-1">
-            <strong>100</strong>
-          </div>
-          <div class="bx--col-sm-1">
-            <span>0,015 €</span>
-          </div>
-          <div class="bx--col-sm-1">
-            <span>1,5 €</span>
-          </div>
-        </div>
-      </div>
+      @* <div class="bx--grid"> *@
+      @*   <div class="bx--row bx--row-padding"> *@
+      @*     <div class="bx--col--auto"> *@
+      @*       <strong>Pricing (EUR)()</strong> *@
+      @*     </div> *@
+      @*   </div> *@
+      @*   <div class="bx--row" style="height: 8px"></div> *@
+      @*   <div class="bx--row"> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <strong>Qty.</strong> *@
+      @*     </div> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <strong>Unit Price</strong> *@
+      @*     </div> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <strong>Ext. Price</strong> *@
+      @*     </div> *@
+      @*   </div> *@
+      @*   <div class="bx--row" style="height: 8px"></div> *@
+      @*   <div class="bx--row"> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <strong>1</strong> *@
+      @*     </div> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <span>0,088 € </span> *@
+      @*     </div> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <span>0,09 € </span> *@
+      @*     </div> *@
+      @*   </div> *@
+      @*   <div class="bx--row" style="height: 8px"></div> *@
+      @*   <div class="bx--row"> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <strong>10</strong> *@
+      @*     </div> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <span>0,037 €</span> *@
+      @*     </div> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <span>0,37 €</span> *@
+      @*     </div> *@
+      @*   </div> *@
+      @*   <div class="bx--row" style="height: 8px"></div> *@
+      @*   <div class="bx--row"> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <strong>100</strong> *@
+      @*     </div> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <span>0,015 €</span> *@
+      @*     </div> *@
+      @*     <div class="bx--col-sm-1"> *@
+      @*       <span>1,5 €</span> *@
+      @*     </div> *@
+      @*   </div> *@
+      @* </div> *@
     </div>
   </div>
 </div>

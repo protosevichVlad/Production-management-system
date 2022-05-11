@@ -1,0 +1,9 @@
+﻿@model dynamic
+
+@{
+  ViewBag.Title = "title";
+  Layout = "_AltiumDBLayout";
+}
+
+<h2>@Model.Name @Model.Variant @Model.ReportDate</h2>
+<partial name="Partail/Devices/DevicesComponents" model="@Model"/>

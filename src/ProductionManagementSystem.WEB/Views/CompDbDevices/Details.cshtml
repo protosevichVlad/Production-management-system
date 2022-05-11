@@ -1,7 +1,8 @@
-﻿@model ProductionManagementSystem.Core.Models.CompDbDevice
+﻿@using ProductionManagementSystem.Core.Models.Users
+@model ProductionManagementSystem.Core.Models.CompDbDevice
 
 @{
-  ViewBag.Title = "title";
+  ViewBag.Title = "Прибор " + Model.Name + " " + Model.Variant;
   Layout = "_AltiumDBLayout";
 }
 
@@ -14,7 +15,9 @@
       </h1>
     </div>
     <div class="bx--col-sm-1" style="display: flex; justify-content: end;">
-      <div data-overflow-menu class="bx--overflow-menu">
+      @if (User.IsInRole(RoleEnum.Admin) || User.IsInRole(RoleEnum.OrderPicker))
+      {
+        <div data-overflow-menu class="bx--overflow-menu">
         <button
           class="bx--overflow-menu__trigger bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--align-start"
           aria-haspopup="true" aria-expanded="false" id="example-zyub0566err-trigger" aria-controls="example-zyub0566err">
@@ -26,38 +29,45 @@
              data-floating-menu-direction="bottom" role="menu" aria-labelledby="example-zyub0566err-trigger"
              id="example-zyub0566err">
           <ul class="bx--overflow-menu-options__content">
-            <li class="bx--overflow-menu-options__option">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('devices', 'add', @Model.Id)">
-                <span class="bx--overflow-menu-options__option-content">
-                  Добавить на склад
-                </span>
-              </button>
-            </li>
-            <li class="bx--overflow-menu-options__option">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('devices', 'get', @Model.Id)">
-                <span class="bx--overflow-menu-options__option-content">
-                  Получить со склада
-                </span>
-              </button>
-            </li>
-            <li class="bx--overflow-menu-options__option  ">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="location.href='/compDbDevices/edit/@Model.Id'">
-                <span class="bx--overflow-menu-options__option-content">
-                  Изменить
-                </span>
-              </button>
-            </li>
-            <li class="bx--overflow-menu-options__option  ">
-              <button class="bx--overflow-menu-options__btn" role="menuitem" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting a project', 'Do you really want to delete this project', () => deleteDevice(@Model.Id, () => location.href='@Url.Action("Index")'))">
-                <span class="bx--overflow-menu-options__option-content">
-                  Удалить
-                </span>
-              </button>
-            </li>
+            @if (User.IsInRole(RoleEnum.OrderPicker))
+            {
+              <li class="bx--overflow-menu-options__option">
+                <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('devices', 'add', @Model.Id)">
+                  <span class="bx--overflow-menu-options__option-content">
+                    Добавить на склад
+                  </span>
+                </button>
+              </li>
+              <li class="bx--overflow-menu-options__option">
+                <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="showQuantityModal('devices', 'get', @Model.Id)">
+                  <span class="bx--overflow-menu-options__option-content">
+                    Получить со склада
+                  </span>
+                </button>
+              </li>
+            }
+            @if (User.IsInRole(RoleEnum.Admin))
+            {
+              <li class="bx--overflow-menu-options__option  ">
+                <button class="bx--overflow-menu-options__btn" role="menuitem" onclick="location.href='@Url.Action("Edit", new {id = @Model.Id})'">
+                  <span class="bx--overflow-menu-options__option-content">
+                    Изменить
+                  </span>
+                </button>
+              </li>
+              <li class="bx--overflow-menu-options__option  ">
+                <button class="bx--overflow-menu-options__btn" role="menuitem" data-modal-target="#modal-danger" onclick="showDeleteModal('Deleting a project', 'Do you really want to delete this project', () => deleteDevice(@Model.Id, () => location.href='@Url.Action("Index")'))">
+                  <span class="bx--overflow-menu-options__option-content">
+                    Удалить
+                  </span>
+                </button>
+              </li>
+            }
           </ul>
           <span tabindex="0"></span>
         </div>
       </div>
+      }
     </div>
   </div>
   <div class="bx--row bx--row-padding">
@@ -74,7 +84,7 @@
             <strong>Версия для печати</strong>
           </div>
           <div class="bx--col-lg-7">
-            <a asp-controller="Pcb" asp-action="PrintVersion" asp-route-id="@Model.Id" target="_blank">Версия для печати</a>
+            <a asp-controller="CompDbDevices" asp-action="PrintVersion" asp-route-id="@Model.Id" target="_blank">Версия для печати</a>
           </div>
         </div>
         <div class="bx--row" style="height: 10px"></div>

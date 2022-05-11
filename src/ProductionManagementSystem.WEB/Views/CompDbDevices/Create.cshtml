@@ -348,7 +348,7 @@
         {
           let vm = this;
           HttpRequest(`/api/search/create-device?q=${vm.searchString}&take=3`, 'GET')
-          .then(json => vm.searchingData = json)
+          .then(json => vm.searchingData = json.filter(x => x.id !== vm.device.id))
           .catch(e => console.log(e));
         },
         selectComponent: function (item)

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Core.Models.PCB;
+using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.WEB.Models;
 
@@ -34,10 +37,24 @@ namespace ProductionManagementSystem.WEB.Controllers
                     .Find(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(q, StringComparison.InvariantCultureIgnoreCase));
                 data.AddRange(await _pcbService.GetPcbWithEntityAsync(q));
             }
+
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                if (orderBy.EndsWith("_desc"))
+                {
+                    data = data.OrderByDescending((x) => typeof(Pcb).GetProperty(orderBy.Substring(0, orderBy.Length - "_desc".Length))?.GetValue(x)).ToList();
+                }
+                else
+                {
+                    data = data.OrderBy((x) => typeof(Pcb).GetProperty(orderBy)?.GetValue(x)).ToList();
+                }
+                
+            }
             
             return View(data);
         }
         
+        [Authorize(Roles = RoleEnum.Admin)]
         public async Task<IActionResult> Create()
         {
             return View("Edit", new PcbCreateEditViewModel()
@@ -47,6 +64,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = RoleEnum.Admin)]
         [Route("/api/pcb")]
         public async Task<IActionResult> CreateApi([FromForm]PcbCreateEditViewModel pcbViewModel)
         {
@@ -99,17 +117,18 @@ namespace ProductionManagementSystem.WEB.Controllers
             return result;
         }
         
-
+        [Authorize(Roles = RoleEnum.Admin)]
         public async Task<IActionResult> Import()
         {
             return View();
         }
         
         [HttpPost]
+        [Authorize(Roles = RoleEnum.Admin)]
         public async Task<IActionResult> Import(IFormFile bom, IFormFile image, IFormFile circuitDiagram, IFormFile assemblyDrawing, IFormFile treeDModel)
         {
-            var project = await _pcbService.ImportPcbAsync(bom.OpenReadStream(), image.OpenReadStream(),
-                circuitDiagram.OpenReadStream(), assemblyDrawing.OpenReadStream(), treeDModel.OpenReadStream());
+            var project = await _pcbService.ImportPcbAsync(bom?.OpenReadStream(), image?.OpenReadStream(),
+                circuitDiagram?.OpenReadStream(), assemblyDrawing?.OpenReadStream(), treeDModel?.OpenReadStream());
             await _pcbService.CreateAsync(project);
             return RedirectToAction(nameof(Details), new {id = project.Id});
         }
@@ -125,6 +144,7 @@ namespace ProductionManagementSystem.WEB.Controllers
             return View(pcb);
         }
         
+        [Authorize(Roles = RoleEnum.Admin)]
         public async Task<IActionResult> Edit(int id)
         {
             var project = await _pcbService.GetByIdAsync(id);
@@ -157,6 +177,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpDelete]
+        [Authorize(Roles = RoleEnum.Admin)]
         [Route("/pcb/{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -172,10 +193,11 @@ namespace ProductionManagementSystem.WEB.Controllers
                 return RedirectToAction(nameof(Index));
             }
             
-            return View();
+            return View(pcb);
         }
         
         [HttpPost]
+        [Authorize(Roles = RoleEnum.OrderPicker)]
         [Route("/api/pcb/{id:int}/add")]
         public async Task<IActionResult> IncreaseQuantity([FromRoute]int id, [FromBody]int quantity)
         {
@@ -184,6 +206,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = RoleEnum.OrderPicker)]
         [Route("/api/pcb/{id:int}/get")]
         public async Task<IActionResult> DecreaseQuantity([FromRoute]int id, [FromBody]int quantity)
         {
@@ -192,6 +215,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPut]
+        [Authorize(Roles = RoleEnum.Admin)]
         [Route("/api/pcb/{id:int}")]
         public async Task<IActionResult> Update([FromRoute]int id, [FromForm]PcbCreateEditViewModel pcbViewModel)
         {

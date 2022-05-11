@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using ProductionManagementSystem.Core.Models.Users
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <title>@ViewData["Title"] - CompDB</title>
@@ -23,11 +24,14 @@
           Компоненты
         </a>
       </li>
-      <li>
-        <a class="bx--header__menu-item" asp-controller="Entities" asp-action="ChangeQuantity" tabindex="0">
-          Добавить/Получить компоненты
-        </a>
-      </li>
+      @if (User.IsInRole(RoleEnum.OrderPicker))
+      {
+        <li>
+          <a class="bx--header__menu-item" asp-controller="Entities" asp-action="ChangeQuantity" tabindex="0">
+            Добавить/Получить компоненты
+          </a>
+        </li>
+      }
       <li>
         <a class="bx--header__menu-item" asp-controller="Pcb" asp-action="Index" tabindex="0">
           PCB

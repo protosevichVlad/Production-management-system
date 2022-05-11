@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Core.Models;
+using ProductionManagementSystem.Core.Models.PCB;
+using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.WEB.Models.Device;
 
@@ -12,23 +16,57 @@ namespace ProductionManagementSystem.WEB.Controllers
     public class CompDbDevicesController : Controller
     {
         private readonly ICompDbDeviceService _deviceService;
+        private readonly IEntityExtService _entityService;
 
-        public CompDbDevicesController(ICompDbDeviceService deviceService)
+        public CompDbDevicesController(ICompDbDeviceService deviceService, IEntityExtService entityService)
         {
             _deviceService = deviceService;
+            _entityService = entityService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string orderBy, string q)
         {
-            var data = await _deviceService.GetAllAsync() ?? new List<CompDbDevice>();
+            List<CompDbDevice> data;
+            
+            if (string.IsNullOrEmpty(q))
+            {
+                data = await _deviceService.GetAllAsync();
+            }
+            else
+            {
+                data = await _deviceService
+                    .Find(x => !string.IsNullOrEmpty(x.Name) && x.Name.Contains(q, StringComparison.InvariantCultureIgnoreCase));
+                
+                var entity = await _entityService.GetEntityExtByPartNumber(q);
+                if (entity != null)
+                {
+                    data.AddRange(await _deviceService.GetWithEntity(entity.KeyId));
+                }
+            }
+            
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                if (orderBy.EndsWith("_desc"))
+                {
+                    data = data.OrderByDescending((x) => typeof(CompDbDevice).GetProperty(orderBy.Substring(0, orderBy.Length - "_desc".Length))?.GetValue(x)).ToList();
+                }
+                else
+                {
+                    data = data.OrderBy((x) => typeof(CompDbDevice).GetProperty(orderBy)?.GetValue(x)).ToList();
+                }
+                
+            }
+            
             return View(data);
         }
 
+        [Authorize(Roles = RoleEnum.Admin)]
         public async Task<IActionResult> Create()
         {
             return View();
         }
         
+        [Authorize(Roles = RoleEnum.Admin)]
         public async Task<IActionResult> Edit(int id)
         {
             return View("Create", id);
@@ -42,6 +80,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleEnum.Admin)]
         [Route("/api/devices")]
         public async Task<IActionResult> ApiCreate([FromForm] DeviceCreateEditViewModel device)
         {
@@ -50,6 +89,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPut]
+        [Authorize(Roles = RoleEnum.Admin)]
         [Route("/api/devices/{id:int}")]
         public async Task<IActionResult> ApiEdit([FromRoute] int id, [FromForm] DeviceCreateEditViewModel device)
         {
@@ -58,6 +98,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpDelete]
+        [Authorize(Roles = RoleEnum.Admin)]
         [Route("/api/devices/{id:int}")]
         public async Task<IActionResult> ApiDelete([FromRoute] int id)
         {
@@ -84,6 +125,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = RoleEnum.OrderPicker)]
         [Route("/api/devices/{id:int}/add")]
         public async Task<IActionResult> IncreaseQuantity([FromRoute]int id, [FromBody]int quantity)
         {
@@ -92,6 +134,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = RoleEnum.OrderPicker)]
         [Route("/api/devices/{id:int}/get")]
         public async Task<IActionResult> DecreaseQuantity([FromRoute]int id, [FromBody]int quantity)
         {
@@ -127,6 +170,17 @@ namespace ProductionManagementSystem.WEB.Controllers
             }
 
             return device;
+        }
+
+        public async Task<IActionResult> PrintVersion(int id)
+        {
+            var device = await _deviceService.GetByIdAsync(id);
+            if (device == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
+            return View(device);
         }
     }
 }

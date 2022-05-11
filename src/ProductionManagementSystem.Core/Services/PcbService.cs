@@ -43,6 +43,8 @@ namespace ProductionManagementSystem.Core.Services
         public async Task<Pcb> ImportPcbAsync(Stream bom, Stream image, Stream circuitDiagram,
             Stream assemblyDrawing, Stream threeDModel)
         {
+            if (bom == null) throw new ArgumentNullException(nameof(bom));
+            
             Pcb pcb = new Pcb();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             Stream bomExcel = new MemoryStream();
@@ -71,11 +73,13 @@ namespace ProductionManagementSystem.Core.Services
                     if (string.IsNullOrWhiteSpace(sheet.Cells[row, 6].Text))
                         break;
                     
-                    UsedItem entityInPcb = new UsedItem() { InItemType = CDBItemType.PCB, ItemType = CDBItemType.Entity};
-                    entityInPcb.Designator = sheet.Cells[row, 4].Text;
-                    entityInPcb.ItemId =
-                        (await _entityExtService.GetEntityExtByPartNumber(sheet.Cells[row, 6].Text))?.KeyId  ?? 0;
-                    entityInPcb.Quantity = int.Parse(sheet.Cells[row, 10].Text);
+                    UsedItem entityInPcb = new UsedItem
+                    {
+                        InItemType = CDBItemType.PCB, ItemType = CDBItemType.Entity,
+                        Designator = sheet.Cells[row, 4].Text,
+                        ItemId = (await _db.EntityExtRepository.GetByPartNumber(sheet.Cells[row, 6].Text))?.KeyId  ?? 0,
+                        Quantity = int.Parse(sheet.Cells[row, 10].Text)
+                    };
 
                     pcb.UsedItems.Add(entityInPcb);
                     row++;
@@ -89,29 +93,42 @@ namespace ProductionManagementSystem.Core.Services
                 Directory.CreateDirectory(basePath);
             }
 
-            pcb.BOMFilePath = '/' + Path.Combine(wwwPath, $"{pcb.Name}_{pcb.Variant}_bom.xlsx").Replace('\\', '/');
-            pcb.ImagePath = '/' + Path.Combine(wwwPath, $"{pcb.Name}_{pcb.Variant}_image.png").Replace('\\', '/');
-            pcb.CircuitDiagramPath = '/' + Path.Combine(wwwPath, $"{pcb.Name}_{pcb.Variant}_circuitDiagram.pdf").Replace('\\', '/');
-            pcb.AssemblyDrawingPath = '/' + Path.Combine(wwwPath, $"{pcb.Name}_{pcb.Variant}_assemblyDrawing.pdf").Replace('\\', '/');
-            pcb.ThreeDModelPath = '/' + Path.Combine(wwwPath, $"{pcb.Name}_{pcb.Variant}_3dModel.stl").Replace('\\', '/');
+            if (bom != null)
+            {
+                await using var ms = new MemoryStream();
+                await bom.CopyToAsync(ms);
+                pcb.BOMFilePath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", $"{pcb.Name}_{pcb.Variant}_Bom.xlsx");
+            }
+            
+            if (image != null)
+            {
+                await using var ms = new MemoryStream();
+                await image.CopyToAsync(ms);
+                pcb.ImagePath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", $"{pcb.Name}_{pcb.Variant}_Image.png");
+            }
+            
+            if (circuitDiagram != null)
+            {
+                await using var ms = new MemoryStream();
+                await circuitDiagram.CopyToAsync(ms);
+                pcb.CircuitDiagramPath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", $"{pcb.Name}_{pcb.Variant}_CircuitDiagram.pdf");
+            }
+            
+            if (assemblyDrawing != null)
+            {
+                await using var ms = new MemoryStream();
+                await assemblyDrawing.CopyToAsync(ms);
+                pcb.AssemblyDrawingPath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", $"{pcb.Name}_{pcb.Variant}_AssemblyDrawing.pdf");
+            }
+            if (threeDModel != null)
+            {
+                await using var ms = new MemoryStream();
+                await threeDModel.CopyToAsync(ms);
+                pcb.ThreeDModelPath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", $"{pcb.Name}_{pcb.Variant}_ThreeDModel.stl");
+            }
+            
             pcb.Description = "This project was created with using a BOM file";
             pcb.Quantity = 0;
-            
-            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{pcb.Name}_{pcb.Variant}_bom.xlsx"), FileMode.Create)) {  
-                await bom.CopyToAsync(outputFileStream);  
-            }
-            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{pcb.Name}_{pcb.Variant}_image.png"), FileMode.Create)) {  
-                await image.CopyToAsync(outputFileStream);  
-            } 
-            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{pcb.Name}_{pcb.Variant}_circuitDiagram.pdf"), FileMode.Create)) {  
-                await circuitDiagram.CopyToAsync(outputFileStream);  
-            } 
-            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{pcb.Name}_{pcb.Variant}_assemblyDrawing.pdf"), FileMode.Create)) {  
-                await assemblyDrawing.CopyToAsync(outputFileStream);  
-            } 
-            await using(FileStream outputFileStream = new FileStream(Path.Combine(basePath ,$"{pcb.Name}_{pcb.Variant}_3dModel.stl"), FileMode.Create)) {  
-                await threeDModel.CopyToAsync(outputFileStream);  
-            } 
             
             return pcb;
         }
@@ -152,12 +169,6 @@ namespace ProductionManagementSystem.Core.Services
                 .Select(x => GetByIdAsync(x.Id).Result).ToList(); 
         }
 
-        public async Task DeleteByIdAsync(int id)
-        {
-            var project = await GetByIdAsync(id);
-            await DeleteAsync(project);
-        }
-
         public override async Task DeleteAsync(Pcb pcb)
         {
             var urls = new List<string>()
@@ -193,7 +204,7 @@ namespace ProductionManagementSystem.Core.Services
             
             await base.CreateAsync(item);
             item.UsedItems.ForEach(x => x.InItemId = item.Id);
-            await _db.UsedItemRepository.UpdateRangeAsync(item.UsedItems);
+            await _db.UsedItemRepository.CreateRangeAsync(item.UsedItems);
             await _db.SaveAsync();
         }
 

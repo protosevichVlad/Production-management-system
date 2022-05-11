@@ -139,11 +139,11 @@ globalSearchInput.addEventListener('input', () => {
 function showQuantityModal(entity, type, id) {
   let text = {};
   if (type === 'add') {
-    text.heading = 'Add to warehouse';
-    text.quantityText = 'Quantity';
+    text.heading = 'Добавить на склад';
+    text.quantityText = 'Количество';
   } else if (type === 'get') {
-    text.heading = 'Get from the warehouse';
-    text.quantityText = 'Quantity';
+    text.heading = 'Получить со склада';
+    text.quantityText = 'Количество';
   }
 
   document.querySelector('#modal-quantity-heading').innerText = text.heading;

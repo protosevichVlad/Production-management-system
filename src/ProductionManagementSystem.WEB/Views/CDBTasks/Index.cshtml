@@ -23,17 +23,20 @@
       <partial name="Partail/Tables/Filter" model="Model.Filters"/>
     </div>
   </div>
-  <section class="bx--table-toolbar  bx--table-toolbar--small ">
-    <div class="bx--toolbar-content">
-      <partial name="Partail/CarbonUIComponents/SearchInTableSm"></partial>
+  @if (User.IsInRole(RoleEnum.Admin))
+  {
+    <section class="bx--table-toolbar  bx--table-toolbar--small ">
+      <div class="bx--toolbar-content">
+        <partial name="Partail/CarbonUIComponents/SearchInTableSm"></partial>
         <button type="button" class="bx--btn bx--btn--sm bx--btn--primary" onclick="location.href='@Url.Action("Create")'">
           Создать задачу
           <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
             <path d="M17 15L17 7 15 7 15 15 7 15 7 17 15 17 15 25 17 25 17 17 25 17 25 15 17 15z"></path>
           </svg>
         </button>
-    </div>
-  </section>
+      </div>
+    </section>
+  }
 </form>
 
 <!-- End Toolbar Content -->
@@ -47,7 +50,7 @@
     <partial name="Partail/CarbonUIComponents/SortableTh" model="@("Срок")"/>
     <partial name="Partail/CarbonUIComponents/SortableTh" model="@("Статус")"/>
     <partial name="Partail/CarbonUIComponents/SortableTh" model="@("Описание")"/>
-    @if (User.IsInRole(RoleEnum.AltiumDBEntitiesAdmin))
+    @if (User.IsInRole(RoleEnum.Admin))
     {
       <th style="width: 30px"></th>
     }
@@ -63,7 +66,7 @@
       <td>@Model.Data[i].Deadline.ToString("dd.MM.yyyy")</td>
       <td>@ProductionManagementSystem.Core.Models.Tasks.TaskStatusExtension.GetName(Model.Data[i].Status)</td>
       <td>@Model.Data[i].Description</td>
-      @if (User.IsInRole(RoleEnum.AltiumDBEntitiesAdmin))
+      @if (User.IsInRole(RoleEnum.Admin))
       {
         <td class="bx--table-column-menu">
           <div data-overflow-menu role="menu" tabindex="0" aria-label="Overflow menu description" class="bx--overflow-menu">
@@ -76,7 +79,7 @@
                   <div class="bx--overflow-menu-options__option-content">
                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                       <path d="M1 13H15V14H1zM12.7 4.5c.4-.4.4-1 0-1.4 0 0 0 0 0 0l-1.8-1.8c-.4-.4-1-.4-1.4 0 0 0 0 0 0 0L2 8.8V12h3.2L12.7 4.5zM10.2 2L12 3.8l-1.5 1.5L8.7 3.5 10.2 2zM3 11V9.2l5-5L9.8 6l-5 5H3z"></path>
-                    </svg> Edit
+                    </svg> Изменить
                   </div>
                 </button>
               </li>
@@ -85,7 +88,7 @@
                   <div class="bx--overflow-menu-options__option-content">
                     <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                       <path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path>
-                    </svg> Delete
+                    </svg> Удалить
                   </div>
                 </button>
               </li>
