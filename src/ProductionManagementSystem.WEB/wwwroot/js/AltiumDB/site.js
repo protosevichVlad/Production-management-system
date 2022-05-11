@@ -272,6 +272,12 @@ function deleteTask(id, action) {
   });
 }
 
+function deletePcb(id, action) {
+  showDeleteModal('Удаление Pcb', 'Вы действительно хотите удалить эту pcb?', () => {
+    HttpRequest(`/api/pcb/${id}`, 'DELETE').then(action).catch(e => showPassiveModal("Error", e));
+  });
+}
+
 function STLViewer(model, elementID) {
   var elem = document.getElementById(elementID);
 

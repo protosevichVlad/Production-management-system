@@ -2,7 +2,7 @@
 
 @{
   bool isEdit = Model != 0;
-  ViewBag.Title = isEdit ? "Edit task" : "Create task";
+  ViewBag.Title = isEdit ? "Изменить задачу" : "Создать задачу";
   Layout = "_AltiumDBLayout";
 }
 
@@ -15,7 +15,7 @@
       <div class="bx--col-md-6" style="padding-top: 2.5rem;">
         <div class="bx--form-item">
           <div data-search role="search" class="bx--search bx--search--lg">
-            <label id="search-input-label" class="bx--label" for="search__input">Search</label>
+            <label id="search-input-label" class="bx--label" for="search__input">Поиск</label>
             <input class="bx--search-input" type="text" id="search__input" placeholder="Search" v-model="searchString" v-on:input="search" @(isEdit ? "disabled":"")>
             <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--search-magnifier" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
               <path d="M15,14.3L10.7,10c1.9-2.3,1.6-5.8-0.7-7.7S4.2,0.7,2.3,3S0.7,8.8,3,10.7c2,1.7,5,1.7,7,0l4.3,4.3L15,14.3z M2,6.5 C2,4,4,2,6.5,2S11,4,11,6.5S9,11,6.5,11S2,9,2,6.5z"></path>
@@ -52,7 +52,7 @@
           <div class="bx--row">
             <div class="bx--col-md-8">
               <h4>
-                Selected task item:
+                Выбранный элемент:
               </h4>
             </div>
           </div>
@@ -80,7 +80,7 @@
           <div data-date-picker data-date-picker-type="single"
                class="bx--date-picker bx--date-picker--single">
             <div class="bx--date-picker-container">
-              <label for="deadline-date-picker" class="bx--label">Deadline</label>
+              <label for="deadline-date-picker" class="bx--label">Срок</label>
               <div class="bx--date-picker-input__wrapper">
                 <input type="text" id="deadline-date-picker" class="bx--date-picker__input" dateFormat="d.m.Y"
                        pattern="\d{1,2}.\d{1,2}.\d{4}" placeholder="dd.mm.yyyy" data-date-picker-input v-model="task.deadline"/>
@@ -96,16 +96,26 @@
     <div class="bx--row bx--row-padding">
       <div class="bx--col-md-8">
         <div class="bx--form-item">
-          <label for="text-area-description" class="bx--label">Description</label>
+          <label for="text-area-description" class="bx--label">Описание</label>
           <div class="bx--text-area__wrapper">
-            <textarea id="text-area-description" class="bx--text-area" rows="4" cols="50" placeholder="Description" v-model="task.description"></textarea>
+            <textarea id="text-area-description" class="bx--text-area" rows="4" cols="50" placeholder="Описание" v-model="task.description"></textarea>
           </div>
         </div>
       </div>
     </div>
     <div v-if="!isEdit" class="bx--row bx--row-padding">
       <div class="bx--col--auto">
-        <h4>The following tasks will be created:</h4>
+        <h4>Будут созданы следующие задачи: </h4>
+      </div>
+    </div>
+    <div v-if="alsoTaskLoading" class="bx--row bx--row-padding">
+      <div class="bx--col--auto">
+        <div data-loading class="bx--loading">
+          <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+            <title>Loading</title>
+            <circle class="bx--loading__stroke" cx="0" cy="0" r="37.5" />
+          </svg>
+        </div>
       </div>
     </div>
     <template v-for="alsoTask in alsoCreated">
@@ -139,7 +149,7 @@
       <div class="bx--row" style="height: 8px"></div>
     </template>
     <div class="bx--row bx--row-padding" style="justify-content: end">
-        <button type="button" class="bx--btn bx--btn--primary" v-on:click="saveTask">@(isEdit ? "Save" : "Create")</button>
+        <button type="button" class="bx--btn bx--btn--primary" v-on:click="saveTask">@(isEdit ? "Сохранить" : "Создать")</button>
     </div>
   </div>
 </div>
@@ -185,7 +195,8 @@
        },
        searchString: "",
        searchingData: [],
-       alsoCreated: []
+       alsoCreated: [],
+       alsoTaskLoading: false,
      },
      methods: {
        loadData: function () {
@@ -212,8 +223,13 @@
          vm.task.itemId = taskItem.id;
          vm.searchingData = [];
          
+         vm.alsoCreated = [];
+         vm.alsoTaskLoading = true;
          sendObjectAsFormData(`/api/tasks/alsoCreated`, 'POST', vm.task)
-           .then(result => vm.alsoCreated = result)
+           .then(result => {
+             vm.alsoCreated = result;
+             vm.alsoTaskLoading = false;
+           })
            .catch((e) => showPassiveModal("Error", e));
        },
        saveTask : function (){
