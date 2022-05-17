@@ -52,12 +52,6 @@ namespace ProductionManagementSystem.WEB.Controllers
             var tasks = (await _taskService.GetTasksByUserRoleAsync(roles)).ToList();
             tasks = SortingTasks(tasks, sortOrder).ToList();
 
-            tasks.Select(async t =>
-            {
-                t.Device = await _deviceService.GetByIdAsync(t.DeviceId);
-                return t;
-            }).Select(t => t.Result).Where(i => i != null).ToList();
-            
             return View(tasks);
         }
         
@@ -79,17 +73,6 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var task = await _taskService.GetByIdAsync(id);
-                task.Device.Montages = task.Device.Montages.OrderBy(x => x.Montage.ToString()).ToList();
-                task.ObtainedMontages = task.ObtainedMontages.OrderBy(x =>
-                {
-                    task.Device.Montages.FirstOrDefault(d => x.ComponentId == d.ComponentId);
-                    return x.Montage.ToString();
-                }).ToList();
-                task.ObtainedDesigns = task.ObtainedDesigns.OrderBy(x =>
-                {
-                    task.Device.Designs.FirstOrDefault(d => x.ComponentId == d.ComponentId);
-                    return x.Design.ToString();
-                }).ToList();
                 ViewBag.States = new SelectList(GetStates(task), "Id", "Name");
                 // ViewBag.Logs = _mapper.Map<IEnumerable<LogDTO>, IEnumerable<LogViewModel>>(_taskService.GetLogs(id));
                 return View(new TaskDetailsViewModel()
@@ -194,6 +177,15 @@ namespace ProductionManagementSystem.WEB.Controllers
             await _taskService.ReceiveDesignsAsync(taskId, obtainedCompIds, designObt);
             return RedirectToAction(nameof(Details), new {id = taskId});
         }
+        
+        public async Task<IActionResult> GetTaskItem(int index)
+        {
+            return PartialView("Partail/Task/TaskItem", new TaskItemViewModel()
+            {
+                Index = index,
+                AllDevices = await _deviceService.GetAllAsync()
+            });
+        }
 
         private static IEnumerable<Task> SortingTasks(IEnumerable<Task> tasks, string sortOrder)
         {
@@ -201,12 +193,6 @@ namespace ProductionManagementSystem.WEB.Controllers
             {
                 case "num_desc":
                     tasks = tasks.OrderByDescending(t => t.Id);
-                    break;
-                case "Device":
-                    tasks = tasks.OrderBy(t => t.Device.Name);
-                    break;
-                case "device_desc":
-                    tasks = tasks.OrderByDescending(t => t.Device.Name);
                     break;
                 case "StartDate":
                     tasks = tasks.OrderBy(t => t.StartTime);

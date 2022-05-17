@@ -19,7 +19,7 @@
         </thead>
         @foreach (var obtainedComp in Model.ObtainedMontages )
         {
-            var comp = Model.Device.Montages.FirstOrDefault(om => obtainedComp.ComponentId == om.ComponentId);
+            var comp = Model.MontageInDevices.FirstOrDefault(om => obtainedComp.ComponentId == om.ComponentId);
             if (comp == null)
             {   
                 continue;

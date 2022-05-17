@@ -23,6 +23,7 @@ namespace ProductionManagementSystem.Core.Data.EF
         public DbSet<DesignInDevice> DesignInDevices { get; set; }
         
         public DbSet<Task> Tasks { get; set; }
+        public DbSet<DevicesInTask> DevicesInTasks { get; set; }
         public DbSet<ObtainedMontage> ObtainedMontages { get; set; }
         public DbSet<ObtainedDesign> ObtainedDesigns { get; set; }
         

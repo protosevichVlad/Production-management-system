@@ -20,13 +20,13 @@
         @foreach (var obtainedDes in Model.ObtainedDesigns)
         {
             
-            var des = Model.Device.Designs.FirstOrDefault(d => obtainedDes.ComponentId == d.ComponentId);
+            var des = Model.DesignInDevices.FirstOrDefault(d => obtainedDes.ComponentId == d.Id);
             if (des == null)
             {
                 continue;
             }
             
-            <tr @if (obtainedDes.Obtained + des.Design.Quantity < des.Quantity) 
+            <tr @if (obtainedDes.Obtained + des.Quantity < des.Quantity) 
                 { 
                     @: class="table-danger"
                 } 

@@ -42,20 +42,36 @@ namespace ProductionManagementSystem.Core.Services
             task.EndTime = new DateTime();
             task.StartTime = DateTime.Now;
 
-            task.ObtainedDesigns = (await _deviceService.GetByIdAsync(task.DeviceId)).Designs.Select(d =>
-                new ObtainedDesign
-                {
-                    ComponentId = d.ComponentId,
-                    TaskId = task.Id,
-                });
-            task.ObtainedMontages = (await _deviceService.GetByIdAsync(task.DeviceId)).Montages.Select(m =>
-                new ObtainedMontage
-                {
-                    ComponentId = m.ComponentId,
-                    TaskId = task.Id,
-                });
-            
+            var obtainedDesigns = new List<ObtainedDesign>();
+            var obtainedMontages = new List<ObtainedMontage>();
+            foreach (var devicesInTask in task.Devices)
+            {
+                obtainedDesigns.AddRange((await _deviceService.GetByIdAsync(devicesInTask.DeviceId)).Designs.Select(d =>
+                    new ObtainedDesign
+                    {
+                        ComponentId = d.ComponentId,
+                        TaskId = task.Id,
+                    }));
+                
+                obtainedMontages.AddRange((await _deviceService.GetByIdAsync(devicesInTask.DeviceId)).Montages.Select(m =>
+                    new ObtainedMontage
+                    {
+                        ComponentId = m.ComponentId,
+                        TaskId = task.Id,
+                    }));
+            }
+
+            task.ObtainedDesigns = obtainedDesigns;
+            task.ObtainedMontages = obtainedMontages;
             await base.CreateAsync(task);
+        }
+
+        public override async System.Threading.Tasks.Task UpdateAsync(Task item)
+        {
+            var task = await GetByIdAsync(item.Id);
+            task.Deadline = item.Deadline;
+            task.Description = item.Description;
+            await base.UpdateAsync(task);
         }
 
         public async System.Threading.Tasks.Task<IEnumerable<Task>> GetTasksByUserRoleAsync(IEnumerable<string> roles)
@@ -71,12 +87,12 @@ namespace ProductionManagementSystem.Core.Services
             var logString = $"{_db.LogRepository.CurrentUser?.UserName} изменил статус задачи №{taskId} с {GetTaskStatusName(task.Status)} ";
             if (task.Status == TaskStatusEnum.Warehouse)
             {
-                await _deviceService.ReceiveDeviceAsync(task.DeviceId);
+                task.Devices.ForEach(async x => await _deviceService.ReceiveDeviceAsync(x.DeviceId));
             }
             
             if ((TaskStatusEnum) to == TaskStatusEnum.Warehouse)
             {
-                await _deviceService.AddDeviceAsync(task.DeviceId);
+                task.Devices.ForEach(async x => await _deviceService.AddDeviceAsync(x.DeviceId));
             }
             
             if (full)

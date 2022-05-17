@@ -36,7 +36,7 @@
                     @t.Id
                 </td>
                 <td>
-                    @t.Device.ToString()
+                    @string.Join(", ", t.Devices.Select(x => x.Device.ToString()))
                 </td>
                 <td>
                     @t.StartTime.ToString("dd.MM.yyyy")

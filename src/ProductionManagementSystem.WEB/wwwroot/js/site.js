@@ -71,6 +71,45 @@ function updateIndex(selector)
     td_with_ids.forEach((elem, index) => elem.innerText  = index + 1);
 }
 
+async function createTaskItem() {
+    disableButton('#buttonCreateDevice');
+    let component_selects = [...document.getElementsByClassName('DeviceSelect')];
+    let length = component_selects.length;
+    $.get(`/tasks/getTaskItem?index=${length}`, function(data) {
+        $(`#devTr0`).before(data)
+        $('.js-example-basic-single').select2();
+    });
+
+    updateIndex('DeviceIds');
+    undisableButton('#buttonCreateDevice');
+}
+
+function removeTaskItem(index) {
+    let device_selects = [...document.getElementsByClassName('DeviceSelect')];
+    let length = device_selects.length;
+
+    if (length === 0)
+    {
+        return;
+    }
+
+    let type = 'Tasks'
+    for (let i = index - 1; i < length - 1; i++)
+    {
+        document.getElementsByName(`${type}[${i}].DeviceId`)[0].value =
+          document.getElementsByName(`${type}[${i + 1}].DeviceId`)[0].value
+        document.getElementsByName(`${type}[${i}].Quantity`)[0].value =
+          document.getElementsByName(`[${i + 1}].Quantity`)[0].value
+        $('select[name="${type}[${i + 1}].DeviceId"]').val(
+          document.getElementsByName(`${type}[${i + 1}].DeviceId`)[0].value);
+    }
+
+    let tr = document.querySelector(`#devTr${length}`);
+    tr.remove();
+    $('.js-example-basic-single').select2();
+    updateIndex('DeviceIds');
+}
+
 async function createDevice() {
     disableButton('#buttonCreateDevice');
     let component_selects = [...document.getElementsByClassName('DeviceSelect')];

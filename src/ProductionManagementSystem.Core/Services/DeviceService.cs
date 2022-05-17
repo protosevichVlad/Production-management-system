@@ -56,11 +56,10 @@ namespace ProductionManagementSystem.Core.Services
         private async Task<Tuple<bool, string>> CheckInTaskAsync(Device device)
         {
             string errorMessage;
-            var task = (await _db.TaskRepository.GetAllAsync())
-                .FirstOrDefault(t => device.Id == t.DeviceId);
-            if (task != null)
+            var tasks = await _db.TaskRepository.GetTasksByDeviceIdAsync(device.Id);
+            if (tasks.Count > 0)
             {
-                errorMessage = $"<i class='bg-light'>{device}</i> используется в <i class='bg-light'>задаче №{task.Id}</i>.<br />";
+                errorMessage = $"<i class='bg-light'>{device}</i> используется в <i class='bg-light'>задаче №{tasks[0].Id}</i>.<br />";
                 return new Tuple<bool, string>(false, errorMessage);
             }
             

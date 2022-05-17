@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Orders;
+using ProductionManagementSystem.Core.Models.Tasks;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services;
 using ProductionManagementSystem.WEB.Models.Order;
@@ -59,17 +60,24 @@ namespace ProductionManagementSystem.WEB.Controllers
                         tasks.Add(new Task()
                         {
                             Deadline = orderModel.Deadline,
-                            DeviceId = orderModel.Tasks[i].DeviceId,
+                            Devices = new List<DevicesInTask>()
+                            {
+                                new DevicesInTask()
+                                {
+                                    Quantity = 1,
+                                    DeviceId = orderModel.Tasks[i].Devices[0].DeviceId
+                                },
+                            },
                             Description = orderModel.Tasks[i].Description
                         });
                     }
                 }
-
+            
                 orderModel.Tasks = tasks;
                 await _orderService.CreateAsync(orderModel);
                 return RedirectToAction(nameof(Index));
             }
-
+            
             return View(orderModel);
         }
 
@@ -84,11 +92,7 @@ namespace ProductionManagementSystem.WEB.Controllers
                 ViewData["DeadlineSortParm"] = sortOrder == "Deadline" ? "deadline_desc" : "Deadline";
 
                 var orderViewModel = await _orderService.GetByIdAsync(id);
-                var tasks = (await _orderService.GetTasksByOrderIdAsync(orderViewModel.Id)).ToList().Select(async t =>
-                {
-                    t.Device = await _deviceService.GetByIdAsync(t.DeviceId);
-                    return t;
-                }).Select(t => t.Result).Where(t => t != null).ToList();
+                var tasks = (await _orderService.GetTasksByOrderIdAsync(orderViewModel.Id)).ToList();
                 orderViewModel.Tasks = SortingTasks(tasks, sortOrder).ToList();
                 return View(orderViewModel);
             }
@@ -103,11 +107,11 @@ namespace ProductionManagementSystem.WEB.Controllers
             try
             {
                 var orderViewModel = await _orderService.GetByIdAsync(id);
-                var tasks = (await _orderService.GetTasksByOrderIdAsync(orderViewModel.Id)).ToList().Select(async t =>
-                {
-                    t.Device = await _deviceService.GetByIdAsync(t.DeviceId);
-                    return t;
-                }).Select(t => t.Result).Where(t => t != null).ToList();
+                // var tasks = (await _orderService.GetTasksByOrderIdAsync(orderViewModel.Id)).ToList().Select(async t =>
+                // {
+                //     t.Device = await _deviceService.GetByIdAsync(t.DeviceId);
+                //     return t;
+                // }).Select(t => t.Result).Where(t => t != null).ToList();
                 return View(orderViewModel);
             }
             catch (PageNotFoundException)
@@ -138,12 +142,12 @@ namespace ProductionManagementSystem.WEB.Controllers
                 case "num_desc":
                     items = items.OrderByDescending(t => t.Id);
                     break;
-                case "Device":
-                    items = items.OrderBy(t => t.Device.Name);
-                    break;
-                case "device_desc":
-                    items = items.OrderByDescending(t => t.Device.Name);
-                    break;
+                // case "Device":
+                //     items = items.OrderBy(t => t.Device.Name);
+                //     break;
+                // case "device_desc":
+                //     items = items.OrderByDescending(t => t.Device.Name);
+                //     break;
                 case "StartDate":
                     items = items.OrderBy(t => t.StartTime);
                     break;

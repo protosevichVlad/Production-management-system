@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductionManagementSystem.Core.Data.EF;
-using ProductionManagementSystem.Core.Models.Tasks;
+using Task = ProductionManagementSystem.Core.Models.Tasks.Task;
 
 namespace ProductionManagementSystem.Core.Repositories
 {
     public interface ITaskRepository : IRepository<Task>
     {
-        
+        Task<bool> ContainDeviceAsync(int taskId, int deviceId);
+        Task<List<Task>> GetTasksByDeviceIdAsync(int deviceId);
     }
     public class TaskRepository : Repository<Task>, ITaskRepository
     {
@@ -52,6 +54,19 @@ namespace ProductionManagementSystem.Core.Repositories
             base.Delete(item);
         }
 
+        public async Task<bool> ContainDeviceAsync(int taskId, int deviceId)
+        {
+            return await _db.DevicesInTasks.AnyAsync(x => x.TaskId == taskId && x.DeviceId == deviceId);
+        }
+
+        public async Task<List<Task>> GetTasksByDeviceIdAsync(int deviceId)
+        {
+            return await _db.DevicesInTasks
+                .Where(x => x.DeviceId == deviceId)
+                .Include(x => x.Task)
+                .Select(x => x.Task).ToListAsync();
+        }
+
         public override async System.Threading.Tasks.Task CreateAsync(Task item)
         {
             await base.CreateAsync(item);
@@ -80,16 +95,23 @@ namespace ProductionManagementSystem.Core.Repositories
             foreach (var obtainedDesign in task.ObtainedDesigns)
                 obtainedDesign.Design = await _db.Designs.FindAsync(obtainedDesign.ComponentId);
 
-            task.Device = await _db.Devices.FindAsync(task.DeviceId);
-            if (task.Device == null)
+            task.Devices = await _db.DevicesInTasks
+                .Where(d => d.TaskId == task.Id)
+                .Include(x => x.Device)
+                .ToListAsync();
+            if (task.Devices == null)
                 return;
-            
-            task.Device.Designs = await _db.DesignInDevices.Where(d => d.DeviceId == task.Device.Id).ToListAsync();
-            task.Device.Montages = await _db.MontageInDevices.Where(m => m.DeviceId == task.Device.Id).ToListAsync();
-            foreach (var montage in task.Device.Montages)
-                montage.Montage = await _db.Montages.FindAsync(montage.ComponentId);
-            foreach (var design in task.Device.Designs)
-                design.Design = await _db.Designs.FindAsync(design.ComponentId);
+
+            for (int i = 0; i < task.Devices.Count; i++)
+            {
+                task.Devices[i].Device.Designs = await _db.DesignInDevices.Where(d => d.DeviceId == task.Devices[i].Device.Id).ToListAsync();
+                task.Devices[i].Device.Montages = await _db.MontageInDevices.Where(m => m.DeviceId == task.Devices[i].Device.Id).ToListAsync();
+                
+                foreach (var montage in task.Devices[i].Device.Montages)
+                    montage.Montage = await _db.Montages.FindAsync(montage.ComponentId);
+                foreach (var design in task.Devices[i].Device.Designs)
+                    design.Design = await _db.Designs.FindAsync(design.ComponentId);
+            }
         }
     }
 }

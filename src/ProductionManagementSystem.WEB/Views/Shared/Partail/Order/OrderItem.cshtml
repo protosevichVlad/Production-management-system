@@ -3,7 +3,7 @@
 <tr id="devTr@(Model.Index + 1)">
     <td class="DeviceIds">@(Model.Index + 1)</td>
     <td>
-        <select class="DeviceSelect align-top width-100 form-select" name="Tasks[@Model.Index].DeviceId">
+        <select class="DeviceSelect align-top width-100 form-select" name="Tasks[@Model.Index].Devices[0].DeviceId">
             @foreach (var device in Model.AllDevices)
             {
                 if (Model.Device != null && device.Id == Model.Device.Id)

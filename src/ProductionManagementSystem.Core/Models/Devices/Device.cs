@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ProductionManagementSystem.Core.Models.Tasks;
 
 namespace ProductionManagementSystem.Core.Models.Devices
 {
@@ -15,7 +16,7 @@ namespace ProductionManagementSystem.Core.Models.Devices
         public List<DesignInDevice> Designs { get; set; }
         [NotMapped]
         public List<MontageInDevice> Montages { get; set; }
-        
+        public List<DevicesInTask> Tasks { get; set; }        
         public override string ToString()
         {
             if (string.IsNullOrEmpty(Description))

@@ -24,7 +24,12 @@
     <div class="row">
         <div class="col">
             <h4>Задача №@Model.Task.Id</h4>
-            <h4>Прибор: <a asp-controller="Devices" asp-action="Details" asp-route-id="@Model.Task.Device.Id">@Model.Task.Device.ToString()</a></h4>
+            <h4>Приборы: <br/>
+                @foreach (var device in Model.Task.Devices)
+                {
+                    <a asp-controller="Devices" asp-action="Details" asp-route-id="@device.DeviceId">@device.Device.ToString()</a> @device.Quantity <text>шт.</text> <br/>
+                }
+            </h4>
             <h4>Статус: @Model.Task.Status.GetTasksStatusName()</h4>
             <h4>Срок: @Model.Task.Deadline.ToString("dd.MM.yyyy")</h4>
             <h4>Описание:</h4>
@@ -49,7 +54,7 @@
             @foreach (var obtainedComp in Model.Task.ObtainedMontages )
             {
                 var supplyRequest = Model.SupplyRequests.FirstOrDefault(sr => sr.ComponentId == obtainedComp.ComponentId);
-                var comp = Model.Task.Device.Montages.FirstOrDefault(om => obtainedComp.ComponentId == om.ComponentId);
+                var comp = Model.Task.MontageInDevices.FirstOrDefault(om => obtainedComp.ComponentId == om.ComponentId);
                 if (comp == null)
                     continue;
                 
@@ -99,7 +104,7 @@
             @foreach (var obtainedDes in Model.Task.ObtainedDesigns)
             {
                 var supplyRequest = Model.SupplyRequests.FirstOrDefault(sr => sr.ComponentId == obtainedDes.ComponentId);
-                var des = Model.Task.Device.Designs.FirstOrDefault(d => obtainedDes.ComponentId == d.ComponentId);
+                var des = Model.Task.DesignInDevices.FirstOrDefault(d => obtainedDes.ComponentId == d.ComponentId);
                 if (des == null)
                 {
                     continue;

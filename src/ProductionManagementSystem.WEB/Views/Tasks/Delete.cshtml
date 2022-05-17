@@ -21,7 +21,12 @@
     <div class="row">
         <div class="col">
             <h4>Задача №@Model.Id</h4>
-            <h4>Прибор: <a asp-controller="Devices" asp-action="Details" asp-route-id="@Model.Device.Id">@Model.Device.ToString()</a></h4>
+            <h4>Приборы: <br/>
+                @foreach (var device in Model.Devices)
+                {
+                    <a asp-controller="Devices" asp-action="Details" asp-route-id="@device.DeviceId">@device.Device.ToString()</a> @device.Quantity <text>шт.</text> <br/>
+                }
+            </h4>
             <h4>Статус: @Model.Status</h4>
             <h4>Срок: @Model.Deadline.ToString("dd.MM.yyyy")</h4>
             <h4>Описание:</h4>
