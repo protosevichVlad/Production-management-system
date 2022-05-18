@@ -183,7 +183,8 @@ namespace ProductionManagementSystem.WEB.Controllers
             return PartialView("Partail/Task/TaskItem", new TaskItemViewModel()
             {
                 Index = index,
-                AllDevices = await _deviceService.GetAllAsync()
+                AllDevices = await _deviceService.GetAllAsync(),
+                Quantity = 1
             });
         }
 

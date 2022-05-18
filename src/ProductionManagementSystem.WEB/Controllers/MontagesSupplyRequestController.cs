@@ -54,7 +54,8 @@ namespace ProductionManagementSystem.WEB.Controllers
                 ViewBag.Components = (await _taskService.GetByIdAsync(viewModel.TaskId.Value)).ObtainedMontages
                     .Select(c =>  new SelectListItem(
                         _montageService.GetByIdAsync(c.ComponentId).Result.ToString(),
-                        c.ComponentId.ToString()
+                        c.ComponentId.ToString(),
+                        c.ComponentId == componentId
                     )).AsEnumerable();
             }
             else

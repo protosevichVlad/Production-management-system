@@ -63,12 +63,12 @@ namespace ProductionManagementSystem.Core.Services
 
         protected override async Task CreateLogForUpdatingAsync(MontageSupplyRequest item)
         {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была изменёна заявка на снабжения монтажа " + item, MontageSupplyRequestId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была изменена заявка на снабжения монтажа " + item, MontageSupplyRequestId = item.Id });
         }
 
         protected override async Task CreateLogForDeletingAsync(MontageSupplyRequest item)
         {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была удалёна заявка на снабжения монтажа " + item, MontageSupplyRequestId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была удалена заявка на снабжения монтажа " + item, MontageSupplyRequestId = item.Id });
         }
         
         

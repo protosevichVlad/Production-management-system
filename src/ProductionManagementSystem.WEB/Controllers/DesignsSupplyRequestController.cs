@@ -52,7 +52,8 @@ namespace ProductionManagementSystem.WEB.Controllers
                 ViewBag.Designs = (await _taskService.GetByIdAsync(viewModel.TaskId.Value)).ObtainedDesigns
                     .Select(c =>  new SelectListItem(
                         _designService.GetByIdAsync(c.ComponentId).Result.ToString(),
-                        c.ComponentId.ToString()
+                        c.ComponentId.ToString(), 
+                        c.ComponentId == designId
                     )).AsEnumerable();
             }
             else

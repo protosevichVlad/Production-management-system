@@ -16,7 +16,6 @@ namespace ProductionManagementSystem.Core.Models.SupplyRequests
         public string Comment { get; set; }
         
         [Display(Name = "Дата добавления")]
-        [DisplayFormat(DataFormatString = "{0:HH:mm:ss dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         public DateTime DateAdded { get; set; }
         
         [Display(Name = "Желаемая дата")]

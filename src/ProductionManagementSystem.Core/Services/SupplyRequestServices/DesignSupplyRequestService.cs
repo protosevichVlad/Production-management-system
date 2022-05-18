@@ -63,12 +63,12 @@ namespace ProductionManagementSystem.Core.Services
 
         protected override async Task CreateLogForUpdatingAsync(DesignSupplyRequest item)
         {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была изменёна заявка на снабжения конструктива " + item, DesignSupplyRequestId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была изменена заявка на снабжения конструктива " + item, DesignSupplyRequestId = item.Id });
         }
 
         protected override async Task CreateLogForDeletingAsync(DesignSupplyRequest item)
         {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была удалёна заявка на снабжения конструктива " + item, DesignSupplyRequestId = item.Id });
+            await _db.LogRepository.CreateAsync(new Log { Message = "Была удалена заявка на снабжения конструктива " + item, DesignSupplyRequestId = item.Id });
         }
         
         protected override bool UpdateLogPredicate(Log log, DesignSupplyRequest item) => log.DesignSupplyRequestId == item.Id; 

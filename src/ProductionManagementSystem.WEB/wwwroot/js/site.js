@@ -78,10 +78,10 @@ async function createTaskItem() {
     $.get(`/tasks/getTaskItem?index=${length}`, function(data) {
         $(`#devTr0`).before(data)
         $('.js-example-basic-single').select2();
+        
+        updateIndex('DeviceIds');
+        undisableButton('#buttonCreateDevice');
     });
-
-    updateIndex('DeviceIds');
-    undisableButton('#buttonCreateDevice');
 }
 
 function removeTaskItem(index) {
