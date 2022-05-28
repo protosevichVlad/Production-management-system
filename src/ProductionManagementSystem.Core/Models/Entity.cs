@@ -1,18 +1,128 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using ProductionManagementSystem.Core.Models.AltiumDB;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
-namespace ProductionManagementSystem.Core.Models
+namespace ProductionManagementSystem.Core.Models.AltiumDB
 {
-    [Table("Entities")]
-    public class Entity
+    public class Entity : Dictionary<string, string>
     {
-        [Key]
-        public int KeyId { get; set; }
-        public int Quantity { get; set; }
-        public string ImageUrl { get; set; }
-        public string PartNumber { get; set; }
-        public int TableId { get; set; }
-        public Table Table { get; set; }
+        public Entity(Table table)
+        {
+            foreach (var columnName in table.TableColumns.Select(x => x.ColumnName))
+            {
+                this[columnName] = "";
+            }
+
+            this.FootprintPath = table.FootprintPath;
+            this.LibraryPath = table.LibraryPath;
+        }
+        
+        public Entity()
+        {
+            foreach (var columnName in Fields)
+            {
+                this[columnName] = "";
+            }
+        }
+
+        public string Item
+        {
+            get => this["Item"];
+            set => this["Item"] = value;
+        }
+
+        public string PartNumber
+        {
+            get => this["Part Number"];
+            set => this["Part Number"] = value;
+        }
+
+        public string LibraryRef
+        {
+            get => this["Library Ref"];
+            set => this["Library Ref"] = value;
+        }
+
+        public string FootprintRef
+        {
+            get => this["Footprint Ref"];
+            set => this["Footprint Ref"] = value;
+        }
+
+        public string LibraryPath // заполняется для всей таблицы
+        {
+            get => this["Library Path"];
+            set => this["Library Path"] = value;
+        }
+
+        public string FootprintPath // заполняется для всей таблицы
+        {
+            get => this["Footprint Path"];
+            set => this["Footprint Path"] = value;
+        }
+
+        public string Supplier
+        {
+            get => this["Supplier"];
+            set => this["Supplier"] = value;
+        }
+
+        public string Case
+        {
+            get => this["Case"];
+            set => this["Case"] = value;
+        }
+
+        public string Manufacture
+        {
+            get => this["Manufacturer"];
+            set => this["Manufacturer"] = value;
+        }
+
+        public string HelpURL
+        {
+            get => this["HelpURL"];
+            set => this["HelpURL"] = value;
+        }
+
+        public string Description
+        {
+            get => this["Description"];
+            set => this["Description"] = value;
+        }
+
+        public string Category
+        {
+            get => this["Category"];
+            set => this["Category"] = value;
+        }
+        
+
+        public static List<string> Fields { get; } = new List<string>()
+        {
+            "Item", "Part Number", "Library Ref", "Footprint Ref", "Library Path", "Footprint Path", "Supplier",
+            "Case", "Manufacturer", "HelpURL", "Description", "Category"
+        };
+
+        public static List<string> ImportantFields { get; } = new List<string>()
+        {
+            "Item", "Manufacturer", "Part Number", "HelpURL", "Description"
+        };
+        
+        public static List<string> NotFilterFields { get; } = new List<string>()
+        {
+            "Item", "Part Number", "Library Ref", "Footprint Ref", "Library Path", "Footprint Path",
+            "HelpURL", "Description"
+        };
+
+        public static List<string> DefaultDisplayFalse { get; } = new List<string>()
+        {
+            "ImageLink", "Library Path", "HelpURL", "Footprint Path"
+        };
+
+        public List<string> NoImportantFields => Fields
+            .Where(x => !ImportantFields.Contains(x) && x != "Part Number").Concat(OtherFields).ToList();
+
+        public List<string> OtherFields => this.Keys.Except(Fields).ToList();
     }
 }

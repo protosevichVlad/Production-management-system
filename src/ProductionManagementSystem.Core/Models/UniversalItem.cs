@@ -89,7 +89,7 @@ namespace ProductionManagementSystem.Core.Models
             Name = entityExt.Item;
             Quantity = entityExt.Quantity;
             Description = entityExt.Description;
-            Manufacture = entityExt.Manufacturer;
+            Manufacture = entityExt.Manufacture;
             Category = entityExt.Category;
             PartNumber = entityExt.PartNumber;
             ItemType = CDBItemType.Entity;

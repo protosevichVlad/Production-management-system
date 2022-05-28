@@ -22,7 +22,9 @@ namespace ProductionManagementSystem.Core.Services
             _taskService = new TaskService(uow);
             _currentRepository = _db.OrderRepository;
         }
-        
+
+        protected override LogsItemType ItemType => LogsItemType.Order;
+
         public override async System.Threading.Tasks.Task CreateAsync(Order order)
         {
             order.DateStart = DateTime.Now.Date;
@@ -40,22 +42,7 @@ namespace ProductionManagementSystem.Core.Services
             
             await base.DeleteAsync(order);
         }
-
-        protected override async System.Threading.Tasks.Task CreateLogForCreatingAsync(Order item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был создан заказ " + item, OrderId = item.Id });
-        }
-
-        protected override async System.Threading.Tasks.Task CreateLogForUpdatingAsync(Order item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был изменён заказ " + item, OrderId = item.Id });
-        }
-
-        protected override async System.Threading.Tasks.Task CreateLogForDeletingAsync(Order item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён заказ " + item, OrderId = item.Id });
-        }
-
+        
         public async System.Threading.Tasks.Task<IEnumerable<Task>> GetTasksByOrderIdAsync(int orderId)
         {
             return await _db.TaskRepository.FindAsync(t => t.OrderId == orderId);
@@ -65,9 +52,5 @@ namespace ProductionManagementSystem.Core.Services
         {
             await DeleteAsync(new Order {Id = orderId});
         }
-        
-        protected override bool UpdateLogPredicate(Log log, Order item) => log.OrderId == item.Id; 
-
-        protected override void UpdateLog(Log log) => log.OrderId = null;
     }
 }

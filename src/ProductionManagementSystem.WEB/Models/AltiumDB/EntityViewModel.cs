@@ -7,6 +7,6 @@ namespace ProductionManagementSystem.WEB.Models.AltiumDB
     public class EntityViewModel
     {
         public Table Table { get; set; }
-        public AltiumDbEntity Data { get; set; }
+        public Entity Data { get; set; }
     }
 }

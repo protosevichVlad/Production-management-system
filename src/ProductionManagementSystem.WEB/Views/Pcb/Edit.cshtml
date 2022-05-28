@@ -115,10 +115,10 @@
         <span class="bx--table-header-label">№</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Category</span>
+        <span class="bx--table-header-label">Категория</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Designator</span>
+        <span class="bx--table-header-label">Обозначение</span>
       </th>
       <th >
         <span class="bx--table-header-label">Item</span>
@@ -127,19 +127,19 @@
         <span class="bx--table-header-label">Part Number</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Supplier</span>
+        <span class="bx--table-header-label">Поставщик</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Case</span>
+        <span class="bx--table-header-label">Корпус</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Manufacture</span>
+        <span class="bx--table-header-label">Производитель</span>
       </th>
       <th >
-        <span class="bx--table-header-label">Quantity</span>
+        <span class="bx--table-header-label">К-во</span>
       </th>
       <th >
-        <span class="bx--table-header-label hidden-print">Description</span>
+        <span class="bx--table-header-label hidden-print">Описание</span>
       </th>
       <th></th>
     </tr>
@@ -201,16 +201,11 @@
     </tbody>
   </table>
 </div>
-<div class="bx--row-padding">
-  <div class="bx--col-sm-4" style="display: flex; justify-content: end">
-    <button class="bx--btn bx--btn--primary" v-on:click="updateProject">Сохранить</button>
-  </div>
-</div>
 </div>
 <div id="add-entity-modal" class="bx--modal" role="dialog" aria-modal="true" tabindex="-1">
   <div class="bx--modal-container">
     <div class="bx--modal-header">
-      <p class="bx--modal-header__heading bx--type-beta" id="modal-heading">Add entity to project</p>
+      <p class="bx--modal-header__heading bx--type-beta" id="modal-heading">Добавление компонента в печатную плату</p>
       <button class="bx--modal-close" type="button" data-modal-close aria-label="close modal">
         <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--modal-close__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
           <path d="M12 4.7L11.3 4 8 7.3 4.7 4 4 4.7 7.3 8 4 11.3 4.7 12 8 8.7 11.3 12 12 11.3 8.7 8z"></path>
@@ -286,7 +281,7 @@
           <div class="bx--col-md-8">
             <div class="bx--form-item">
               <div data-numberinput class=" bx--number bx--number--light">
-                <label for="input-quantity-entity-in-project" class="bx--label">Quantity</label>
+                <label for="input-quantity-entity-in-project" class="bx--label">Количество</label>
                 <div class="bx--number__input-wrapper">
                   <input id="input-quantity-entity-in-project" type="number" min="0" max="999999" v-model="selectedUsedItem.quantity">
                   <div class="bx--number__controls">
@@ -306,9 +301,9 @@
             </div>
           </div>
           <div class="bx--col-md-8">
-            <label for="text-area-entityInProject-designator" class="bx--label">Designator</label>
+            <label for="text-area-entityInProject-designator" class="bx--label">Обозначение</label>
             <textarea id="text-area-entityInProject-designator" class="bx--text-area"
-                    style="height: 100px;" placeholder="Placeholder text." v-model="selectedUsedItem.designator"></textarea>
+                    style="height: 100px;" placeholder="Обозначение" v-model="selectedUsedItem.designator"></textarea>
           </div>
         </div>
       </div>

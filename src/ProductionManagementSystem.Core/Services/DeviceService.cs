@@ -28,7 +28,9 @@ namespace ProductionManagementSystem.Core.Services
         {
             _currentRepository = _db.DeviceRepository;
         }
-        
+
+        protected override LogsItemType ItemType => LogsItemType.Device;
+
         public override async Task UpdateAsync(Device device)
         {
             var checkInTask = await CheckInTaskAsync(device);
@@ -123,11 +125,11 @@ namespace ProductionManagementSystem.Core.Services
 
             if (quantity < 0)
             {
-                await _db.LogRepository.CreateAsync(new Log { Message = $"Был получен прибор {device} со склада {quantity}шт.", DeviceId = device.Id});
+                await _db.LogRepository.CreateAsync(new Log { Message = $"Был получен прибор {device} со склада {quantity}шт.", ItemId = device.Id, ItemType = LogsItemType.Device});
             }
             else
             {
-                await _db.LogRepository.CreateAsync(new Log { Message = $"Был добавлен прибор {device} на склад {-quantity}шт.", DeviceId = device.Id});
+                await _db.LogRepository.CreateAsync(new Log { Message = $"Был добавлен прибор {device} на склад {-quantity}шт.", ItemId = device.Id, ItemType = LogsItemType.Device});
             }
             
             await _db.SaveAsync();
@@ -137,24 +139,16 @@ namespace ProductionManagementSystem.Core.Services
         {
             return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString()));
         }
-        
-        protected override async Task CreateLogForCreatingAsync(Device item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был создан прибор " + item, DeviceId = item.Id });
-        }
 
-        protected override async Task CreateLogForUpdatingAsync(Device item)
+        protected override object GetPropValue(Device src, string propName)
         {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был изменён прибор " + item, DeviceId = item.Id });
+            if (propName == nameof(src.Montages) && src.Montages != null)
+                return "<br />&nbsp;&nbsp;" + string.Join("<br/>&nbsp;&nbsp;", src.Montages.Select(async x => $"{x.Montage ?? (await _db.MontageRepository.FindAsync(y => y.Id == x.ComponentId)).FirstOrDefault()} {x.Quantity}шт").Select(x => x.Result));
+            
+            if (propName == nameof(src.Designs) && src.Designs != null)
+                return "<br />&nbsp;&nbsp;" + string.Join("<br/>&nbsp;&nbsp;", src.Designs.Select(async x => $"{x.Design ?? (await _db.DesignRepository.FindAsync(y => y.Id == x.ComponentId)).FirstOrDefault()} {x.Quantity}шт").Select(x => x.Result));
+            
+            return base.GetPropValue(src, propName);
         }
-
-        protected override async Task CreateLogForDeletingAsync(Device item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён прибор " + item, DeviceId = item.Id });
-        }
-        
-        protected override bool UpdateLogPredicate(Log log, Device item) => log.DeviceId == item.Id; 
-
-        protected override void UpdateLog(Log log) => log.DeviceId = null;
     }
 }

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Models.SupplyRequests;
@@ -39,9 +42,8 @@ namespace ProductionManagementSystem.Core.Services
             await _db.LogRepository.CreateAsync(new Log
             {
                 Message = message, 
-                DesignSupplyRequestId = designSupplyRequest.Id, 
-                DesignId = designSupplyRequest.ComponentId, 
-                TaskId = designSupplyRequest.TaskId
+                ItemId = designSupplyRequest.Id, 
+                ItemType = LogsItemType.DesignSupplyRequest, 
             });
             await _db.SaveAsync();
         }
@@ -55,24 +57,31 @@ namespace ProductionManagementSystem.Core.Services
         {
             await DeleteAsync(new DesignSupplyRequest {Id = id});
         }
-        
-        protected override async Task CreateLogForCreatingAsync(DesignSupplyRequest item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была создана заявка на снабжения конструктива " + item, DesignSupplyRequestId = item.Id });
-        }
 
-        protected override async Task CreateLogForUpdatingAsync(DesignSupplyRequest item)
+        protected override LogsItemType ItemType => LogsItemType.DesignSupplyRequest;
+        protected override object GetPropValue(DesignSupplyRequest src, string propName)
         {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была изменена заявка на снабжения конструктива " + item, DesignSupplyRequestId = item.Id });
-        }
-
-        protected override async Task CreateLogForDeletingAsync(DesignSupplyRequest item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была удалена заявка на снабжения конструктива " + item, DesignSupplyRequestId = item.Id });
+            if (propName == nameof(src.StatusSupply))
+                return GetStatusName(src.StatusSupply);
+                    
+            return base.GetPropValue(src, propName);
         }
         
-        protected override bool UpdateLogPredicate(Log log, DesignSupplyRequest item) => log.DesignSupplyRequestId == item.Id; 
-
-        protected override void UpdateLog(Log log) => log.DesignSupplyRequestId = null;
+        public string GetStatusName(SupplyStatusEnum item)
+        {
+            List<string> result = new List<string>();
+            foreach (var value in Enum.GetValues<SupplyStatusEnum>())
+            {
+                if ((item & value) == value)
+                {
+                    result.Add(value.GetType()
+                        .GetMember(value.ToString())
+                        .First()
+                        .GetCustomAttribute<DisplayAttribute>()
+                        ?.GetName());
+                }
+            }
+            return String.Join(", ", result);
+        }
     }
 }

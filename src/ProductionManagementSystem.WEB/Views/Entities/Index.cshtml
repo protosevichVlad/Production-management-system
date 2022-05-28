@@ -5,8 +5,8 @@
 @{
   ViewBag.Title = Model.Table?.DisplayName ?? "Все компоненты";
   Layout = "_AltiumDBLayout";
-  List<string> columns = Model.Table?.TableColumns?.Where(x => x.Display)?.Select(x => x.ColumnName).ToList() ?? AltiumDbEntity.Fields;
-  columns = columns.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x)).ToList();
+  List<string> columns = Model.Table?.TableColumns?.Where(x => x.Display)?.Select(x => x.ColumnName).ToList() ?? Entity.Fields;
+  columns = columns.Where(x => Entity.DefaultDisplayFalse.All(y => y != x)).ToList();
   columns.AddRange(new List<string>(){"Quantity"});
   
   if (!User.IsInRole(RoleEnum.Engineer))
@@ -35,44 +35,7 @@
           <h4 class="bx--data-table-header__title">@ViewBag.Title</h4>
         </div>
       </div>
-      <div class="bx--row">
-        <div class="bx--col-lg-12">
-          <div class="bx--grid">
-            <div class="bx--row">
-              @foreach (var filter in Model.Filters)
-              {
-                <div class="bx--col-lg-2">
-                  <fieldset class="bx--fieldset" style="max-height: 200px; overflow: auto">
-                    <legend class="bx--label">@filter.FilterName</legend>
-                    @foreach (var value in filter.Values)
-                    {
-                      <div class="bx--form-item bx--checkbox-wrapper">
-                        <input id="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox" type="checkbox" value="@value.value"
-                               name="@filter.FilterName" @(value.selected ? "checked" : "")>
-                        <label for="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox-label">@value.text</label>
-                      </div>
-                    }
-                  </fieldset>
-                </div>
-              }
-            </div>
-            <div class="bx--row">
-              <div class="bx--col--auto" style="display: flex; justify-content: end">
-                <button
-                  class="bx--btn bx--btn--tertiary bx--btn--sm"
-                  type="reset" onclick="location.href ='@Url.Action("Index", Model.Table != null ? new {tableId = Model.Table.Id} : new {})'">
-                  Сбросить фильтр
-                </button>
-                <button
-                  class="bx--btn bx--btn--tertiary bx--btn--sm"
-                  type="submit">
-                  Применить фильтр
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <partial name="Partail/Tables/Filter" model="Model.Filters"/>
     </div>
   </div>
 

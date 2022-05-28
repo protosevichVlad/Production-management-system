@@ -1,4 +1,5 @@
-﻿@model ProductionManagementSystem.Core.Models.Logs.Log;
+﻿@using ProductionManagementSystem.Core.Models.Logs
+@model ProductionManagementSystem.Core.Models.Logs.Log;
 
 @{
     ViewData["Title"] = "Подробная информация";
@@ -32,30 +33,30 @@
             @Html.DisplayNameFor(model => model.Message)
         </dt>
         <dd class="col-6">
-            @Html.DisplayFor(model => model.Message)
+            @Html.Raw(Model.Message)
         </dd>
     </dl>
 </div>
 <div>
     <a class="btn btn-light btn-sm" asp-action="Index">Вернуться к логам</a>
-    @if (Model.DesignId != null)
+    @if (Model.ItemType == LogsItemType.Design)
     {
-        <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="Details" asp-route-id="@Model.DesignId">Перейти к конструктиву</a>
+        <a class="btn btn-light btn-sm" asp-controller="Designs" asp-action="Details" asp-route-id="@Model.ItemId">Перейти к конструктиву</a>
     }
-    @if (Model.MontageId != null)
+    @if (Model.ItemType == LogsItemType.Montage)
     {
-        <a class="btn btn-light btn-sm" asp-controller="Montages" asp-action="Details" asp-route-id="@Model.MontageId">Перейти к монтажу</a>
+        <a class="btn btn-light btn-sm" asp-controller="Montages" asp-action="Details" asp-route-id="@Model.ItemId">Перейти к монтажу</a>
     }
-    @if (Model.DeviceId != null)
+    @if (Model.ItemType == LogsItemType.Device)
     {
-        <a class="btn btn-light btn-sm" asp-controller="Devices" asp-action="Details" asp-route-id="@Model.DeviceId">Перейти к прибору</a>
+        <a class="btn btn-light btn-sm" asp-controller="Devices" asp-action="Details" asp-route-id="@Model.ItemId">Перейти к прибору</a>
     }
-    @if (Model.TaskId != null)
+    @if (Model.ItemType == LogsItemType.Task)
     {
-        <a class="btn btn-light btn-sm" asp-controller="Tasks" asp-action="Details" asp-route-id="@Model.TaskId">Перейти к задаче</a>
+        <a class="btn btn-light btn-sm" asp-controller="Tasks" asp-action="Details" asp-route-id="@Model.ItemId">Перейти к задаче</a>
     }
-    @if (Model.OrderId != null)
+    @if (Model.ItemType == LogsItemType.Order)
     {
-        <a class="btn btn-light btn-sm" asp-controller="Orders" asp-action="Details" asp-route-id="@Model.OrderId">Перейти к заказу</a>
+        <a class="btn btn-light btn-sm" asp-controller="Orders" asp-action="Details" asp-route-id="@Model.ItemId">Перейти к заказу</a>
     }
 </div>

@@ -11,33 +11,17 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=123PassWord123
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=<password>
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     volumes:
-      - C:\https:/https
+      - ./https:/https
       - ./log.txt:/app/log.txt
+      - ./uploads:/app/wwwroot/uploads
+      - ./appsettings.json:/app/appsettings.json
     ports:
       - "32825:80"
       - "32824:443"
     restart: always
-
-#  production-management-system-api:
-#    image: production-management-system-api
-#    build:
-#      context: .
-#      dockerfile: ProductionManagementSystem.API/Dockerfile
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#      - ASPNETCORE_URLS=https://+:443;http://+:80
-#      - ASPNETCORE_Kestrel__Certificates__Default__Password=123PassWord123
-#      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
-#    volumes:
-#      - C:\https:/https
-#    ports:
-#      - "32827:80"
-#      - "32826:443"
-#    restart: always
-
 
   db:
     image: mysql
@@ -45,10 +29,10 @@ services:
     volumes:
       - ./my-db:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 123Pass123
+      MYSQL_ROOT_PASSWORD: <root password>
       MYSQL_DATABASE: master
-      MYSQL_USER: user1
-      MYSQL_PASSWORD: 123Pass123  
+      MYSQL_USER: <username>
+      MYSQL_PASSWORD: <user password>  
     ports:
       - "3306:3306"
         
@@ -60,9 +44,9 @@ services:
       - ./backup:/backup
     environment:
       - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQL_PASS=123Pass123
+      - MYSQL_USER=<username>
+      - MYSQL_PASS=<userpassword>
       - MAX_BACKUPS=15
       - INIT_BACKUP=0
-      - CRON_TIME=*/5 * * * *
+      - CRON_TIME=0 7 * * *
     restart: unless-stopped

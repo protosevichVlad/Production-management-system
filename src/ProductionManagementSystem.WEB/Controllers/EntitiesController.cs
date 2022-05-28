@@ -76,8 +76,8 @@ namespace ProductionManagementSystem.WEB.Controllers
                 : await _entityExtService.SearchByKeyWordAsync(q, tableId);
             
             List<FilterViewModel> filters = new List<FilterViewModel>();
-            var fields = table?.TableColumns?.Where(x => x.Display)?.Select(x => x.ColumnName) ?? AltiumDbEntity.Fields;
-            foreach (var column in fields.Where(x => AltiumDbEntity.NotFilterFields.All(y => y != x)))
+            var fields = table?.TableColumns?.Where(x => x.Display)?.Select(x => x.ColumnName) ?? Entity.Fields;
+            foreach (var column in fields.Where(x => Entity.NotFilterFields.All(y => y != x)))
             {
                 data = data.Where(x => !filter.ContainsKey(column) || filter[column].Contains(x[column])).ToList();
                 filters.Add(new FilterViewModel()

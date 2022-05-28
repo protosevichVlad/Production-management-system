@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Models.SupplyRequests;
@@ -39,9 +42,8 @@ namespace ProductionManagementSystem.Core.Services
             await _db.LogRepository.CreateAsync(new Log
             {
                 Message = message, 
-                MontageSupplyRequestId = montageSupplyRequest.Id, 
-                DesignId = montageSupplyRequest.ComponentId, 
-                TaskId = montageSupplyRequest.TaskId
+                ItemId = montageSupplyRequest.Id,
+                ItemType = LogsItemType.MontageSupplyRequest,
             });
             await _db.SaveAsync();
         }
@@ -51,29 +53,31 @@ namespace ProductionManagementSystem.Core.Services
             return await _currentRepository.FindAsync(sr => sr.TaskId == taskId);
         }
 
-        public async Task DeleteByIdAsync(int id)
+        protected override LogsItemType ItemType => LogsItemType.MontageSupplyRequest;
+        
+        protected override object GetPropValue(MontageSupplyRequest src, string propName)
         {
-            await DeleteAsync(new MontageSupplyRequest {Id = id});
+            if (propName == nameof(src.StatusSupply))
+                return GetStatusName(src.StatusSupply);
+                    
+            return base.GetPropValue(src, propName);
         }
         
-        protected override async Task CreateLogForCreatingAsync(MontageSupplyRequest item)
+        public string GetStatusName(SupplyStatusEnum item)
         {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была создана заявка на снабжения монтажа " + item, MontageSupplyRequestId = item.Id });
+            List<string> result = new List<string>();
+            foreach (var value in Enum.GetValues<SupplyStatusEnum>())
+            {
+                if ((item & value) == value)
+                {
+                    result.Add(value.GetType()
+                        .GetMember(value.ToString())
+                        .First()
+                        .GetCustomAttribute<DisplayAttribute>()
+                        ?.GetName());
+                }
+            }
+            return String.Join(", ", result);
         }
-
-        protected override async Task CreateLogForUpdatingAsync(MontageSupplyRequest item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была изменена заявка на снабжения монтажа " + item, MontageSupplyRequestId = item.Id });
-        }
-
-        protected override async Task CreateLogForDeletingAsync(MontageSupplyRequest item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была удалена заявка на снабжения монтажа " + item, MontageSupplyRequestId = item.Id });
-        }
-        
-        
-        protected override bool UpdateLogPredicate(Log log, MontageSupplyRequest item) => log.MontageSupplyRequestId == item.Id; 
-
-        protected override void UpdateLog(Log log) => log.MontageSupplyRequestId = null;
     }
 }

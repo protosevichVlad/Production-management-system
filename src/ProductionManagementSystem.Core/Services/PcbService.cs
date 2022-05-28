@@ -97,34 +97,34 @@ namespace ProductionManagementSystem.Core.Services
             {
                 await using var ms = new MemoryStream();
                 await bom.CopyToAsync(ms);
-                pcb.BOMFilePath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", $"{pcb.Name}_{pcb.Variant}_Bom.xlsx");
+                pcb.BOMFilePath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}", $"{pcb.Name}_{pcb.Variant}_Bom.xlsx");
             }
             
             if (image != null)
             {
                 await using var ms = new MemoryStream();
                 await image.CopyToAsync(ms);
-                pcb.ImagePath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", $"{pcb.Name}_{pcb.Variant}_Image.png");
+                pcb.ImagePath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}", $"{pcb.Name}_{pcb.Variant}_Image.png");
             }
             
             if (circuitDiagram != null)
             {
                 await using var ms = new MemoryStream();
                 await circuitDiagram.CopyToAsync(ms);
-                pcb.CircuitDiagramPath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", $"{pcb.Name}_{pcb.Variant}_CircuitDiagram.pdf");
+                pcb.CircuitDiagramPath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}", $"{pcb.Name}_{pcb.Variant}_CircuitDiagram.pdf");
             }
             
             if (assemblyDrawing != null)
             {
                 await using var ms = new MemoryStream();
                 await assemblyDrawing.CopyToAsync(ms);
-                pcb.AssemblyDrawingPath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", $"{pcb.Name}_{pcb.Variant}_AssemblyDrawing.pdf");
+                pcb.AssemblyDrawingPath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}", $"{pcb.Name}_{pcb.Variant}_AssemblyDrawing.pdf");
             }
             if (threeDModel != null)
             {
                 await using var ms = new MemoryStream();
                 await threeDModel.CopyToAsync(ms);
-                pcb.ThreeDModelPath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}/{DateTime.Now.ToString(CultureInfo.InvariantCulture)}", $"{pcb.Name}_{pcb.Variant}_ThreeDModel.stl");
+                pcb.ThreeDModelPath = await  _fileService.CreateFileByUrl(ms.ToArray(), $"/uploads/{pcb.Name}/{pcb.Variant}", $"{pcb.Name}_{pcb.Variant}_ThreeDModel.stl");
             }
             
             pcb.Description = "This project was created with using a BOM file";

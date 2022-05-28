@@ -36,6 +36,7 @@ namespace ProductionManagementSystem.Core.Services
             _currentRepository = _db.TaskRepository;
         }
 
+        protected override LogsItemType ItemType => LogsItemType.Task;
         public override async System.Threading.Tasks.Task CreateAsync(Task task)
         {
             task.Status = TaskStatusEnum.Equipment;
@@ -108,7 +109,7 @@ namespace ProductionManagementSystem.Core.Services
 
             logString += $"на {GetTaskStatusName(task.Status)}" + 
                          (String.IsNullOrWhiteSpace(message) ? $" с сообщением: {message}": String.Empty);
-            await _db.LogRepository.CreateAsync(new Log {Message = logString, TaskId = task.Id, OrderId = task.OrderId});
+            await _db.LogRepository.CreateAsync(new Log {Message = logString, ItemId = task.Id, ItemType = LogsItemType.Task});
             await _db.SaveAsync();
         }
 
@@ -223,24 +224,5 @@ namespace ProductionManagementSystem.Core.Services
             }
             return status;
         }
-        
-        protected override async System.Threading.Tasks.Task CreateLogForCreatingAsync(Task item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была создана задача " + item, TaskId = item.Id, OrderId = item.OrderId});
-        }
-
-        protected override async System.Threading.Tasks.Task CreateLogForUpdatingAsync(Task item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была изменёна задача " + item, TaskId = item.Id, OrderId = item.OrderId });
-        }
-
-        protected override async System.Threading.Tasks.Task CreateLogForDeletingAsync(Task item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Была удалёна задача " + item, TaskId = item.Id, OrderId = item.OrderId });
-        }
-        
-        protected override bool UpdateLogPredicate(Log log, Task item) => log.TaskId == item.Id; 
-
-        protected override void UpdateLog(Log log) => log.TaskId = null;
     }
 }

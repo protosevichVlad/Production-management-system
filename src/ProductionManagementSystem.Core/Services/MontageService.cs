@@ -22,7 +22,9 @@ namespace ProductionManagementSystem.Core.Services
         {
             _currentRepository = _db.MontageRepository;
         }
-        
+
+        protected override LogsItemType ItemType => LogsItemType.Montage;
+
         public override async Task DeleteAsync(Montage montage)
         {
             var checkInDevices = (await CheckInDevicesAsync(montage));
@@ -65,11 +67,11 @@ namespace ProductionManagementSystem.Core.Services
             
             if (quantity < 0)
             {
-                await _db.LogRepository.CreateAsync(new Log {Message = $"Было получено {-quantity}ед. монтажа {montage}", MontageId = montage.Id});
+                await _db.LogRepository.CreateAsync(new Log {Message = $"Было получено {-quantity}ед. монтажа {montage}", ItemId = montage.Id, ItemType = LogsItemType.Montage});
             }
             else
             {
-                await _db.LogRepository.CreateAsync(new Log {Message = $"Было добавлено {quantity}ед. монтажа {montage}", MontageId = montage.Id});
+                await _db.LogRepository.CreateAsync(new Log {Message = $"Было добавлено {quantity}ед. монтажа {montage}", ItemId = montage.Id, ItemType = LogsItemType.Montage});
             }
 
             await _db.SaveAsync();
@@ -107,12 +109,6 @@ namespace ProductionManagementSystem.Core.Services
             return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString())).ToList();
         }
 
-
-        public async Task DeleteByIdAsync(int id)
-        {
-            await DeleteAsync(new Montage {Id = id});
-        }
-
         public async Task UsingInDevice(List<Montage> components)
         {
             foreach (var component in components)
@@ -126,26 +122,5 @@ namespace ProductionManagementSystem.Core.Services
                 }
             }
         }
-
-
-        protected override async Task CreateLogForCreatingAsync(Montage item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был создан монтаж " + item, MontageId = item.Id });
-        }
-
-        protected override async Task CreateLogForUpdatingAsync(Montage item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был изменён монтаж " + item, MontageId = item.Id });
-        }
-
-        protected override async Task CreateLogForDeletingAsync(Montage item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён монтаж " + item, MontageId = item.Id });
-        }
-        
-        
-        protected override bool UpdateLogPredicate(Log log, Montage item) => log.MontageId == item.Id; 
-
-        protected override void UpdateLog(Log log) => log.MontageId = null;
     }
 }

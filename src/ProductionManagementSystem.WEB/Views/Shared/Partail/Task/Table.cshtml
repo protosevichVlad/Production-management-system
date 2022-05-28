@@ -58,7 +58,7 @@
       <td>@Model[i].UsedItem.Item.Case</td>
       <td>@Model[i].UsedItem.Item.Manufacture</td>
       <td>@Model[i].Quantity</td>
-      <td>@Model[i].UsedItem.Quantity</td>
+      <td @(Model[i].UsedItem.Quantity > Model[i].UsedItem.Item.Quantity ? "style=color:red":"")>@Model[i].UsedItem.Quantity</td>
       <td class="hidden-print">
         <span style="white-space: pre-line">@Model[i].UsedItem.Item.Description</span>
       </td>

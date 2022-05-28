@@ -26,11 +26,11 @@ namespace ProductionManagementSystem.Core.Models
         {
             DisplayName = tableName;
             TableName = $"AltiumDB {tableName}";
-            TableColumns = AltiumDbEntity.Fields.Select((x, i) => new TableColumn()
+            TableColumns = Entity.Fields.Select((x, i) => new TableColumn()
             {
                 ColumnName = x,
                 DatabaseOrder = i,
-                Display = AltiumDbEntity.DefaultDisplayFalse.All(y => y != x),
+                Display = Entity.DefaultDisplayFalse.All(y => y != x),
             }).ToList();
         }
 

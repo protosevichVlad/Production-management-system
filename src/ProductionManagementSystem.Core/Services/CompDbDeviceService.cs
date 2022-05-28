@@ -73,12 +73,6 @@ namespace ProductionManagementSystem.Core.Services
             return await _db.CompDbDeviceRepository.SearchByKeyWordAsync(s);
         }
 
-        public async Task DeleteByIdAsync(int id)
-        {
-            var item = await base.GetByIdAsync(id);
-            await base.DeleteAsync(item);
-        }
-
         public async Task<CompDbDevice> GetLatest()
         {
             var devices = await _currentRepository.GetAllAsync();

@@ -11,6 +11,7 @@
       <div class="bx--row">
         @foreach (var filter in Model)
         {
+          @if (filter.Values.Count == 0) continue;
           <div class="bx--col-lg-2">
             <fieldset class="bx--fieldset" style="max-height: 200px; overflow: auto">
               <legend class="bx--label">@filter.FilterName</legend>
@@ -31,12 +32,12 @@
           <button
             class="bx--btn bx--btn--tertiary bx--btn--sm"
             type="reset" onclick="location.search =''">
-            Reset All
+            Сбрость фильтры
           </button>
           <button
             class="bx--btn bx--btn--tertiary bx--btn--sm"
             type="submit">
-            Apply filters
+            Применить фильтры
           </button>
         </div>
       </div>

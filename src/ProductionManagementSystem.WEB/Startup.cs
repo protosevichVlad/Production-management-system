@@ -46,7 +46,7 @@ namespace ProductionManagementSystem.WEB
 
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
-                    new MySqlServerVersion(new Version(8, 0, 24)))
+                    new MySqlServerVersion(new Version(8, 0, 29)))
             );
 
 

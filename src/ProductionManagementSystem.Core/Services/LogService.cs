@@ -32,7 +32,7 @@ namespace ProductionManagementSystem.Core.Services
 
         public async Task<List<Log>> GetByTaskIdAsync(int taskId)
         {
-            var result = await _currentRepository.FindAsync(l => l.TaskId == taskId);
+            var result = await _currentRepository.FindAsync(l => l.ItemType == LogsItemType.Task && l.ItemId == taskId);
             result.Reverse();
             return result;
         }

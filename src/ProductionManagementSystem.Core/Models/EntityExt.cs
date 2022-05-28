@@ -4,7 +4,7 @@ using ProductionManagementSystem.Core.Models.AltiumDB;
 
 namespace ProductionManagementSystem.Core.Models
 {
-    public class EntityExt : AltiumDbEntity
+    public class EntityExt : Entity
     {
         public EntityExt(Table table) : base(table)
         {
@@ -15,14 +15,14 @@ namespace ProductionManagementSystem.Core.Models
             ImageUrl = "";
         }
         
-        public EntityExt(AltiumDbEntity altiumDbEntity, Entity entity)
+        public EntityExt(Entity entity, EntityDBModel entityDbModel)
         {
-            this.Quantity = entity.Quantity;
-            this.Table = entity.Table;
-            this.KeyId = entity.KeyId;
-            this.ImageUrl = entity.ImageUrl;
-            this.TableId = entity.TableId;
-            foreach (var pair in altiumDbEntity)
+            this.Quantity = entityDbModel.Quantity;
+            this.Table = entityDbModel.Table;
+            this.KeyId = entityDbModel.KeyId;
+            this.ImageUrl = entityDbModel.ImageUrl;
+            this.TableId = entityDbModel.TableId;
+            foreach (var pair in entity)
             {
                 this[pair.Key] = pair.Value;
             }
@@ -58,14 +58,14 @@ namespace ProductionManagementSystem.Core.Models
         
         
 
-        public AltiumDbEntity GetAltiumDbEntity()
+        public Entity GetAltiumDbEntity()
         {
             return this;
         }
         
-        public Entity GetEntity()
+        public EntityDBModel GetEntity()
         {
-            return new Entity()
+            return new EntityDBModel()
             {
                 KeyId = KeyId,
                 Quantity = Quantity,

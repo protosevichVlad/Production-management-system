@@ -41,7 +41,6 @@ namespace ProductionManagementSystem.Core.Repositories
             try
             {
                 await _conn.OpenAsync();
-                
                 var cmd = _conn.CreateCommand();
                 cmd.CommandText = string.Join(" UNION ", tables.Select((x) => GetSqlSelectAllColumnsEntityExt(x)));
                 return await GetListEntityExt(cmd);
@@ -60,7 +59,7 @@ namespace ProductionManagementSystem.Core.Repositories
         {
             List<EntityExt> result = new List<EntityExt>();
             var reader = await cmd.ExecuteReaderAsync();
-            var fields = table?.TableColumns.Select(x => x.ColumnName) ?? AltiumDbEntity.Fields;
+            var fields = table?.TableColumns.Select(x => x.ColumnName) ?? Entity.Fields;
             while (await reader.ReadAsync())
             {
                 var row = new EntityExt();
@@ -362,7 +361,7 @@ namespace ProductionManagementSystem.Core.Repositories
         private string GetSqlSelectAllColumnsEntityExt(Table table, bool full=false)
         {
             table.TableColumns = table.TableColumns.OrderBy(x => x.DatabaseOrder).ToList();
-            var fields = full ? table?.TableColumns?.Select(x => x.ColumnName) : AltiumDbEntity.Fields;
+            var fields = full ? table?.TableColumns?.Select(x => x.ColumnName) : Entity.Fields;
             return
                 $"SELECT {string.Join(", ", fields.Select(x => $"t.`{x}` as `{x}`"))}, " +
                 $"e.Quantity, e.ImageUrl, e.KeyId, e.TableId " +

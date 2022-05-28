@@ -5,7 +5,7 @@
 @{
   ViewBag.Title = "Добавить/Получить компоненты";
   Layout = "_AltiumDBLayout";
-  var fields = AltiumDbEntity.Fields;
+  var fields = Entity.Fields;
 }
 
 <div class="bx--data-table-container " data-table>
@@ -21,44 +21,7 @@
             <h4 class="bx--data-table-header__title">@ViewBag.Title</h4>
           </div>
         </div>
-        <div class="bx--row">
-          <div class="bx--col-lg-12">
-            <div class="bx--grid">
-              <div class="bx--row">
-                @foreach (var filter in Model.Filters)
-                {
-                  <div class="bx--col-lg-2">
-                    <fieldset class="bx--fieldset" style="max-height: 200px; overflow: auto">
-                      <legend class="bx--label">@filter.FilterName</legend>
-                      @foreach (var value in filter.Values)
-                      {
-                        <div class="bx--form-item bx--checkbox-wrapper">
-                          <input id="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox" type="checkbox" value="@value.value"
-                                 name="@filter.FilterName" @(value.selected ? "checked" : "")>
-                          <label for="bx--checkbox-@filter.FilterName-@value.value" class="bx--checkbox-label">@value.text</label>
-                        </div>
-                      }
-                    </fieldset>
-                  </div>
-                }
-              </div>
-              <div class="bx--row">
-                <div class="bx--col--auto" style="display: flex; justify-content: end">
-                  <button
-                    class="bx--btn bx--btn--tertiary bx--btn--sm"
-                    type="reset" onclick="location.href ='@Url.Action("Index", Model.Table != null ? new {tableId = Model.Table.Id} : new {})'">
-                    Сбросить фильтр
-                  </button>
-                  <button
-                    class="bx--btn bx--btn--tertiary bx--btn--sm"
-                    type="submit">
-                    Применить фильтр
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <partial name="Partail/Tables/Filter" model="Model.Filters"/>
       </div>
     </div>
     <section class="bx--table-toolbar  bx--table-toolbar--small ">
@@ -73,7 +36,7 @@
     <thead>
     <tr>
       <th></th>
-      @foreach (var columnName in fields.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x) && x != "Library Ref" && x != "Footprint Ref"))
+      @foreach (var columnName in fields.Where(x => Entity.DefaultDisplayFalse.All(y => y != x) && x != "Library Ref" && x != "Footprint Ref"))
       {
         <partial name="Partail/CarbonUIComponents/SortableTh" model="columnName"/>
       }
@@ -102,7 +65,7 @@
           <img src="@Model.Data[i].ImageUrl" class="altiumdb--entity-table--image"/>
         </td>
 
-        @foreach (var columnName in fields.Where(x => AltiumDbEntity.DefaultDisplayFalse.All(y => y != x) && x != "Library Ref" && x != "Footprint Ref"))
+        @foreach (var columnName in fields.Where(x => Entity.DefaultDisplayFalse.All(y => y != x) && x != "Library Ref" && x != "Footprint Ref"))
         {
           <td>
             @if (columnName == "Part Number")

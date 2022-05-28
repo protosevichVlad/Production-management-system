@@ -178,7 +178,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         
         [HttpDelete]
         [Authorize(Roles = RoleEnum.Admin)]
-        [Route("/pcb/{id:int}")]
+        [Route("api/pcb/{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _pcbService.DeleteByIdAsync(id);

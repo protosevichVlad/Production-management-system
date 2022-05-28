@@ -75,7 +75,7 @@ namespace ProductionManagementSystem.Core.Services
 
             logString += $"на {GetTaskStatusName(task.Status)}" + 
                          (!string.IsNullOrWhiteSpace(message) ? $" с сообщением: {message}": string.Empty);
-            await _db.LogRepository.CreateAsync(new Log {Message = logString, TaskId = task.Id});
+            await _db.LogRepository.CreateAsync(new Log {Message = logString, ItemId = task.Id, ItemType = LogsItemType.Task});
             await _db.SaveAsync();
         }
 

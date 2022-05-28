@@ -34,6 +34,8 @@ namespace ProductionManagementSystem.Core.Services
             _currentRepository = _db.DesignRepository;
         }
 
+        protected override LogsItemType ItemType => LogsItemType.Design;
+
         public override async Task DeleteAsync(Design design)
         {
             var checkInDevices = (await CheckInDevicesAsync(design));
@@ -95,11 +97,11 @@ namespace ProductionManagementSystem.Core.Services
             
             if (quantity < 0)
             {
-                await _db.LogRepository.CreateAsync(new Log {Message = $"Было получено {-quantity}ед. конструктива {design}", DesignId = design.Id});
+                await _db.LogRepository.CreateAsync(new Log {Message = $"Было получено {-quantity}ед. конструктива {design}", ItemId = design.Id, ItemType = LogsItemType.Design});
             }
             else
             {
-                await _db.LogRepository.CreateAsync(new Log {Message = $"Было добавлено {quantity}ед. конструктива {design}", DesignId = design.Id});
+                await _db.LogRepository.CreateAsync(new Log {Message = $"Было добавлено {quantity}ед. конструктива {design}", ItemId = design.Id, ItemType = LogsItemType.Design});
             }
             
             await _db.SaveAsync();
@@ -115,24 +117,6 @@ namespace ProductionManagementSystem.Core.Services
             await IncreaseQuantityAsync(id, -quantity);
         }
         
-        protected override async Task CreateLogForCreatingAsync(Design item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был создан конструктив " + item, DesignId = item.Id });
-        }
-
-        protected override async Task CreateLogForUpdatingAsync(Design item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был изменён конструктив " + item, DesignId = item.Id });
-        }
-
-        protected override async Task CreateLogForDeletingAsync(Design item)
-        {
-            await _db.LogRepository.CreateAsync(new Log { Message = "Был удалён конструктив " + item, DesignId = item.Id });
-        }
-
-        protected override bool UpdateLogPredicate(Log log, Design design) => log.DesignId == design.Id; 
-
-        protected override void UpdateLog(Log log) => log.DesignId = null;
 
         private async Task<Tuple<bool, string>> CheckInDevicesAsync(Design design)
         {

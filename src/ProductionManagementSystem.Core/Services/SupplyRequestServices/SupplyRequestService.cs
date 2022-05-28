@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using ProductionManagementSystem.Core.Models.SupplyRequests;
@@ -28,6 +30,23 @@ namespace ProductionManagementSystem.Core.Services.SupplyRequestServices
             List<SupplyRequest> result = (await _montageSupplyRequestService.GetSupplyRequestsByTaskIdAsync(taskId)).Cast<SupplyRequest>().ToList();
             result.AddRange((await _designSupplyRequestService.GetSupplyRequestsByTaskIdAsync(taskId)).Cast<SupplyRequest>().ToList());
             return result;
+        }
+        
+        public string GetStatusName(SupplyStatusEnum item)
+        {
+            List<string> result = new List<string>();
+            foreach (var value in Enum.GetValues<SupplyStatusEnum>())
+            {
+                if ((item & value) == value)
+                {
+                    result.Add(value.GetType()
+                        .GetMember(value.ToString())
+                        .First()
+                        .GetCustomAttribute<DisplayAttribute>()
+                        ?.GetName());
+                }
+            }
+            return String.Join(", ", result);
         }
     }
 }

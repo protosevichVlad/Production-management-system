@@ -31,25 +31,25 @@ namespace ProductionManagementSystem.WEB.Controllers
                 logs = logs.Where(l => l.User.UserName == userName);
             
             if (deviceId != null)
-                logs = logs.Where(l => l.DesignId == deviceId);
+                logs = logs.Where(l => l.ItemId == deviceId && l.ItemType == LogsItemType.Device);
             
             if (montageId != null)
-                logs = logs.Where(l => l.MontageId == montageId);
+                logs = logs.Where(l => l.ItemId == montageId && l.ItemType == LogsItemType.Montage);
             
             if (designId != null)
-                logs = logs.Where(l => l.DesignId == designId);
+                logs = logs.Where(l => l.ItemId == designId && l.ItemType == LogsItemType.Design);
             
             if (taskId != null)
-                logs = logs.Where(l => l.TaskId == taskId);
+                logs = logs.Where(l => l.ItemId == taskId && l.ItemType == LogsItemType.Task);
             
             if (orderId != null)
-                logs = logs.Where(l => l.OrderId == orderId);
+                logs = logs.Where(l => l.ItemId == orderId && l.ItemType == LogsItemType.Order);
             
             if (montageSupplyRequestId != null)
-                logs = logs.Where(l => l.MontageSupplyRequestId == montageSupplyRequestId);
+                logs = logs.Where(l => l.ItemId == montageSupplyRequestId && l.ItemType == LogsItemType.MontageSupplyRequest);
             
             if (designSupplyRequestId != null)
-                logs = logs.Where(l => l.DesignSupplyRequestId == designSupplyRequestId);
+                logs = logs.Where(l => l.ItemId == designSupplyRequestId && l.ItemType == LogsItemType.DesignSupplyRequest);
             
             return View(logs);
         }

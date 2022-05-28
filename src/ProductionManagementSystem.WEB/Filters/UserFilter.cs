@@ -23,8 +23,9 @@ namespace ProductionManagementSystem.WEB.Filters
             {
                 var userManager = context.HttpContext.RequestServices.GetService<UserManager<User>>();
                 var userService = context.HttpContext.RequestServices.GetService<IUserService>();
-                if (userManager != null && userService != null && controller.User.Identity != null && !string.IsNullOrEmpty(controller.User.Identity.Name))
-                        userService.User = await userManager.FindByNameAsync(controller.User.Identity.Name);
+                if (userManager != null && userService != null && controller.User.Identity != null 
+                    && !string.IsNullOrEmpty(controller.User.Identity.Name))
+                    userService.User = await userManager.FindByNameAsync(controller.User.Identity.Name);
             }
 
             await base.OnResultExecutionAsync(context, next);

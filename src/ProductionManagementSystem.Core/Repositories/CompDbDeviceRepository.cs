@@ -68,7 +68,8 @@ namespace ProductionManagementSystem.Core.Repositories
             {
                 throw new DeleteReferenceException("Device delete not permitted", "This device used in other device");
             }
-            
+
+            _db.UsedItems.AsNoTracking().Where(x => x.InItemType == CDBItemType.Device && x.InItemId == item.Id).ToList().ForEach(x => _db.Entry(x).State = EntityState.Deleted);
             base.Delete(item);
         }
     }

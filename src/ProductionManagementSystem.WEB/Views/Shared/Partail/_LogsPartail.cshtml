@@ -27,7 +27,7 @@
                     @(log.User?.UserName ?? "Пользователь удалён")
                 </td>
                 <td>
-                    @log.Message
+                    @Html.Raw(@log.Message)
                 </td>
             <td class="border-0">
                 <a class="btn btn-light btn-sm" asp-controller="Logs" asp-action="Details" asp-route-id="@log.Id">Подробности</a>
