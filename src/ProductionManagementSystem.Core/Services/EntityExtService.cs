@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.AltiumDB;
 using ProductionManagementSystem.Core.Models.ElementsDifference;
+using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Repositories;
 using ProductionManagementSystem.Core.Services.AltiumDB;
 
@@ -28,7 +29,7 @@ namespace ProductionManagementSystem.Core.Services
         Task<List<EntityExt>> SearchByKeyWordAsync(string s, int? tableId=null);
     }
 
-    public class EntityExtService : BaseService<EntityExt, IUnitOfWork>, IEntityExtService
+    public class EntityExtService : BaseServiceWithLogs<EntityExt>, IEntityExtService
     {
         private readonly IToDoNoteService _toDoNoteService;
         public EntityExtService(IUnitOfWork db, IToDoNoteService toDoNoteService) : base(db)
@@ -101,6 +102,8 @@ namespace ProductionManagementSystem.Core.Services
             await _db.SaveAsync();
         }
 
+        protected override LogsItemType ItemType => LogsItemType.Entity;
+
         public override async Task CreateAsync(EntityExt item)
         {
             var table = await _db.DatabaseTableRepository.GetByIdAsync(item.TableId);
@@ -114,7 +117,9 @@ namespace ProductionManagementSystem.Core.Services
             await AddToToDoNotes(table, item);
             await base.UpdateAsync(item);
         }
-        
+
+        protected override int GetEntityId(EntityExt model) => model.KeyId;
+
         public async Task IncreaseQuantityAsync(int id, int quantity)
         {
             await ChangeQuantityAsync(id, quantity);
@@ -144,5 +149,26 @@ namespace ProductionManagementSystem.Core.Services
                 {Difference = quantity, ElementId = entity.KeyId, ElementType = ElementType.Montage});
             await _db.SaveAsync();
         }
+
+        protected override object GetPropValue(EntityExt src, string propName)
+        {
+            if (propName == "Table")
+                return _db.DatabaseTableRepository.GetByIdAsync(src.TableId).Result?.DisplayName ?? "";
+            
+            if (src.ContainsKey(propName))
+                return src[propName];
+            return "";
+        }
+
+        protected override List<string> Properties(EntityExt src)
+        {
+            var result = src.Select(x => x.Key)
+                .Where(x => x != "__RequestVerificationToken" && x != nameof(src.KeyId)&& x != nameof(src.TableId))
+                .ToList();
+            result.Add("Table");
+            return result;
+        }
+
+        protected override string GetPropertyDisplayName(string propName) => propName;
     }
 }

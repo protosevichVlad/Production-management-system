@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using ProductionManagementSystem.Core.Models;
 using ProductionManagementSystem.Core.Models.Logs;
@@ -12,7 +13,7 @@ using ProductionManagementSystem.Core.Repositories;
 namespace ProductionManagementSystem.Core.Services
 {
     public abstract class BaseServiceWithLogs<TItem> : BaseService<TItem, IUnitOfWork>, IBaseService<TItem>
-        where TItem : BaseEntity
+        where TItem : class
     {
         protected abstract LogsItemType ItemType { get; }
         protected BaseServiceWithLogs(IUnitOfWork db) : base(db)
@@ -30,7 +31,9 @@ namespace ProductionManagementSystem.Core.Services
 
         public new virtual async Task UpdateAsync(TItem item)
         {
-            await _db.LogRepository.CreateAsync(await GetLog(LogEventType.Update, item));
+            var log = await GetLog(LogEventType.Update, item);
+            if (log.HasChanges)
+                await _db.LogRepository.CreateAsync(log);
             await _currentRepository.UpdateAsync(item);
             await _db.SaveAsync();
         }
@@ -38,13 +41,15 @@ namespace ProductionManagementSystem.Core.Services
         public new virtual async Task DeleteAsync(TItem item)
         {
             await _db.LogRepository.CreateAsync(await GetLog(LogEventType.Delete, item));
+            await _db.SaveAsync();
+            
             _currentRepository.Delete(item);
             await _db.SaveAsync();
         }
         
         protected virtual async Task<Log> GetLog(LogEventType eventType, TItem newEntity, TItem oldEntity=null)
         {
-            var itemId = GetEntityId(newEntity) ?? 0;
+            var itemId = GetEntityId(newEntity);
             Log log = new Log(ItemType, itemId);
             await AddMessageToLog(log, eventType, newEntity, oldEntity);
             return log;
@@ -68,6 +73,7 @@ namespace ProductionManagementSystem.Core.Services
                 LogsItemType.Order => "заказ",
                 LogsItemType.DesignSupplyRequest => "заявку на снабжение",
                 LogsItemType.MontageSupplyRequest => "заявку на снабжение",
+                LogsItemType.Entity => "компонент",
             };
             
             log.AddMessage($"{startMessage}: {newEntity}.");
@@ -77,13 +83,13 @@ namespace ProductionManagementSystem.Core.Services
 
             if (eventType == LogEventType.Add)
             {
-                foreach (var propName in Porperties<TItem>())
+                foreach (var propName in Properties(newEntity))
                 {
                     var value = GetPropValue(newEntity, propName);
                     if (value == null)
                         continue;
 
-                    log.AddMessageParameterSet(GetPropertyDisplayName<TItem>(propName), value.ToString());
+                    log.AddMessageParameterSet(GetPropertyDisplayName(propName), value.ToString());
                 }
 
                 return;
@@ -92,23 +98,26 @@ namespace ProductionManagementSystem.Core.Services
             if (oldEntity == null)
             {
                 var id = GetEntityId(newEntity);
-                if (!id.HasValue)
+                if (id == 0)
                     return;
 
-                oldEntity = (await _currentRepository.FindAsync(x => x.Id == id)).FirstOrDefault();
+                if (ItemType != LogsItemType.Entity)
+                    oldEntity = (await _currentRepository.FindAsync(x => GetEntityId(x) == id)).FirstOrDefault();
+                else
+                    oldEntity = await _currentRepository.GetByIdAsync(GetEntityId(newEntity));
             }
 
-            foreach (var propName in Porperties<TItem>())
+            foreach (var propName in Properties(newEntity))
             {
                 var newValue = GetPropValue(newEntity, propName)?.ToString() ?? "";
                 var oldValue = GetPropValue(oldEntity, propName)?.ToString() ?? "";
-                log.AddMessageParameterChange(GetPropertyDisplayName<TItem>(propName), oldValue, newValue);
+                log.AddMessageParameterChange(GetPropertyDisplayName(propName), oldValue, newValue);
             }
         }
 
-        protected virtual List<string> Porperties<TEntity>()
+        protected virtual List<string> Properties(TItem src=null)
         {
-            return typeof(TEntity).GetProperties()
+            return typeof(TItem).GetProperties()
                 .Where(x => x.PropertyType != typeof(Guid))
                 .Select(x => x.Name)
                 .Where(x => !x.ToLower().EndsWith("id"))
@@ -126,18 +135,7 @@ namespace ProductionManagementSystem.Core.Services
             return logs;
         }
 
-        protected virtual int? GetEntityId(TItem model)
-        {
-            var kyePropName = model.GetType().GetProperties().Select(x => x.Name).FirstOrDefault(x => x.ToLower().Contains("id"));
-            if (kyePropName == null) return null;
-            if (int.TryParse(GetPropValue(model, kyePropName).ToString(), out int id))
-            {
-                return id;
-            }
-
-            return null;
-        }
-
+        protected abstract int GetEntityId(TItem model);
 
         protected virtual object GetPropValue(TItem src, string propName)
         {
@@ -155,7 +153,7 @@ namespace ProductionManagementSystem.Core.Services
             Delete = 3,
         }
         
-        private string GetPropertyDisplayName<TItem>(string propertyName)
+        protected virtual string GetPropertyDisplayName(string propertyName)
         {
             List<string> result = new List<string>();
             return typeof(TItem)

@@ -48,6 +48,8 @@ namespace ProductionManagementSystem.Core.Services
             await base.DeleteAsync(design);
         }
 
+        protected override int GetEntityId(Design model) => model.Id;
+
         public async Task DeleteByIdAsync(int id)
         {
             await DeleteAsync(new Design {Id = id});

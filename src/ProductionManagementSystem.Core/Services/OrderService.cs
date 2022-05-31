@@ -42,7 +42,9 @@ namespace ProductionManagementSystem.Core.Services
             
             await base.DeleteAsync(order);
         }
-        
+
+        protected override int GetEntityId(Order model) => model.Id;
+
         public async System.Threading.Tasks.Task<IEnumerable<Task>> GetTasksByOrderIdAsync(int orderId)
         {
             return await _db.TaskRepository.FindAsync(t => t.OrderId == orderId);

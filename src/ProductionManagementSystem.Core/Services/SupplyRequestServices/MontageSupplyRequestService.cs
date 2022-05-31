@@ -79,5 +79,7 @@ namespace ProductionManagementSystem.Core.Services
             }
             return String.Join(", ", result);
         }
+        
+        protected override int GetEntityId(MontageSupplyRequest model) => model.Id;
     }
 }

@@ -8,6 +8,8 @@ using ProductionManagementSystem.Core.Infrastructure;
 using ProductionManagementSystem.Core.Models.Logs;
 using ProductionManagementSystem.Core.Models.Users;
 using ProductionManagementSystem.Core.Services;
+using ProductionManagementSystem.WEB.Models;
+using ProductionManagementSystem.WEB.Models.AltiumDB;
 
 namespace ProductionManagementSystem.WEB.Controllers
 {
@@ -23,9 +25,12 @@ namespace ProductionManagementSystem.WEB.Controllers
 
         public async Task<IActionResult> Index(string userName, 
             int? deviceId, int? montageId, int? designId, int? taskId, int? orderId,
-            int? designSupplyRequestId, int? montageSupplyRequestId)
+            int? designSupplyRequestId, int? montageSupplyRequestId,
+            string orderBy, Dictionary<string, List<string>> filter, 
+            string q, int? tableId, int? itemPerPage, int? page)
         {
             IEnumerable<Log> logs = await _logService.GetAllAsync();
+            var total = logs.Count();
 
             if (userName != null)
                 logs = logs.Where(l => l.User.UserName == userName);
@@ -50,8 +55,20 @@ namespace ProductionManagementSystem.WEB.Controllers
             
             if (designSupplyRequestId != null)
                 logs = logs.Where(l => l.ItemId == designSupplyRequestId && l.ItemType == LogsItemType.DesignSupplyRequest);
+
+            logs = logs.Skip(((page ?? 1) - 1) * (itemPerPage ?? 20)).Take(itemPerPage ?? 20);
             
-            return View(logs);
+            return View(new DataListViewModel<Log>()
+            {
+                Data = logs.ToList(),
+                Filters = null,
+                Pagination = new PaginationViewModel()
+                {
+                    CurrentPage = page ?? 1,
+                    TotalItems = total,
+                    ItemPerPage = itemPerPage ?? 20,
+                }
+            });
         }
         
         public async Task<IActionResult> Details(int id)

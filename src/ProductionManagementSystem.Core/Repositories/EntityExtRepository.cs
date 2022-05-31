@@ -81,9 +81,8 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public async Task<EntityExt> GetByIdAsync(int id)
         {
-            var entity = await _context.Entities.FindAsync(id);
-            if (entity == null) return null;
-            var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.Id == entity.TableId);
+            var tableId = GetTableIdByEntityId(id);
+            var table = await _context.Tables.AsNoTracking().Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.Id == tableId);
             try
             {
                 await _conn.OpenAsync();
@@ -101,6 +100,11 @@ namespace ProductionManagementSystem.Core.Repositories
             }
         }
 
+        private int GetTableIdByEntityId(int id)
+        {
+            return _context.Entities.AsNoTracking().FirstOrDefault(x => x.KeyId == id)?.TableId ?? 0;
+        }
+
         public async Task<List<EntityExt>> FindAsync(Func<EntityExt, bool> predicate, string includeProperty = null)
         {
             throw new NotImplementedException();
@@ -108,11 +112,13 @@ namespace ProductionManagementSystem.Core.Repositories
 
         public async Task CreateAsync(EntityExt item)
         {
-            var altiumDbEntity = item.GetAltiumDbEntity();
-            var entity = item.GetEntity();
-            var table = await _context.Tables.Include(x => x.TableColumns).FirstOrDefaultAsync(x=> x.Id == entity.TableId);
-            altiumDbEntity.LibraryPath = table.FootprintPath;
-            altiumDbEntity.FootprintPath = table.FootprintPath;
+            var table = await _context.Tables.AsNoTracking().Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.Id == item.TableId);
+            if (table != null)
+            {
+                item.LibraryPath = table.FootprintPath;
+                item.FootprintPath = table.FootprintPath;
+            }
+            
             try
             {
                 await _conn.OpenAsync();
@@ -121,14 +127,14 @@ namespace ProductionManagementSystem.Core.Repositories
                     $"INSERT INTO `{table.TableName}` ({table.GetColumns()}) VALUES ({table.GenerateValueBinding()})";
                 foreach (var column in table.TableColumns)
                 {
-                    AddParameterToCmd(cmd, column.ParameterName, altiumDbEntity[column.ColumnName]);
+                    AddParameterToCmd(cmd, column.ParameterName, item[column.ColumnName]);
                 }
 
                 await cmd.ExecuteNonQueryAsync();
 
-                await _context.Entities.AddAsync(entity);
+                await _context.Entities.AddAsync(item.GetEntity());
                 await _context.SaveChangesAsync();
-                item.KeyId = entity.KeyId;
+                item.KeyId = item.GetEntity().KeyId;
             }
             catch(MySqlException ex)
             {
@@ -150,17 +156,14 @@ namespace ProductionManagementSystem.Core.Repositories
                 await _conn.OpenAsync();
                 var cmd = _conn.CreateCommand();
                 cmd.CommandText =
-                    $"UPDATE `{table.TableName}` SET {table.GenerateUpdateBinding()} WHERE `Part Number` = @WherePartNumber";
+                    $"{UpdateSqlScript(cmd, table)} WHERE `Part Number` = @WherePartNumber";
                 AddParameterToCmd(cmd, "@WherePartNumber", altiumDbEntity.PartNumber);
+                AddParameterToCmd(cmd, "@tableName", table.TableName);
                 foreach (var column in table.TableColumns)
                 {
                     AddParameterToCmd(cmd, column.ParameterName, altiumDbEntity[column.ColumnName]);
                 }
-
                 await cmd.ExecuteNonQueryAsync();
-                
-                _context.Entities.Update(entity);
-                await _context.SaveChangesAsync();
             }
             catch(MySqlException ex)
             {
@@ -170,6 +173,12 @@ namespace ProductionManagementSystem.Core.Repositories
             {  
                 await _conn.CloseAsync(); 
             }
+        }
+
+        protected string UpdateSqlScript(DbCommand cmd, Table table)
+        {
+            return
+                $"UPDATE `{table.TableName}` SET {string.Join(", ", table.TableColumns.Select(x => $"`{x.ColumnName}` = {x.ParameterName}"))}";
         }
 
         public async Task UpdateRangeAsync(List<EntityExt> items)

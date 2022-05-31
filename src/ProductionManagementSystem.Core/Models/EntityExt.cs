@@ -75,5 +75,10 @@ namespace ProductionManagementSystem.Core.Models
                 ImageUrl = ImageUrl
             };
         }
+
+        public override string ToString()
+        {
+            return $"{Category} {Item}";
+        }
     }
 }

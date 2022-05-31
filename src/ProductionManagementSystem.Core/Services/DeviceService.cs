@@ -140,6 +140,8 @@ namespace ProductionManagementSystem.Core.Services
             return (await GetAllAsync()).Select(x => new KeyValuePair<int, string>(x.Id, x.ToString()));
         }
 
+        protected override int GetEntityId(Device model) => model.Id;
+
         protected override object GetPropValue(Device src, string propName)
         {
             if (propName == nameof(src.Montages) && src.Montages != null)

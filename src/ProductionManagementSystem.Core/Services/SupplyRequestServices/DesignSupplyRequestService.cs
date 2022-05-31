@@ -27,6 +27,8 @@ namespace ProductionManagementSystem.Core.Services
             _currentRepository = _db.DesignsSupplyRequestRepository;
         }
         
+        
+        
         public async Task ChangeStatusAsync(int id, int to, string message = "")
         {
             var designSupplyRequest = await GetByIdAsync(id);
@@ -59,6 +61,8 @@ namespace ProductionManagementSystem.Core.Services
         }
 
         protected override LogsItemType ItemType => LogsItemType.DesignSupplyRequest;
+        protected override int GetEntityId(DesignSupplyRequest model) => model.Id;
+
         protected override object GetPropValue(DesignSupplyRequest src, string propName)
         {
             if (propName == nameof(src.StatusSupply))

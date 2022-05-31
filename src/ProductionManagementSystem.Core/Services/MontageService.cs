@@ -37,6 +37,8 @@ namespace ProductionManagementSystem.Core.Services
             await base.DeleteAsync(montage);
         }
 
+        protected override int GetEntityId(Montage model) => model.Id;
+
         public async Task<List<string>> GetTypesAsync()
         {
             var montages = await GetAllAsync();

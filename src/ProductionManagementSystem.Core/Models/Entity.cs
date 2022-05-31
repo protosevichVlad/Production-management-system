@@ -73,7 +73,7 @@ namespace ProductionManagementSystem.Core.Models.AltiumDB
             set => this["Case"] = value;
         }
 
-        public string Manufacture
+        public string Manufacturer
         {
             get => this["Manufacturer"];
             set => this["Manufacturer"] = value;

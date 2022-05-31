@@ -1,7 +1,6 @@
-﻿@model IEnumerable<ProductionManagementSystem.Core.Models.Logs.Log>
+﻿@model ProductionManagementSystem.WEB.Models.AltiumDB.DataListViewModel<ProductionManagementSystem.Core.Models.Logs.Log>
 @{
     ViewData["Title"] = "Логи";
+    Layout = "_AltiumDBLayout";
 }
-<h2>Логи</h2>
-
-<partial name="Partail/_LogsPartail" model="Model"/>
+<partial name="Partail/Logs/Table" model="Model"/>

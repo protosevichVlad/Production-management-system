@@ -200,6 +200,8 @@ namespace ProductionManagementSystem.Core.Services
             await base.DeleteAsync(item);
         }
 
+        protected override int GetEntityId(Task model) => model.Id;
+
         public async System.Threading.Tasks.Task DeleteByIdAsync(int id)
         {
             await DeleteAsync(new Task {Id = id});
