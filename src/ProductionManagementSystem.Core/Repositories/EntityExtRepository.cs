@@ -82,6 +82,7 @@ namespace ProductionManagementSystem.Core.Repositories
         public async Task<EntityExt> GetByIdAsync(int id)
         {
             var tableId = GetTableIdByEntityId(id);
+            if (tableId == 0) return null;
             var table = await _context.Tables.AsNoTracking().Include(x => x.TableColumns).FirstOrDefaultAsync(x => x.Id == tableId);
             try
             {
