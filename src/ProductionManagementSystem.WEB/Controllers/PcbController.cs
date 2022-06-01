@@ -69,8 +69,8 @@ namespace ProductionManagementSystem.WEB.Controllers
         public async Task<IActionResult> CreateApi([FromForm]PcbCreateEditViewModel pcbViewModel)
         {
             var pcb = await MapToCreateEditPcb(pcbViewModel);
-            await _pcbService.CreateAsync(pcb);
-            return Ok(pcb);
+            var pcbResult = await _pcbService.CreateAsync(pcb);
+            return Ok(pcbResult);
         }
 
         private async Task<CreateEditPcb> MapToCreateEditPcb(PcbCreateEditViewModel pcbViewModel)
@@ -217,7 +217,7 @@ namespace ProductionManagementSystem.WEB.Controllers
         [HttpPut]
         [Authorize(Roles = RoleEnum.Admin)]
         [Route("/api/pcb/{id:int}")]
-        public async Task<IActionResult> Update([FromRoute]int id, [FromForm]PcbCreateEditViewModel pcbViewModel)
+        public async Task<IActionResult> UpdateApi([FromRoute]int id, [FromForm]PcbCreateEditViewModel pcbViewModel)
         {
             var pcb = await MapToCreateEditPcb(pcbViewModel);
             pcb.Id = id;

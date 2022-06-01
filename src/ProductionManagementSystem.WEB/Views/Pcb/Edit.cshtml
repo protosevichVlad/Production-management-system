@@ -39,8 +39,16 @@
           </div>
         </div>
         <div class="bx--col-sm-1">
-          <label for="text-input-variant" class="bx--label">Версия</label>
-          <input id="text-input-variant" type="text" class="bx--text-input" placeholder="Item" v-model="project.variant">
+          <div class="bx--form-item bx--text-input-wrapper">
+            <label for="text-input-variant" class="bx--label">Версия</label>
+            <div class="bx--text-input__field-wrapper">
+              <svg v-if="!validator.projectVariant.isValid" focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--text-input__invalid-icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8,1C4.2,1,1,4.2,1,8s3.2,7,7,7s7-3.1,7-7S11.9,1,8,1z M7.5,4h1v5h-1C7.5,9,7.5,4,7.5,4z M8,12.2 c-0.4,0-0.8-0.4-0.8-0.8s0.3-0.8,0.8-0.8c0.4,0,0.8,0.4,0.8,0.8S8.4,12.2,8,12.2z"></path><path d="M7.5,4h1v5h-1C7.5,9,7.5,4,7.5,4z M8,12.2c-0.4,0-0.8-0.4-0.8-0.8s0.3-0.8,0.8-0.8 c0.4,0,0.8,0.4,0.8,0.8S8.4,12.2,8,12.2z" data-icon-path="inner-path" opacity="0"></path></svg>
+              <input id="text-input-variant" type="text" :class="{ 'bx--text-input': true, 'bx--text-input--invalid': !validator.projectVariant.isValid }" placeholder="Variant" v-model="project.variant">
+            </div>
+            <div v-if="!validator.projectVariant.isValid" class="bx--form-requirement">
+              {{validator.projectVariant.validationMessage}}
+            </div>
+          </div>
         </div>
       </div>
       <div class="bx--row">
@@ -365,8 +373,12 @@
            return {
              projectName: {
                isValid: vm.project.name != null && vm.project.name.length > 0,
-               validationMessage : "Заполните обязательное поле",
-             }
+               validationMessage : "Обязательное поле",
+             },
+             projectVariant: {
+               isValid: vm.project.variant != null && vm.project.variant.length > 0,
+               validationMessage : "Обязательное поле",
+             },
            }
         }
       },
@@ -442,6 +454,11 @@
         updateProject : function ()
         {
           let vm = this;
+          if (!vm.validator.projectName.isValid || !vm.validator.projectVariant.isValid) {
+            showPassiveModal("Невозможно создать PCB", "Заполните обязательные поля");
+            return;
+          }
+          
           if (vm.isEdit)
           {
              sendObjectAsFormData(`/api/pcb/${vm.project.id}`, 'PUT', vm.project, 2)

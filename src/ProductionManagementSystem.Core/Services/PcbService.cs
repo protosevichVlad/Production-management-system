@@ -21,7 +21,7 @@ namespace ProductionManagementSystem.Core.Services
             Stream assemblyDrawing, Stream threeDModel);
 
         Task UpdateAsync(CreateEditPcb createEditPcb);
-        Task CreateAsync(CreateEditPcb createEditPcb);
+        Task<Pcb> CreateAsync(CreateEditPcb createEditPcb);
 
         Task<List<Pcb>> GetPcbWithEntityAsync(string partNumber);
         Task<List<Pcb>> SearchByKeyWordAsync(string keyWord);
@@ -138,9 +138,11 @@ namespace ProductionManagementSystem.Core.Services
             await UpdateAsync(await createEditPcb.GetPcb(_fileService));
         }
 
-        public async Task CreateAsync(CreateEditPcb createEditPcb)
+        public async Task<Pcb> CreateAsync(CreateEditPcb createEditPcb)
         {
-            await CreateAsync(await createEditPcb.GetPcb(_fileService));
+            var pcb = await createEditPcb.GetPcb(_fileService);
+            await CreateAsync(pcb);
+            return pcb;
         }
 
         public async Task<List<Pcb>> GetPcbWithEntityAsync(string partNumber)
@@ -203,8 +205,12 @@ namespace ProductionManagementSystem.Core.Services
             }
             
             await base.CreateAsync(item);
-            item.UsedItems.ForEach(x => x.InItemId = item.Id);
-            await _db.UsedItemRepository.CreateRangeAsync(item.UsedItems);
+            if (item.UsedItems != null)
+            {
+                item.UsedItems.ForEach(x => x.InItemId = item.Id);
+                await _db.UsedItemRepository.CreateRangeAsync(item.UsedItems);
+            }
+            
             await _db.SaveAsync();
         }
 
