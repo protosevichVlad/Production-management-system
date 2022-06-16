@@ -37,6 +37,7 @@ namespace ProductionManagementSystem.Core.Repositories
         ICDBObtainedRepository CdbObtainedRepository { get; }
         ICDBTasksRepository CdbTasksRepository { get; }
         IUsedItemRepository UsedItemRepository { get; }
+        ICDBSupplyRequestRepository CdbSupplyRequestRepository { get; }
 
     }
 
@@ -109,6 +110,7 @@ namespace ProductionManagementSystem.Core.Repositories
         private ICDBObtainedRepository _cdbObtainedRepository;
         private ICDBTasksRepository _cdbTasksRepository;
         private IUsedItemRepository _usedItemRepository;
+        private ICDBSupplyRequestRepository _cdbSupplyRequestRepository;
 
         public EFUnitOfWork(string connectionString) : base(connectionString)
         {
@@ -160,5 +162,8 @@ namespace ProductionManagementSystem.Core.Repositories
         public ICDBObtainedRepository CdbObtainedRepository => _cdbObtainedRepository ??= new CDBObtainedRepository(_db);
         public ICDBTasksRepository CdbTasksRepository => _cdbTasksRepository ??= new CDBTasksRepository(_db);
         public IUsedItemRepository UsedItemRepository => _usedItemRepository ??= new UsedItemRepository(_db);
+
+        public ICDBSupplyRequestRepository CdbSupplyRequestRepository =>
+            _cdbSupplyRequestRepository ??= new CDBSupplyRequestRepository(_db);
     }
 }

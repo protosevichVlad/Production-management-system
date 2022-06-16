@@ -94,6 +94,7 @@ namespace ProductionManagementSystem.WEB
             services.AddScoped<IImportService, ImportService>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<ICDBTaskService, CDBTaskService>();
+            services.AddScoped<ICDBSupplyRequestService, CDBSupplyRequestService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -43,6 +43,7 @@ namespace ProductionManagementSystem.Core.Data.EF
         public DbSet<CDBTask> CdbTasks { get; set; }
         public DbSet<CDBObtained> CdbObtained { get; set; }
         public DbSet<UsedItem> UsedItems { get; set; }
+        public DbSet<CDBSupplyRequest> CdbSupplyRequests { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {

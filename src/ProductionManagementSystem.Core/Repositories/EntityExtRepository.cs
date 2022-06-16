@@ -165,6 +165,9 @@ namespace ProductionManagementSystem.Core.Repositories
                     AddParameterToCmd(cmd, column.ParameterName, altiumDbEntity[column.ColumnName]);
                 }
                 await cmd.ExecuteNonQueryAsync();
+
+                _context.Entities.Update(entity);
+                await _context.SaveChangesAsync();
             }
             catch(MySqlException ex)
             {

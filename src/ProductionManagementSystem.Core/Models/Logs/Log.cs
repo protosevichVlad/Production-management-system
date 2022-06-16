@@ -66,6 +66,7 @@ namespace ProductionManagementSystem.Core.Models.Logs
         Order,
         DesignSupplyRequest,
         MontageSupplyRequest,
-        Entity
+        Entity,
+        SupplyRequest
     }
 }

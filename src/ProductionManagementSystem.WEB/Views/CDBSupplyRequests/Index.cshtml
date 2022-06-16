@@ -1,0 +1,78 @@
+﻿@model ProductionManagementSystem.WEB.Models.AltiumDB.DataListViewModel<ProductionManagementSystem.Core.Models.CDBSupplyRequest>
+
+@{
+  ViewBag.Title = "Заявки на снабжение";
+  Layout = "_AltiumDBLayout";
+}
+
+<div class="bx--data-table-container " data-table>
+  <form method="get" action="" id="tableFiltersForm">
+    @if (Model.Pagination != null)
+    {
+      <input type="hidden" name="page" value="@(Model.Pagination.CurrentPage)">
+      <input type="hidden" name="itemPerPage" value="@(Model.Pagination.ItemPerPage)">
+    }
+    <div class="bx--data-table-header">
+      <div class="bx--grid bx--grid--full-width">
+        <div class="bx--row bx--row-padding">
+          <div class="bx--col-lg-12">
+            <h4 class="bx--data-table-header__title">@ViewBag.Title</h4>
+          </div>
+        </div>
+        <partial name="Partail/Tables/Filter" model="Model.Filters"/>
+      </div>
+    </div>
+
+    <section class="bx--table-toolbar  bx--table-toolbar--small ">
+      <div class="bx--toolbar-content">
+        <partial name="Partail/CarbonUIComponents/SearchInTableSm"></partial>
+      </div>
+    </section>
+  </form>
+
+  <!-- End Toolbar Content -->
+  <!-- Table -->
+  <table class="bx--data-table  bx--data-table--sort bx--data-table--visible-overflow-menu bx--data-table--compact">
+    <thead>
+    <tr>
+      <partial name="Partail/CarbonUIComponents/SortableTh" model="@("№")"/>
+      <partial name="Partail/CarbonUIComponents/SortableTh" model="@("Компонент")"/>
+      <partial name="Partail/CarbonUIComponents/SortableTh" model="@("Задача №")"/>
+      <partial name="Partail/CarbonUIComponents/SortableTh" model="@("Дата добавления")"/>
+      <partial name="Partail/CarbonUIComponents/SortableTh" model="@("Желаемая дата")"/>
+      <partial name="Partail/CarbonUIComponents/SortableTh" model="@("Количество")"/>
+      <partial name="Partail/CarbonUIComponents/SortableTh" model="@("Статус")"/>
+    </tr>
+    </thead>
+    <tbody>
+    @for (int i = 0; i < Model.Data.Count; i++)
+    {
+      <tr onclick="location.href = '@Url.Action("Details", "CDBSupplyRequests", new {id = Model.Data[i].Id})'">
+        <td>
+          @Model.Data[i].Id
+        </td>
+        <td>
+          @(Model.Data[i].Entity?.ToString() ?? "-")
+        </td>
+        <td>
+          @Model.Data[i].TaskId
+        </td>
+        <td>
+          @Model.Data[i].DateAdded.ToString("dd.MM.yyyy")
+        </td>
+        <td>
+          @Model.Data[i].DesiredDate.ToString("dd.MM.yyyy")
+        </td>
+        <td>
+          @Model.Data[i].Quantity
+        </td>
+        <td>
+          @Model.Data[i].StatusRuName
+        </td>
+      </tr>
+    }
+    </tbody>
+  </table>
+  <!-- Pagination -->
+  <partial name="Partail/CarbonUIComponents/Pagination" model="@Model.Pagination"/>
+</div>

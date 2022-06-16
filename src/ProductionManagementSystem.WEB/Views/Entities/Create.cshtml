@@ -140,7 +140,7 @@ else
           <div data-numberinput class="bx--number">
             <label for="number-Quantity" class="bx--label">Quantity</label>
             <div class="bx--number__input-wrapper">
-              <input id="number-Quantity" asp-for="Quantity" type="number" min="0" value="0">
+              <input id="number-Quantity" asp-for="Quantity" type="number" min="0" value="@Model.Quantity">
               <div class="bx--number__controls">
                 <button aria-label="increase number input" class="bx--number__control-btn up-icon" type="button" aria-live="polite" aria-atomic="true">
                   <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" width="8" height="4" viewBox="0 0 8 4" aria-hidden="true"><path d="M0 4L4 0 8 4z"></path></svg>
